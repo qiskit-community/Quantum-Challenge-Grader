@@ -39,7 +39,12 @@ def get_server_endpoint(lab_id: Optional[str] = None, ex_id: Optional[str] = Non
     return endpoint
 
 
-def send_request(data: dict, endpoint: str, method :str = 'POST', header: Optional[dict] = None) -> dict:
+def send_request(
+    data: dict,
+    endpoint: str,
+    method: str = 'POST',
+    header: Optional[dict] = None
+) -> dict:
     header = header if header else {
         'Accept': 'application/json',
         'Content-Type': 'application/json'

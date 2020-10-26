@@ -13,7 +13,7 @@
 
 import os
 
-from typing import Callable, Optional, Union
+from typing import Any, Callable, Optional, Tuple, Union
 
 from qiskit import IBMQ, execute, QuantumCircuit
 from qiskit.providers import JobStatus
@@ -29,39 +29,35 @@ def prepare_grading_job(
     ex_id: str,
     server_url: Optional[str] = None
 ) -> IBMQJob:
-    if not callable(solver_func):
-        print('🚫 Please provide a callable function that returns a qiskit.QuantumCircuit'
-              ' that solves the problem set.')
-    else:
-        server = server_url if server_url else get_server_endpoint(lab_id, ex_id)
-        if not server:
-            print('🚫 Failed to find a valid grading server or the grading servers are down right now.')
-            return
+    server = server_url if server_url else get_server_endpoint(lab_id, ex_id)
+    if not server:
+        print('🚫 Failed to find and connect to a valid grading server.')
+        return
 
-        # TODO get problem set
-        problem_set_1 = None
-        qc_1 = solver_func(problem_set_1)
+    # TODO get problem set
+    problem_set_1 = None
+    qc_1 = solver_func(problem_set_1)
 
-        endpoint = _normalize_final_slash(server) + 'problem-set'
-        index, value = get_problem_set(lab_id, ex_id, endpoint)
-        if index and value:
-            qc_2 = solver_func(value)
+    endpoint = _normalize_final_slash(server) + 'problem-set'
+    index, value = get_problem_set(lab_id, ex_id, endpoint)
+    if index and value:
+        qc_2 = solver_func(value)
 
-            backend = get_provider().get_backend('ibmq_qasm_simulator')
+        backend = get_provider().get_backend('ibmq_qasm_simulator')
 
-            # execute experiments
-            print('Running...')
-            job = execute(
-                [qc_1, qc_2],
-                backend=backend,
-                shots=1000,
-                qobj_header={
-                    'qc_index': index
-                }
-            )
+        # execute experiments
+        print('Running...')
+        job = execute(
+            [qc_1, qc_2],
+            backend=backend,
+            shots=1000,
+            qobj_header={
+                'qc_index': index
+            }
+        )
 
-            print(f'Monitor job (id: {job.job_id()}) status, and grade when it is done.')
-            return job
+        print(f'Monitor job (id: {job.job_id()}) status, and grade when it is done.')
+        return job
 
 
 def grade(
@@ -167,16 +163,20 @@ def check_answer(payload: dict, endpoint: str) -> str:
         return f'❌ Failed: {err}'
 
 
-def get_problem_set(lab_id: str, ex_id: str, endpoint: str) -> dict:
+def get_problem_set(
+    lab_id: str, ex_id: str, endpoint: str
+) -> Tuple[Optional[int], Optional[Any]]:
     try:
         payload = {'question_id': f'{lab_id}/{ex_id}'}
-        problem_set_response = send_request(payload, endpoint, method = 'GET')
+        problem_set_response = send_request(payload, endpoint, method='GET')
         if problem_set_response.get('is_valid'):
             return problem_set_response['index'], problem_set_response['value']
         else:
             print(f'❌ Failed. Please confirm lab and exercise IDs.')
     except Exception as err:
         print(f'❌ Failed: {err}')
+
+    return None, None
 
 
 def _normalize_final_slash(url: str) -> str:

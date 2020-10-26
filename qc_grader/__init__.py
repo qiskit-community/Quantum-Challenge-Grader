@@ -38,5 +38,6 @@ def grade_ex_2b(job: IBMQJob) -> None:
 def grade_ex_3(job: IBMQJob) -> None:
     grade(job, 'week3', 'exA')
 
+
 def prepare_ex_3(solver_func: Callable) -> IBMQJob:
     return prepare_grading_job(solver_func, 'week3', 'exA')
