@@ -1,11 +1,10 @@
 import json
 
 import numpy as np
-from typing import Any, Union
+from typing import Any, Optional, Tuple, Union
 
 from qiskit import IBMQ, QuantumCircuit, assemble
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
-from qiskit.providers.ibmq.exceptions import IBMQBackendApiError, IBMQBackendApiProtocolError
 from qiskit.providers.ibmq.job import IBMQJob
 
 
@@ -18,13 +17,18 @@ def get_provider() -> AccountProvider:
     return provider
 
 
-def get_job_status(job: Union[str, IBMQJob]) -> IBMQJob:
-    job_id = job.job_id() if isinstance(job, IBMQJob) else job
+def get_job_status(job: Union[str, IBMQJob]) -> Tuple[str, Optional[str]]:
     try:
-        the_job = job if isinstance(job, IBMQJob) else get_provider().backends.retrieve_job(job_id)
-        return job_id, the_job.status()
-    except (IBMQBackendApiError, IBMQBackendApiProtocolError):
+        if isinstance(job, IBMQJob):
+            job_id = job.job_id()
+            job_status = job.status()
+        else:
+            job_id = job
+            job_status = get_provider().backends.retrieve_job(job_id).status()
+    except Exception:
         return job_id, None
+
+    return job_id, job_status
 
 
 def circuit_to_json(qc: QuantumCircuit) -> str:

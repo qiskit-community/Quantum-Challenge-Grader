@@ -23,6 +23,20 @@ from .api import get_server_endpoint, send_request
 from .util import get_provider, get_job_status, circuit_to_json
 
 
+EXERCISES = [
+    'week1/exA', 'week1/exB',
+    'week2/exA', 'week2/exB',
+    'week3/exA',
+]
+
+
+def get_question_id(lab_id: str, ex_id: str) -> int:
+    try:
+        return EXERCISES.index(f'{lab_id}/{ex_id}') + 1
+    except Exception:
+        return -1
+
+
 def prepare_grading_job(
     solver_func: Callable,
     lab_id: str,
@@ -38,7 +52,7 @@ def prepare_grading_job(
     problem_set_1 = None
     qc_1 = solver_func(problem_set_1)
 
-    endpoint = _normalize_final_slash(server) + 'problem-set'
+    endpoint = server + 'problem-set'
     index, value = get_problem_set(lab_id, ex_id, endpoint)
 
     if index and value:
@@ -80,7 +94,7 @@ def grade(
 
         result = check_answer(
             payload,
-            _normalize_final_slash(server) + 'validate-answer'
+            server + 'validate-answer'
         )
 
         print(result)
@@ -103,7 +117,7 @@ def submit(
         print('Submitting...')
         result = check_answer(
             payload,
-            _normalize_final_slash(server) + 'submit-answer'
+            server + 'submit-answer'
         )
 
         print(result)
@@ -123,8 +137,12 @@ def make_payload(
 
     payload = {
         'iqx_token': os.getenv('QXToken'),
-        'question_id': f'{lab_id}/{ex_id}'
+        'question_id': get_question_id(lab_id, ex_id)
     }
+
+    if payload['iqx_token'] is None:
+        print('🚫 Unable to obtain authentication token.')
+        return None
 
     if isinstance(answer, IBMQJob) or isinstance(answer, str):
         job_id, status = get_job_status(answer)
@@ -150,7 +168,7 @@ def make_payload(
 
 def check_answer(payload: dict, endpoint: str) -> str:
     try:
-        answer_response = send_request(payload, endpoint)
+        answer_response = send_request(endpoint, body=payload)
 
         if answer_response.get('is_valid'):
             result_msg = '🎉 Correct'
@@ -160,7 +178,7 @@ def check_answer(payload: dict, endpoint: str) -> str:
             cause = answer_response.get('cause')
             result_msg = f'❌ Failed: {cause}'
 
-        return f'{payload["question_id"]} - {result_msg}'
+        return result_msg
     except Exception as err:
         return f'❌ Failed: {err}'
 
@@ -169,8 +187,8 @@ def get_problem_set(
     lab_id: str, ex_id: str, endpoint: str
 ) -> Tuple[Optional[int], Optional[Any]]:
     try:
-        payload = {'question_id': f'{lab_id}/{ex_id}'}
-        problem_set_response = send_request(payload, endpoint, method='GET')
+        payload = {'question_id': get_question_id(lab_id, ex_id)}
+        problem_set_response = send_request(endpoint, query=payload, method='GET')
         if problem_set_response.get('is_valid'):
             return problem_set_response['index'], problem_set_response['value']
         else:
@@ -179,10 +197,3 @@ def get_problem_set(
         print(f'❌ Failed: {err}')
 
     return None, None
-
-
-def _normalize_final_slash(url: str) -> str:
-    if url[-1] != '/':
-        url += '/'
-
-    return url

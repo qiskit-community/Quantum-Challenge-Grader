@@ -22,10 +22,10 @@ def get_server_endpoint(lab_id: Optional[str] = None, ex_id: Optional[str] = Non
 
                 if response.json().get(QC_API_NAME) == QC_API_VERSION:
                     if lab_id and ex_id:
-                        question_id = f'{lab_id}/{ex_id}'
+                        question_name = f'{lab_id}/{ex_id}'
                         available_validations = response.json().get('available validations')
 
-                        if not available_validations or question_id in available_validations:
+                        if not available_validations or question_name in available_validations:
                             endpoint = server_url
                             break
                         else:
@@ -36,12 +36,13 @@ def get_server_endpoint(lab_id: Optional[str] = None, ex_id: Optional[str] = Non
             except Exception as e:
                 pass
 
-    return endpoint
+    return normalize_final_slash(endpoint) if endpoint else None
 
 
 def send_request(
-    data: dict,
     endpoint: str,
+    query: Optional[dict] = None,
+    body: Optional[dict] = None,
     method: str = 'POST',
     header: Optional[dict] = None
 ) -> dict:
@@ -50,7 +51,20 @@ def send_request(
         'Content-Type': 'application/json'
     }
 
-    response = requests.request(method, url=endpoint, json=data, headers=header)
+    response = requests.request(
+        method,
+        url=endpoint,
+        params=query,
+        json=body,
+        headers=header
+    )
     response.raise_for_status()
 
     return response.json()
+
+
+def normalize_final_slash(url: str) -> str:
+    if url[-1] != '/':
+        url += '/'
+
+    return url
