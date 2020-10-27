@@ -49,8 +49,8 @@ def send_request(
         'Accept': 'application/json',
         'Content-Type': 'application/json'
     }
+
     response = requests.request(method, url=endpoint, json=data, headers=header)
-    if 'Cannot decipher' in response.text:
-        print('Cannot decipher session!')
     response.raise_for_status()
+
     return response.json()

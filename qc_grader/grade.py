@@ -34,12 +34,13 @@ def prepare_grading_job(
         print('🚫 Failed to find and connect to a valid grading server.')
         return
 
-    # TODO get problem set
+    # TODO
     problem_set_1 = None
     qc_1 = solver_func(problem_set_1)
 
     endpoint = _normalize_final_slash(server) + 'problem-set'
     index, value = get_problem_set(lab_id, ex_id, endpoint)
+
     if index and value:
         qc_2 = solver_func(value)
 
@@ -56,7 +57,8 @@ def prepare_grading_job(
             }
         )
 
-        print(f'Monitor job (id: {job.job_id()}) status, and grade when it is done.')
+        print(f'🧐 Monitor job (id: {job.job_id()}) status. '
+              'When it successfully completes you may grade it.')
         return job
 
 
@@ -114,34 +116,34 @@ def make_payload(
 ) -> Optional[dict]:
     if not lab_id:
         print('🚫 In which lab are you?.')
-        return {}
+        return None
     if not ex_id:
         print('🚫 In which exercise are you?.')
-        return {}
+        return None
 
     payload = {
         'iqx_token': os.getenv('QXToken'),
         'question_id': f'{lab_id}/{ex_id}'
     }
 
-    if isinstance(answer, IBMQJob):
+    if isinstance(answer, IBMQJob) or isinstance(answer, str):
         job_id, status = get_job_status(answer)
         if status is JobStatus.DONE:
             payload['answer'] = job_id
         elif status is None:
             print('🚫 Invalid or non-existent job specified.')
-            return {}
+            return None
         else:
             print(f'🚫 Job has not yet completed or was not successful (status: {status}).')
-            print(f'Monitor job (id: {job_id}) and try again.')
-            return {}
+            print(f'🧐 Monitor job (id: {job_id}) and try again.')
+            return None
     elif isinstance(answer, QuantumCircuit):
         payload['answer'] = circuit_to_json(answer)
     elif isinstance(answer, int):
         payload['answer'] = str(answer)
     else:
         print(f'🚫 Unsupported answer type ({type(answer)})')
-        return {}
+        return None
 
     return payload
 
