@@ -12,14 +12,16 @@
 # that they have been altered from the originals.
 
 import os
+import requests
 
 from typing import Any, Callable, Optional, Tuple, Union
+from urllib.parse import urljoin
 
 from qiskit import IBMQ, execute, QuantumCircuit
 from qiskit.providers import JobStatus
 from qiskit.providers.ibmq.job import IBMQJob
 
-from .api import get_server_endpoint, send_request
+from .api import get_server_endpoint, send_request, get_access_token, get_auth_endpoint
 from .util import get_provider, get_job_status, circuit_to_json
 
 
@@ -103,24 +105,29 @@ def grade(
 def submit(
     answer: Union[str, int, IBMQJob, QuantumCircuit],
     lab_id: str,
-    ex_id: str,
-    server_url: Optional[str] = None
+    ex_id: str
 ) -> None:
-    server = server_url if server_url else get_server_endpoint(lab_id, ex_id)
-    if not server:
-        print('🚫 Failed to find a valid grading server or the grading servers are down right now.')
-        return
-
     payload = make_payload(answer, lab_id, ex_id)
 
     if payload:
         print('Submitting...')
-        result = check_answer(
-            payload,
-            server + 'submit-answer'
-        )
+        result = submit_answer(payload)
 
         print(result)
+
+    # baseurl = get_api_auth_url()
+    # endpoint = urljoin(baseurl, './challenges/answers')
+    # payload = circuit_to_json(circuit)
+
+    # access_token = _get_access_token()
+    # response = requests.post(endpoint, json={
+    #     'questionNumber': 4,
+    #     'answer': payload
+    # }, params={'access_token': access_token})
+
+    # response.raise_for_status()
+    # data = response.json()
+    # _display_submit_result(data)
 
 
 def make_payload(
@@ -148,19 +155,20 @@ def make_payload(
         job_id, status = get_job_status(answer)
         if status is JobStatus.DONE:
             payload['answer'] = job_id
-        elif status is None:
-            print('🚫 Invalid or non-existent job specified.')
-            return None
         else:
-            print(f'🚫 Job has not yet completed or was not successful (status: {status}).')
-            print(f'🧐 Monitor job (id: {job_id}) and try again.')
+            if status is None:
+                print('🚫 Invalid or non-existent job specified.')
+            elif status in [JobStatus.CANCELLED, JobStatus.ERROR]:
+                print(f'🚫 Job did not successful finish: {status.value}.')
+            else:
+                print(f'🚫 Job has not yet completed: {status.value}.')
             return None
     elif isinstance(answer, QuantumCircuit):
         payload['answer'] = circuit_to_json(answer)
     elif isinstance(answer, int):
         payload['answer'] = str(answer)
     else:
-        print(f'🚫 Unsupported answer type ({type(answer)})')
+        print(f'🚫 Unsupported answer type: {type(answer)}')
         return None
 
     return payload
@@ -170,7 +178,8 @@ def check_answer(payload: dict, endpoint: str) -> str:
     try:
         answer_response = send_request(endpoint, body=payload)
 
-        if answer_response.get('is_valid'):
+        status = answer_response.get('status')
+        if status == 'valid':
             result_msg = '🎉 Correct'
             score = answer_response.get('score')
             result_msg += f'\nYour score is {score}.' if score is not None else ''
@@ -183,16 +192,52 @@ def check_answer(payload: dict, endpoint: str) -> str:
         return f'❌ Failed: {err}'
 
 
+def submit_answer(payload: dict) -> str:
+    try:
+        iqx_token = os.getenv('QXToken')
+        access_token = get_access_token(iqx_token)
+
+        baseurl = get_auth_endpoint()
+        endpoint = urljoin(baseurl, './challenges/answers')
+
+        response = requests.post(
+            endpoint,
+            json=payload,
+            params={'access_token': access_token}
+        )
+
+        if response.status_code == 401:
+            return f'❌ Failed: Authenticaion failure'
+        else:
+            response.raise_for_status()
+            data = response.json()
+
+            # if answer_response.get('is_valid'):
+            #     result_msg = '🎉 Correct'
+            #     score = answer_response.get('score')
+            #     result_msg += f'\nYour score is {score}.' if score is not None else ''
+            # else:
+            #     cause = answer_response.get('cause')
+            #     result_msg = f'❌ Failed: {cause}'
+
+            return data
+    except Exception as err:
+        return f'❌ Failed: {err}'
+
+
 def get_problem_set(
     lab_id: str, ex_id: str, endpoint: str
 ) -> Tuple[Optional[int], Optional[Any]]:
     try:
         payload = {'question_id': get_question_id(lab_id, ex_id)}
         problem_set_response = send_request(endpoint, query=payload, method='GET')
-        if problem_set_response.get('is_valid'):
+        
+        status = problem_set_response.get('status')
+
+        if status == 'valid':
             return problem_set_response['index'], problem_set_response['value']
         else:
-            print(f'❌ Failed. Please confirm lab and exercise IDs.')
+            print(f'❌ Failed: {cause}')
     except Exception as err:
         print(f'❌ Failed: {err}')
 

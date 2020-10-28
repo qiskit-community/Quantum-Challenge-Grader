@@ -41,3 +41,23 @@ def grade_ex_3(job: IBMQJob) -> None:
 
 def prepare_ex_3(solver_func: Callable) -> IBMQJob:
     return prepare_grading_job(solver_func, 'week3', 'exA')
+
+
+def submit_ex_1a(circuit: QuantumCircuit) -> None:
+    submit(circuit, 'week1', 'exA')
+
+
+def submit_ex_1b(answer: int) -> None:
+    submit(answer, 'week1', 'exB')
+
+
+def submit_ex_2a(job: IBMQJob) -> None:
+    submit(job, 'week2', 'exA')
+
+
+def submit_ex_2b(job: IBMQJob) -> None:
+    submit(job, 'week2', 'exB')
+
+
+def submit_ex_3(job: IBMQJob) -> None:
+    submit(job, 'week3', 'exA')
