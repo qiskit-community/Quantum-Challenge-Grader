@@ -22,7 +22,7 @@ from qiskit.providers import JobStatus
 from qiskit.providers.ibmq.job import IBMQJob
 
 from .api import get_server_endpoint, send_request, get_access_token, get_auth_endpoint
-from .util import get_provider, get_job_status, circuit_to_json
+from .util import get_provider, get_job, get_job_status, circuit_to_json, compute_cost
 
 
 EXERCISES = [
@@ -56,9 +56,11 @@ def prepare_grading_job(
 
     endpoint = server + 'problem-set'
     index, value = get_problem_set(lab_id, ex_id, endpoint)
+    cost_1 = compute_cost(qc_1)
 
     if index and value:
         qc_2 = solver_func(value)
+        # cost_2 = compute_cost(qc_1)
 
         backend = get_provider().get_backend('ibmq_qasm_simulator')
 
@@ -69,7 +71,8 @@ def prepare_grading_job(
             backend=backend,
             shots=1000,
             qobj_header={
-                'qc_index': index
+                'qc_index': index,
+                'qc_cost': cost_1
             }
         )
 
@@ -91,12 +94,19 @@ def grade(
 
     payload = make_payload(answer, lab_id, ex_id)
 
+    score = None
+    if isinstance(answer, IBMQJob) or isinstance(answer, str):
+        job = get_job(answer) if isinstance(answer, str) else answer
+        qobj_header = job.result().header.to_dict() if job else {}
+        score = qobj_header['qc_cost'] if 'qc_cost' in qobj_header else None
+
     if payload:
         print('Grading...')
 
         result = check_answer(
             payload,
-            server + 'validate-answer'
+            server + 'validate-answer',
+            cost=score
         )
 
         print(result)
@@ -174,14 +184,14 @@ def make_payload(
     return payload
 
 
-def check_answer(payload: dict, endpoint: str) -> str:
+def check_answer(payload: dict, endpoint: str, cost: Optional[int] = None) -> str:
     try:
         answer_response = send_request(endpoint, body=payload)
 
         status = answer_response.get('status')
         if status == 'valid':
             result_msg = '🎉 Correct'
-            score = answer_response.get('score')
+            score = cost if cost else answer_response.get('score')
             result_msg += f'\nYour score is {score}.' if score is not None else ''
         else:
             cause = answer_response.get('cause')
@@ -231,12 +241,13 @@ def get_problem_set(
     try:
         payload = {'question_id': get_question_id(lab_id, ex_id)}
         problem_set_response = send_request(endpoint, query=payload, method='GET')
-        
+
         status = problem_set_response.get('status')
 
         if status == 'valid':
             return problem_set_response['index'], problem_set_response['value']
         else:
+            cause = problem_set_response.get('cause')
             print(f'❌ Failed: {cause}')
     except Exception as err:
         print(f'❌ Failed: {err}')

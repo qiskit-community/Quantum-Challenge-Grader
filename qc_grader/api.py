@@ -59,9 +59,7 @@ def get_auth_endpoint() -> Optional[str]:
 def get_access_token(iqx_token: Optional[str]) -> str:
     baseurl = get_auth_endpoint()
     endpoint = urljoin(baseurl, './users/loginWithToken')
-
     response = requests.post(endpoint, json={'apiToken': iqx_token})
-
     response.raise_for_status()
     return response.json()['id']
 
