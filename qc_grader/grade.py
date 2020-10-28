@@ -11,6 +11,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
+import json
 import os
 import requests
 
@@ -22,7 +23,7 @@ from qiskit.providers import JobStatus
 from qiskit.providers.ibmq.job import IBMQJob
 
 from .api import get_server_endpoint, send_request, get_access_token, get_auth_endpoint
-from .util import get_provider, get_job, get_job_status, circuit_to_json, compute_cost
+from .util import get_provider, get_job, get_job_status, circuit_to_json, compute_cost, get_job_urls
 
 
 EXERCISES = [
@@ -43,6 +44,7 @@ def prepare_grading_job(
     solver_func: Callable,
     lab_id: str,
     ex_id: str,
+    problem_set: Optional[list] = None,
     server_url: Optional[str] = None
 ) -> IBMQJob:
     server = server_url if server_url else get_server_endpoint(lab_id, ex_id)
@@ -50,29 +52,26 @@ def prepare_grading_job(
         print('🚫 Failed to find and connect to a valid grading server.')
         return
 
-    # TODO
-    problem_set_1 = None
-    qc_1 = solver_func(problem_set_1)
+    qc_1 = solver_func(problem_set)
 
     endpoint = server + 'problem-set'
     index, value = get_problem_set(lab_id, ex_id, endpoint)
+    print(index, type(value), value)
     cost_1 = compute_cost(qc_1)
 
     if index and value:
         qc_2 = solver_func(value)
         # cost_2 = compute_cost(qc_1)
 
-        backend = get_provider().get_backend('ibmq_qasm_simulator')
-
         # execute experiments
         print('Running...')
         job = execute(
             [qc_1, qc_2],
-            backend=backend,
+            # backend=backend,
             shots=1000,
             qobj_header={
-                'qc_index': index,
-                'qc_cost': cost_1
+                'qc_index': [-1, index],
+                'qc_cost': [cost_1, cost_1]
             }
         )
 
@@ -153,18 +152,22 @@ def make_payload(
         return None
 
     payload = {
-        'iqx_token': os.getenv('QXToken'),
         'question_id': get_question_id(lab_id, ex_id)
     }
-
-    if payload['iqx_token'] is None:
-        print('🚫 Unable to obtain authentication token.')
-        return None
 
     if isinstance(answer, IBMQJob) or isinstance(answer, str):
         job_id, status = get_job_status(answer)
         if status is JobStatus.DONE:
-            payload['answer'] = job_id
+            ok, download_url, result_url = get_job_urls(job_id)
+            if ok:
+                cred = get_provider().credentials
+                payload['answer'] = json.dumps({
+                    'download_url': download_url,
+                    'result_url': result_url
+                })
+            else:
+                print('🚫 Invalid or non-existent job specified.')
+                return None
         else:
             if status is None:
                 print('🚫 Invalid or non-existent job specified.')
@@ -204,8 +207,7 @@ def check_answer(payload: dict, endpoint: str, cost: Optional[int] = None) -> st
 
 def submit_answer(payload: dict) -> str:
     try:
-        iqx_token = os.getenv('QXToken')
-        access_token = get_access_token(iqx_token)
+        access_token = get_access_token()
 
         baseurl = get_auth_endpoint()
         endpoint = urljoin(baseurl, './challenges/answers')

@@ -63,7 +63,7 @@ def circuit_to_dict(qc: QuantumCircuit) -> dict:
 
 def compute_cost(circuit: QuantumCircuit) -> int:
 
-    print('⏳ This may take several minutes...')
+    print('⏳ Computing cost. This may take several minutes...')
     # Unroll the circuit
     pass_ = Unroller(['u3', 'cx'])
     pm = PassManager(pass_)
@@ -78,3 +78,23 @@ def compute_cost(circuit: QuantumCircuit) -> int:
     cost = num_u3 + 10 * num_cx
 
     return cost
+
+
+def get_job_urls(job: Union[str, IBMQJob]) -> Tuple[bool, Optional[str], Optional[str]]:
+    try:
+        if isinstance(job, IBMQJob):
+            job_id = job.job_id()
+            job_status = job.status()
+        else:
+            job_id = job
+            job_status = get_provider().backends.retrieve_job(job_id).status()
+    except Exception:
+        return False, None, None
+
+    try:
+        download_url = get_provider()._api_client.account_api.job(job_id).download_url()['url']
+        result_url = get_provider()._api_client.account_api.job(job_id).result_url()['url']
+    except Exception:
+        return False, None, None
+
+    return True, download_url, result_url

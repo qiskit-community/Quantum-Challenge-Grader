@@ -8,56 +8,10 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-from typing import Callable
-
-from qiskit import QuantumCircuit
-from qiskit.providers.ibmq.job import IBMQJob
-
-from .grade import prepare_grading_job, grade, submit
+from qc_grader.exercises import week1
+from qc_grader.exercises.week1 import *
+from qc_grader.exercises.week2 import *
+from qc_grader.exercises.week3 import *
 
 
-__version__ = '0.1.0'
-
-
-def grade_ex_1a(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'week1', 'exA')
-
-
-def grade_ex_1b(answer: int) -> None:
-    grade(answer, 'week1', 'exB')
-
-
-def grade_ex_2a(job: IBMQJob) -> None:
-    grade(job, 'week2', 'exA')
-
-
-def grade_ex_2b(job: IBMQJob) -> None:
-    grade(job, 'week2', 'exB')
-
-
-def grade_ex_3(job: IBMQJob) -> None:
-    grade(job, 'week3', 'exA')
-
-
-def prepare_ex_3(solver_func: Callable) -> IBMQJob:
-    return prepare_grading_job(solver_func, 'week3', 'exA')
-
-
-def submit_ex_1a(circuit: QuantumCircuit) -> None:
-    submit(circuit, 'week1', 'exA')
-
-
-def submit_ex_1b(answer: int) -> None:
-    submit(answer, 'week1', 'exB')
-
-
-def submit_ex_2a(job: IBMQJob) -> None:
-    submit(job, 'week2', 'exA')
-
-
-def submit_ex_2b(job: IBMQJob) -> None:
-    submit(job, 'week2', 'exB')
-
-
-def submit_ex_3(job: IBMQJob) -> None:
-    submit(job, 'week3', 'exA')
+__version__ = '0.2.0'

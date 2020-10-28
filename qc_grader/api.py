@@ -56,7 +56,8 @@ def get_auth_endpoint() -> Optional[str]:
     return _api_auth_url
 
 
-def get_access_token(iqx_token: Optional[str]) -> str:
+def get_access_token() -> str:
+    iqx_token = os.getenv('QXToken')
     baseurl = get_auth_endpoint()
     endpoint = urljoin(baseurl, './users/loginWithToken')
     response = requests.post(endpoint, json={'apiToken': iqx_token})
