@@ -49,7 +49,7 @@ def prepare_grading_job(
 ) -> IBMQJob:
     server = server_url if server_url else get_server_endpoint(lab_id, ex_id)
     if not server:
-        print('🚫 Failed to find and connect to a valid grading server.')
+        print('Failed to find and connect to a valid grading server.')
         return
 
     qc_1 = solver_func(problem_set)
@@ -64,7 +64,7 @@ def prepare_grading_job(
         backend = get_provider().get_backend('ibmq_qasm_simulator')
 
         # execute experiments
-        print('Running...')
+        print('Preparing the circuit. Please wait...')
         job = execute(
             [qc_1, qc_2],
             backend=backend,
@@ -75,8 +75,8 @@ def prepare_grading_job(
             }
         )
 
-        print(f'🧐 Monitor job (id: {job.job_id()}) status. '
-              'When it successfully completes you may grade it.')
+        print(f'You may monitor the job (id: {job.job_id()}) status '
+              'and proceed to grading when it successfully completes.')
         return job
 
 
@@ -88,27 +88,25 @@ def grade(
 ) -> None:
     server = server_url if server_url else get_server_endpoint(lab_id, ex_id)
     if not server:
-        print('🚫 Failed to find a valid grading server or the grading servers are down right now.')
+        print('Could not find a valid grading server or the grading servers are down right now.')
         return
 
     payload = make_payload(answer, lab_id, ex_id)
 
-    score = None
-    if isinstance(answer, IBMQJob) or isinstance(answer, str):
-        job = get_job(answer) if isinstance(answer, str) else answer
-        qobj_header = job.result().header.to_dict() if job else {}
-        score = qobj_header['qc_cost'] if 'qc_cost' in qobj_header else None
-
     if payload:
-        print('Grading...')
+        score = None
+        if isinstance(answer, IBMQJob) or isinstance(answer, str):
+            job = get_job(answer) if isinstance(answer, str) else answer
+            if job:
+                qobj_header = job.result().header.to_dict() if job else {}
+                score = qobj_header['qc_cost'] if 'qc_cost' in qobj_header else None
 
-        result = check_answer(
+        print('Grading your answer. Please wait...')
+        check_answer(
             payload,
             server + 'validate-answer',
             cost=score
         )
-
-        print(result)
 
 
 def submit(
@@ -119,24 +117,8 @@ def submit(
     payload = make_payload(answer, lab_id, ex_id)
 
     if payload:
-        print('Submitting...')
-        result = submit_answer(payload)
-
-        print(result)
-
-    # baseurl = get_api_auth_url()
-    # endpoint = urljoin(baseurl, './challenges/answers')
-    # payload = circuit_to_json(circuit)
-
-    # access_token = _get_access_token()
-    # response = requests.post(endpoint, json={
-    #     'questionNumber': 4,
-    #     'answer': payload
-    # }, params={'access_token': access_token})
-
-    # response.raise_for_status()
-    # data = response.json()
-    # _display_submit_result(data)
+        print('Submitting your answer. Please wait...')
+        submit_answer(payload)
 
 
 def make_payload(
@@ -145,10 +127,10 @@ def make_payload(
     ex_id: str
 ) -> Optional[dict]:
     if not lab_id:
-        print('🚫 In which lab are you?.')
+        print('Missing lab id. Please include the lab id.')
         return None
     if not ex_id:
-        print('🚫 In which exercise are you?.')
+        print('Missing exercise id. Please include the exercise id.')
         return None
 
     payload = {
@@ -165,75 +147,68 @@ def make_payload(
                     'result_url': result_url
                 })
             else:
-                print('🚫 Invalid or non-existent job specified.')
+                print('An invalid or non-existent job was specified.')
                 return None
         else:
             if status is None:
-                print('🚫 Invalid or non-existent job specified.')
+                print('An invalid or non-existent job was specified.')
             elif status in [JobStatus.CANCELLED, JobStatus.ERROR]:
-                print(f'🚫 Job did not successful finish: {status.value}.')
+                print(f'Job did not successfully complete: {status.value}.')
             else:
-                print(f'🚫 Job has not yet completed: {status.value}.')
+                print(f'Job has not yet completed: {status.value}.')
+                print(f'Please wait for the job (id: {job_id}) to complete then try again.')
             return None
     elif isinstance(answer, QuantumCircuit):
         payload['answer'] = circuit_to_json(answer)
     elif isinstance(answer, int):
         payload['answer'] = str(answer)
     else:
-        print(f'🚫 Unsupported answer type: {type(answer)}')
+        print(f'Unsupported answer type: {type(answer)}')
         return None
 
     return payload
 
 
-def check_answer(payload: dict, endpoint: str, cost: Optional[int] = None) -> str:
+def check_answer(payload: dict, endpoint: str, cost: Optional[int] = None) -> None:
     try:
         answer_response = send_request(endpoint, body=payload)
 
         status = answer_response.get('status')
         if status == 'valid':
-            result_msg = '🎉 Correct'
+            print('\nCongratulations 🎉! Your answer is correct.')
             score = cost if cost else answer_response.get('score')
-            result_msg += f'\nYour score is {score}.' if score is not None else ''
+            if score is not None:
+                print(f'Your score is {score}.')
+            print('\nFeel free to submit your answer.')
         else:
             cause = answer_response.get('cause')
-            result_msg = f'❌ Failed: {cause}'
-
-        return result_msg
+            print(f'\nOops 😕! {cause}')
+            print('Please review your answer and try again.')
     except Exception as err:
-        return f'❌ Failed: {err}'
+        print(f'Failed: {err}')
 
 
-def submit_answer(payload: dict) -> str:
+def submit_answer(payload: dict) -> None:
     try:
         access_token = get_access_token()
 
         baseurl = get_auth_endpoint()
         endpoint = urljoin(baseurl, './challenges/answers')
 
-        response = requests.post(
+        submit_response = send_request(
             endpoint,
-            json=payload,
-            params={'access_token': access_token}
+            body=payload,
+            header={'access_token': access_token}
         )
 
-        if response.status_code == 401:
-            return f'❌ Failed: Authenticaion failure'
+        status = submit_response.get('status')
+        if status == 'valid':
+            print('\nYour answer has been submitted!')
         else:
-            response.raise_for_status()
-            data = response.json()
-
-            # if answer_response.get('is_valid'):
-            #     result_msg = '🎉 Correct'
-            #     score = answer_response.get('score')
-            #     result_msg += f'\nYour score is {score}.' if score is not None else ''
-            # else:
-            #     cause = answer_response.get('cause')
-            #     result_msg = f'❌ Failed: {cause}'
-
-            return data
+            cause = submit_response.get('cause')
+            print(f'\nOops 😕! {cause}')
     except Exception as err:
-        return f'❌ Failed: {err}'
+        print(f'Failed: {err}')
 
 
 def get_problem_set(
@@ -242,7 +217,10 @@ def get_problem_set(
     try:
         payload = {'question_id': get_question_id(lab_id, ex_id)}
         problem_set_response = send_request(endpoint, query=payload, method='GET')
+    except Exception as err:
+        print('Unable to obtain the problem set')
 
+    try:
         status = problem_set_response.get('status')
 
         if status == 'valid':
@@ -251,8 +229,8 @@ def get_problem_set(
             return index, value
         else:
             cause = problem_set_response.get('cause')
-            print(f'❌ Failed: {cause}')
+            print(f'Problem set failed: {cause}')
     except Exception as err:
-        print(f'❌ Failed: {err}')
+        print(f'Problem set could not be processed: {err}')
 
     return None, None

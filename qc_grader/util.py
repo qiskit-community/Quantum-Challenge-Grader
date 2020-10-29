@@ -22,7 +22,7 @@ def get_provider() -> AccountProvider:
 
 def get_job(job_id: str) -> Optional[IBMQJob]:
     try:
-        job = get_provider().backends.retrieve_job(job_id).status()
+        job = get_provider().backends.retrieve_job(job_id)
         return job
     except Exception:
         pass
@@ -63,7 +63,7 @@ def circuit_to_dict(qc: QuantumCircuit) -> dict:
 
 def compute_cost(circuit: QuantumCircuit) -> int:
 
-    print('⏳ Computing cost. This may take several minutes...')
+    print('Computing cost. Please wait this may take several minutes...')
     # Unroll the circuit
     pass_ = Unroller(['u3', 'cx'])
     pm = PassManager(pass_)

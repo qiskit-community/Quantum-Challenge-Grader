@@ -86,6 +86,9 @@ def send_request(
     )
     response.raise_for_status()
 
+    if not response.ok:
+        raise Exception(f'{response.text}')
+
     return response.json()
 
 
