@@ -56,22 +56,22 @@ def prepare_grading_job(
 
     endpoint = server + 'problem-set'
     index, value = get_problem_set(lab_id, ex_id, endpoint)
-    print(index, type(value), value)
-    cost_1 = compute_cost(qc_1)
+    # cost = compute_cost(qc_1)
 
     if index and value:
         qc_2 = solver_func(value)
-        # cost_2 = compute_cost(qc_1)
+        cost = compute_cost(qc_1)
+        backend = get_provider().get_backend('ibmq_qasm_simulator')
 
         # execute experiments
         print('Running...')
         job = execute(
             [qc_1, qc_2],
-            # backend=backend,
+            backend=backend,
             shots=1000,
             qobj_header={
                 'qc_index': [-1, index],
-                'qc_cost': [cost_1, cost_1]
+                'qc_cost': [cost, cost]
             }
         )
 
@@ -160,7 +160,6 @@ def make_payload(
         if status is JobStatus.DONE:
             ok, download_url, result_url = get_job_urls(job_id)
             if ok:
-                cred = get_provider().credentials
                 payload['answer'] = json.dumps({
                     'download_url': download_url,
                     'result_url': result_url
@@ -247,7 +246,9 @@ def get_problem_set(
         status = problem_set_response.get('status')
 
         if status == 'valid':
-            return problem_set_response['index'], problem_set_response['value']
+            index = problem_set_response.get('index')
+            value = json.loads(problem_set_response.get('value'))
+            return index, value
         else:
             cause = problem_set_response.get('cause')
             print(f'❌ Failed: {cause}')
