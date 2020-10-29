@@ -8,7 +8,6 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-from qc_grader.exercises import week1
 from qc_grader.exercises.week1 import *
 from qc_grader.exercises.week2 import *
 from qc_grader.exercises.week3 import *
