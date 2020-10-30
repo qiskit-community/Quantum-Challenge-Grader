@@ -173,17 +173,11 @@ def check_answer(payload: dict, endpoint: str, cost: Optional[int] = None) -> No
     try:
         answer_response = send_request(endpoint, body=payload)
 
-        status = answer_response.get('status')
-        if status == 'valid':
-            print('\nCongratulations 🎉! Your answer is correct.')
-            score = cost if cost else answer_response.get('score')
-            if score is not None:
-                print(f'Your score is {score}.')
-            print('\nFeel free to submit your answer.')
-        else:
-            cause = answer_response.get('cause')
-            print(f'\nOops 😕! {cause}')
-            print('Please review your answer and try again.')
+        status = answer_response.get('status', None)
+        cause = answer_response.get('cause', None)
+        score = cost if cost else answer_response.get('score', None)
+
+        handle_grade_response(status, score=score, cause=cause)
     except Exception as err:
         print(f'Failed: {err}')
 
@@ -201,12 +195,10 @@ def submit_answer(payload: dict) -> None:
             header={'access_token': access_token}
         )
 
-        status = submit_response.get('status')
-        if status == 'valid':
-            print('\nYour answer has been submitted!')
-        else:
-            cause = submit_response.get('cause')
-            print(f'\nOops 😕! {cause}')
+        status = submit_response.get('status', None)
+        cause = submit_response.get('cause', None)
+
+        handle_submit_response(status, cause=cause)
     except Exception as err:
         print(f'Failed: {err}')
 
@@ -234,3 +226,33 @@ def get_problem_set(
         print(f'Problem set could not be processed: {err}')
 
     return None, None
+
+
+def handle_grade_response(
+    status: Optional[str], score: Optional[int] = None, cause: Optional[str] = None
+) -> None:
+    if status == 'valid':
+        print('\nCongratulations 🎉! Your answer is correct.')
+        if score is not None:
+            print(f'Your score is {score}. The lower, the better!')
+        print('Feel free to submit your answer.')
+    elif status == 'invalid':
+        print(f'\nOops 😕! {cause}')
+        print('Please review your answer and try again.')
+    elif status == 'notFinished':
+        print(f'Job has not finished: {cause}')
+        print(f'Please wait for the job complete then try again.')
+    else:
+        print(f'Failed: {cause}')
+        print('Unable to grade your answer.')
+
+
+def handle_submit_response(
+    status: str, cause: Optional[str] = None
+) -> None:
+    if status == 'valid':
+        print('\nSuccess 🎉! Your circuit has been submitted.')
+        print('\nRemember you can submit a circuit as many times as you want.')
+    else:
+        print(f'\nOops 😕! {cause}')
+        print('Make sure your circuit has been successfully graded before submitting.')
