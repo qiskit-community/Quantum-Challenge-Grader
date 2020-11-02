@@ -62,15 +62,28 @@ def prepare_grading_job(
         qc_2 = solver_func(value)
         cost = compute_cost(qc_1)
         backend = get_provider().get_backend('ibmq_qasm_simulator')
+        basis_gates = [
+            'u1', 'u2', 'u3', 'cx', 'cz', 'id',
+            'x', 'y', 'z', 'h', 's', 'sdg', 't',
+            'tdg', 'swap', 'ccx',
+            'unitary', 'diagonal', 'initialize',
+            'cu1', 'cu2', 'cu3', 'cswap',
+            'mcx', 'mcy', 'mcz',
+            'mcu1', 'mcu2', 'mcu3',
+            'mcswap', 'multiplexer', 'kraus', 'roerror'
+        ]
 
         # execute experiments
         print('Preparing the circuit. Please wait...')
         job = execute(
             [qc_1, qc_2],
+            basis_gates=basis_gates,
             backend=backend,
             shots=1000,
+            seed_simulator=12345,
+            optimization_level=0,
             qobj_header={
-                'qc_index': [-1, index],
+                'qc_index': [None, index],
                 'qc_cost': [cost, cost]
             }
         )

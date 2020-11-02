@@ -26,16 +26,28 @@ problem_set_ex3 = [
 
 
 def prepare_ex3(solver_func: Callable) -> IBMQJob:
-    return prepare_grading_job(
-        solver_func,
-        'week3', 'exA',
-        problem_set=problem_set_ex3
-    )
+    if callable(solver_func):
+        return prepare_grading_job(
+            solver_func,
+            'week3', 'exA',
+            problem_set=problem_set_ex3
+        )
+    else:
+        print(f'Expected a function, but was given {type(solver_func)}')
+        print(f'Please provide a function that returns a QuantumCircuit.')
 
 
 def grade_ex3(job: IBMQJob) -> None:
-    grade(job, 'week3', 'exA')
+    if isinstance(job, IBMQJob) or isinstance(job, str):
+        grade(job, 'week3', 'exA')
+    else:
+        print(f'Expected an IBMQJob or a job ID, but was given {type(job)}')
+        print(f'Please submit a job as your answer.')
 
 
 def submit_ex3(job: IBMQJob) -> None:
-    submit(job, 'week3', 'exA')
+    if isinstance(job, IBMQJob) or isinstance(job, str):
+        submit(job, 'week3', 'exA')
+    else:
+        print(f'Expected an IBMQJob or a job ID, but was given {type(job)}')
+        print(f'Please submit a job as your answer.')
