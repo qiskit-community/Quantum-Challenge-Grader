@@ -90,10 +90,13 @@ def send_request(
         json=body,
         headers=header
     )
-    response.raise_for_status()
 
     if not response.ok:
-        raise Exception(f'{response.text}')
+        if response.status_code == 403:
+            result = f'Unable to access service ({response.reason})'
+        else:
+            result = response.json()['error']['message']
+        raise Exception(result)
 
     return response.json()
 

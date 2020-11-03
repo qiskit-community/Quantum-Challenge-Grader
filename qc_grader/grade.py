@@ -128,6 +128,8 @@ def submit(
     ex_id: str
 ) -> None:
     payload = make_payload(answer, lab_id, ex_id)
+    payload['questionNumber'] = payload['question_id']
+    del payload['question_id']
 
     if payload:
         print('Submitting your answer. Please wait...')
@@ -205,10 +207,12 @@ def submit_answer(payload: dict) -> None:
         submit_response = send_request(
             endpoint,
             body=payload,
-            header={'access_token': access_token}
+            query={'access_token': access_token}
         )
 
         status = submit_response.get('status', None)
+        if status is None:
+            status = submit_response.get('valid', None)
         cause = submit_response.get('cause', None)
 
         handle_submit_response(status, cause=cause)
@@ -263,9 +267,8 @@ def handle_grade_response(
 def handle_submit_response(
     status: str, cause: Optional[str] = None
 ) -> None:
-    if status == 'valid':
+    if status == 'valid' or status == True:
         print('\nSuccess 🎉! Your circuit has been submitted.')
-        print('\nRemember you can submit a circuit as many times as you want.')
     else:
         print(f'\nOops 😕! {cause}')
-        print('Make sure your circuit has been successfully graded before submitting.')
+        print('Make sure your circuit was successfully graded before submitting.')
