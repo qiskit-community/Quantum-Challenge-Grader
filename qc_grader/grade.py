@@ -270,5 +270,5 @@ def handle_submit_response(
     if status == 'valid' or status == True:
         print('\nSuccess 🎉! Your circuit has been submitted.')
     else:
-        print(f'\nOops 😕! {cause}')
-        print('Make sure your circuit was successfully graded before submitting.')
+        print(f'\nOops 😕! {"" if cause is None else cause}')
+        print('Make sure your answer is correct and successfully graded before submitting.')
