@@ -42,7 +42,7 @@ def grade_ex3(job: IBMQJob) -> None:
         grade(job, 'week3', 'exA')
     else:
         print(f'Expected an IBMQJob or a job ID, but was given {type(job)}')
-        print(f'Please submit a job as your answer.')
+        print(f'Please provide a job as your answer.')
 
 
 def submit_ex3(job: IBMQJob) -> None:
@@ -50,4 +50,4 @@ def submit_ex3(job: IBMQJob) -> None:
         submit(job, 'week3', 'exA')
     else:
         print(f'Expected an IBMQJob or a job ID, but was given {type(job)}')
-        print(f'Please submit a job as your answer.')
+        print(f'Please provide a job as your answer.')

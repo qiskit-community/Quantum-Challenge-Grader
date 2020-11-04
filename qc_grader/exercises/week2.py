@@ -10,7 +10,7 @@ def grade_ex2a(job: Union[IBMQJob, str]) -> None:
         grade(job, 'week2', 'exA')
     else:
         print(f'Expected an IBMQJob or a job ID, but was given {type(job)}')
-        print(f'Please submit a job as your answer.')
+        print(f'Please provide a job as your answer.')
 
 
 def submit_ex2a(job: Union[IBMQJob, str]) -> None:
@@ -18,7 +18,7 @@ def submit_ex2a(job: Union[IBMQJob, str]) -> None:
         submit(job, 'week2', 'exA')
     else:
         print(f'Expected an IBMQJob or a job ID, but was given {type(job)}')
-        print(f'Please submit a job as your answer.')
+        print(f'Please provide a job as your answer.')
 
 
 def grade_ex2b(job: Union[IBMQJob, str]) -> None:
@@ -26,7 +26,7 @@ def grade_ex2b(job: Union[IBMQJob, str]) -> None:
         grade(job, 'week2', 'exB')
     else:
         print(f'Expected an IBMQJob or a job ID, but was given {type(job)}')
-        print(f'Please submit a job as your answer.')
+        print(f'Please provide a job as your answer.')
 
 
 def submit_ex2b(job: Union[IBMQJob, str]) -> None:
@@ -34,4 +34,4 @@ def submit_ex2b(job: Union[IBMQJob, str]) -> None:
         submit(job, 'week2', 'exB')
     else:
         print(f'Expected an IBMQJob or a job ID, but was given {type(job)}')
-        print(f'Please submit a job as your answer.')
+        print(f'Please provide a job as your answer.')
