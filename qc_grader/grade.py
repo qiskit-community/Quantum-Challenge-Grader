@@ -15,82 +15,16 @@ import json
 import os
 import requests
 
-from typing import Any, Callable, Optional, Tuple, Union
+from typing import Optional, Union
 from urllib.parse import urljoin
 
-from qiskit import IBMQ, execute, QuantumCircuit
+from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus
 from qiskit.providers.ibmq.job import IBMQJob
 
 from .api import get_server_endpoint, send_request, get_access_token, get_auth_endpoint
-from .util import get_provider, get_job, get_job_status, circuit_to_json, compute_cost, get_job_urls
-
-
-EXERCISES = [
-    'week1/exA', 'week1/exB',
-    'week2/exA', 'week2/exB',
-    'week3/exA',
-]
-
-
-def get_question_id(lab_id: str, ex_id: str) -> int:
-    try:
-        return EXERCISES.index(f'{lab_id}/{ex_id}') + 1
-    except Exception:
-        return -1
-
-
-def prepare_grading_job(
-    solver_func: Callable,
-    lab_id: str,
-    ex_id: str,
-    problem_set: Optional[list] = None,
-    server_url: Optional[str] = None
-) -> IBMQJob:
-    server = server_url if server_url else get_server_endpoint(lab_id, ex_id)
-    if not server:
-        print('Failed to find and connect to a valid grading server.')
-        return
-
-    qc_1 = solver_func(problem_set)
-
-    endpoint = server + 'problem-set'
-    index, value = get_problem_set(lab_id, ex_id, endpoint)
-    # cost = compute_cost(qc_1)
-
-    if index and value:
-        qc_2 = solver_func(value)
-        cost = compute_cost(qc_1)
-        backend = get_provider().get_backend('ibmq_qasm_simulator')
-        basis_gates = [
-            'u1', 'u2', 'u3', 'cx', 'cz', 'id',
-            'x', 'y', 'z', 'h', 's', 'sdg', 't',
-            'tdg', 'swap', 'ccx',
-            'unitary', 'diagonal', 'initialize',
-            'cu1', 'cu2', 'cu3', 'cswap',
-            'mcx', 'mcy', 'mcz',
-            'mcu1', 'mcu2', 'mcu3',
-            'mcswap', 'multiplexer', 'kraus', 'roerror'
-        ]
-
-        # execute experiments
-        print('Preparing the circuit. Please wait...')
-        job = execute(
-            [qc_1, qc_2],
-            basis_gates=basis_gates,
-            backend=backend,
-            shots=1000,
-            seed_simulator=12345,
-            optimization_level=0,
-            qobj_header={
-                'qc_index': [None, index],
-                'qc_cost': [cost, cost]
-            }
-        )
-
-        print(f'You may monitor the job (id: {job.job_id()}) status '
-              'and proceed to grading when it successfully completes.')
-        return job
+from .exercises import get_question_id
+from .util import get_job, get_job_status, circuit_to_json, get_job_urls
 
 
 def grade(
@@ -220,31 +154,6 @@ def submit_answer(payload: dict) -> None:
         print(f'Failed: {err}')
 
 
-def get_problem_set(
-    lab_id: str, ex_id: str, endpoint: str
-) -> Tuple[Optional[int], Optional[Any]]:
-    try:
-        payload = {'question_id': get_question_id(lab_id, ex_id)}
-        problem_set_response = send_request(endpoint, query=payload, method='GET')
-    except Exception as err:
-        print('Unable to obtain the problem set')
-
-    try:
-        status = problem_set_response.get('status')
-
-        if status == 'valid':
-            index = problem_set_response.get('index')
-            value = json.loads(problem_set_response.get('value'))
-            return index, value
-        else:
-            cause = problem_set_response.get('cause')
-            print(f'Problem set failed: {cause}')
-    except Exception as err:
-        print(f'Problem set could not be processed: {err}')
-
-    return None, None
-
-
 def handle_grade_response(
     status: Optional[str], score: Optional[int] = None, cause: Optional[str] = None
 ) -> None:
@@ -258,7 +167,7 @@ def handle_grade_response(
         print('Please review your answer and try again.')
     elif status == 'notFinished':
         print(f'Job has not finished: {cause}')
-        print(f'Please wait for the job complete then try again.')
+        print(f'Please wait for the job to complete then try again.')
     else:
         print(f'Failed: {cause}')
         print('Unable to grade your answer.')
@@ -269,6 +178,12 @@ def handle_submit_response(
 ) -> None:
     if status == 'valid' or status == True:
         print('\nSuccess 🎉! Your answer has been submitted.')
-    else:
-        print(f'\nOops 😕! {"" if cause is None else cause}')
+    elif status == 'invalid' or status == False:
+        print(f'\nOops 😕! {"Your answer is incorrect" if cause is None else cause}')
         print('Make sure your answer is correct and successfully graded before submitting.')
+    elif status == 'notFinished':
+        print(f'Job has not finished: {cause}')
+        print(f'Please wait for the job to complete, grade it, and then try to submit again.')
+    else:
+        print(f'Failed: {cause}')
+        print('Unable to submit your answer at this time.')
