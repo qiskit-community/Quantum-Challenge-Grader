@@ -12,6 +12,18 @@ from qc_grader.grade import grade, submit
 from qc_grader.util import compute_cost, get_provider
 
 
+
+basis_gates = [
+    'u1', 'u2', 'u3', 'cx', 'cz', 'id',
+    'x', 'y', 'z', 'h', 's', 'sdg', 't',
+    'tdg', 'swap', 'ccx',
+    'unitary', 'diagonal', 'initialize',
+    'cu1', 'cu2', 'cu3', 'cswap',
+    'mcx', 'mcy', 'mcz',
+    'mcu1', 'mcu2', 'mcu3',
+    'mcswap', 'multiplexer', 'kraus', 'roerror'
+]
+
 problem_set_ex3 = [
     [['0', '2'], ['1', '0'], ['1', '2'], ['1', '3'], ['2', '0'], ['3', '3']],
     [['0', '0'], ['0', '1'], ['1', '2'], ['2', '2'], ['3', '0'], ['3', '3']],
@@ -77,22 +89,12 @@ def prepare_job(
     print(f'Running {solver_func.__name__}...')
 
     qc_1 = solver_func(problem_set)
-    # cost = compute_cost(qc_1)
 
     if value and index >= 0:
         qc_2 = solver_func(value)
         cost = compute_cost(qc_1)
+        
         backend = get_provider().get_backend('ibmq_qasm_simulator')
-        basis_gates = [
-            'u1', 'u2', 'u3', 'cx', 'cz', 'id',
-            'x', 'y', 'z', 'h', 's', 'sdg', 't',
-            'tdg', 'swap', 'ccx',
-            'unitary', 'diagonal', 'initialize',
-            'cu1', 'cu2', 'cu3', 'cswap',
-            'mcx', 'mcy', 'mcz',
-            'mcu1', 'mcu2', 'mcu3',
-            'mcswap', 'multiplexer', 'kraus', 'roerror'
-        ]
 
         # execute experiments
         print('Starting experiments. Please wait...')
@@ -105,7 +107,7 @@ def prepare_job(
             optimization_level=0,
             qobj_header={
                 'qc_index': [None, index],
-                'qc_cost': [cost, cost]
+                'qc_cost': cost
             }
         )
 

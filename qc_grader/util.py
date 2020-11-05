@@ -1,14 +1,16 @@
 import json
-
 import numpy as np
-from typing import Any, Optional, Tuple, Union
+
+from functools import wraps
+from typing import Any, Callable, Optional, Tuple, Union
+
 
 from qiskit import IBMQ, QuantumCircuit, assemble
+from qiskit.circuit import Gate
+from qiskit.circuit.library import U3Gate, CXGate
 from qiskit.providers import JobStatus
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
-from qiskit.transpiler import PassManager
-from qiskit.transpiler.passes import Unroller
 
 
 def get_provider() -> AccountProvider:
@@ -61,25 +63,6 @@ def circuit_to_dict(qc: QuantumCircuit) -> dict:
     return qobj.to_dict()
 
 
-def compute_cost(circuit: QuantumCircuit) -> int:
-
-    print('Computing cost. Please wait this may take several minutes...')
-    # Unroll the circuit
-    pass_ = Unroller(['u3', 'cx'])
-    pm = PassManager(pass_)
-    new_circuit = pm.run(circuit)
-
-    # obtain gates
-    gates = new_circuit.count_ops()
-    num_u3 = gates['u3']
-    num_cx = gates['cx']
-
-    # compute cost
-    cost = num_u3 + 10 * num_cx
-
-    return cost
-
-
 def get_job_urls(job: Union[str, IBMQJob]) -> Tuple[bool, Optional[str], Optional[str]]:
     try:
         if isinstance(job, IBMQJob):
@@ -98,3 +81,34 @@ def get_job_urls(job: Union[str, IBMQJob]) -> Tuple[bool, Optional[str], Optiona
         return False, None, None
 
     return True, download_url, result_url
+
+
+def cached(key_function: Callable) -> Callable:
+    def _decorator(f: Any) -> Callable:
+        f.__cache = {}
+        @wraps(f)
+        def _decorated(*args: Any, **kwargs: Any) -> int:
+            key = key_function(*args, **kwargs)
+            if key not in f.__cache:
+                f.__cache[key] = f(*args, **kwargs)
+            return f.__cache[key]
+        return _decorated
+    return _decorator
+
+
+def gate_key(gate: Gate) -> Tuple[str, int]:
+    return gate.name, gate.num_qubits
+
+
+@cached(gate_key)
+def gate_cost(gate: Gate) -> int:
+    if isinstance(gate, U3Gate):
+        return 1
+    if isinstance(gate, CXGate):
+        return 10
+    return sum(map(gate_cost, (g for g, _, _ in gate.definition.data)))
+
+
+def compute_cost(circuit: QuantumCircuit) -> int:
+    print('Computing cost...')
+    return sum(map(gate_cost, (g for g, _, _ in circuit.data if isinstance(g, Gate))))
