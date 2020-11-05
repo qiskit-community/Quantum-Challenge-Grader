@@ -13,4 +13,4 @@ from qc_grader.exercises.week2 import grade_ex2a, grade_ex2b, submit_ex2a, submi
 from qc_grader.exercises.week3 import prepare_ex3, grade_ex3, submit_ex3
 
 
-__version__ = '0.2.3'
+__version__ = '0.2.4'
