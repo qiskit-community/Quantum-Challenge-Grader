@@ -174,11 +174,11 @@ def handle_grade_response(
 
 
 def handle_submit_response(
-    status: str, cause: Optional[str] = None
+    status: Union[str, bool], cause: Optional[str] = None
 ) -> None:
-    if status == 'valid' or status == True:
+    if status == 'valid' or status is True:
         print('\nSuccess 🎉! Your answer has been submitted.')
-    elif status == 'invalid' or status == False:
+    elif status == 'invalid' or status is False:
         print(f'\nOops 😕! {"Your answer is incorrect" if cause is None else cause}')
         print('Make sure your answer is correct and successfully graded before submitting.')
     elif status == 'notFinished':

@@ -12,7 +12,6 @@ from qc_grader.grade import grade, submit
 from qc_grader.util import compute_cost, get_provider
 
 
-
 basis_gates = [
     'u1', 'u2', 'u3', 'cx', 'cz', 'id',
     'x', 'y', 'z', 'h', 's', 'sdg', 't',
@@ -55,18 +54,18 @@ def get_problem_set(
     except Exception as err:
         print('Unable to obtain the problem set')
 
-    try:
+    if problem_set_response:
         status = problem_set_response.get('status')
-
         if status == 'valid':
-            index = problem_set_response.get('index')
-            value = json.loads(problem_set_response.get('value'))
-            return index, value
+            try:
+                index = problem_set_response.get('index')
+                value = json.loads(problem_set_response.get('value'))
+                return index, value
+            except Exception as err:
+                print(f'Problem set could not be processed: {err}')
         else:
             cause = problem_set_response.get('cause')
             print(f'Problem set failed: {cause}')
-    except Exception as err:
-        print(f'Problem set could not be processed: {err}')
 
     return None, None
 
@@ -93,7 +92,7 @@ def prepare_job(
     if value and index >= 0:
         qc_2 = solver_func(value)
         cost = compute_cost(qc_1)
-        
+
         backend = get_provider().get_backend('ibmq_qasm_simulator')
 
         # execute experiments
@@ -114,7 +113,7 @@ def prepare_job(
         print(f'You may monitor the job (id: {job.job_id()}) status '
               'and proceed to grading when it successfully completes.')
         return job
-    
+
 
 def prepare_ex3(solver_func: Callable) -> IBMQJob:
     if callable(solver_func):
