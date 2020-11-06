@@ -37,4 +37,6 @@ def grade_ex2b(job: Union[IBMQJob, str]) -> None:
 
 
 def submit_ex2b(job: Union[IBMQJob, str]) -> None:
-    submit_job(job, 'week2', 'exB')
+    if submit_job(job, 'week2', 'exB'):
+        print('There seems to be huge "noise clusters" interfering with '
+              'Dr. Ryoko’s device. Can you please help?')

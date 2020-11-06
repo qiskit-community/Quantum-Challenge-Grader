@@ -39,7 +39,8 @@ def _circuit_grading(
     if not is_submit:
         server = get_server_endpoint(lab_id, ex_id)
         if not server:
-            print('Could not find a valid grading server or the grading servers are down right now.')
+            print('Could not find a valid grading server or '
+                  'the grading servers are down right now.')
             return None, None
     else:
         server = None
@@ -70,11 +71,12 @@ def _job_grading(
     if not is_submit:
         server = get_server_endpoint(lab_id, ex_id)
         if not server:
-            print('Could not find a valid grading server or the grading servers are down right now.')
+            print('Could not find a valid grading server or the grading '
+                  'servers are down right now.')
             return None, None
     else:
         server = None
-    
+
     job = get_job(job_or_id) if isinstance(job_or_id, str) else job_or_id
     if not job:
         print('An invalid or non-existent job was specified.')
@@ -92,7 +94,8 @@ def _job_grading(
     header = job.result().header.to_dict()
     if 'qc_cost' not in header:
         if is_submit:
-            print('An unprepared answer was specified. Please prepare() and grade() answer before submitting.')
+            print('An unprepared answer was specified. '
+                  'Please prepare() and grade() answer before submitting.')
         else:
             print('An unprepared answer was specified. Please prepare() answer before grading.')
         return None, None
@@ -131,7 +134,8 @@ def _number_grading(
     if not is_submit:
         server = get_server_endpoint(lab_id, ex_id)
         if not server:
-            print('Could not find a valid grading server or the grading servers are down right now.')
+            print('Could not find a valid grading server '
+                  'or the grading servers are down right now.')
             return None, None
     else:
         server = None
@@ -170,7 +174,7 @@ def prepare_circuit(circuit: QuantumCircuit, **kwargs) -> Optional[IBMQJob]:
     )
 
     print(f'You may monitor the job (id: {job.job_id()}) status '
-            'and proceed to grading when it successfully completes.')
+          'and proceed to grading when it successfully completes.')
     return job
 
 
@@ -224,75 +228,81 @@ def grade_circuit(
     circuit: QuantumCircuit,
     lab_id: str,
     ex_id: str
-) -> None:
+) -> bool:
     payload, server = _circuit_grading(circuit, lab_id, ex_id, is_submit=False)
     if payload:
         print('Grading your answer. Please wait...')
-        check_answer(
+        return check_answer(
             payload,
             server + 'validate-answer'
         )
+    return False
 
 
 def grade_job(
     job_or_id: Union[IBMQJob, str],
     lab_id: str,
     ex_id: str
-) -> None:
+) -> bool:
     payload, server = _job_grading(job_or_id, lab_id, ex_id, is_submit=False)
     if payload:
         print('Grading your answer. Please wait...')
-        check_answer(
+        return check_answer(
             payload,
             server + 'validate-answer'
         )
+    return False
 
 
 def grade_number(
     answer: int,
     lab_id: str,
     ex_id: str
-) -> None:
+) -> bool:
     payload, server = _number_grading(answer, lab_id, ex_id, is_submit=False)
     if payload:
         print('Grading your answer. Please wait...')
-        check_answer(
+        return check_answer(
             payload,
             server + 'validate-answer'
         )
+    return False
 
 
 def submit_circuit(
     circuit: QuantumCircuit,
     lab_id: str,
     ex_id: str,
-) -> None:
+) -> bool:
     payload, _ = _circuit_grading(circuit, lab_id, ex_id, is_submit=True)
     if payload:
         print('Submitting your answer. Please wait...')
-        submit_answer(payload)
+        return submit_answer(payload)
+    return False
 
 
 def submit_job(
     job_or_id: IBMQJob,
     lab_id: str,
     ex_id: str,
-) -> None:
+) -> bool:
     payload, _ = _job_grading(job_or_id, lab_id, ex_id, is_submit=True)
     if payload:
         print('Submitting your answer. Please wait...')
-        submit_answer(payload)
+        return submit_answer(payload)
+    return False
 
 
 def submit_number(
     answer: int,
     lab_id: str,
     ex_id: str
-) -> None:
+) -> bool:
     payload, _ = _number_grading(answer, lab_id, ex_id, is_submit=True)
     if payload:
         print('Submitting your answer. Please wait...')
-        submit_answer(payload)
+        return submit_answer(payload)
+    return False
 
 
 def get_problem_set(
@@ -322,7 +332,7 @@ def get_problem_set(
     return None, None
 
 
-def check_answer(payload: dict, endpoint: str, cost: Optional[int] = None) -> None:
+def check_answer(payload: dict, endpoint: str, cost: Optional[int] = None) -> bool:
     try:
         answer_response = send_request(endpoint, body=payload)
 
@@ -331,11 +341,13 @@ def check_answer(payload: dict, endpoint: str, cost: Optional[int] = None) -> No
         score = cost if cost else answer_response.get('score', None)
 
         handle_grade_response(status, score=score, cause=cause)
+        return status == 'valid' or status is True
     except Exception as err:
         print(f'Failed: {err}')
+        return False
 
 
-def submit_answer(payload: dict) -> None:
+def submit_answer(payload: dict) -> bool:
     try:
         access_token = get_access_token()
 
@@ -354,8 +366,10 @@ def submit_answer(payload: dict) -> None:
         cause = submit_response.get('cause', None)
 
         handle_submit_response(status, cause=cause)
+        return status == 'valid' or status is True
     except Exception as err:
         print(f'Failed: {err}')
+        return False
 
 
 def handle_grade_response(

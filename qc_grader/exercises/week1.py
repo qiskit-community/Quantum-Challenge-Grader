@@ -16,4 +16,5 @@ def grade_ex1b(answer: int) -> None:
 
 
 def submit_ex1b(answer: int) -> None:
-    submit_number(answer, 'week1', 'exB')
+    if submit_number(answer, 'week1', 'exB'):
+        print('Have you ever wonder about the quantum realm? Ask Dr. Ryoko about it.')
