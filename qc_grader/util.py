@@ -8,7 +8,6 @@ from typing import Any, Callable, Optional, Tuple, Union
 from qiskit import IBMQ, QuantumCircuit, assemble
 from qiskit.circuit import Gate
 from qiskit.circuit.library import U3Gate, CXGate
-from qiskit.providers import JobStatus
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
 
@@ -32,20 +31,6 @@ def get_job(job_id: str) -> Optional[IBMQJob]:
     return None
 
 
-def get_job_status(job: Union[str, IBMQJob]) -> Tuple[str, Optional[JobStatus]]:
-    try:
-        if isinstance(job, IBMQJob):
-            job_id = job.job_id()
-            job_status = job.status()
-        else:
-            job_id = job
-            job_status = get_provider().backends.retrieve_job(job_id).status()
-    except Exception:
-        return job_id, None
-
-    return job_id, job_status
-
-
 def circuit_to_json(qc: QuantumCircuit) -> str:
     class _QobjEncoder(json.encoder.JSONEncoder):
         def default(self, obj: Any) -> Any:
@@ -65,22 +50,12 @@ def circuit_to_dict(qc: QuantumCircuit) -> dict:
 
 def get_job_urls(job: Union[str, IBMQJob]) -> Tuple[bool, Optional[str], Optional[str]]:
     try:
-        if isinstance(job, IBMQJob):
-            job_id = job.job_id()
-            job_status = job.status()
-        else:
-            job_id = job
-            job_status = get_provider().backends.retrieve_job(job_id).status()
-    except Exception:
-        return False, None, None
-
-    try:
+        job_id = job.job_id() if isinstance(job, IBMQJob) else job
         download_url = get_provider()._api_client.account_api.job(job_id).download_url()['url']
         result_url = get_provider()._api_client.account_api.job(job_id).result_url()['url']
+        return download_url, result_url
     except Exception:
-        return False, None, None
-
-    return True, download_url, result_url
+        return None, None
 
 
 def cached(key_function: Callable) -> Callable:

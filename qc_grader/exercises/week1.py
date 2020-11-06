@@ -1,35 +1,19 @@
 from qiskit import QuantumCircuit
 
-from qc_grader.grade import grade, submit
+from qc_grader.grade import grade_circuit, grade_number, submit_circuit, submit_number
 
 
 def grade_ex1a(circuit: QuantumCircuit) -> None:
-    if isinstance(circuit, QuantumCircuit):
-        grade(circuit, 'week1', 'exA')
-    else:
-        print(f'Expected a QuantumCircuit, but was given {type(circuit)}')
-        print(f'Please provide a circuit as your answer.')
+    grade_circuit(circuit, 'week1', 'exA')
 
 
 def submit_ex1a(circuit: QuantumCircuit) -> None:
-    if isinstance(circuit, QuantumCircuit):
-        submit(circuit, 'week1', 'exA')
-    else:
-        print(f'Expected a QuantumCircuit, but was given {type(circuit)}')
-        print(f'Please provide a circuit as your answer.')
+    submit_circuit(circuit, 'week1', 'exA')
 
 
 def grade_ex1b(answer: int) -> None:
-    if isinstance(answer, int):
-        grade(answer, 'week1', 'exB')
-    else:
-        print(f'Expected a integer, but was given {type(answer)}')
-        print(f'Please provide a number as your answer.')
+    grade_number(answer, 'week1', 'exB')
 
 
 def submit_ex1b(answer: int) -> None:
-    if isinstance(answer, int):
-        submit(answer, 'week1', 'exB')
-    else:
-        print(f'Expected a integer, but was given {type(answer)}')
-        print(f'Please provide a number as your answer.')
+    submit_number(answer, 'week1', 'exB')

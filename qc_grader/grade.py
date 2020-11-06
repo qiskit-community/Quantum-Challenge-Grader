@@ -12,110 +12,314 @@
 # that they have been altered from the originals.
 
 import json
-import os
-import requests
 
-from typing import Optional, Union
+from typing import Any, Callable, Optional, Tuple, Union
 from urllib.parse import urljoin
 
-from qiskit import QuantumCircuit
+from qiskit import QuantumCircuit, execute
 from qiskit.providers import JobStatus
 from qiskit.providers.ibmq.job import IBMQJob
 
 from .api import get_server_endpoint, send_request, get_access_token, get_auth_endpoint
 from .exercises import get_question_id
-from .util import get_job, get_job_status, circuit_to_json, get_job_urls
+from .util import compute_cost, get_provider, get_job, circuit_to_json, get_job_urls
 
 
-def grade(
-    answer: Union[str, int, IBMQJob, QuantumCircuit],
+def _circuit_grading(
+    circuit: QuantumCircuit,
     lab_id: str,
     ex_id: str,
-    server_url: Optional[str] = None
-) -> None:
-    server = server_url if server_url else get_server_endpoint(lab_id, ex_id)
+    is_submit: Optional[bool] = False
+) -> Tuple[Optional[dict], Optional[str]]:
+    if not isinstance(circuit, QuantumCircuit):
+        print(f'Expected a QuantumCircuit, but was given {type(circuit)}')
+        print(f'Please provide a circuit as your answer.')
+        return None, None
+
+    if not is_submit:
+        server = get_server_endpoint(lab_id, ex_id)
+        if not server:
+            print('Could not find a valid grading server or the grading servers are down right now.')
+            return None, None
+    else:
+        server = None
+
+    payload = {
+        'answer': circuit_to_json(circuit)
+    }
+
+    if is_submit:
+        payload['questionNumber'] = get_question_id(lab_id, ex_id)
+    else:
+        payload['question_id'] = get_question_id(lab_id, ex_id)
+
+    return payload, server
+
+
+def _job_grading(
+    job_or_id: Union[IBMQJob, str],
+    lab_id: str,
+    ex_id: str,
+    is_submit: Optional[bool] = False
+) -> Tuple[Optional[dict], Optional[str]]:
+    if not isinstance(job_or_id, IBMQJob) and not isinstance(job_or_id, str):
+        print(f'Expected an IBMQJob or a job ID, but was given {type(job_or_id)}')
+        print(f'Please submit a job as your answer.')
+        return None, None
+
+    if not is_submit:
+        server = get_server_endpoint(lab_id, ex_id)
+        if not server:
+            print('Could not find a valid grading server or the grading servers are down right now.')
+            return None, None
+    else:
+        server = None
+    
+    job = get_job(job_or_id) if isinstance(job_or_id, str) else job_or_id
+    if not job:
+        print('An invalid or non-existent job was specified.')
+        return None, None
+
+    job_status = job.status()
+    if job_status in [JobStatus.CANCELLED, JobStatus.ERROR]:
+        print(f'Job did not successfully complete: {job_status.value}.')
+        return None, None
+    elif job_status is not JobStatus.DONE:
+        print(f'Job has not yet completed: {job_status.value}.')
+        print(f'Please wait for the job (id: {job.job_id()}) to complete then try again.')
+        return None, None
+
+    header = job.result().header.to_dict()
+    if 'qc_cost' not in header:
+        if is_submit:
+            print('An unprepared answer was specified. Please prepare() and grade() answer before submitting.')
+        else:
+            print('An unprepared answer was specified. Please prepare() answer before grading.')
+        return None, None
+
+    download_url, result_url = get_job_urls(job)
+    if not download_url or not result_url:
+        print('Unable to obtain job URLs')
+        return None, None
+
+    payload = {
+        'answer': json.dumps({
+            'download_url': download_url,
+            'result_url': result_url
+        })
+    }
+
+    if is_submit:
+        payload['questionNumber'] = get_question_id(lab_id, ex_id)
+    else:
+        payload['question_id'] = get_question_id(lab_id, ex_id)
+
+    return payload, server
+
+
+def _number_grading(
+    answer: int,
+    lab_id: str,
+    ex_id: str,
+    is_submit: Optional[bool] = False
+) -> Tuple[Optional[dict], Optional[str]]:
+    if not isinstance(answer, int):
+        print(f'Expected a integer, but was given {type(answer)}')
+        print(f'Please provide a number as your answer.')
+        return None, None
+
+    if not is_submit:
+        server = get_server_endpoint(lab_id, ex_id)
+        if not server:
+            print('Could not find a valid grading server or the grading servers are down right now.')
+            return None, None
+    else:
+        server = None
+
+    payload = {
+        'answer': str(answer)
+    }
+
+    if is_submit:
+        payload['questionNumber'] = get_question_id(lab_id, ex_id)
+    else:
+        payload['question_id'] = get_question_id(lab_id, ex_id)
+
+    return payload, server
+
+
+def prepare_circuit(circuit: QuantumCircuit, **kwargs) -> Optional[IBMQJob]:
+    if not isinstance(circuit, QuantumCircuit):
+        print(f'Expected a QuantumCircuit, but was given {type(circuit)}')
+        print(f'Please provide a circuit.')
+        return None
+
+    cost = compute_cost(circuit)
+
+    if 'backend' not in kwargs:
+        kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
+
+    # execute experiments
+    print('Starting experiment. Please wait...')
+    job = execute(
+        circuit,
+        qobj_header={
+            'qc_cost': cost
+        },
+        **kwargs
+    )
+
+    print(f'You may monitor the job (id: {job.job_id()}) status '
+            'and proceed to grading when it successfully completes.')
+    return job
+
+
+def prepare_solver(
+    solver_func: Callable,
+    lab_id: str,
+    ex_id: str,
+    problem_set: Optional[Any] = None,
+    **kwargs
+) -> Optional[IBMQJob]:
+    if not callable(solver_func):
+        print(f'Expected a function, but was given {type(solver_func)}')
+        print(f'Please provide a function that returns a QuantumCircuit.')
+        return None
+
+    server = get_server_endpoint(lab_id, ex_id)
     if not server:
         print('Could not find a valid grading server or the grading servers are down right now.')
         return
 
-    payload = make_payload(answer, lab_id, ex_id)
+    endpoint = server + 'problem-set'
+    index, value = get_problem_set(lab_id, ex_id, endpoint)
 
-    if payload:
-        score = None
-        if isinstance(answer, IBMQJob) or isinstance(answer, str):
-            job = get_job(answer) if isinstance(answer, str) else answer
-            if job:
-                qobj_header = job.result().header.to_dict() if job else {}
-                score = qobj_header['qc_cost'] if 'qc_cost' in qobj_header else None
+    print(f'Running {solver_func.__name__}...')
+    qc_1 = solver_func(problem_set)
 
-        print('Grading your answer. Please wait...')
-        check_answer(
-            payload,
-            server + 'validate-answer',
-            cost=score
+    if value and index is not None and index >= 0:
+        qc_2 = solver_func(value)
+        cost = compute_cost(qc_1)
+
+        if 'backend' not in kwargs:
+            kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
+
+        # execute experiments
+        print('Starting experiments. Please wait...')
+        job = execute(
+            [qc_1, qc_2],
+            qobj_header={
+                'qc_index': [None, index],
+                'qc_cost': cost
+            },
+            **kwargs
         )
 
+        print(f'You may monitor the job (id: {job.job_id()}) status '
+              'and proceed to grading when it successfully completes.')
+        return job
 
-def submit(
-    answer: Union[str, int, IBMQJob, QuantumCircuit],
+
+def grade_circuit(
+    circuit: QuantumCircuit,
     lab_id: str,
     ex_id: str
 ) -> None:
-    payload = make_payload(answer, lab_id, ex_id)
-    payload['questionNumber'] = payload['question_id']
-    del payload['question_id']
+    payload, server = _circuit_grading(circuit, lab_id, ex_id, is_submit=False)
+    if payload:
+        print('Grading your answer. Please wait...')
+        check_answer(
+            payload,
+            server + 'validate-answer'
+        )
 
+
+def grade_job(
+    job_or_id: Union[IBMQJob, str],
+    lab_id: str,
+    ex_id: str
+) -> None:
+    payload, server = _job_grading(job_or_id, lab_id, ex_id, is_submit=False)
+    if payload:
+        print('Grading your answer. Please wait...')
+        check_answer(
+            payload,
+            server + 'validate-answer'
+        )
+
+
+def grade_number(
+    answer: int,
+    lab_id: str,
+    ex_id: str
+) -> None:
+    payload, server = _number_grading(answer, lab_id, ex_id, is_submit=False)
+    if payload:
+        print('Grading your answer. Please wait...')
+        check_answer(
+            payload,
+            server + 'validate-answer'
+        )
+
+
+def submit_circuit(
+    circuit: QuantumCircuit,
+    lab_id: str,
+    ex_id: str,
+) -> None:
+    payload, _ = _circuit_grading(circuit, lab_id, ex_id, is_submit=True)
     if payload:
         print('Submitting your answer. Please wait...')
         submit_answer(payload)
 
 
-def make_payload(
-    answer: Union[str, int, IBMQJob, QuantumCircuit],
+def submit_job(
+    job_or_id: IBMQJob,
+    lab_id: str,
+    ex_id: str,
+) -> None:
+    payload, _ = _job_grading(job_or_id, lab_id, ex_id, is_submit=True)
+    if payload:
+        print('Submitting your answer. Please wait...')
+        submit_answer(payload)
+
+
+def submit_number(
+    answer: int,
     lab_id: str,
     ex_id: str
-) -> Optional[dict]:
-    if not lab_id:
-        print('Missing lab id. Please include the lab id.')
-        return None
-    if not ex_id:
-        print('Missing exercise id. Please include the exercise id.')
-        return None
+) -> None:
+    payload, _ = _number_grading(answer, lab_id, ex_id, is_submit=True)
+    if payload:
+        print('Submitting your answer. Please wait...')
+        submit_answer(payload)
 
-    payload = {
-        'question_id': get_question_id(lab_id, ex_id)
-    }
 
-    if isinstance(answer, IBMQJob) or isinstance(answer, str):
-        job_id, status = get_job_status(answer)
-        if status is JobStatus.DONE:
-            ok, download_url, result_url = get_job_urls(job_id)
-            if ok:
-                payload['answer'] = json.dumps({
-                    'download_url': download_url,
-                    'result_url': result_url
-                })
-            else:
-                print('An invalid or non-existent job was specified.')
-                return None
+def get_problem_set(
+    lab_id: str, ex_id: str, endpoint: str
+) -> Tuple[Optional[int], Optional[Any]]:
+    problem_set_response = None
+
+    try:
+        payload = {'question_id': get_question_id(lab_id, ex_id)}
+        problem_set_response = send_request(endpoint, query=payload, method='GET')
+    except Exception as err:
+        print('Unable to obtain the problem set')
+
+    if problem_set_response:
+        status = problem_set_response.get('status')
+        if status == 'valid':
+            try:
+                index = problem_set_response.get('index')
+                value = json.loads(problem_set_response.get('value'))
+                return index, value
+            except Exception as err:
+                print(f'Problem set could not be processed: {err}')
         else:
-            if status is None:
-                print('An invalid or non-existent job was specified.')
-            elif status in [JobStatus.CANCELLED, JobStatus.ERROR]:
-                print(f'Job did not successfully complete: {status.value}.')
-            else:
-                print(f'Job has not yet completed: {status.value}.')
-                print(f'Please wait for the job (id: {job_id}) to complete then try again.')
-            return None
-    elif isinstance(answer, QuantumCircuit):
-        payload['answer'] = circuit_to_json(answer)
-    elif isinstance(answer, int):
-        payload['answer'] = str(answer)
-    else:
-        print(f'Unsupported answer type: {type(answer)}')
-        return None
+            cause = problem_set_response.get('cause')
+            print(f'Problem set failed: {cause}')
 
-    return payload
+    return None, None
 
 
 def check_answer(payload: dict, endpoint: str, cost: Optional[int] = None) -> None:
