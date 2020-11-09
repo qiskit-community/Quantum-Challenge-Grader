@@ -378,8 +378,7 @@ def handle_grade_response(
     if status == 'valid':
         print('\nCongratulations 🎉! Your answer is correct.')
         if score is not None:
-            print(f'Your score is {score}. The lower, the better!')
-        print('Feel free to submit your answer.')
+            print(f'Your score is {score}.')
     elif status == 'invalid':
         print(f'\nOops 😕! {cause}')
         print('Please review your answer and try again.')

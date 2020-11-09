@@ -16,7 +16,8 @@ def prepare_ex2a(circuit: QuantumCircuit) -> IBMQJob:
 
 
 def grade_ex2a(job: Union[IBMQJob, str]) -> None:
-    grade_job(job, 'week2', 'exA')
+    if grade_job(job, 'week2', 'exA'):
+        print('Feel free to submit your answer.')
 
 
 def submit_ex2a(job: Union[IBMQJob, str]) -> None:
@@ -33,7 +34,8 @@ def prepare_ex2b(circuit: QuantumCircuit) -> IBMQJob:
 
 
 def grade_ex2b(job: Union[IBMQJob, str]) -> None:
-    grade_job(job, 'week2', 'exB')
+    if grade_job(job, 'week2', 'exB'):
+        print('Feel free to submit your answer.')
 
 
 def submit_ex2b(job: Union[IBMQJob, str]) -> None:

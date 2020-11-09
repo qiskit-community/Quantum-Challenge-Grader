@@ -49,7 +49,9 @@ def prepare_ex3(solver_func: Callable) -> IBMQJob:
 
 
 def grade_ex3(job: IBMQJob) -> None:
-    grade_job(job, 'week3', 'exA')
+    if grade_job(job, 'week3', 'exA'):
+        print('The lower your score the better!')
+        print('Feel free to submit your answer.')
 
 
 def submit_ex3(job: IBMQJob) -> None:
