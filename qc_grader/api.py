@@ -64,7 +64,7 @@ def get_auth_endpoint() -> Optional[str]:
 
 
 def get_submission_endpoint() -> Optional[str]:
-    # https://api.quantum-computing.ibm.com/api/challenges/answers
+    # https://auth-dev.quantum-computing.ibm.com/api/challenges/answers
     global _api_submit_url
     if not _api_submit_url:
         if 'auth-dev' not in os.getenv('QXAuthURL', 'auth-dev'):
