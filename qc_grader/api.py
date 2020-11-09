@@ -13,6 +13,7 @@ QC_GRADING_STAGING: list = ['https://qac-grading-dev.quantum-computing.ibm.com']
 QC_GRADING: list = ['https://qac-grading.quantum-computing.ibm.com']
 
 _api_auth_url: Optional[str] = None
+_api_submit_url: Optional[str] = None
 
 if 'auth-dev' not in os.getenv('QXAuthURL', 'auth-dev'):
     grading_urls = QC_GRADING_LOCAL + QC_GRADING
@@ -60,6 +61,20 @@ def get_auth_endpoint() -> Optional[str]:
         _api_auth_url = normalize_final_slash(url)
 
     return _api_auth_url
+
+
+def get_submission_endpoint() -> Optional[str]:
+    # https://api.quantum-computing.ibm.com/api/challenges/answers
+    global _api_submit_url
+    if not _api_submit_url:
+        if 'auth-dev' not in os.getenv('QXAuthURL', 'auth-dev'):
+            url = 'https://api.quantum-computing.ibm.com/api'
+        else:
+            url = 'https://api-dev.quantum-computing.ibm.com/api'
+
+        _api_submit_url = normalize_final_slash(url)
+
+    return _api_submit_url
 
 
 def get_access_token() -> str:
