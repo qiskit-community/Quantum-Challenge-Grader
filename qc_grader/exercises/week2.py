@@ -9,6 +9,7 @@ from qc_grader.grade import prepare_circuit, grade_job, submit_job
 def prepare_ex2a(circuit: QuantumCircuit) -> IBMQJob:
     return prepare_circuit(
         circuit,
+        max_qubits=28,
         shots=8000,
         seed_simulator=12345,
         backend_options={"fusion_enable": True},
@@ -27,6 +28,7 @@ def submit_ex2a(job: Union[IBMQJob, str]) -> None:
 def prepare_ex2b(circuit: QuantumCircuit) -> IBMQJob:
     return prepare_circuit(
         circuit,
+        max_qubits=28,
         shots=8000,
         seed_simulator=12345,
         backend_options={"fusion_enable": True},

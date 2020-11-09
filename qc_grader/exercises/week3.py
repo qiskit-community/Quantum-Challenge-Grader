@@ -41,6 +41,7 @@ def prepare_ex3(solver_func: Callable) -> IBMQJob:
         solver_func,
         'week3', 'exA',
         problem_set=problem_set_ex3,
+        max_qubits=28,
         basis_gates=basis_gates,
         shots=1000,
         seed_simulator=12345,

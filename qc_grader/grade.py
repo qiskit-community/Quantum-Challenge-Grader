@@ -152,10 +152,15 @@ def _number_grading(
     return payload, server
 
 
-def prepare_circuit(circuit: QuantumCircuit, **kwargs) -> Optional[IBMQJob]:
+def prepare_circuit(circuit: QuantumCircuit, max_qubits: Optional[int] = None, **kwargs) -> Optional[IBMQJob]:
     if not isinstance(circuit, QuantumCircuit):
         print(f'Expected a QuantumCircuit, but was given {type(circuit)}')
         print(f'Please provide a circuit.')
+        return None
+
+    if max_qubits is not None and circuit.num_qubits > max_qubits:
+        print(f'Your circuit has {circuit.num_qubits} qubits, which exceeds the maximum allowed.')
+        print(f'Please reduce the number of qubits in your circuit to below {max_qubits}.')
         return None
 
     cost = compute_cost(circuit)
@@ -183,6 +188,7 @@ def prepare_solver(
     lab_id: str,
     ex_id: str,
     problem_set: Optional[Any] = None,
+    max_qubits: Optional[int] = None,
     **kwargs
 ) -> Optional[IBMQJob]:
     if not callable(solver_func):
@@ -200,6 +206,11 @@ def prepare_solver(
 
     print(f'Running {solver_func.__name__}...')
     qc_1 = solver_func(problem_set)
+
+    if max_qubits is not None and qc_1.num_qubits > max_qubits:
+        print(f'Your circuit has {qc_1.num_qubits} qubits, which exceeds the maximum allowed.')
+        print(f'Please reduce the number of qubits in your circuit to below {max_qubits}.')
+        return None
 
     if value and index is not None and index >= 0:
         qc_2 = solver_func(value)
