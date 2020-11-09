@@ -70,7 +70,7 @@ def get_submission_endpoint() -> Optional[str]:
         if 'auth-dev' not in os.getenv('QXAuthURL', 'auth-dev'):
             url = 'https://api.quantum-computing.ibm.com/api'
         else:
-            url = 'https://api-dev.quantum-computing.ibm.com/api'
+            url = 'https://auth-dev.quantum-computing.ibm.com/api'
 
         _api_submit_url = normalize_final_slash(url)
 

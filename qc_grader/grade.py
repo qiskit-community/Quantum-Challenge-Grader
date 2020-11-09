@@ -20,7 +20,7 @@ from qiskit import QuantumCircuit, execute
 from qiskit.providers import JobStatus
 from qiskit.providers.ibmq.job import IBMQJob
 
-from .api import get_server_endpoint, send_request, get_access_token, get_auth_endpoint
+from .api import get_server_endpoint, send_request, get_access_token, get_auth_endpoint, get_submission_endpoint
 from .exercises import get_question_id
 from .util import compute_cost, get_provider, get_job, circuit_to_json, get_job_urls
 
@@ -351,7 +351,7 @@ def submit_answer(payload: dict) -> bool:
     try:
         access_token = get_access_token()
 
-        baseurl = get_auth_endpoint()
+        baseurl = get_submission_endpoint()
         endpoint = urljoin(baseurl, './challenges/answers')
 
         submit_response = send_request(
