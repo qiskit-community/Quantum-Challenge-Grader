@@ -1,18 +1,23 @@
 from qiskit import QuantumCircuit
 from qiskit.providers.ibmq.job import IBMQJob
 
-from typing import Union
+from typing import Callable, Union
 
-from qc_grader.grade import prepare_circuit, grade_job, submit_job
+from qc_grader.grade import prepare_solver, prepare_circuit, grade_job, submit_job
 
 
-def prepare_ex2a(circuit: QuantumCircuit) -> IBMQJob:
-    return prepare_circuit(
-        circuit,
+problem_set_ex2a = [0, 1, 1, 1, 0, 0, 1, 1, 1]
+
+
+def prepare_ex2a(solver_func: Callable) -> IBMQJob:
+    return prepare_solver(
+        solver_func,
+        'week2', 'exA',
+        problem_set=problem_set_ex2a,
         max_qubits=28,
         shots=8000,
         seed_simulator=12345,
-        backend_options={"fusion_enable": True},
+        backend_options={"fusion_enable": True}
     )
 
 
