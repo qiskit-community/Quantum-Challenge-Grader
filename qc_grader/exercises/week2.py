@@ -7,6 +7,12 @@ from qc_grader.grade import prepare_solver, prepare_circuit, grade_job, submit_j
 
 
 problem_set_ex2a = [0, 1, 1, 1, 0, 0, 1, 1, 1]
+problem_set_ex2b = [
+    [1, 1, 1, 0, 0, 0, 1, 0, 0],
+    [1, 0, 1, 0, 0, 0, 1, 1, 0],
+    [1, 0, 1, 1, 1, 1, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 1, 0, 0]
+]
 
 
 def prepare_ex2a(solver_func: Callable) -> IBMQJob:
@@ -17,7 +23,7 @@ def prepare_ex2a(solver_func: Callable) -> IBMQJob:
         max_qubits=28,
         shots=8000,
         seed_simulator=12345,
-        backend_options={"fusion_enable": True}
+        backend_options={'fusion_enable': True}
     )
 
 
@@ -30,13 +36,15 @@ def submit_ex2a(job: Union[IBMQJob, str]) -> None:
     submit_job(job, 'week2', 'exA')
 
 
-def prepare_ex2b(circuit: QuantumCircuit) -> IBMQJob:
-    return prepare_circuit(
-        circuit,
+def prepare_ex2b(solver_func: Callable) -> IBMQJob:
+    return prepare_solver(
+        solver_func,
+        'week2', 'exB',
+        problem_set=problem_set_ex2b,
         max_qubits=28,
         shots=8000,
         seed_simulator=12345,
-        backend_options={"fusion_enable": True},
+        backend_options={'fusion_enable': True}
     )
 
 
