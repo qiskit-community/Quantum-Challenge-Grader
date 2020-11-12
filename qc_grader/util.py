@@ -1,4 +1,5 @@
 import json
+import logging
 import numpy as np
 import warnings
 
@@ -16,11 +17,18 @@ from qiskit.providers.ibmq.job import IBMQJob
 def get_provider() -> AccountProvider:
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
+
+        ibmq_logger = logging.getLogger('qiskit.providers.ibmq')
+        current_level = ibmq_logger.level
+        ibmq_logger.setLevel(logging.ERROR)
+
         # get provider
         try:
             provider = IBMQ.get_provider()
         except IBMQProviderError:
             provider = IBMQ.load_account()
+
+        ibmq_logger.setLevel(current_level)
         return provider
 
 
