@@ -1,5 +1,6 @@
 import json
 import numpy as np
+import warnings
 
 from functools import wraps
 from typing import Any, Callable, Optional, Tuple, Union
@@ -13,12 +14,14 @@ from qiskit.providers.ibmq.job import IBMQJob
 
 
 def get_provider() -> AccountProvider:
-    # get provider
-    try:
-        provider = IBMQ.get_provider()
-    except IBMQProviderError:
-        provider = IBMQ.load_account()
-    return provider
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        # get provider
+        try:
+            provider = IBMQ.get_provider()
+        except IBMQProviderError:
+            provider = IBMQ.load_account()
+        return provider
 
 
 def get_job(job_id: str) -> Optional[IBMQJob]:
