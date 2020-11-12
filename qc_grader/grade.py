@@ -20,17 +20,41 @@ from qiskit import QuantumCircuit, execute
 from qiskit.providers import JobStatus
 from qiskit.providers.ibmq.job import IBMQJob
 
-from .api import get_server_endpoint, send_request, get_access_token, get_auth_endpoint, get_submission_endpoint
+from .api import get_server_endpoint, send_request, get_access_token, get_submission_endpoint
 from .exercises import get_question_id
 from .util import compute_cost, get_provider, get_job, circuit_to_json, get_job_urls
+
+
+def _circuit_criteria(
+    circuit: QuantumCircuit,
+    max_qubits: Optional[int] = None,
+    min_cost: Optional[int] = None
+) -> Tuple[Optional[int], Optional[int]]:
+    if max_qubits is not None and circuit.num_qubits > max_qubits:
+        print(f'Your circuit has {circuit.num_qubits} qubits, which exceeds the maximum allowed.')
+        print(f'Please reduce the number of qubits in your circuit to below {max_qubits}.')
+        return None, None
+
+    cost = compute_cost(circuit)
+    if min_cost is not None and cost < min_cost:
+        print(f'Your circuit cost ({cost}) is too low.')
+        print('Please review your circuit and try again.')
+        return None, None
+
+    return circuit.num_qubits, cost
 
 
 def _circuit_grading(
     circuit: QuantumCircuit,
     lab_id: str,
     ex_id: str,
-    is_submit: Optional[bool] = False
+    is_submit: Optional[bool] = False,
+    max_qubits: Optional[int] = None,
+    min_cost: Optional[int] = None
 ) -> Tuple[Optional[dict], Optional[str]]:
+    payload = None
+    server = None
+
     if not isinstance(circuit, QuantumCircuit):
         print(f'Expected a QuantumCircuit, but was given {type(circuit)}')
         print(f'Please provide a circuit as your answer.')
@@ -45,14 +69,16 @@ def _circuit_grading(
     else:
         server = None
 
-    payload = {
-        'answer': circuit_to_json(circuit)
-    }
+    _, cost = _circuit_criteria(circuit, max_qubits=max_qubits, min_cost=min_cost)
+    if cost is not None:
+        payload = {
+            'answer': circuit_to_json(circuit)
+        }
 
-    if is_submit:
-        payload['questionNumber'] = get_question_id(lab_id, ex_id)
-    else:
-        payload['question_id'] = get_question_id(lab_id, ex_id)
+        if is_submit:
+            payload['questionNumber'] = get_question_id(lab_id, ex_id)
+        else:
+            payload['question_id'] = get_question_id(lab_id, ex_id)
 
     return payload, server
 
@@ -152,34 +178,37 @@ def _number_grading(
     return payload, server
 
 
-def prepare_circuit(circuit: QuantumCircuit, max_qubits: Optional[int] = None, **kwargs) -> Optional[IBMQJob]:
+def prepare_circuit(
+    circuit: QuantumCircuit,
+    max_qubits: Optional[int] = 28,
+    min_cost: Optional[int] = None,
+    **kwargs
+) -> Optional[IBMQJob]:
+    job = None
+
     if not isinstance(circuit, QuantumCircuit):
         print(f'Expected a QuantumCircuit, but was given {type(circuit)}')
         print(f'Please provide a circuit.')
         return None
 
-    if max_qubits is not None and circuit.num_qubits > max_qubits:
-        print(f'Your circuit has {circuit.num_qubits} qubits, which exceeds the maximum allowed.')
-        print(f'Please reduce the number of qubits in your circuit to below {max_qubits}.')
-        return None
+    _, cost = _circuit_criteria(circuit, max_qubits=max_qubits, min_cost=min_cost)
+    if cost is not None:
+        if 'backend' not in kwargs:
+            kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
 
-    cost = compute_cost(circuit)
+        # execute experiments
+        print('Starting experiment. Please wait...')
+        job = execute(
+            circuit,
+            qobj_header={
+                'qc_cost': cost
+            },
+            **kwargs
+        )
 
-    if 'backend' not in kwargs:
-        kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
-
-    # execute experiments
-    print('Starting experiment. Please wait...')
-    job = execute(
-        circuit,
-        qobj_header={
-            'qc_cost': cost
-        },
-        **kwargs
-    )
-
-    print(f'You may monitor the job (id: {job.job_id()}) status '
-          'and proceed to grading when it successfully completes.')
+        print(f'You may monitor the job (id: {job.job_id()}) status '
+            'and proceed to grading when it successfully completes.')
+        
     return job
 
 
@@ -188,9 +217,12 @@ def prepare_solver(
     lab_id: str,
     ex_id: str,
     problem_set: Optional[Any] = None,
-    max_qubits: Optional[int] = None,
+    max_qubits: Optional[int] = 28,
+    min_cost: Optional[int] = None,
     **kwargs
 ) -> Optional[IBMQJob]:
+    job = None
+
     if not callable(solver_func):
         print(f'Expected a function, but was given {type(solver_func)}')
         print(f'Please provide a function that returns a QuantumCircuit.')
@@ -207,14 +239,10 @@ def prepare_solver(
     print(f'Running {solver_func.__name__}...')
     qc_1 = solver_func(problem_set)
 
-    if max_qubits is not None and qc_1.num_qubits > max_qubits:
-        print(f'Your circuit has {qc_1.num_qubits} qubits, which exceeds the maximum allowed.')
-        print(f'Please reduce the number of qubits in your circuit to below {max_qubits}.')
-        return None
+    _, cost = _circuit_criteria(qc_1, max_qubits=max_qubits, min_cost=min_cost)
 
-    if value and index is not None and index >= 0:
+    if value and index is not None and index >= 0 and cost is not None:
         qc_2 = solver_func(value)
-        cost = compute_cost(qc_1)
 
         if 'backend' not in kwargs:
             kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
@@ -232,18 +260,28 @@ def prepare_solver(
 
         print(f'You may monitor the job (id: {job.job_id()}) status '
               'and proceed to grading when it successfully completes.')
-        return job
+
+    return job
 
 
 def grade_circuit(
     circuit: QuantumCircuit,
     lab_id: str,
-    ex_id: str
+    ex_id: str,
+    max_qubits: Optional[int] = 28,
+    min_cost: Optional[int] = None
 ) -> bool:
-    payload, server = _circuit_grading(circuit, lab_id, ex_id, is_submit=False)
+    payload, server = _circuit_grading(
+        circuit,
+        lab_id,
+        ex_id,
+        is_submit=False,
+        max_qubits=max_qubits,
+        min_cost=min_cost
+    )
     if payload:
         print('Grading your answer. Please wait...')
-        return check_answer(
+        return grade_answer(
             payload,
             server + 'validate-answer'
         )
@@ -258,7 +296,7 @@ def grade_job(
     payload, server = _job_grading(job_or_id, lab_id, ex_id, is_submit=False)
     if payload:
         print('Grading your answer. Please wait...')
-        return check_answer(
+        return grade_answer(
             payload,
             server + 'validate-answer'
         )
@@ -273,7 +311,7 @@ def grade_number(
     payload, server = _number_grading(answer, lab_id, ex_id, is_submit=False)
     if payload:
         print('Grading your answer. Please wait...')
-        return check_answer(
+        return grade_answer(
             payload,
             server + 'validate-answer'
         )
@@ -284,8 +322,17 @@ def submit_circuit(
     circuit: QuantumCircuit,
     lab_id: str,
     ex_id: str,
+    max_qubits: Optional[int] = 28,
+    min_cost: Optional[int] = None
 ) -> bool:
-    payload, _ = _circuit_grading(circuit, lab_id, ex_id, is_submit=True)
+    payload, _ = _circuit_grading(
+        circuit,
+        lab_id,
+        ex_id,
+        is_submit=True,
+        max_qubits=max_qubits,
+        min_cost=min_cost
+    )
     if payload:
         print('Submitting your answer. Please wait...')
         return submit_answer(payload)
@@ -343,7 +390,7 @@ def get_problem_set(
     return None, None
 
 
-def check_answer(payload: dict, endpoint: str, cost: Optional[int] = None) -> bool:
+def grade_answer(payload: dict, endpoint: str, cost: Optional[int] = None) -> bool:
     try:
         answer_response = send_request(endpoint, body=payload)
 

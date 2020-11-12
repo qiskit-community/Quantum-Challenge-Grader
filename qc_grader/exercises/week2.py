@@ -6,6 +6,11 @@ from typing import Callable, Union
 from qc_grader.grade import prepare_solver, prepare_circuit, grade_job, submit_job
 
 
+criteria: dict = {
+    'max_qubits': 28,
+    'min_cost': 100
+}
+
 problem_set_ex2a = [0, 1, 1, 1, 0, 0, 1, 1, 1]
 problem_set_ex2b = [
     [1, 1, 1, 0, 0, 0, 1, 0, 0],
@@ -20,7 +25,7 @@ def prepare_ex2a(solver_func: Callable) -> IBMQJob:
         solver_func,
         'week2', 'exA',
         problem_set=problem_set_ex2a,
-        max_qubits=28,
+        **criteria,
         shots=8000,
         seed_simulator=12345,
         backend_options={'fusion_enable': True}
@@ -41,7 +46,7 @@ def prepare_ex2b(solver_func: Callable) -> IBMQJob:
         solver_func,
         'week2', 'exB',
         problem_set=problem_set_ex2b,
-        max_qubits=28,
+        **criteria,
         shots=8000,
         seed_simulator=12345,
         backend_options={'fusion_enable': True}

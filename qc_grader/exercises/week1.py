@@ -3,13 +3,19 @@ from qiskit import QuantumCircuit
 from qc_grader.grade import grade_circuit, grade_number, submit_circuit, submit_number
 
 
+criteria: dict = {
+    'max_qubits': 28,
+    'min_cost': 30
+}
+
+
 def grade_ex1a(circuit: QuantumCircuit) -> None:
-    if grade_circuit(circuit, 'week1', 'exA'):
+    if grade_circuit(circuit, 'week1', 'exA', **criteria):
         print('Feel free to submit your answer.')
 
 
 def submit_ex1a(circuit: QuantumCircuit) -> None:
-    submit_circuit(circuit, 'week1', 'exA')
+    submit_circuit(circuit, 'week1', 'exA', **criteria)
 
 
 def grade_ex1b(answer: int) -> None:

@@ -5,6 +5,11 @@ from qiskit.providers.ibmq.job import IBMQJob
 from qc_grader.grade import prepare_solver, grade_job, submit_job
 
 
+criteria: dict = {
+    'max_qubits': 28,
+    'min_cost': 100
+}
+
 basis_gates = [
     'u1', 'u2', 'u3', 'cx', 'cz', 'id',
     'x', 'y', 'z', 'h', 's', 'sdg', 't',
@@ -41,7 +46,7 @@ def prepare_ex3(solver_func: Callable) -> IBMQJob:
         solver_func,
         'week3', 'exA',
         problem_set=problem_set_ex3,
-        max_qubits=28,
+        **criteria,
         basis_gates=basis_gates,
         shots=1000,
         seed_simulator=12345,
