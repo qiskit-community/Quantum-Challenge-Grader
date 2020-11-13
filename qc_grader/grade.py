@@ -35,13 +35,17 @@ def _circuit_criteria(
         print(f'Please reduce the number of qubits in your circuit to below {max_qubits}.')
         return None, None
 
-    cost = compute_cost(circuit)
-    if min_cost is not None and cost < min_cost:
-        print(f'Your circuit cost ({cost}) is too low.')
-        print('Please review your circuit and try again.')
-        return None, None
+    try:
+        cost = compute_cost(circuit)
+        if min_cost is not None and cost < min_cost:
+            print(f'Your circuit cost ({cost}) is too low.')
+            print('Please review your circuit and try again.')
+            return None, None
 
-    return circuit.num_qubits, cost
+        return circuit.num_qubits, cost
+    except Exception as err:
+        print(f'Unable to compute cost: {err}')
+        return None, None
 
 
 def _circuit_grading(
