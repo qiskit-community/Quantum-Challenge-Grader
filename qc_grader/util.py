@@ -9,7 +9,7 @@ from typing import Any, Callable, Optional, Tuple, Union
 
 from qiskit import IBMQ, QuantumCircuit, assemble
 from qiskit.circuit import Gate
-from qiskit.circuit.library import U3Gate, CXGate
+from qiskit.circuit.library import UGate, U3Gate, CXGate
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
 
@@ -88,9 +88,11 @@ def gate_key(gate: Gate) -> Tuple[str, int]:
 
 @cached(gate_key)
 def gate_cost(gate: Gate) -> int:
-    if isinstance(gate, U3Gate):
+    if isinstance(gate, UGate):
         return 1
-    if isinstance(gate, CXGate):
+    elif isinstance(gate, U3Gate):
+        return 1
+    elif isinstance(gate, CXGate):
         return 10
     return sum(map(gate_cost, (g for g, _, _ in gate.definition.data)))
 
@@ -98,3 +100,7 @@ def gate_cost(gate: Gate) -> int:
 def compute_cost(circuit: QuantumCircuit) -> int:
     print('Computing cost...')
     return sum(map(gate_cost, (g for g, _, _ in circuit.data if isinstance(g, Gate))))
+
+
+def has_cx(circuit: QuantumCircuit) -> bool:
+    return any(isinstance(g, CXGate) for g, _, _ in circuit.data)
