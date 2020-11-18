@@ -8,7 +8,7 @@ from typing import Any, Callable, Optional, Tuple, Union
 
 
 from qiskit import IBMQ, QuantumCircuit, assemble
-from qiskit.circuit import Gate
+from qiskit.circuit import Barrier, Gate, Instruction, Measure
 from qiskit.circuit.library import UGate, U3Gate, CXGate
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
@@ -88,19 +88,30 @@ def gate_key(gate: Gate) -> Tuple[str, int]:
 
 @cached(gate_key)
 def gate_cost(gate: Gate) -> int:
-    if isinstance(gate, UGate):
-        return 1
-    elif isinstance(gate, U3Gate):
+    if isinstance(gate, (UGate, U3Gate)):
         return 1
     elif isinstance(gate, CXGate):
         return 10
+    elif isinstance(gate, (Measure, Barrier)):
+        return 0
     return sum(map(gate_cost, (g for g, _, _ in gate.definition.data)))
 
 
-def compute_cost(circuit: QuantumCircuit) -> int:
+def compute_cost(circuit: Union[Instruction, QuantumCircuit]) -> int:
     print('Computing cost...')
-    return sum(map(gate_cost, (g for g, _, _ in circuit.data if isinstance(g, Gate))))
+    circuit_data = None
+    try:
+        circuit_data = circuit.data
+    except Exception:
+        circuit_data = circuit.definition.data
+
+    return sum(map(gate_cost, (g for g, _, _ in circuit_data)))
 
 
 def has_cx(circuit: QuantumCircuit) -> bool:
-    return any(isinstance(g, CXGate) for g, _, _ in circuit.data)
+    circuit_data = None
+    try:
+        circuit_data = circuit.data
+    except Exception:
+        circuit_data = circuit.definition.data
+    return any(isinstance(g, CXGate) for g, _, _ in circuit_data)
