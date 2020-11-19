@@ -22,13 +22,14 @@ from qiskit.providers.ibmq.job import IBMQJob
 
 from .api import get_server_endpoint, send_request, get_access_token, get_submission_endpoint
 from .exercises import get_question_id
-from .util import compute_cost, get_provider, get_job, circuit_to_json, get_job_urls
+from .util import compute_cost, get_provider, get_job, has_cx, circuit_to_json, get_job_urls
 
 
 def _circuit_criteria(
     circuit: QuantumCircuit,
     max_qubits: Optional[int] = None,
-    min_cost: Optional[int] = None
+    min_cost: Optional[int] = None,
+    check_gates: Optional[bool] = False
 ) -> Tuple[Optional[int], Optional[int]]:
     if max_qubits is not None and circuit.num_qubits > max_qubits:
         print(f'Your circuit has {circuit.num_qubits} qubits, which exceeds the maximum allowed.')
@@ -36,10 +37,15 @@ def _circuit_criteria(
         return None, None
 
     try:
+        if check_gates and not has_cx(circuit):
+            print('Your circuit appears to be missing some expected gates.')
+            print('Please review your circuit and try again.')
+            return None, None
+
         cost = compute_cost(circuit)
         if min_cost is not None and cost < min_cost:
-            print(f'Your circuit cost ({cost}) is too low.')
-            print('Please review your circuit and try again.')
+            print(f'Your circuit cost ({cost}) is too low. But if you are convinced that your circuit\n'
+                   'is correct, please let us know in the `#ibm-quantum-challenge-2020` Slack channel.')
             return None, None
 
         return circuit.num_qubits, cost
@@ -54,7 +60,8 @@ def _circuit_grading(
     ex_id: str,
     is_submit: Optional[bool] = False,
     max_qubits: Optional[int] = None,
-    min_cost: Optional[int] = None
+    min_cost: Optional[int] = None,
+    check_gates: Optional[bool] = False
 ) -> Tuple[Optional[dict], Optional[str]]:
     payload = None
     server = None
@@ -73,7 +80,12 @@ def _circuit_grading(
     else:
         server = None
 
-    _, cost = _circuit_criteria(circuit, max_qubits=max_qubits, min_cost=min_cost)
+    _, cost = _circuit_criteria(
+        circuit,
+        max_qubits=max_qubits,
+        min_cost=min_cost,
+        check_gates=check_gates
+    )
     if cost is not None:
         payload = {
             'answer': circuit_to_json(circuit)
@@ -186,6 +198,7 @@ def prepare_circuit(
     circuit: QuantumCircuit,
     max_qubits: Optional[int] = 28,
     min_cost: Optional[int] = None,
+    check_gates: Optional[bool] = False,
     **kwargs
 ) -> Optional[IBMQJob]:
     job = None
@@ -195,7 +208,12 @@ def prepare_circuit(
         print(f'Please provide a circuit.')
         return None
 
-    _, cost = _circuit_criteria(circuit, max_qubits=max_qubits, min_cost=min_cost)
+    _, cost = _circuit_criteria(
+        circuit,
+        max_qubits=max_qubits,
+        min_cost=min_cost,
+        check_gates=check_gates
+    )
     if cost is not None:
         if 'backend' not in kwargs:
             kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
@@ -223,6 +241,7 @@ def prepare_solver(
     problem_set: Optional[Any] = None,
     max_qubits: Optional[int] = 28,
     min_cost: Optional[int] = None,
+    check_gates: Optional[bool] = False,
     **kwargs
 ) -> Optional[IBMQJob]:
     job = None
@@ -243,7 +262,12 @@ def prepare_solver(
     print(f'Running {solver_func.__name__}...')
     qc_1 = solver_func(problem_set)
 
-    _, cost = _circuit_criteria(qc_1, max_qubits=max_qubits, min_cost=min_cost)
+    _, cost = _circuit_criteria(
+        qc_1,
+        max_qubits=max_qubits,
+        min_cost=min_cost,
+        check_gates=check_gates
+    )
 
     if value and index is not None and index >= 0 and cost is not None:
         qc_2 = solver_func(value)

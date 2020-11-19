@@ -3,12 +3,15 @@ from qiskit.providers.ibmq.job import IBMQJob
 
 from typing import Callable, Union
 
+from qiskit.circuit.library import CXGate
+
 from qc_grader.grade import prepare_solver, prepare_circuit, grade_job, submit_job
 
 
 criteria: dict = {
     'max_qubits': 28,
-    'min_cost': 100
+    'min_cost': 100,
+    'check_gates': True
 }
 
 problem_set_ex2a = [0, 1, 1, 1, 0, 0, 1, 1, 1]

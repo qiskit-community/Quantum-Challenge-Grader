@@ -100,18 +100,30 @@ def gate_cost(gate: Gate) -> int:
 def compute_cost(circuit: Union[Instruction, QuantumCircuit]) -> int:
     print('Computing cost...')
     circuit_data = None
-    try:
+    if isinstance(circuit, QuantumCircuit):
         circuit_data = circuit.data
-    except Exception:
+    elif isinstance(circuit, Instruction):
         circuit_data = circuit.definition.data
+    else:
+        raise Exception(f'Unable to obtain circuit data from {type(circuit)}')
 
     return sum(map(gate_cost, (g for g, _, _ in circuit_data)))
 
 
 def has_cx(circuit: QuantumCircuit) -> bool:
     circuit_data = None
-    try:
+    if isinstance(circuit, QuantumCircuit):
         circuit_data = circuit.data
-    except Exception:
+    elif isinstance(circuit, Instruction):
         circuit_data = circuit.definition.data
-    return any(isinstance(g, CXGate) for g, _, _ in circuit_data)
+    else:
+        raise Exception(f'Unable to obtain circuit data from {type(circuit)}')
+
+    for g, _, _ in circuit_data:
+        if isinstance(g, (Barrier, Gate, Measure)):
+            if isinstance(g, CXGate):
+                return True
+        elif isinstance(g, (QuantumCircuit, Instruction)) and has_cx(g):
+            return True
+
+    return False
