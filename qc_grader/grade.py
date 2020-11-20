@@ -37,10 +37,10 @@ def _circuit_criteria(
         return None, None
 
     try:
-        if check_gates and not has_cx(circuit):
-            print('Your circuit appears to be missing some expected gates.')
-            print('Please review your circuit and try again.')
-            return None, None
+        # if check_gates and not has_cx(circuit):
+        #     print('Your circuit appears to be missing some expected gates.')
+        #     print('Please review your circuit and try again.')
+        #     return None, None
 
         cost = compute_cost(circuit)
         if min_cost is not None and cost < min_cost:
