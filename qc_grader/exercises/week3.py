@@ -7,7 +7,7 @@ from qc_grader.grade import prepare_solver, grade_job, submit_job
 
 criteria: dict = {
     'max_qubits': 28,
-    'min_cost': 100000,
+    'min_cost': 10000,
     'check_gates': True
 }
 
