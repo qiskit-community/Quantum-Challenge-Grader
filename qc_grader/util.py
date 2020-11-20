@@ -114,13 +114,15 @@ def uses_multiqubit_gate(circuit: QuantumCircuit) -> bool:
     circuit_data = None
     if isinstance(circuit, QuantumCircuit):
         circuit_data = circuit.data
-    elif isinstance(circuit, Instruction):
+    elif isinstance(circuit, Instruction) and circuit.definition is not None:
         circuit_data = circuit.definition.data
     else:
         raise Exception(f'Unable to obtain circuit data from {type(circuit)}')
 
     for g, _, _ in circuit_data:
-        if isinstance(g, (Barrier, Gate, Measure)):
+        if isinstance(g, (Barrier, Measure)):
+            continue
+        elif isinstance(g, Gate):
             if g.num_qubits > 1:
                 return True
         elif isinstance(g, (QuantumCircuit, Instruction)) and uses_multiqubit_gate(g):
