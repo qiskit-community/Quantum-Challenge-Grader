@@ -22,7 +22,7 @@ from qiskit.providers.ibmq.job import IBMQJob
 
 from .api import get_server_endpoint, send_request, get_access_token, get_submission_endpoint
 from .exercises import get_question_id
-from .util import compute_cost, get_provider, get_job, has_cx, circuit_to_json, get_job_urls
+from .util import compute_cost, get_provider, get_job, circuit_to_json, get_job_urls, uses_multiqubit_gate
 
 
 def _circuit_criteria(
@@ -37,10 +37,10 @@ def _circuit_criteria(
         return None, None
 
     try:
-        # if check_gates and not has_cx(circuit):
-        #     print('Your circuit appears to be missing some expected gates.')
-        #     print('Please review your circuit and try again.')
-        #     return None, None
+        if check_gates and not uses_multiqubit_gate(circuit):
+            print('Your circuit appears to not use any multi-quibit gates.')
+            print('Please review your circuit and try again.')
+            return None, None
 
         cost = compute_cost(circuit)
         if min_cost is not None and cost < min_cost:

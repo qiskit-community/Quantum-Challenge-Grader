@@ -110,7 +110,7 @@ def compute_cost(circuit: Union[Instruction, QuantumCircuit]) -> int:
     return sum(map(gate_cost, (g for g, _, _ in circuit_data)))
 
 
-def has_cx(circuit: QuantumCircuit) -> bool:
+def uses_multiqubit_gate(circuit: QuantumCircuit) -> bool:
     circuit_data = None
     if isinstance(circuit, QuantumCircuit):
         circuit_data = circuit.data
@@ -121,9 +121,9 @@ def has_cx(circuit: QuantumCircuit) -> bool:
 
     for g, _, _ in circuit_data:
         if isinstance(g, (Barrier, Gate, Measure)):
-            if isinstance(g, CXGate):
+            if g.num_qubits > 1:
                 return True
-        elif isinstance(g, (QuantumCircuit, Instruction)) and has_cx(g):
+        elif isinstance(g, (QuantumCircuit, Instruction)) and uses_multiqubit_gate(g):
             return True
 
     return False
