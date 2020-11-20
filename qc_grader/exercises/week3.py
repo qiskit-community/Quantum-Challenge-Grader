@@ -64,4 +64,4 @@ def grade_ex3(job: IBMQJob) -> None:
 def submit_ex3(job: IBMQJob) -> None:
     if submit_job(job, 'week3', 'exA'):
         print('Congratulations! You have rescued Dr. Ryoko from the quantum realm. '
-              'The bright quantum future is ahead.')
+              'The bright "quantum future" is ahead.')
