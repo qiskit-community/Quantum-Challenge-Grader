@@ -9,7 +9,7 @@ from typing import Any, Callable, Optional, Tuple, Union
 
 from qiskit import IBMQ, QuantumCircuit, assemble
 from qiskit.circuit import Barrier, Gate, Instruction, Measure
-from qiskit.circuit.library import UGate, U3Gate, CXGate
+from qiskit.circuit.library import Reset, UGate, U3Gate, CXGate
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
 
@@ -114,18 +114,20 @@ def uses_multiqubit_gate(circuit: QuantumCircuit) -> bool:
     circuit_data = None
     if isinstance(circuit, QuantumCircuit):
         circuit_data = circuit.data
-    elif isinstance(circuit, Instruction) and circuit.definition is not None:
+    elif isinstance(circuit, Instruction) and hasattr(circuit, 'definition'):
         circuit_data = circuit.definition.data
     else:
-        raise Exception(f'Unable to obtain circuit data from {type(circuit)}')
+        # print(f'Skipping {type(circuit)}')
+        return False
 
-    for g, _, _ in circuit_data:
-        if isinstance(g, (Barrier, Measure)):
-            continue
-        elif isinstance(g, Gate):
-            if g.num_qubits > 1:
+    if circuit_data:
+        for g, _, _ in circuit_data:
+            if isinstance(g, (Barrier, Measure, Reset)):
+                continue
+            elif isinstance(g, Gate):
+                if g.num_qubits > 1:
+                    return True
+            elif isinstance(g, (QuantumCircuit, Instruction)) and uses_multiqubit_gate(g):
                 return True
-        elif isinstance(g, (QuantumCircuit, Instruction)) and uses_multiqubit_gate(g):
-            return True
 
     return False
