@@ -1,19 +1,23 @@
 import os
 import requests
 
-from typing import Optional
+from typing import Optional, Tuple
 from urllib.parse import urljoin
 
 
-QC_API_NAME = 'IBM Quantum Challenge'
-QC_API_VERSION = '2020'
+# challenge name and version
+CHALLENGE_NAME: str = os.getenv('QC_NAME', 'Quantum Computing Challenge')
+CHALLENGE_VERSION: str = os.getenv('QC_VERSION', '2021')
 
+# possible challenge API endpoints
 QC_GRADING_LOCAL: list = ['http://127.0.0.1:5000']
 QC_GRADING_STAGING: list = ['https://qac-grading-dev.quantum-computing.ibm.com']
 QC_GRADING: list = ['https://qac-grading.quantum-computing.ibm.com']
 
 _api_auth_url: Optional[str] = None
 _api_submit_url: Optional[str] = None
+_api_challenge_url: Optional[str] = None
+_api_challenge_exercises: list = []
 
 if 'auth-dev' not in os.getenv('QXAuthURL', 'auth-dev'):
     grading_urls = QC_GRADING_LOCAL + QC_GRADING
@@ -21,32 +25,40 @@ else:
     grading_urls = QC_GRADING_LOCAL + QC_GRADING_STAGING
 
 
-def get_server_endpoint(lab_id: Optional[str] = None, ex_id: Optional[str] = None) -> Optional[str]:
-    endpoint = os.getenv('QC_GRADING_ENDPOINT')
+def get_challenge(challenge_name: Optional[str], challenge_version: Optional[str]) -> Tuple[Optional[str], list]:
+    exercises = []
+    endpoint = None
+    for server_url in grading_urls:
+        try:
+            response = requests.get(url=server_url)
+            response.raise_for_status()
 
-    if not endpoint:
-        for server_url in grading_urls:
-            try:
-                response = requests.get(url=server_url)
-                response.raise_for_status()
+            if response.json().get(challenge_name) == challenge_version:
+                exercises = response.json().get('available validations')
+                endpoint = normalize_final_slash(server_url)
+                break
+        except Exception as err:
+            pass
+    return endpoint, exercises
 
-                if response.json().get(QC_API_NAME) == QC_API_VERSION:
-                    if lab_id and ex_id:
-                        question_name = f'{lab_id}/{ex_id}'
-                        available_validations = response.json().get('available validations')
 
-                        if not available_validations or question_name in available_validations:
-                            endpoint = server_url
-                            break
-                        else:
-                            continue
+def get_server_endpoint() -> Optional[str]:
+    global _api_challenge_url
+    if not _api_challenge_url:
+        endpoint = os.getenv('QC_GRADING_ENDPOINT')
+        if endpoint:
+            _api_challenge_url = normalize_final_slash(endpoint)
+        else:
+            _api_challenge_url, _ = get_challenge(CHALLENGE_NAME, CHALLENGE_VERSION)
+    return _api_challenge_url
 
-                    endpoint = server_url
-                    break
-            except Exception as e:
-                pass
 
-    return normalize_final_slash(endpoint) if endpoint else None
+def get_challenge_question_set() -> Optional[str]:
+    global _api_challenge_exercises
+    if not _api_challenge_exercises:
+        print('va', CHALLENGE_NAME, CHALLENGE_VERSION)
+        _, _api_challenge_exercises = get_challenge(CHALLENGE_NAME, CHALLENGE_VERSION)
+    return _api_challenge_exercises
 
 
 def get_auth_endpoint() -> Optional[str]:
@@ -56,7 +68,6 @@ def get_auth_endpoint() -> Optional[str]:
         url = os.getenv('QXAuthURL')
         if not url:
             url = 'https://auth-dev.quantum-computing.ibm.com/api'
-            # print(f'Using auth api server at {url}')
 
         _api_auth_url = normalize_final_slash(url)
 
@@ -68,7 +79,6 @@ def get_submission_endpoint() -> Optional[str]:
     global _api_submit_url
     if not _api_submit_url:
         if 'auth-dev' not in os.getenv('QXAuthURL', 'auth-dev'):
-            # url = 'https://api.quantum-computing.ibm.com/api'
             url = 'https://auth.quantum-computing.ibm.com/api'
         else:
             url = 'https://auth-dev.quantum-computing.ibm.com/api'

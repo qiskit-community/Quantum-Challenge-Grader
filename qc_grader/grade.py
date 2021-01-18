@@ -42,11 +42,13 @@ def _circuit_criteria(
             print('Please review your circuit and try again.')
             return None, None
 
-        cost = compute_cost(circuit)
-        if min_cost is not None and cost < min_cost:
-            print(f'Your circuit cost ({cost}) is too low. But if you are convinced that your circuit\n'
-                   'is correct, please let us know in the `#ibm-quantum-challenge-2020` Slack channel.')
-            return None, None
+        cost = -1
+        if min_cost is not None:
+            cost = compute_cost(circuit)
+            if cost < min_cost:
+                print(f'Your circuit cost ({cost}) is too low. But if you are convinced that your circuit\n'
+                    'is correct, please let us know in the `#ibm-quantum-challenge-2020` Slack channel.')
+                return None, None
 
         return circuit.num_qubits, cost
     except Exception as err:
@@ -72,7 +74,7 @@ def _circuit_grading(
         return None, None
 
     if not is_submit:
-        server = get_server_endpoint(lab_id, ex_id)
+        server = get_server_endpoint()
         if not server:
             print('Could not find a valid grading server or '
                   'the grading servers are down right now.')
@@ -111,7 +113,7 @@ def _job_grading(
         return None, None
 
     if not is_submit:
-        server = get_server_endpoint(lab_id, ex_id)
+        server = get_server_endpoint()
         if not server:
             print('Could not find a valid grading server or the grading '
                   'servers are down right now.')
@@ -174,7 +176,7 @@ def _number_grading(
         return None, None
 
     if not is_submit:
-        server = get_server_endpoint(lab_id, ex_id)
+        server = get_server_endpoint()
         if not server:
             print('Could not find a valid grading server '
                   'or the grading servers are down right now.')
@@ -251,7 +253,7 @@ def prepare_solver(
         print(f'Please provide a function that returns a QuantumCircuit.')
         return None
 
-    server = get_server_endpoint(lab_id, ex_id)
+    server = get_server_endpoint()
     if not server:
         print('Could not find a valid grading server or the grading servers are down right now.')
         return
@@ -421,7 +423,6 @@ def get_problem_set(
 def grade_answer(payload: dict, endpoint: str, cost: Optional[int] = None) -> bool:
     try:
         answer_response = send_request(endpoint, body=payload)
-
         status = answer_response.get('status', None)
         cause = answer_response.get('cause', None)
         score = cost if cost else answer_response.get('score', None)
