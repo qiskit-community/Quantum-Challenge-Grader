@@ -56,7 +56,6 @@ def get_server_endpoint() -> Optional[str]:
 def get_challenge_question_set() -> Optional[str]:
     global _api_challenge_exercises
     if not _api_challenge_exercises:
-        print('va', CHALLENGE_NAME, CHALLENGE_VERSION)
         _, _api_challenge_exercises = get_challenge(CHALLENGE_NAME, CHALLENGE_VERSION)
     return _api_challenge_exercises
 

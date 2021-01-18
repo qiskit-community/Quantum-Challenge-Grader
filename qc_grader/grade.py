@@ -82,6 +82,11 @@ def _circuit_grading(
     else:
         server = None
 
+    question_id = get_question_id(lab_id, ex_id)
+    if question_id < 0:
+        print('Invalid or unsupported question')
+        return None, None
+
     _, cost = _circuit_criteria(
         circuit,
         max_qubits=max_qubits,
@@ -93,10 +98,7 @@ def _circuit_grading(
             'answer': circuit_to_json(circuit)
         }
 
-        if is_submit:
-            payload['questionNumber'] = get_question_id(lab_id, ex_id)
-        else:
-            payload['question_id'] = get_question_id(lab_id, ex_id)
+        payload['questionNumber' if is_submit else 'question_id'] = question_id
 
     return payload, server
 
@@ -134,6 +136,11 @@ def _job_grading(
         print(f'Job has not yet completed: {job_status.value}.')
         print(f'Please wait for the job (id: {job.job_id()}) to complete then try again.')
         return None, None
+    
+    question_id = get_question_id(lab_id, ex_id)
+    if question_id < 0:
+        print('Invalid or unsupported question')
+        return None, None
 
     header = job.result().header.to_dict()
     if 'qc_cost' not in header:
@@ -156,10 +163,7 @@ def _job_grading(
         })
     }
 
-    if is_submit:
-        payload['questionNumber'] = get_question_id(lab_id, ex_id)
-    else:
-        payload['question_id'] = get_question_id(lab_id, ex_id)
+    payload['questionNumber' if is_submit else 'question_id'] = question_id
 
     return payload, server
 
@@ -184,14 +188,17 @@ def _number_grading(
     else:
         server = None
 
+
+    question_id = get_question_id(lab_id, ex_id)
+    if question_id < 0:
+        print('Invalid or unsupported question')
+        return None, None
+
     payload = {
         'answer': str(answer)
     }
 
-    if is_submit:
-        payload['questionNumber'] = get_question_id(lab_id, ex_id)
-    else:
-        payload['question_id'] = get_question_id(lab_id, ex_id)
+    payload['questionNumber' if is_submit else 'question_id'] = question_id
 
     return payload, server
 
@@ -398,8 +405,13 @@ def get_problem_set(
 ) -> Tuple[Optional[int], Optional[Any]]:
     problem_set_response = None
 
+    question_id = get_question_id(lab_id, ex_id)
+    if question_id < 0:
+        print('Invalid or unsupported question')
+        return None, None
+
     try:
-        payload = {'question_id': get_question_id(lab_id, ex_id)}
+        payload = {'question_id': question_id}
         problem_set_response = send_request(endpoint, query=payload, method='GET')
     except Exception as err:
         print('Unable to obtain the problem set')
