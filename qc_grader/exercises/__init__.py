@@ -1,9 +1,10 @@
 
+from typing import Optional
 from ..api import get_challenge_question_set
 
-def get_question_id(lab_id: str, ex_id: str) -> int:
+def get_question_id(lab_id: str, ex_id: Optional[str] = None) -> int:
     try:
-        question_name = f'{lab_id}/{ex_id}'
+        question_name = f'{lab_id}/{ex_id}' if ex_id is not None else lab_id
         question_set = get_challenge_question_set()
 
         if isinstance(question_set[0], dict):

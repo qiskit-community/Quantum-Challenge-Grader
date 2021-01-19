@@ -84,7 +84,7 @@ def _circuit_grading(
 
     question_id = get_question_id(lab_id, ex_id)
     if question_id < 0:
-        print('Invalid or unsupported question')
+        print('Invalid or unsupported argument')
         return None, None
 
     _, cost = _circuit_criteria(
@@ -139,7 +139,7 @@ def _job_grading(
     
     question_id = get_question_id(lab_id, ex_id)
     if question_id < 0:
-        print('Invalid or unsupported question')
+        print('Invalid or unsupported argument')
         return None, None
 
     header = job.result().header.to_dict()
@@ -191,7 +191,7 @@ def _number_grading(
 
     question_id = get_question_id(lab_id, ex_id)
     if question_id < 0:
-        print('Invalid or unsupported question')
+        print('Invalid or unsupported argument')
         return None, None
 
     payload = {
@@ -407,7 +407,7 @@ def get_problem_set(
 
     question_id = get_question_id(lab_id, ex_id)
     if question_id < 0:
-        print('Invalid or unsupported question')
+        print('Invalid or unsupported argument')
         return None, None
 
     try:
