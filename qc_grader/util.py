@@ -55,7 +55,10 @@ def circuit_to_json(qc: QuantumCircuit) -> str:
 
 
 def circuit_to_dict(qc: QuantumCircuit) -> dict:
-    qobj = assemble(qc)
+    if len(qc.parameters):
+        qobj = assemble(qc, parameter_binds=[{x: 1 for x in qc.parameters}])
+    else:
+        qobj = assemble(qc)
     return qobj.to_dict()
 
 
