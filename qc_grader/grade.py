@@ -203,6 +203,36 @@ def _number_grading(
     return payload, server
 
 
+def _json_grading(
+    answer: Any,
+    lab_id: str,
+    ex_id: Optional[str] = None,
+    is_submit: Optional[bool] = False
+) -> Tuple[Optional[dict], Optional[str]]:
+    if not is_submit:
+        server = get_server_endpoint()
+        if not server:
+            print('Could not find a valid grading server '
+                  'or the grading servers are down right now.')
+            return None, None
+    else:
+        server = None
+
+
+    question_id = get_question_id(lab_id, ex_id)
+    if question_id < 0:
+        print('Invalid or unsupported argument')
+        return None, None
+
+    payload = {
+        'answer': json.dumps(answer)
+    }
+
+    payload['questionNumber' if is_submit else 'question_id'] = question_id
+
+    return payload, server
+
+
 def prepare_circuit(
     circuit: QuantumCircuit,
     max_qubits: Optional[int] = 28,
@@ -223,22 +253,25 @@ def prepare_circuit(
         min_cost=min_cost,
         check_gates=check_gates
     )
+
+    if 'backend' not in kwargs:
+        kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
+
+    if 'qobj_header' not in kwargs:
+        kwargs['qobj_header'] = {}
+
     if cost is not None:
-        if 'backend' not in kwargs:
-            kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
+        kwargs['qobj_header']['qc_cost'] = cost
 
-        # execute experiments
-        print('Starting experiment. Please wait...')
-        job = execute(
-            circuit,
-            qobj_header={
-                'qc_cost': cost
-            },
-            **kwargs
-        )
+    # execute experiments
+    print('Starting experiment. Please wait...')
+    job = execute(
+        circuit,
+        **kwargs
+    )
 
-        print(f'You may monitor the job (id: {job.job_id()}) status '
-            'and proceed to grading when it successfully completes.')
+    print(f'You may monitor the job (id: {job.job_id()}) status '
+        'and proceed to grading when it successfully completes.')
         
     return job
 
@@ -355,6 +388,21 @@ def grade_number(
     return False
 
 
+def grade_json(
+    answer: Any,
+    lab_id: str,
+    ex_id: Optional[str] = None
+) -> bool:
+    payload, server = _json_grading(answer, lab_id, ex_id, is_submit=False)
+    if payload:
+        print('Grading your answer. Please wait...')
+        return grade_answer(
+            payload,
+            server + 'validate-answer'
+        )
+    return False
+
+
 def submit_circuit(
     circuit: QuantumCircuit,
     lab_id: str,
@@ -394,6 +442,18 @@ def submit_number(
     ex_id: str
 ) -> bool:
     payload, _ = _number_grading(answer, lab_id, ex_id, is_submit=True)
+    if payload:
+        print('Submitting your answer. Please wait...')
+        return submit_answer(payload)
+    return False
+
+
+def submit_json(
+    answer: Any,
+    lab_id: str,
+    ex_id: Optional[str] = None
+) -> bool:
+    payload, _ = _json_grading(answer, lab_id, ex_id, is_submit=True)
     if payload:
         print('Submitting your answer. Please wait...')
         return submit_answer(payload)

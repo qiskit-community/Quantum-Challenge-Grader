@@ -8,17 +8,17 @@ criteria: dict = {}
 
 def grade_ex1a(circuit: QuantumCircuit) -> None:
     if grade_circuit(circuit, 'ex1', 'partA', **criteria):
-        print('Feel free to submit your answer.')
+        print('Feel free to submit your answer.\r\n')
 
 
 def grade_ex1b(circuit: QuantumCircuit) -> None:
     if grade_circuit(circuit, 'ex1', 'partB', **criteria):
-        print('Feel free to submit your answer.')
+        print('Feel free to submit your answer.\r\n')
 
 
 def grade_ex1c(circuit: QuantumCircuit) -> None:
     if grade_circuit(circuit, 'ex1', 'partC', **criteria):
-        print('Feel free to submit your answer.')
+        print('Feel free to submit your answer.\r\n')
 
 
 def submit_ex1a(circuit: QuantumCircuit) -> None:
