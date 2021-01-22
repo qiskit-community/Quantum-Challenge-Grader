@@ -1,29 +1,13 @@
-from qiskit import Aer, QuantumCircuit, QuantumRegister, execute
+from qiskit import QuantumCircuit, QuantumRegister
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import CXGate
 
-import base64
 import json
 import numpy as np
 
 from qc_grader.exercises import SubmissionError
 from qc_grader.grade import grade_json, submit_json
-    
-
-class ComplexEncoder(json.encoder.JSONEncoder):
-    def default(self, obj):
-        """If obj is a complex number encode by storing 'real' and 'imag' parts
-            in a dictionary
-        """
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        if isinstance(obj, complex):
-            return {
-                "__complex__": True,
-                "real": obj.real,
-                "imag": obj.imag
-            }
-        return json.JSONEncoder.default(self, obj)
+from qc_grader.util import circuit_to_json
 
 
 def get_cost_vars(qc: QuantumCircuit):
@@ -40,7 +24,7 @@ def get_cost_vars(qc: QuantumCircuit):
     return G, D, nqubits
 
 
-def _validate_and_run_circuit(qc: QuantumCircuit, m: int) -> bool:
+def _validate_and_prepare_circuit(qc: QuantumCircuit, m: int) -> bool:
     """Verifies the circuit and runs an experiment using the 'unitary_simulator'.
         Args:
            qc (QuantumCircuit): QuantumCircuit to validate. Input register must
@@ -54,8 +38,6 @@ def _validate_and_run_circuit(qc: QuantumCircuit, m: int) -> bool:
                     result from the experiment.
     """
     print(f'Verifying your circuit for m={m} ...')
-
-    usim = Aer.get_backend('unitary_simulator')
 
     try:
         alpha = next(x for x in qc.parameters if x.name == 'alpha')
@@ -89,7 +71,7 @@ def _validate_and_run_circuit(qc: QuantumCircuit, m: int) -> bool:
     if len(qc.qubits) != nqubits:  # Probably register name mismatch
         raise SubmissionError("You must name your three-qubit input register 'input'.")
 
-    trial_submissions = []
+    circuits = []
 
     for trials in range(30):
         a = np.random.rand()*np.pi*2
@@ -98,23 +80,22 @@ def _validate_and_run_circuit(qc: QuantumCircuit, m: int) -> bool:
             alpha: a,
             beta: b
         }
-        submission = execute(qc, usim, parameter_binds=[param]).result().get_unitary()
         
-        trial_submissions.append({
+        circuits.append({
             'alpha': a,
             'beta': b,
-            'unitary': submission
+            'qc': circuit_to_json(qc, parameter_binds=[param])
         })
         
-    return trial_submissions
+    return circuits
 
 
 def validate_ex3(circuit: QuantumCircuit, m: int) -> dict:
-    runs = _validate_and_run_circuit(circuit, m)
+    runs = _validate_and_prepare_circuit(circuit, m)
     g, d, n = get_cost_vars(circuit)
     submission = {
-        'output': json.dumps(runs, cls=ComplexEncoder),
-        'qc': { 'm': m, 'G': g, 'D': d, 'nqubits': n }
+        'circuits': json.dumps(runs),
+        'cost': { 'm': m, 'G': g, 'D': d, 'nqubits': n }
     }
     return submission
 
