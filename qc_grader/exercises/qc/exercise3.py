@@ -105,7 +105,7 @@ def grade_ex3(circuit: QuantumCircuit, m: int) -> Optional[int]:
         return score
 
 
-def grade_ex3(circuit: QuantumCircuit, m: int) -> None:
+def submit_ex3(circuit: QuantumCircuit, m: int) -> None:
     runs = _validate_and_prepare_circuit(circuit, m)
     g, d, n = get_cost_vars(circuit)
 
