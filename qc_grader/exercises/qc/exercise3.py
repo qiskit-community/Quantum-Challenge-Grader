@@ -1,3 +1,4 @@
+from typing import Optional
 from qiskit import QuantumCircuit, QuantumRegister
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import CXGate
@@ -37,7 +38,7 @@ def _validate_and_prepare_circuit(qc: QuantumCircuit, m: int) -> bool:
                     parameter values used in teh experiment and also the 'unitary'
                     result from the experiment.
     """
-    print(f'Verifying your circuit for m={m} ...')
+    print(f'\r\nVerifying your circuit for m={m} ...')
 
     try:
         alpha = next(x for x in qc.parameters if x.name == 'alpha')
@@ -90,20 +91,26 @@ def _validate_and_prepare_circuit(qc: QuantumCircuit, m: int) -> bool:
     return circuits
 
 
-def validate_ex3(circuit: QuantumCircuit, m: int) -> dict:
+def grade_ex3(circuit: QuantumCircuit, m: int) -> Optional[int]:
     runs = _validate_and_prepare_circuit(circuit, m)
     g, d, n = get_cost_vars(circuit)
-    submission = {
+
+    circuit_runs = {
         'circuits': json.dumps(runs),
         'cost': { 'm': m, 'G': g, 'D': d, 'nqubits': n }
     }
-    return submission
+
+    ok, score = grade_json(circuit_runs, 'ex3')
+    if ok:
+        return score
 
 
-def grade_ex3(submissions: list) -> None:
-    if grade_json(submissions, 'ex3'):
-        print('Feel free to submit your answer.\r\n')
+def grade_ex3(circuit: QuantumCircuit, m: int) -> None:
+    runs = _validate_and_prepare_circuit(circuit, m)
+    g, d, n = get_cost_vars(circuit)
 
-
-def submit_ex3(submissions: list) -> None:
-    submit_json(submissions, 'ex3')
+    circuit_runs = {
+        'circuits': json.dumps(runs),
+        'cost': { 'm': m, 'G': g, 'D': d, 'nqubits': n }
+    }
+    submit_json(circuit_runs, 'ex3')

@@ -340,7 +340,7 @@ def grade_circuit(
     ex_id: str,
     max_qubits: Optional[int] = 28,
     min_cost: Optional[int] = None
-) -> bool:
+) -> Tuple[bool, Optional[Any]]:
     payload, server = _circuit_grading(
         circuit,
         lab_id,
@@ -355,14 +355,14 @@ def grade_circuit(
             payload,
             server + 'validate-answer'
         )
-    return False
+    return False, None
 
 
 def grade_job(
     job_or_id: Union[IBMQJob, str],
     lab_id: str,
     ex_id: str
-) -> bool:
+) -> Tuple[bool, Optional[Any]]:
     payload, server = _job_grading(job_or_id, lab_id, ex_id, is_submit=False)
     if payload:
         print('Grading your answer. Please wait...')
@@ -370,14 +370,14 @@ def grade_job(
             payload,
             server + 'validate-answer'
         )
-    return False
+    return False, None
 
 
 def grade_number(
     answer: int,
     lab_id: str,
     ex_id: str
-) -> bool:
+) -> Tuple[bool, Optional[Any]]:
     payload, server = _number_grading(answer, lab_id, ex_id, is_submit=False)
     if payload:
         print('Grading your answer. Please wait...')
@@ -385,14 +385,14 @@ def grade_number(
             payload,
             server + 'validate-answer'
         )
-    return False
+    return False, None
 
 
 def grade_json(
     answer: Any,
     lab_id: str,
     ex_id: Optional[str] = None
-) -> bool:
+) -> Tuple[bool, Optional[Any]]:
     payload, server = _json_grading(answer, lab_id, ex_id, is_submit=False)
     if payload:
         print('Grading your answer. Please wait...')
@@ -400,7 +400,7 @@ def grade_json(
             payload,
             server + 'validate-answer'
         )
-    return False
+    return False, None
 
 
 def submit_circuit(
@@ -492,7 +492,9 @@ def get_problem_set(
     return None, None
 
 
-def grade_answer(payload: dict, endpoint: str, cost: Optional[int] = None) -> bool:
+def grade_answer(
+    payload: dict, endpoint: str, cost: Optional[int] = None
+) -> Tuple[bool, Optional[Any]]:
     try:
         answer_response = send_request(endpoint, body=payload)
         status = answer_response.get('status', None)
@@ -500,10 +502,11 @@ def grade_answer(payload: dict, endpoint: str, cost: Optional[int] = None) -> bo
         score = cost if cost else answer_response.get('score', None)
 
         handle_grade_response(status, score=score, cause=cause)
-        return status == 'valid' or status is True
+        s = status == 'valid' or status is True
+        return s, score
     except Exception as err:
         print(f'Failed: {err}')
-        return False
+        return False, None
 
 
 def submit_answer(payload: dict) -> bool:

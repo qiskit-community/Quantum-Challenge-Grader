@@ -10,5 +10,5 @@ from .exercise2 import (
 )
 
 from .exercise3 import (
-    validate_ex3, grade_ex3, submit_ex3
+    grade_ex3, submit_ex3
 )
