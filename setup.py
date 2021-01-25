@@ -22,7 +22,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         'Topic :: Scientific/Engineering',
     ],
-    keywords='iqx quantum challenge',
+    keywords='qiskit quantum challenge grader',
     packages=find_packages(include=[
         'qc_grader',
         'qc_grader.*'

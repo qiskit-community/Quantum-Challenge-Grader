@@ -1,10 +1,10 @@
-# IBMQuantumChallenge2020-Grader
+# Quantum Challenge Grader
 
-Grading client for the IBM Quantum Challenge 2020
+Grading client for IBM Quantum Challenges
 
 ## Installation
 
-1. Log in to [IBM Quantum Experience](https://quantum-computing.ibm.com/)
+1. Log in to the [Quantum Lab](https://quantum-computing.ibm.com/jupyter)
 1. Open a new Qiskit Notebook
 1. In a code cell, run the following code:
 
