@@ -1,44 +1,34 @@
-from typing import Optional
+from typing import List, Optional
+
+import numpy as np
+
 from qiskit import QuantumCircuit, QuantumRegister
 from qiskit.circuit import Parameter
-from qiskit.circuit.library import CXGate
 
-import json
-import numpy as np
 
 from qc_grader.exercises import SubmissionError
 from qc_grader.grade import grade_json, submit_json
 from qc_grader.util import circuit_to_json
 
 
-def get_cost_vars(qc: QuantumCircuit):
-    nqubits = len(qc.qubits)
-    G = 0
-    D = qc.depth()
-    for gate, qubits, _ in qc.data:
-        if len(qubits) > 1:
-            if isinstance(gate, CXGate):
-                G += 1
-            else:
-                raise SubmissionError('Only multi-qubit gates allowed are CNOTs (CXGate), found '
-                                      f'{type(gate).__name__}')
-    return G, D, nqubits
+expected_circuit_count = 5
+max_qubits_count = 10
 
 
-def _validate_and_prepare_circuit(qc: QuantumCircuit, m: int) -> bool:
-    """Verifies the circuit and runs an experiment using the 'unitary_simulator'.
+def _quick_check_circuit(qc: QuantumCircuit, m: int) -> bool:
+    """Check the circuit for expected parameters and input before sending to server
+        for additional checks and grading.
         Args:
-           qc (QuantumCircuit): QuantumCircuit to validate. Input register must
+           qc (QuantumCircuit): QuantumCircuit to check. Input register must
                                 have name 'input' and size 3, all other qubits will be
                                 treated as scratch qubits. Circuit must have exactly two
                                 parameters named 'alpha' and 'beta'.
            m (int): Index of boolean function to create oracle for (see question).
        Returns:
            List: list of a dictionary objects containing the 'alpha' and 'beta'
-                    parameter values used in teh experiment and also the 'unitary'
-                    result from the experiment.
+                    parameter values used and the JSON representation of circuit.
     """
-    print(f'\r\nVerifying your circuit for m={m} ...')
+    print(f'\r\Checking circuit for m={m} ...')
 
     try:
         alpha = next(x for x in qc.parameters if x.name == 'alpha')
@@ -62,8 +52,8 @@ def _validate_and_prepare_circuit(qc: QuantumCircuit, m: int) -> bool:
             )
 
     nqubits = len(qc.qubits)
-    if nqubits > 10:
-        raise SubmissionError("Circuit cannot contain more than ten qubits.")
+    if nqubits > max_qubits_count:
+        raise SubmissionError(f'Circuit cannot contain more than {max_qubits_count} qubits.')
 
     # Make sure 'input' is always first
     qr = QuantumRegister(3, 'input')
@@ -91,26 +81,32 @@ def _validate_and_prepare_circuit(qc: QuantumCircuit, m: int) -> bool:
     return circuits
 
 
-def grade_ex3(circuit: QuantumCircuit, m: int) -> Optional[int]:
-    runs = _validate_and_prepare_circuit(circuit, m)
-    g, d, n = get_cost_vars(circuit)
+def _check_circuits(circuits: List[QuantumCircuit]) -> List:
+    if len(circuits) != expected_circuit_count:
+        raise SubmissionError(
+            f'You must submit {expected_circuit_count} circuits. '
+            'Review the exercise question for solution requirements.')
 
-    circuit_runs = {
-        'circuits': json.dumps(runs),
-        'cost': { 'm': m, 'G': g, 'D': d, 'nqubits': n }
-    }
-
-    ok, score = grade_json(circuit_runs, 'ex3')
-    if ok:
-        return score
+    circuits_checked = []
+    for m, circuit in enumerate(circuits):
+        checked = _quick_check_circuit(circuit, m)
+        circuits_checked.append(checked)
+    return circuits_checked
 
 
-def submit_ex3(circuit: QuantumCircuit, m: int) -> None:
-    runs = _validate_and_prepare_circuit(circuit, m)
-    g, d, n = get_cost_vars(circuit)
+def grade_ex3(circuits: List[QuantumCircuit]) -> Optional[int]:
+    try:
+        circuits_checked = _check_circuits(circuits)
+        ok, _ = grade_json(circuits_checked, 'ex3')
+        if ok:
+            print('Feel free to submit your answer.\r\n')
+    except SubmissionError as err:
+        print(err)
 
-    circuit_runs = {
-        'circuits': json.dumps(runs),
-        'cost': { 'm': m, 'G': g, 'D': d, 'nqubits': n }
-    }
-    submit_json(circuit_runs, 'ex3')
+
+def submit_ex3(circuits: List[QuantumCircuit]) -> None:
+    try:
+        circuits_checked = _check_circuits(circuits)
+        submit_json(circuits_checked, 'ex3')
+    except SubmissionError as err:
+        print(err)
