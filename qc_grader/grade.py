@@ -42,11 +42,13 @@ def _circuit_criteria(
             print('Please review your circuit and try again.')
             return None, None
 
-        cost = compute_cost(circuit)
-        if min_cost is not None and cost < min_cost:
-            print(f'Your circuit cost ({cost}) is too low. But if you are convinced that your circuit\n'
-                   'is correct, please let us know in the `#ibm-quantum-challenge-2020` Slack channel.')
-            return None, None
+        cost = -1
+        if min_cost is not None:
+            cost = compute_cost(circuit)
+            if cost < min_cost:
+                print(f'Your circuit cost ({cost}) is too low. But if you are convinced that your circuit\n'
+                    'is correct, please let us know in the `#ibm-quantum-challenge-2020` Slack channel.')
+                return None, None
 
         return circuit.num_qubits, cost
     except Exception as err:
@@ -72,13 +74,18 @@ def _circuit_grading(
         return None, None
 
     if not is_submit:
-        server = get_server_endpoint(lab_id, ex_id)
+        server = get_server_endpoint()
         if not server:
             print('Could not find a valid grading server or '
                   'the grading servers are down right now.')
             return None, None
     else:
         server = None
+
+    question_id = get_question_id(lab_id, ex_id)
+    if question_id < 0:
+        print('Invalid or unsupported argument')
+        return None, None
 
     _, cost = _circuit_criteria(
         circuit,
@@ -91,10 +98,7 @@ def _circuit_grading(
             'answer': circuit_to_json(circuit)
         }
 
-        if is_submit:
-            payload['questionNumber'] = get_question_id(lab_id, ex_id)
-        else:
-            payload['question_id'] = get_question_id(lab_id, ex_id)
+        payload['questionNumber' if is_submit else 'question_id'] = question_id
 
     return payload, server
 
@@ -111,7 +115,7 @@ def _job_grading(
         return None, None
 
     if not is_submit:
-        server = get_server_endpoint(lab_id, ex_id)
+        server = get_server_endpoint()
         if not server:
             print('Could not find a valid grading server or the grading '
                   'servers are down right now.')
@@ -131,6 +135,11 @@ def _job_grading(
     elif job_status is not JobStatus.DONE:
         print(f'Job has not yet completed: {job_status.value}.')
         print(f'Please wait for the job (id: {job.job_id()}) to complete then try again.')
+        return None, None
+    
+    question_id = get_question_id(lab_id, ex_id)
+    if question_id < 0:
+        print('Invalid or unsupported argument')
         return None, None
 
     header = job.result().header.to_dict()
@@ -154,10 +163,7 @@ def _job_grading(
         })
     }
 
-    if is_submit:
-        payload['questionNumber'] = get_question_id(lab_id, ex_id)
-    else:
-        payload['question_id'] = get_question_id(lab_id, ex_id)
+    payload['questionNumber' if is_submit else 'question_id'] = question_id
 
     return payload, server
 
@@ -174,7 +180,7 @@ def _number_grading(
         return None, None
 
     if not is_submit:
-        server = get_server_endpoint(lab_id, ex_id)
+        server = get_server_endpoint()
         if not server:
             print('Could not find a valid grading server '
                   'or the grading servers are down right now.')
@@ -182,14 +188,47 @@ def _number_grading(
     else:
         server = None
 
+
+    question_id = get_question_id(lab_id, ex_id)
+    if question_id < 0:
+        print('Invalid or unsupported argument')
+        return None, None
+
     payload = {
         'answer': str(answer)
     }
 
-    if is_submit:
-        payload['questionNumber'] = get_question_id(lab_id, ex_id)
+    payload['questionNumber' if is_submit else 'question_id'] = question_id
+
+    return payload, server
+
+
+def _json_grading(
+    answer: Any,
+    lab_id: str,
+    ex_id: Optional[str] = None,
+    is_submit: Optional[bool] = False
+) -> Tuple[Optional[dict], Optional[str]]:
+    if not is_submit:
+        server = get_server_endpoint()
+        if not server:
+            print('Could not find a valid grading server '
+                  'or the grading servers are down right now.')
+            return None, None
     else:
-        payload['question_id'] = get_question_id(lab_id, ex_id)
+        server = None
+
+
+    question_id = get_question_id(lab_id, ex_id)
+    if question_id < 0:
+        print('Invalid or unsupported argument')
+        return None, None
+
+    payload = {
+        'answer': json.dumps(answer)
+    }
+
+    payload['questionNumber' if is_submit else 'question_id'] = question_id
 
     return payload, server
 
@@ -214,22 +253,25 @@ def prepare_circuit(
         min_cost=min_cost,
         check_gates=check_gates
     )
+
+    if 'backend' not in kwargs:
+        kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
+
+    if 'qobj_header' not in kwargs:
+        kwargs['qobj_header'] = {}
+
     if cost is not None:
-        if 'backend' not in kwargs:
-            kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
+        kwargs['qobj_header']['qc_cost'] = cost
 
-        # execute experiments
-        print('Starting experiment. Please wait...')
-        job = execute(
-            circuit,
-            qobj_header={
-                'qc_cost': cost
-            },
-            **kwargs
-        )
+    # execute experiments
+    print('Starting experiment. Please wait...')
+    job = execute(
+        circuit,
+        **kwargs
+    )
 
-        print(f'You may monitor the job (id: {job.job_id()}) status '
-            'and proceed to grading when it successfully completes.')
+    print(f'You may monitor the job (id: {job.job_id()}) status '
+        'and proceed to grading when it successfully completes.')
         
     return job
 
@@ -251,7 +293,7 @@ def prepare_solver(
         print(f'Please provide a function that returns a QuantumCircuit.')
         return None
 
-    server = get_server_endpoint(lab_id, ex_id)
+    server = get_server_endpoint()
     if not server:
         print('Could not find a valid grading server or the grading servers are down right now.')
         return
@@ -298,7 +340,7 @@ def grade_circuit(
     ex_id: str,
     max_qubits: Optional[int] = 28,
     min_cost: Optional[int] = None
-) -> bool:
+) -> Tuple[bool, Optional[Any]]:
     payload, server = _circuit_grading(
         circuit,
         lab_id,
@@ -313,14 +355,14 @@ def grade_circuit(
             payload,
             server + 'validate-answer'
         )
-    return False
+    return False, None
 
 
 def grade_job(
     job_or_id: Union[IBMQJob, str],
     lab_id: str,
     ex_id: str
-) -> bool:
+) -> Tuple[bool, Optional[Any]]:
     payload, server = _job_grading(job_or_id, lab_id, ex_id, is_submit=False)
     if payload:
         print('Grading your answer. Please wait...')
@@ -328,14 +370,14 @@ def grade_job(
             payload,
             server + 'validate-answer'
         )
-    return False
+    return False, None
 
 
 def grade_number(
     answer: int,
     lab_id: str,
     ex_id: str
-) -> bool:
+) -> Tuple[bool, Optional[Any]]:
     payload, server = _number_grading(answer, lab_id, ex_id, is_submit=False)
     if payload:
         print('Grading your answer. Please wait...')
@@ -343,7 +385,22 @@ def grade_number(
             payload,
             server + 'validate-answer'
         )
-    return False
+    return False, None
+
+
+def grade_json(
+    answer: Any,
+    lab_id: str,
+    ex_id: Optional[str] = None
+) -> Tuple[bool, Optional[Any]]:
+    payload, server = _json_grading(answer, lab_id, ex_id, is_submit=False)
+    if payload:
+        print('Grading your answer. Please wait...')
+        return grade_answer(
+            payload,
+            server + 'validate-answer'
+        )
+    return False, None
 
 
 def submit_circuit(
@@ -391,13 +448,30 @@ def submit_number(
     return False
 
 
+def submit_json(
+    answer: Any,
+    lab_id: str,
+    ex_id: Optional[str] = None
+) -> bool:
+    payload, _ = _json_grading(answer, lab_id, ex_id, is_submit=True)
+    if payload:
+        print('Submitting your answer. Please wait...')
+        return submit_answer(payload)
+    return False
+
+
 def get_problem_set(
     lab_id: str, ex_id: str, endpoint: str
 ) -> Tuple[Optional[int], Optional[Any]]:
     problem_set_response = None
 
+    question_id = get_question_id(lab_id, ex_id)
+    if question_id < 0:
+        print('Invalid or unsupported argument')
+        return None, None
+
     try:
-        payload = {'question_id': get_question_id(lab_id, ex_id)}
+        payload = {'question_id': question_id}
         problem_set_response = send_request(endpoint, query=payload, method='GET')
     except Exception as err:
         print('Unable to obtain the problem set')
@@ -418,19 +492,21 @@ def get_problem_set(
     return None, None
 
 
-def grade_answer(payload: dict, endpoint: str, cost: Optional[int] = None) -> bool:
+def grade_answer(
+    payload: dict, endpoint: str, cost: Optional[int] = None
+) -> Tuple[bool, Optional[Any]]:
     try:
         answer_response = send_request(endpoint, body=payload)
-
         status = answer_response.get('status', None)
         cause = answer_response.get('cause', None)
         score = cost if cost else answer_response.get('score', None)
 
         handle_grade_response(status, score=score, cause=cause)
-        return status == 'valid' or status is True
+        s = status == 'valid' or status is True
+        return s, score
     except Exception as err:
         print(f'Failed: {err}')
-        return False
+        return False, None
 
 
 def submit_answer(payload: dict) -> bool:
