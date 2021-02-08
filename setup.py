@@ -9,7 +9,7 @@ from qc_grader import __version__
 setup(
     name='qc_grader',
     version=__version__,
-    description='Grading client for the IBM Quantum Challenge 2020',
+    description='Grading client for the IBM Quantum Challenge',
     url='https://quantum-computing.ibm.com/',
     author='IBM Quantum Community Team',
     author_email='va@us.ibm.com',
@@ -22,7 +22,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         'Topic :: Scientific/Engineering',
     ],
-    keywords='iqx quantum challenge',
+    keywords='qiskit quantum challenge grader',
     packages=find_packages(include=[
         'qc_grader',
         'qc_grader.*'

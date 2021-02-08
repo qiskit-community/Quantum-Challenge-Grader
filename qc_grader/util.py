@@ -4,7 +4,7 @@ import numpy as np
 import warnings
 
 from functools import wraps
-from typing import Any, Callable, Optional, Tuple, Union
+from typing import Any, Callable, List, Optional, Tuple, Union
 
 
 from qiskit import IBMQ, QuantumCircuit, assemble
@@ -42,7 +42,7 @@ def get_job(job_id: str) -> Optional[IBMQJob]:
     return None
 
 
-def circuit_to_json(qc: QuantumCircuit) -> str:
+def circuit_to_json(qc: QuantumCircuit, parameter_binds: Optional[List] = None) -> str:
     class _QobjEncoder(json.encoder.JSONEncoder):
         def default(self, obj: Any) -> Any:
             if isinstance(obj, np.ndarray):
@@ -51,11 +51,14 @@ def circuit_to_json(qc: QuantumCircuit) -> str:
                 return (obj.real, obj.imag)
             return json.JSONEncoder.default(self, obj)
 
-    return json.dumps(circuit_to_dict(qc), cls=_QobjEncoder)
+    return json.dumps(circuit_to_dict(qc, parameter_binds), cls=_QobjEncoder)
 
 
-def circuit_to_dict(qc: QuantumCircuit) -> dict:
-    qobj = assemble(qc)
+def circuit_to_dict(qc: QuantumCircuit, parameter_binds: Optional[List] = None) -> dict:
+    if not parameter_binds:
+        qobj = assemble(qc)
+    else:
+        qobj = assemble(qc, parameter_binds=parameter_binds)
     return qobj.to_dict()
 
 
