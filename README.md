@@ -9,5 +9,5 @@ Grading client for IBM Quantum Challenges
 1. In a code cell, run the following code:
 
 ```
-!pip install -I git+https://github.com/qiskit-community/IBMQuantumChallenge2020-Grader.git
+!pip install -I git+https://github.com/qiskit-community/Quantum-Challenge-Grader.git
 ```
