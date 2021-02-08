@@ -28,7 +28,7 @@ def _quick_check_circuit(qc: QuantumCircuit, m: int) -> bool:
            List: list of a dictionary objects containing the 'alpha' and 'beta'
                     parameter values used and the JSON representation of circuit.
     """
-    print(f'\r\Checking circuit for m={m} ...')
+    print(f'Checking for circuit {m} ...')
 
     try:
         alpha = next(x for x in qc.parameters if x.name == 'alpha')
