@@ -120,7 +120,10 @@ def send_request(
         if response.status_code == 403:
             result = f'Unable to access service ({response.reason})'
         else:
-            result = response.json()['error']['message']
+            try:
+                result = response.json()['error']['message']
+            except:
+                result = response.reason
         raise Exception(result)
 
     return response.json()
