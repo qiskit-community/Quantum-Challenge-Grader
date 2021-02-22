@@ -350,7 +350,7 @@ def grade_circuit(
         min_cost=min_cost
     )
     if payload:
-        print('Grading your answer. Please wait...')
+        print(f'Grading your answer for {lab_id}{"/"+ex_id if ex_id else ""}. Please wait...')
         return grade_answer(
             payload,
             server + 'validate-answer'
@@ -365,7 +365,7 @@ def grade_job(
 ) -> Tuple[bool, Optional[Any]]:
     payload, server = _job_grading(job_or_id, lab_id, ex_id, is_submit=False)
     if payload:
-        print('Grading your answer. Please wait...')
+        print(f'Grading your answer for {lab_id}{"/"+ex_id if ex_id else ""}. Please wait...')
         return grade_answer(
             payload,
             server + 'validate-answer'
@@ -380,7 +380,7 @@ def grade_number(
 ) -> Tuple[bool, Optional[Any]]:
     payload, server = _number_grading(answer, lab_id, ex_id, is_submit=False)
     if payload:
-        print('Grading your answer. Please wait...')
+        print(f'Grading your answer for {lab_id}{"/"+ex_id if ex_id else ""}. Please wait...')
         return grade_answer(
             payload,
             server + 'validate-answer'
@@ -395,7 +395,7 @@ def grade_json(
 ) -> Tuple[bool, Optional[Any]]:
     payload, server = _json_grading(answer, lab_id, ex_id, is_submit=False)
     if payload:
-        print('Grading your answer. Please wait...')
+        print(f'Grading your answer for {lab_id}{"/"+ex_id if ex_id else ""}. Please wait...')
         return grade_answer(
             payload,
             server + 'validate-answer'
@@ -419,7 +419,7 @@ def submit_circuit(
         min_cost=min_cost
     )
     if payload:
-        print('Submitting your answer. Please wait...')
+        print(f'Submitting your answer for {lab_id}{"/"+ex_id if ex_id else ""}. Please wait...')
         return submit_answer(payload)
     return False
 
@@ -431,7 +431,7 @@ def submit_job(
 ) -> bool:
     payload, _ = _job_grading(job_or_id, lab_id, ex_id, is_submit=True)
     if payload:
-        print('Submitting your answer. Please wait...')
+        print(f'Submitting your answer for {lab_id}{"/"+ex_id if ex_id else ""}. Please wait...')
         return submit_answer(payload)
     return False
 
@@ -443,7 +443,7 @@ def submit_number(
 ) -> bool:
     payload, _ = _number_grading(answer, lab_id, ex_id, is_submit=True)
     if payload:
-        print('Submitting your answer. Please wait...')
+        print(f'Submitting your answer for {lab_id}{"/"+ex_id if ex_id else ""}. Please wait...')
         return submit_answer(payload)
     return False
 
@@ -455,7 +455,7 @@ def submit_json(
 ) -> bool:
     payload, _ = _json_grading(answer, lab_id, ex_id, is_submit=True)
     if payload:
-        print('Submitting your answer. Please wait...')
+        print(f'Submitting your answer for {lab_id}{"/"+ex_id if ex_id else ""}. Please wait...')
         return submit_answer(payload)
     return False
 
@@ -556,9 +556,9 @@ def handle_submit_response(
     status: Union[str, bool], cause: Optional[str] = None
 ) -> None:
     if status == 'valid' or status is True:
-        print('\nSuccess 🎉! Your answer has been submitted.')
+        print('Success 🎉! Your answer has been submitted.')
     elif status == 'invalid' or status is False:
-        print(f'\nOops 😕! {"Your answer is incorrect" if cause is None else cause}')
+        print(f'Oops 😕! {"Your answer is incorrect" if cause is None else cause}')
         print('Make sure your answer is correct and successfully graded before submitting.')
     elif status == 'notFinished':
         print(f'Job has not finished: {cause}')
