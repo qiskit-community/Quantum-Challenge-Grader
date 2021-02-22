@@ -540,7 +540,7 @@ def handle_grade_response(
     if status == 'valid':
         print('\nCongratulations 🎉! Your answer is correct.')
         if score is not None:
-            print(f'Your score is {score}.')
+            print(f'Your cost is {score}.')
     elif status == 'invalid':
         print(f'\nOops 😕! {cause}')
         print('Please review your answer and try again.')
