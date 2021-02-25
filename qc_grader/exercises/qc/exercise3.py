@@ -21,22 +21,14 @@ def _quick_check_circuit(qc: QuantumCircuit, m: int) -> bool:
         Args:
            qc (QuantumCircuit): QuantumCircuit to check. Input register must
                                 have name 'input' and size 3, all other qubits will be
-                                treated as scratch qubits. Circuit must have exactly two
-                                parameters named 'alpha' and 'beta'.
+                                treated as scratch qubits. Circuit must have exactly one
+                                parameter named 'beta'.
            m (int): Index of boolean function to create oracle for (see question).
        Returns:
-           List: list of a dictionary objects containing the 'alpha' and 'beta'
-                    parameter values used and the JSON representation of circuit.
+           List: list of a dictionary objects containing the 'beta'
+                    parameter value used and the JSON representation of circuit.
     """
     print(f'Checking for circuit {m} ...')
-
-    try:
-        alpha = next(x for x in qc.parameters if x.name == 'alpha')
-    except StopIteration as err:
-        raise SubmissionError(
-            "Could not find Parameter named 'alpha'. "
-            "(See: https://qiskit.org/documentation/stubs/qiskit.circuit.Parameter.html )"
-        )
 
     try:
         beta = next(x for x in qc.parameters if x.name == 'beta')
@@ -65,15 +57,12 @@ def _quick_check_circuit(qc: QuantumCircuit, m: int) -> bool:
     circuits = []
 
     for trials in range(30):
-        a = np.random.rand()*np.pi*2
         b = np.random.rand()*np.pi*2
         param = {
-            alpha: a,
             beta: b
         }
         
         circuits.append({
-            'alpha': a,
             'beta': b,
             'qc': circuit_to_json(qc, parameter_binds=[param])
         })
