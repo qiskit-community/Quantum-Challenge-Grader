@@ -10,5 +10,5 @@
 
 from qc_grader.exercises.qc import *
 
-__version__ = '0.4.7'
+__version__ = '0.4.6'
 
