@@ -4,9 +4,11 @@ import requests
 from typing import Optional, Tuple
 from urllib.parse import urljoin
 
+from . import __version__
+
 
 # challenge name and version
-CHALLENGE_NAME: str = os.getenv('QC_NAME', 'Quantum Computing Challenge')
+CHALLENGE_NAME: str = os.getenv('QC_NAME', 'IBM Quantum Challenge')
 CHALLENGE_VERSION: str = os.getenv('QC_VERSION', '2021')
 
 # possible challenge API endpoints
@@ -105,7 +107,8 @@ def send_request(
 ) -> dict:
     header = header if header else {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-Client-Version': __version__
     }
 
     response = requests.request(
@@ -121,7 +124,11 @@ def send_request(
             result = f'Unable to access service ({response.reason})'
         else:
             try:
-                result = response.json()['error']['message']
+                result = response.json()
+                if 'error' in result:
+                    result = result['error']
+                if 'message' in result:
+                    result = result['message']
             except:
                 result = response.reason
         raise Exception(result)

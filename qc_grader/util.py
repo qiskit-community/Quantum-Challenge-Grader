@@ -12,6 +12,7 @@ from qiskit.circuit import Barrier, Gate, Instruction, Measure
 from qiskit.circuit.library import UGate, U3Gate, CXGate
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
+from qiskit.qobj import PulseQobj, QasmQobj
 
 
 def get_provider() -> AccountProvider:
@@ -60,6 +61,18 @@ def circuit_to_dict(qc: QuantumCircuit, parameter_binds: Optional[List] = None) 
     else:
         qobj = assemble(qc, parameter_binds=parameter_binds)
     return qobj.to_dict()
+
+
+def qobj_to_json(qobj: Union[PulseQobj, QasmQobj]) -> str:
+    class _QobjEncoder(json.encoder.JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, np.ndarray):
+                return obj.tolist()
+            if isinstance(obj, complex):
+                return (obj.real, obj.imag)
+            return json.JSONEncoder.default(self, obj)
+
+    return json.dumps(qobj.to_dict(), cls=_QobjEncoder)
 
 
 def get_job_urls(job: Union[str, IBMQJob]) -> Tuple[bool, Optional[str], Optional[str]]:

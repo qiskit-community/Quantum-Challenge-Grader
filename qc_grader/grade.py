@@ -19,10 +19,19 @@ from urllib.parse import urljoin
 from qiskit import QuantumCircuit, execute
 from qiskit.providers import JobStatus
 from qiskit.providers.ibmq.job import IBMQJob
+from qiskit.qobj import PulseQobj, QasmQobj
 
 from .api import get_server_endpoint, send_request, get_access_token, get_submission_endpoint
 from .exercises import get_question_id
-from .util import compute_cost, get_provider, get_job, circuit_to_json, get_job_urls, uses_multiqubit_gate
+from .util import (
+    circuit_to_json,
+    compute_cost,
+    get_job,
+    get_job_urls,
+    get_provider,
+    qobj_to_json,
+    uses_multiqubit_gate
+)
 
 
 def _circuit_criteria(
@@ -59,7 +68,7 @@ def _circuit_criteria(
 def _circuit_grading(
     circuit: QuantumCircuit,
     lab_id: str,
-    ex_id: str,
+    ex_id: Optional[str] = None,
     is_submit: Optional[bool] = False,
     max_qubits: Optional[int] = None,
     min_cost: Optional[int] = None,
@@ -103,10 +112,47 @@ def _circuit_grading(
     return payload, server
 
 
+def _qobj_grading(
+    qobj: Union[PulseQobj, QasmQobj],
+    lab_id: str,
+    ex_id: Optional[str] = None,
+    is_submit: Optional[bool] = False
+) -> Tuple[Optional[dict], Optional[str]]:
+    payload = None
+    server = None
+
+    if not isinstance(qobj, (PulseQobj, QasmQobj)):
+        print(f'Expected a Qobj, but was given {type(qobj)}')
+        print(f'Please provide a Qobj as your answer.')
+        return None, None
+
+    if not is_submit:
+        server = get_server_endpoint()
+        if not server:
+            print('Could not find a valid grading server or '
+                  'the grading servers are down right now.')
+            return None, None
+    else:
+        server = None
+
+    question_id = get_question_id(lab_id, ex_id)
+    if question_id < 0:
+        print('Invalid or unsupported argument')
+        return None, None
+
+    payload = {
+        'answer': qobj_to_json(qobj)
+    }
+
+    payload['questionNumber' if is_submit else 'question_id'] = question_id
+
+    return payload, server
+
+
 def _job_grading(
     job_or_id: Union[IBMQJob, str],
     lab_id: str,
-    ex_id: str,
+    ex_id: Optional[str] = None,
     is_submit: Optional[bool] = False
 ) -> Tuple[Optional[dict], Optional[str]]:
     if not isinstance(job_or_id, IBMQJob) and not isinstance(job_or_id, str):
@@ -171,7 +217,7 @@ def _job_grading(
 def _number_grading(
     answer: int,
     lab_id: str,
-    ex_id: str,
+    ex_id: Optional[str] = None,
     is_submit: Optional[bool] = False
 ) -> Tuple[Optional[dict], Optional[str]]:
     if not isinstance(answer, int):
@@ -279,7 +325,7 @@ def prepare_circuit(
 def prepare_solver(
     solver_func: Callable,
     lab_id: str,
-    ex_id: str,
+    ex_id: Optional[str] = None,
     problem_set: Optional[Any] = None,
     max_qubits: Optional[int] = 28,
     min_cost: Optional[int] = None,
@@ -337,7 +383,7 @@ def prepare_solver(
 def grade_circuit(
     circuit: QuantumCircuit,
     lab_id: str,
-    ex_id: str,
+    ex_id: Optional[str] = None,
     max_qubits: Optional[int] = 28,
     min_cost: Optional[int] = None
 ) -> Tuple[bool, Optional[Any]]:
@@ -358,10 +404,30 @@ def grade_circuit(
     return False, None
 
 
+def grade_qobj(
+    qobj: Union[PulseQobj, QasmQobj],
+    lab_id: str,
+    ex_id: Optional[str] = None
+) -> Tuple[bool, Optional[Any]]:
+    payload, server = _qobj_grading(
+        qobj,
+        lab_id,
+        ex_id,
+        is_submit=False,
+    )
+    if payload:
+        print(f'Grading your answer for {lab_id}{"/"+ex_id if ex_id else ""}. Please wait...')
+        return grade_answer(
+            payload,
+            server + 'validate-answer'
+        )
+    return False, None
+
+
 def grade_job(
     job_or_id: Union[IBMQJob, str],
     lab_id: str,
-    ex_id: str
+    ex_id: Optional[str] = None
 ) -> Tuple[bool, Optional[Any]]:
     payload, server = _job_grading(job_or_id, lab_id, ex_id, is_submit=False)
     if payload:
@@ -376,7 +442,7 @@ def grade_job(
 def grade_number(
     answer: int,
     lab_id: str,
-    ex_id: str
+    ex_id: Optional[str] = None
 ) -> Tuple[bool, Optional[Any]]:
     payload, server = _number_grading(answer, lab_id, ex_id, is_submit=False)
     if payload:
@@ -406,7 +472,7 @@ def grade_json(
 def submit_circuit(
     circuit: QuantumCircuit,
     lab_id: str,
-    ex_id: str,
+    ex_id: Optional[str] = None,
     max_qubits: Optional[int] = 28,
     min_cost: Optional[int] = None
 ) -> bool:
@@ -424,10 +490,27 @@ def submit_circuit(
     return False
 
 
+def submit_qobj(
+    qobj: Union[PulseQobj, QasmQobj],
+    lab_id: str,
+    ex_id: Optional[str] = None
+) -> bool:
+    payload, _ = _qobj_grading(
+        qobj,
+        lab_id,
+        ex_id,
+        is_submit=True
+    )
+    if payload:
+        print(f'Submitting your answer for {lab_id}{"/"+ex_id if ex_id else ""}. Please wait...')
+        return submit_answer(payload)
+    return False
+
+
 def submit_job(
     job_or_id: IBMQJob,
     lab_id: str,
-    ex_id: str,
+    ex_id: Optional[str] = None
 ) -> bool:
     payload, _ = _job_grading(job_or_id, lab_id, ex_id, is_submit=True)
     if payload:
@@ -439,7 +522,7 @@ def submit_job(
 def submit_number(
     answer: int,
     lab_id: str,
-    ex_id: str
+    ex_id: Optional[str] = None
 ) -> bool:
     payload, _ = _number_grading(answer, lab_id, ex_id, is_submit=True)
     if payload:
