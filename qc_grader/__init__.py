@@ -8,7 +8,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 
 from qc_grader.exercises.iqc_2021 import *
 
