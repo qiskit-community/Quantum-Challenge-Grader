@@ -29,7 +29,7 @@ setup(
     ]),
     install_requires=[
         'numpy',
-        'qiskit>=0.20',
+        'qiskit>=0.25',
         'requests'
     ],
     include_package_data=True,
