@@ -1,5 +1,3 @@
-from qiskit import QuantumCircuit
-
 from qc_grader.grade import grade_json, submit_json
 
 
