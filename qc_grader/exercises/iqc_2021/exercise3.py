@@ -8,16 +8,33 @@ from qc_grader.util import circuit_to_json
 criteria: dict = {}
 
 
-def format_submission(circuit: QuantumCircuit, initial_layout: List) -> dict:
+def format_submission(
+    qc_init: QuantumCircuit,
+    qc_syn: QuantumCircuit,
+    error_qubits: List[int],
+    initial_layout: dict
+) -> dict:
     return {
-        'qc': circuit_to_json(circuit),
+        'qc_init': circuit_to_json(qc_init),
+        'qc_syn': circuit_to_json(qc_syn),
+        'error_qubits': error_qubits,
         'initial_layout': initial_layout
     }
 
 
-def grade_ex3(circuit: QuantumCircuit, initial_layout: List) -> None:
+def grade_ex3(
+    qc_init: QuantumCircuit,
+    qc_syn: QuantumCircuit,
+    error_qubits: List[int],
+    initial_layout: dict
+) -> None:
     try:
-        submission = format_submission(circuit, initial_layout)
+        submission = format_submission(
+            qc_init,
+            qc_syn,
+            error_qubits,
+            initial_layout
+        )
         ok, _ = grade_json(submission, 'ex3')
         if ok:
             print('Feel free to submit your answer.\r\n')
@@ -25,9 +42,19 @@ def grade_ex3(circuit: QuantumCircuit, initial_layout: List) -> None:
         print(err)
 
 
-def submit_ex3(circuit: QuantumCircuit, initial_layout: List) -> None:
+def submit_ex3(
+    qc_init: QuantumCircuit,
+    qc_syn: QuantumCircuit,
+    error_qubits: List[int],
+    initial_layout: dict
+) -> None:
     try:
-        submission = format_submission(circuit, initial_layout)
+        submission = format_submission(
+            qc_init,
+            qc_syn,
+            error_qubits,
+            initial_layout
+        )
         submit_json(submission, 'ex3')
     except Exception as err:
         print(err)
