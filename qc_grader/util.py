@@ -1,6 +1,8 @@
+import inspect
 import json
 import logging
 import numpy as np
+import pickle
 import warnings
 
 from functools import wraps
@@ -8,11 +10,21 @@ from typing import Any, Callable, List, Optional, Tuple, Union
 
 
 from qiskit import IBMQ, QuantumCircuit, assemble
+from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
 from qiskit.circuit import Barrier, Gate, Instruction, Measure
 from qiskit.circuit.library import UGate, U3Gate, CXGate
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
+
+
+class _QobjEncoder(json.encoder.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        if isinstance(obj, complex):
+            return (obj.real, obj.imag)
+        return json.JSONEncoder.default(self, obj)
 
 
 def get_provider() -> AccountProvider:
@@ -43,16 +55,15 @@ def get_job(job_id: str) -> Optional[IBMQJob]:
     return None
 
 
-def circuit_to_json(qc: QuantumCircuit, parameter_binds: Optional[List] = None) -> str:
-    class _QobjEncoder(json.encoder.JSONEncoder):
-        def default(self, obj: Any) -> Any:
-            if isinstance(obj, np.ndarray):
-                return obj.tolist()
-            if isinstance(obj, complex):
-                return (obj.real, obj.imag)
-            return json.JSONEncoder.default(self, obj)
-
-    return json.dumps(circuit_to_dict(qc, parameter_binds), cls=_QobjEncoder)
+def circuit_to_json(
+    qc: QuantumCircuit,
+    parameter_binds: Optional[List] = None,
+    byte_string: bool = False
+) -> str:
+    if byte_string:
+        return pickle.dumps(qc).decode('ISO-8859-1')
+    else:
+        return json.dumps(circuit_to_dict(qc, parameter_binds), cls=_QobjEncoder)
 
 
 def circuit_to_dict(qc: QuantumCircuit, parameter_binds: Optional[List] = None) -> dict:
@@ -64,15 +75,23 @@ def circuit_to_dict(qc: QuantumCircuit, parameter_binds: Optional[List] = None) 
 
 
 def qobj_to_json(qobj: Union[PulseQobj, QasmQobj]) -> str:
-    class _QobjEncoder(json.encoder.JSONEncoder):
-        def default(self, obj):
-            if isinstance(obj, np.ndarray):
-                return obj.tolist()
-            if isinstance(obj, complex):
-                return (obj.real, obj.imag)
-            return json.JSONEncoder.default(self, obj)
-
     return json.dumps(qobj.to_dict(), cls=_QobjEncoder)
+
+
+def paulisumop_to_json(op: PauliSumOp) -> str:
+    return json.dumps(op.primitive.to_list(), cls=_QobjEncoder)
+
+
+def to_json(result: Any, skip: List = []) -> str:
+    if result is None:
+        return ''
+    as_dict = {}
+    for name, value in inspect.getmembers(result):
+        if not name.startswith('_') and name not in skip and \
+            not inspect.ismethod(value) and not inspect.isfunction(value):
+            as_dict[name] = value
+
+    return json.dumps(as_dict, cls=_QobjEncoder)
 
 
 def get_job_urls(job: Union[str, IBMQJob]) -> Tuple[bool, Optional[str], Optional[str]]:
