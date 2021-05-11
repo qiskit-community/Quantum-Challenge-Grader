@@ -13,7 +13,7 @@ def verify_parameters(
     qc_init: QuantumCircuit,
     qc_syn: QuantumCircuit,
     error_qubits: List[int],
-    initial_layout: dict
+    initial_layout: List[int]
 ):
     if not isinstance(qc_init, QuantumCircuit):
         raise SubmissionError("The 'qc_init' parameter must be of type QuantumCircuit")
@@ -28,7 +28,7 @@ def format_submission(
     qc_init: QuantumCircuit,
     qc_syn: QuantumCircuit,
     error_qubits: List[int],
-    initial_layout: dict
+    initial_layout: List[int]
 ) -> dict:
     verify_parameters(
         qc_init,
@@ -48,7 +48,7 @@ def grade_ex3(
     qc_init: QuantumCircuit,
     qc_syn: QuantumCircuit,
     error_qubits: List[int],
-    initial_layout: dict
+    initial_layout: List[int]
 ) -> None:
     try:
         submission = format_submission(
@@ -70,7 +70,7 @@ def submit_ex3(
     qc_init: QuantumCircuit,
     qc_syn: QuantumCircuit,
     error_qubits: List[int],
-    initial_layout: dict
+    initial_layout: List[int]
 ) -> None:
     try:
         submission = format_submission(
