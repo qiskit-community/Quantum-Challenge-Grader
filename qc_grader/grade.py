@@ -457,14 +457,16 @@ def grade_number(
 def grade_json(
     answer: Any,
     lab_id: str,
-    ex_id: Optional[str] = None
+    ex_id: Optional[str] = None,
+    max_content_length: Optional[int] = None
 ) -> Tuple[bool, Optional[Any]]:
     payload, server = _json_grading(answer, lab_id, ex_id, is_submit=False)
     if payload:
         print(f'Grading your answer for {lab_id}{"/"+ex_id if ex_id else ""}. Please wait...')
         return grade_answer(
             payload,
-            server + 'validate-answer'
+            server + 'validate-answer',
+            max_content_length=max_content_length
         )
     return False, None
 
@@ -534,12 +536,13 @@ def submit_number(
 def submit_json(
     answer: Any,
     lab_id: str,
-    ex_id: Optional[str] = None
+    ex_id: Optional[str] = None,
+    max_content_length: Optional[int] = None
 ) -> bool:
     payload, _ = _json_grading(answer, lab_id, ex_id, is_submit=True)
     if payload:
         print(f'Submitting your answer for {lab_id}{"/"+ex_id if ex_id else ""}. Please wait...')
-        return submit_answer(payload)
+        return submit_answer(payload, max_content_length=max_content_length)
     return False
 
 
@@ -576,10 +579,12 @@ def get_problem_set(
 
 
 def grade_answer(
-    payload: dict, endpoint: str, cost: Optional[int] = None
+    payload: dict, endpoint: str, cost: Optional[int] = None, max_content_length: Optional[int] = None
 ) -> Tuple[bool, Optional[Any]]:
     try:
-        answer_response = send_request(endpoint, body=payload)
+        answer_response = send_request(
+            endpoint, body=payload, max_content_length=max_content_length
+        )
         status = answer_response.get('status', None)
         cause = answer_response.get('cause', None)
         score = cost if cost else answer_response.get('score', None)
@@ -592,7 +597,7 @@ def grade_answer(
         return False, None
 
 
-def submit_answer(payload: dict) -> bool:
+def submit_answer(payload: dict, max_content_length: Optional[int] = None) -> bool:
     try:
         access_token = get_access_token()
 
@@ -602,7 +607,8 @@ def submit_answer(payload: dict) -> bool:
         submit_response = send_request(
             endpoint,
             body=payload,
-            query={'access_token': access_token}
+            query={'access_token': access_token},
+            max_content_length=max_content_length
         )
 
         status = submit_response.get('status', None)

@@ -27,6 +27,14 @@ else:
     grading_urls = QC_GRADING_LOCAL + QC_GRADING_STAGING
 
 
+class MaxContentError(BaseException):
+    def __init__(self, content_length: int, max_content_length: int) -> None:
+        self.message = f'Max content length ({max_content_length}) exceeded: {content_length}'
+
+    def __str__(self) -> str:
+        return self.message
+
+
 def get_challenge(challenge_name: Optional[str], challenge_version: Optional[str]) -> Tuple[Optional[str], list]:
     exercises = []
     endpoint = None
@@ -103,13 +111,19 @@ def send_request(
     query: Optional[dict] = None,
     body: Optional[dict] = None,
     method: str = 'POST',
-    header: Optional[dict] = None
+    header: Optional[dict] = None,
+    max_content_length: Optional[int] = None
 ) -> dict:
     header = header if header else {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'X-Client-Version': __version__
     }
+
+    if max_content_length:
+        content_length = compute_content_length(endpoint, body=body)
+        if content_length >= max_content_length:
+            raise MaxContentError(content_length, max_content_length)
 
     response = requests.request(
         method,
@@ -135,6 +149,30 @@ def send_request(
 
     return response.json()
 
+
+def compute_content_length(
+    endpoint: str,
+    query: Optional[dict] = None,
+    body: Optional[dict] = None,
+    method: str = 'POST',
+    header: Optional[dict] = None
+) -> int:
+    from requests import Request
+    header = header if header else {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-Client-Version': __version__
+    }
+
+    req = Request(
+        method,
+        url=endpoint,
+        params=query,
+        json=body,
+        headers=header
+    )
+    prepped = req.prepare()
+    return int(prepped.headers['Content-Length'])
 
 def normalize_final_slash(url: str) -> str:
     if url[-1] != '/':
