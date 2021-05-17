@@ -111,14 +111,15 @@ def send_request(
     query: Optional[dict] = None,
     body: Optional[dict] = None,
     method: str = 'POST',
-    header: Optional[dict] = None,
+    header: Optional[dict] = {},
     max_content_length: Optional[int] = None
 ) -> dict:
-    header = header if header else {
+    default_header = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'X-Client-Version': __version__
     }
+    header = {**default_header, **header}
 
     if max_content_length:
         content_length = compute_content_length(endpoint, body=body)
@@ -148,6 +149,16 @@ def send_request(
         raise Exception(result)
 
     return response.json()
+
+
+def notify_provider(access_token: str):
+    server = get_server_endpoint()
+    provider_response = send_request(
+        urljoin(server, './provider'),
+        header={
+            'X-Access-Token': access_token
+        }
+    )
 
 
 def compute_content_length(
