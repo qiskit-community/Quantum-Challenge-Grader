@@ -21,7 +21,7 @@ from qiskit.providers import JobStatus
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
 
-from .api import get_server_endpoint, send_request, get_access_token, get_submission_endpoint
+from .api import get_server_endpoint, send_request, get_access_token, get_submission_endpoint, notify_provider
 from .exercises import get_question_id
 from .util import (
     circuit_to_json,
@@ -616,8 +616,12 @@ def submit_answer(payload: dict, max_content_length: Optional[int] = None) -> bo
             status = submit_response.get('valid', None)
         cause = submit_response.get('cause', None)
 
+        success = status == 'valid' or status is True
+        if success:
+            notify_provider(access_token)
+
         handle_submit_response(status, cause=cause)
-        return status == 'valid' or status is True
+        return success
     except Exception as err:
         print(f'Failed: {err}')
         return False
