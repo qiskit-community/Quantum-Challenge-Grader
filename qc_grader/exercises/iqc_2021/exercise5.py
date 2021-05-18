@@ -1,4 +1,4 @@
-from typing import List
+from typing import Optional
 
 from qiskit import QuantumCircuit
 from qiskit.algorithms.minimum_eigen_solvers.vqe import VQEResult
@@ -18,12 +18,14 @@ criteria: dict = {
 def format_submission(
     ansatz: QuantumCircuit,
     qubit_op: PauliSumOp,
-    vqe_result: VQEResult
+    vqe_result: VQEResult,
+    freeze_core: bool
 ) -> dict:
     return {
         'ansatz': circuit_to_json(ansatz, byte_string=True),
         'qubit_op': paulisumop_to_json(qubit_op),
-        'vqe_result': to_json(vqe_result, skip=['data', 'optimal_parameters'])
+        'vqe_result': to_json(vqe_result, skip=['data', 'optimal_parameters']),
+        'freeze_core': freeze_core
     }
 
 
@@ -43,11 +45,12 @@ def validate_inputs(
 def grade_ex5(
     ansatz: QuantumCircuit,
     qubit_op: PauliSumOp,
-    vqe_result: VQEResult
+    vqe_result: VQEResult,
+    freeze_core: Optional[bool] = False
 ) -> None:
     try:
         validate_inputs(ansatz, qubit_op, vqe_result)
-        submission = format_submission(ansatz, qubit_op, vqe_result)
+        submission = format_submission(ansatz, qubit_op, vqe_result, freeze_core)
         ok, _ = grade_json(submission, 'ex5', **criteria)
         if ok:
             print('Feel free to submit your answer.\r\n')
@@ -65,11 +68,12 @@ def grade_ex5(
 def submit_ex5(
     ansatz: QuantumCircuit,
     qubit_op: PauliSumOp,
-    vqe_result: VQEResult
+    vqe_result: VQEResult,
+    freeze_core: Optional[bool] = False
 ) -> None:
     try:
         validate_inputs(ansatz, qubit_op, vqe_result)
-        submission = format_submission(ansatz, qubit_op, vqe_result)
+        submission = format_submission(ansatz, qubit_op, vqe_result, freeze_core)
         submit_json(submission, 'ex5', **criteria)
     except MaxContentError as mce:
         print(f'\nOops 😕! Your solution is larger than expected.')
