@@ -215,13 +215,13 @@ def _job_grading(
 
 
 def _number_grading(
-    answer: int,
+    answer: Union[int, float, complex],
     lab_id: str,
     ex_id: Optional[str] = None,
     is_submit: Optional[bool] = False
 ) -> Tuple[Optional[dict], Optional[str]]:
-    if not isinstance(answer, int):
-        print(f'Expected a integer, but was given {type(answer)}')
+    if not isinstance(answer, (int, float, complex)):
+        print(f'Expected a number, but was given {type(answer)}')
         print(f'Please provide a number as your answer.')
         return None, None
 
@@ -440,7 +440,7 @@ def grade_job(
 
 
 def grade_number(
-    answer: int,
+    answer: Union[int, float, complex],
     lab_id: str,
     ex_id: Optional[str] = None
 ) -> Tuple[bool, Optional[Any]]:
@@ -522,7 +522,7 @@ def submit_job(
 
 
 def submit_number(
-    answer: int,
+    answer: Union[int, float, complex],
     lab_id: str,
     ex_id: Optional[str] = None
 ) -> bool:
