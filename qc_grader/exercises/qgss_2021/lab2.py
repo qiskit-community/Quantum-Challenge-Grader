@@ -1,3 +1,5 @@
+from typing import List
+
 from qiskit import QuantumCircuit
 from qiskit_optimization import QuadraticProgram
 
@@ -7,7 +9,7 @@ from qc_grader.grade import grade_circuit, grade_json
 criteria: dict = {}
 
 
-def grade_lab2_ex1(answer: list) -> None:
+def grade_lab2_ex1(answer: List[int]) -> None:
     ok, _ = grade_json(answer, 'lab2', 'ex1', **criteria)
 
 
