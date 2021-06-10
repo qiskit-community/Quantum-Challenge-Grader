@@ -8,7 +8,6 @@ import warnings
 from functools import wraps
 from typing import Any, Callable, List, Optional, Tuple, Union
 
-
 from qiskit import IBMQ, QuantumCircuit, assemble
 from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
 from qiskit.circuit import Barrier, Gate, Instruction, Measure
@@ -16,6 +15,8 @@ from qiskit.circuit.library import UGate, U3Gate, CXGate
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
+
+from .exercises.qgss_2021.util import display_maxcut_widget, QAOA_widget, graphs
 
 
 class _QobjEncoder(json.encoder.JSONEncoder):
