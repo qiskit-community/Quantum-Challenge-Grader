@@ -35,4 +35,5 @@ def grade_lab1_ex7(answer: list) -> None:
 
 
 def grade_lab1_ex8(circuit: QuantumCircuit) -> None:
-    ok, _ = grade_circuit(circuit, 'lab1', 'ex8', **criteria)
+    decomposed_circuit = circuit.decompose()
+    ok, _ = grade_circuit(decomposed_circuit, 'lab1', 'ex8', **criteria)
