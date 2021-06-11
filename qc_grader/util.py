@@ -12,6 +12,7 @@ from qiskit import IBMQ, QuantumCircuit, assemble
 from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
 from qiskit.circuit import Barrier, Gate, Instruction, Measure
 from qiskit.circuit.library import UGate, U3Gate, CXGate
+from qiskit.providers.aer.noise import NoiseModel
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
@@ -81,6 +82,18 @@ def qobj_to_json(qobj: Union[PulseQobj, QasmQobj]) -> str:
 
 def paulisumop_to_json(op: PauliSumOp) -> str:
     return json.dumps(op.primitive.to_list(), cls=_QobjEncoder)
+
+
+def noisemodel_to_json(noise_model: NoiseModel) -> str:
+    class _NoiseModelEncoder(json.encoder.JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, np.ndarray):
+                return { '__class__': 'ndarray', 'list': obj.tolist() }
+            if isinstance(obj, complex):
+                return { '__class__': 'complex', 're': obj.real, 'im': obj.imag }
+            return json.JSONEncoder.default(self, obj)
+
+    return json.dumps(noise_model.to_dict(), cls=_NoiseModelEncoder)
 
 
 def to_json(result: Any, skip: List = []) -> str:
