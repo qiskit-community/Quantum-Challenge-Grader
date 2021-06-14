@@ -1,5 +1,3 @@
 numpy
 qiskit>=0.25
 requests
-ipycytoscape
-plotly
