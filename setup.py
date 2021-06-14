@@ -31,6 +31,7 @@ setup(
         'numpy',
         'qiskit>=0.25',
         'requests',
+        'networkx',
         'ipycytoscape',
         'plotly'
     ],
