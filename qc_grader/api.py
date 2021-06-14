@@ -4,12 +4,12 @@ import requests
 from typing import Optional, Tuple
 from urllib.parse import urljoin
 
-from . import __version__, challenge_name, challenge_version
+from . import __version__
 
 
 # challenge name and version
-CHALLENGE_NAME: str = os.getenv('QC_NAME', challenge_name)
-CHALLENGE_VERSION: str = os.getenv('QC_VERSION', challenge_version)
+CHALLENGE_NAME: str = os.getenv('QC_NAME', 'IBM Quantum Challenge')
+CHALLENGE_VERSION: str = os.getenv('QC_VERSION', '2021')
 
 # possible challenge API endpoints
 QC_GRADING_LOCAL: list = ['http://127.0.0.1:5000']

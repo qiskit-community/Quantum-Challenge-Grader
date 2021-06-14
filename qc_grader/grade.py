@@ -34,22 +34,6 @@ from .util import (
 )
 
 
-def grade_and_submit(
-    answer: Any,
-    lab_id: str,
-    ex_id: str
-) -> Tuple[bool, Optional[Any]]:
-    connected = 'qac-grading' in get_server_endpoint()
-
-    if isinstance(answer, QuantumCircuit):
-        grade_function = submit_circuit if connected else grade_circuit
-    elif isinstance(answer, (complex, float, int)):
-        grade_function = submit_number if connected else grade_number
-    else:
-        grade_function = submit_json if connected else grade_json
-
-    return grade_function(answer, lab_id, ex_id)
-
 def _circuit_criteria(
     circuit: QuantumCircuit,
     max_qubits: Optional[int] = None,
@@ -231,13 +215,13 @@ def _job_grading(
 
 
 def _number_grading(
-    answer: Union[int, float, complex],
+    answer: int,
     lab_id: str,
     ex_id: Optional[str] = None,
     is_submit: Optional[bool] = False
 ) -> Tuple[Optional[dict], Optional[str]]:
-    if not isinstance(answer, (int, float, complex)):
-        print(f'Expected a number, but was given {type(answer)}')
+    if not isinstance(answer, int):
+        print(f'Expected a integer, but was given {type(answer)}')
         print(f'Please provide a number as your answer.')
         return None, None
 
@@ -456,7 +440,7 @@ def grade_job(
 
 
 def grade_number(
-    answer: Union[int, float, complex],
+    answer: int,
     lab_id: str,
     ex_id: Optional[str] = None
 ) -> Tuple[bool, Optional[Any]]:
@@ -538,7 +522,7 @@ def submit_job(
 
 
 def submit_number(
-    answer: Union[int, float, complex],
+    answer: int,
     lab_id: str,
     ex_id: Optional[str] = None
 ) -> bool:
@@ -633,8 +617,8 @@ def submit_answer(payload: dict, max_content_length: Optional[int] = None) -> bo
         cause = submit_response.get('cause', None)
 
         success = status == 'valid' or status is True
-        # if success:
-        #     notify_provider(access_token)
+        if success:
+            notify_provider(access_token)
 
         handle_submit_response(status, cause=cause)
         return success
@@ -665,11 +649,10 @@ def handle_submit_response(
     status: Union[str, bool], cause: Optional[str] = None
 ) -> None:
     if status == 'valid' or status is True:
-        print('Congratulations 🎉! Your answer is correct and has been submitted.')
+        print('Success 🎉! Your answer has been submitted.')
     elif status == 'invalid' or status is False:
         print(f'Oops 😕! {"Your answer is incorrect" if cause is None else cause}')
-        # print('Make sure your answer is correct and successfully graded before submitting.')
-        print('Please review your answer and try again.')
+        print('Make sure your answer is correct and successfully graded before submitting.')
     elif status == 'notFinished':
         print(f'Job has not finished: {cause}')
         print(f'Please wait for the job to complete, grade it, and then try to submit again.')
