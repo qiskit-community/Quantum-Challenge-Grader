@@ -30,7 +30,9 @@ setup(
     install_requires=[
         'numpy',
         'qiskit>=0.25',
-        'requests'
+        'requests',
+        'ipycytoscape',
+        'plotly'
     ],
     include_package_data=True,
     zip_safe=False,
