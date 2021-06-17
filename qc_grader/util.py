@@ -17,8 +17,6 @@ from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
 
-from .exercises.qgss_2021.util import display_maxcut_widget, QAOA_widget, graphs
-
 
 class _QobjEncoder(json.encoder.JSONEncoder):
     def default(self, obj):
