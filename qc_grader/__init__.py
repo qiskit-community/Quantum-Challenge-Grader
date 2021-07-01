@@ -8,7 +8,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-__version__ = '0.6.1'
+__version__ = '0.6.2'
 
 challenge_name = 'Qiskit Global Summer School'
 challenge_version = '2021'
