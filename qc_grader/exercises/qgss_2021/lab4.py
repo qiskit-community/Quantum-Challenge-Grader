@@ -26,11 +26,5 @@ def grade_lab4_ex3(H_tfi: PauliSumOp) -> None:
     grade_and_submit(answer, 'lab4', 'ex3')
 
 
-def grade_lab4_ex4(tfi_result: Tuple) -> None:
-    answer = []
-    for t in tfi_result:
-        if isinstance(t, np.ndarray):
-            answer.append(t.tolist())
-        else:
-            answer.append(t)
-    grade_and_submit(answer, 'lab4', 'ex4')
+def grade_lab4_ex4(tfi_result: float) -> None:
+    grade_and_submit(tfi_result, 'lab4', 'ex4')
