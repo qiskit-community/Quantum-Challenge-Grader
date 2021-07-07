@@ -68,6 +68,6 @@ quantum-challenge` folder in the **Lab files** panel
     ```python
     from qc_grader import grade_lab1_ex2 
 
-    grade_lab1_ex1(qc_2)
+    grade_lab1_ex2(qc_2)
     ```
 
