@@ -45,29 +45,29 @@ To install the grader locally:
     
     - `QC_GRADING_ENDPOINT` - the URL to the grading server
     - `QXAuthURL` - IBM Quantum Authentication API URL
-    - `QXToken` - IBM Quantum API Token
+    - `QXToken` - IBM Quantum API Token (can be found in **Account Details**)
 
 
 ## Usage
 
 1. Open an exercise notebook
 
-    - For IBM Quantum Lab, the notebooks can be found in the `
+    - In IBM Quantum Lab, the notebooks can be found in the `
 quantum-challenge` folder in the **Lab files** panel
     - For local install, download the notebooks (from IBM Quantum Lab or specific challenge repo) and import into local Jupyter environment
 
 1. Run the notebook cells, answering the exercises and submitting solution for grading. For example
 
     ```python
-    from qiskit.circuit.random import random_circuit
+    from qc_grader import grade_lab1_ex1 
 
-    qc = random_circuit(3, 3)
+    grade_lab1_ex1(qc_1)
     ```
     
     
     ```python
-    from qc_grader import grade_lab1_ex1 
+    from qc_grader import grade_lab1_ex2 
 
-    grade_lab1_ex1(qc)
+    grade_lab1_ex1(qc_2)
     ```
 
