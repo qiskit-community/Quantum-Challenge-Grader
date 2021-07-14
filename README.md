@@ -18,15 +18,7 @@ Pre-requisites:
 
 - [IBM Quantum account](https://quantum-computing.ibm.com/)
 
-To install the grader in IBM Quantum Lab:
-
-1. Log in to [IBM Quantum Lab](https://quantum-computing.ibm.com/lab)
-1. Create a new or open an existing Notebook
-1. In a code cell, run the following code to install the grading client
-
-    ```
-    !pip install -I git+https://github.com/qiskit-community/Quantum-Challenge-Grader.git
-    ```
+The grader comes pre-installed in Quantum Lab and does not need to be installed.
 
 
 ### Run in Docker
