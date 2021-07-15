@@ -66,6 +66,8 @@ Pre-requisites:
     - Classic [Jupyter Notebook](https://jupyter.readthedocs.io/en/latest/install/notebook-classic.html) interface or [JupyterLab](https://jupyterlab.readthedocs.io/en/stable/getting_started/installation.html)
     - [Qiskit](https://qiskit.org/documentation/index.html)
         - `pip install qiskit[all]`
+    - [qiskit_textbook](https://github.com/qiskit-community/qiskit-textbook#installing-the-qiskit_textbook-package) package
+        - `pip install git+https://github.com/qiskit-community/qiskit-textbook.git#subdirectory=qiskit-textbook-src`
 
 To install the grader locally:
 
