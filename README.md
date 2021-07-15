@@ -74,7 +74,7 @@ To install the grader locally:
 1. In the Python environment, install the grading client
 
     ```
-    !pip install -I git+https://github.com/qiskit-community/Quantum-Challenge-Grader.git
+    pip install -I git+https://github.com/qiskit-community/Quantum-Challenge-Grader.git
     ```
 1. Configure the following environment variables
     
