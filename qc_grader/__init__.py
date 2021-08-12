@@ -8,10 +8,10 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-__version__ = '0.6.2'
+__version__ = '0.7.0'
 
-challenge_name = 'Qiskit Global Summer School'
+challenge_name = 'IBM Quantum Challenge Africa'
 challenge_version = '2021'
 
-from qc_grader.exercises.qgss_2021 import *
+from qc_grader.exercises.africa_2021 import *
 
