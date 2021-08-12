@@ -1,5 +1,3 @@
-import json
-
 from enum import Enum
 from functools import partial
 
@@ -38,7 +36,7 @@ def callable_to_MolecularVariation_and_atom_pair(callable):
     return moleculare_variation, atom_pair
 
 
-def molecule_to_json(molecule: Molecule) -> str:
+def molecule_to_dict(molecule: Molecule) -> str:
     if len(molecule._degrees_of_freedom) != 1:
         raise NotImplementedError(
             'serialize_molecule does not currently support more than one degree of freedom'
@@ -57,6 +55,6 @@ def molecule_to_json(molecule: Molecule) -> str:
         'masses': molecule.masses
     }
 
-    return json.dumps(molecule_dict)
+    return molecule_dict
 
 
