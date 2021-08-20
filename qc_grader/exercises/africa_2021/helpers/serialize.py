@@ -21,6 +21,7 @@ from qiskit.circuit.library import  LinearAmplitudeFunction
 from qiskit_finance.circuit.library import LogNormalDistribution
 
 from .molecule import molecule_to_dict
+from .bopess import bopessresult_to_dict
 
 
 def answer_2b(
@@ -98,7 +99,7 @@ def answer_ex3e(
     perturbation_steps: list,
 ) -> dict:
     return {
-        'energy_surface_result': pickle.dumps(energy_surface_result).decode('ISO-8859-1'), #bopessresult_to_json(energy_surface_result),
+        'energy_surface_result': bopessresult_to_dict(energy_surface_result),
         'molecule': molecule_to_dict(molecule),
         'num_electrons': num_electrons,
         'num_molecular_orbitals': num_molecular_orbitals,

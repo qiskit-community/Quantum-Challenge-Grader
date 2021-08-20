@@ -24,6 +24,7 @@ from qiskit.qobj import PulseQobj, QasmQobj
 from .api import get_server_endpoint, send_request, get_access_token, get_submission_endpoint, notify_provider
 from .exercises import get_question_id
 from .util import (
+    QObjEncoder,
     circuit_to_json,
     compute_cost,
     get_job,
@@ -287,7 +288,7 @@ def _json_grading(
         return None, None
 
     payload = {
-        'answer': json.dumps(answer)
+        'answer': json.dumps(answer, skipkeys=True, cls=QObjEncoder)
     }
 
     payload['questionNumber' if is_submit else 'question_id'] = question_id
