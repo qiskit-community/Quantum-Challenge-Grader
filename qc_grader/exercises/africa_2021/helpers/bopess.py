@@ -1,11 +1,7 @@
-import json
-
 from qiskit_nature.results.bopes_sampler_result import BOPESSamplerResult
 
-from qc_grader.util import _QobjEncoder
 
-
-def bopessresult_to_json(result: BOPESSamplerResult) -> str:
+def bopessresult_to_dict(result: BOPESSamplerResult) -> str:
     from copy import deepcopy as copy
 
     result_dict = copy(result.__dict__)
@@ -19,4 +15,4 @@ def bopessresult_to_json(result: BOPESSamplerResult) -> str:
             result_dict['_raw_results'][key]['_raw_result'].__dict__
         )
 
-    return json.dumps(result_dict, cls=_QobjEncoder)
+    return result_dict
