@@ -284,7 +284,7 @@ def _json_grading(
 
     question_id = get_question_id(lab_id, ex_id)
     if question_id < 0:
-        print('Invalid or unsupported argument')
+        print(f'Invalid or unsupported lab/exercise ({lab_id}/{ex_id}) ID: {question_id}')
         return None, None
 
     payload = {
