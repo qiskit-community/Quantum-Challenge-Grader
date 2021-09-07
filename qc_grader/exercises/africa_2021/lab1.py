@@ -22,3 +22,7 @@ def grade_ex1c(tonnage_qaoa: Union[int, float], tonnage_vqe: Union[int, float]) 
         'tonnage_vqe': tonnage_vqe
     }
     grade_and_submit(answer, 'ex1', 'partC')
+
+
+def grade_ex1d(job_id: str) -> None:
+    grade_and_submit(job_id, 'ex1', 'partD', is_job_id=True)

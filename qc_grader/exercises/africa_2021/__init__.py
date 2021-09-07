@@ -2,6 +2,7 @@ from .lab1 import (
     grade_ex1a,
     grade_ex1b,
     grade_ex1c,
+    grade_ex1d
 )
 
 from .lab2 import (

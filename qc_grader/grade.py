@@ -38,7 +38,8 @@ from .util import (
 def grade_and_submit(
     answer: Any,
     lab_id: str,
-    ex_id: str
+    ex_id: str,
+    is_job_id: Optional[bool] = False
 ) -> Tuple[bool, Optional[Any]]:
     connected = 'qac-grading' in get_server_endpoint()
 
@@ -46,10 +47,13 @@ def grade_and_submit(
         grade_function = submit_circuit if connected else grade_circuit
     elif isinstance(answer, (complex, float, int)):
         grade_function = submit_number if connected else grade_number
+    elif isinstance(answer, IBMQJob) or (isinstance(answer, str) and is_job_id):
+        grade_function = submit_job if connected else grade_job
     else:
         grade_function = submit_json if connected else grade_json
 
     return grade_function(answer, lab_id, ex_id)
+
 
 def _circuit_criteria(
     circuit: QuantumCircuit,
@@ -206,13 +210,13 @@ def _job_grading(
         return None, None
 
     header = job.result().header.to_dict()
-    if 'qc_cost' not in header:
-        if is_submit:
-            print('An unprepared answer was specified. '
-                  'Please prepare() and grade() answer before submitting.')
-        else:
-            print('An unprepared answer was specified. Please prepare() answer before grading.')
-        return None, None
+    # if 'qc_cost' not in header:
+    #     if is_submit:
+    #         print('An unprepared answer was specified. '
+    #               'Please prepare() and grade() answer before submitting.')
+    #     else:
+    #         print('An unprepared answer was specified. Please prepare() answer before grading.')
+    #     return None, None
 
     download_url, result_url = get_job_urls(job)
     if not download_url or not result_url:
