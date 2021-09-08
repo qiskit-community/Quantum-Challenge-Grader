@@ -35,10 +35,26 @@ def get_provider() -> AccountProvider:
         current_level = ibmq_logger.level
         ibmq_logger.setLevel(logging.ERROR)
 
-        # get provider
+        # get providers
         try:
-            provider = IBMQ.get_provider(group='q-challenge')
+            providers = IBMQ.providers()
         except IBMQProviderError:
+            IBMQ.load_account()
+            providers = IBMQ.providers()
+
+        # get correct provider
+        provider = None
+        for p in IBMQ.providers():
+            if (
+                "iqc-africa-21" in p.credentials.hub
+                and "q-challenge" in p.credentials.group
+                and "ex1" in p.credentials.project
+            ):
+                # correct provider found
+                provider = p
+
+        # handle no correct provider found
+        if provider == None:
             provider = IBMQ.load_account()
 
         ibmq_logger.setLevel(current_level)
