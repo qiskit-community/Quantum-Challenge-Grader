@@ -37,7 +37,7 @@ def get_provider() -> AccountProvider:
 
         # get provider
         try:
-            provider = IBMQ.get_provider()
+            provider = IBMQ.get_provider(group='q-challenge')
         except IBMQProviderError:
             provider = IBMQ.load_account()
 
