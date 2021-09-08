@@ -44,7 +44,7 @@ def get_provider() -> AccountProvider:
 
         # get correct provider
         provider = None
-        for p in IBMQ.providers():
+        for p in providers:
             if (
                 "iqc-africa-21" in p.credentials.hub
                 and "q-challenge" in p.credentials.group
