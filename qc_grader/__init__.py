@@ -8,7 +8,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-__version__ = '0.7.5'
+__version__ = '0.7.6'
 
 challenge_name = 'IBM Quantum Challenge Africa'
 challenge_version = '2021'
