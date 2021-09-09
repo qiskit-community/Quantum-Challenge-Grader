@@ -636,12 +636,13 @@ def submit_answer(payload: dict, max_content_length: Optional[int] = None) -> bo
         if status is None:
             status = submit_response.get('valid', None)
         cause = submit_response.get('cause', None)
+        score = submit_response.get('score', None)
 
         success = status == 'valid' or status is True
         # if success:
         #     notify_provider(access_token)
 
-        handle_submit_response(status, cause=cause)
+        handle_submit_response(status, cause=cause, score=score)
         return success
     except Exception as err:
         print(f'Failed: {err}')
@@ -667,10 +668,12 @@ def handle_grade_response(
 
 
 def handle_submit_response(
-    status: Union[str, bool], cause: Optional[str] = None
+    status: Union[str, bool], cause: Optional[str] = None, score: Optional[int] = None
 ) -> None:
     if status == 'valid' or status is True:
         print('Congratulations 🎉! Your answer is correct and has been submitted.')
+        if score is not None:
+            print(f'Your score is {score}.')
     elif status == 'invalid' or status is False:
         print(f'Oops 😕! {"Your answer is incorrect" if cause is None else cause}')
         # print('Make sure your answer is correct and successfully graded before submitting.')
