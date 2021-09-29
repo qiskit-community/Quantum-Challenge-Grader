@@ -13,5 +13,5 @@ __version__ = '0.8.0'
 challenge_name = 'IBM Quantum Challenge Fall 2021'
 challenge_version = '2021'
 
-from qc_grader.exercises.iqc_2021_fall import *
+from qc_grader.exercises.fall_2021   import *
 
