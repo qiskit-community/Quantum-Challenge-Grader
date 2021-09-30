@@ -19,3 +19,7 @@ def grade_ex2c(numpy_results: ElectronicStructureResult) -> None:
 def grade_ex2d(vqe_results: ElectronicStructureResult) -> None:
     answer = jsonpickle.encode(vqe_results)
     grade_and_submit(answer, 'ex2', 'partD')
+
+def grade_ex2e(qeom_results: ElectronicStructureResult) -> None:
+    answer = jsonpickle.encode(qeom_results)
+    grade_and_submit(answer, 'ex2', 'partE')
