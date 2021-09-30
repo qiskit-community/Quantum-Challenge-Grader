@@ -1,5 +1,6 @@
 from .challenge1 import (
-    grade_ex1a
+    grade_ex1a,
+    grade_ex1b
 )
 
 from .challenge2 import (
