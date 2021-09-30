@@ -15,3 +15,7 @@ def grade_ex2b(answer: Dict) -> None:
 def grade_ex2c(numpy_results: ElectronicStructureResult) -> None:
     answer = jsonpickle.encode(numpy_results)
     grade_and_submit(answer, 'ex2', 'partC')
+
+def grade_ex2d(vqe_results: ElectronicStructureResult) -> None:
+    answer = jsonpickle.encode(vqe_results)
+    grade_and_submit(answer, 'ex2', 'partD')
