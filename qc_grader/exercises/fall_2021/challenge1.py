@@ -14,3 +14,6 @@ def grade_ex1b(result: MinimumEigenOptimizationResult) -> None:
     answer = jsonpickle.encode(result.x)
     grade_and_submit(answer, 'ex1', 'partB')
 
+def grade_ex1c(result: MinimumEigenOptimizationResult) -> None:
+    answer = jsonpickle.encode(result.x)
+    grade_and_submit(answer, 'ex1', 'partC')
