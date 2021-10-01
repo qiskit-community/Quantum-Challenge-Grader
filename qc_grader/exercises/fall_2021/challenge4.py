@@ -10,12 +10,11 @@ def grade_ex4a(quadratic_program: QuadraticProgram) -> None:
     objective = quadratic_program.objective
 
     answer_dict = {
-                'offset': objective.constant,
-                'matrix': objective.quadratic.to_array(symmetric=True),
-                'linear coeff': objective.linear.to_array()
-            }
-    answer = jsonpickle.encode(answer_dict)
-    grade_and_submit(answer, 'ex4', 'partA')
+                    'offset': objective.constant,
+                    'matrix': objective.quadratic.to_array(symmetric=True),
+                    'linear coeff': objective.linear.to_array()
+                  }
+    grade_and_submit(answer_dict, 'ex4', 'partA')
 
 def grade_ex4b(result: MinimumEigenOptimizationResult) -> None:
     answer = jsonpickle.encode(result.x)
