@@ -11,3 +11,13 @@ from .challenge2 import (
     grade_ex2d,
     grade_ex2e
 )
+
+from .challenge3 import (
+    grade_ex3a
+)
+
+from .challenge4 import (
+    grade_ex4a,
+    grade_ex4b,
+    grade_ex4c
+)
