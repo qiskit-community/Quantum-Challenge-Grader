@@ -6,19 +6,22 @@ from qiskit_optimization.algorithms.minimum_eigen_optimizer import MinimumEigenO
 
 from qc_grader.grade import grade_and_submit
 
+
 def grade_ex4a(quadratic_program: QuadraticProgram) -> None:
     objective = quadratic_program.objective
 
     answer_dict = {
-                    'offset': objective.constant,
-                    'matrix': objective.quadratic.to_array(symmetric=True),
-                    'linear coeff': objective.linear.to_array()
-                  }
+        'offset': objective.constant,
+        'matrix': objective.quadratic.to_array(symmetric=True),
+        'linear coeff': objective.linear.to_array()
+    }
     grade_and_submit(answer_dict, 'ex4', 'partA')
+
 
 def grade_ex4b(result: MinimumEigenOptimizationResult) -> None:
     answer = jsonpickle.encode(result.x)
     grade_and_submit(answer, 'ex4', 'partB')
+
 
 def grade_ex4c(result: MinimumEigenOptimizationResult) -> None:
     answer = jsonpickle.encode(result.x)
