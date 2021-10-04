@@ -18,8 +18,9 @@ def grade_ex4a(quadratic_program: QuadraticProgram) -> None:
     grade_and_submit(answer_dict, 'ex4', 'partA')
 
 
-def grade_ex4b(answer: Any) -> None:
-    print('Grading not yet available')
+def grade_ex4b(function: Any) -> None:
+    answer = jsonpickle.encode(function)
+    grade_and_submit(answer, 'ex4', 'partB')
 
 
 def grade_ex4c(answer: Any) -> None:
