@@ -8,14 +8,10 @@ from qc_grader.grade import grade_and_submit
 
 
 def grade_ex4a(quadratic_program: QuadraticProgram) -> None:
-    objective = quadratic_program.objective
-
-    answer_dict = {
-        'offset': objective.constant,
-        'matrix': objective.quadratic.to_array(symmetric=True),
-        'linear coeff': objective.linear.to_array()
+    answer = {
+        'qp': quadratic_program.export_as_lp_string()
     }
-    grade_and_submit(answer_dict, 'ex4', 'partA')
+    grade_and_submit(answer, 'ex4', 'partA')
 
 
 def grade_ex4b(function: Any) -> None:
