@@ -5,3 +5,4 @@ networkx
 ipycytoscape
 plotly
 jsonpickle
+typeguard

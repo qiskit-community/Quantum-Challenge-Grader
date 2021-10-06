@@ -427,8 +427,8 @@ def run_using_problem_set(
             ins = [inputs[x] for x in params_order]
             function_results = solver_func(*ins)
         return {
-            'indexes': [index],
-            'results': [function_results]
+            'index': index,
+            'result': function_results
         }
     else:
         print('Failed to obtain a valid problem set')

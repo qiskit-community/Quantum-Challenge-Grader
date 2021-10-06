@@ -52,7 +52,8 @@ setup(
         'networkx',
         'ipycytoscape',
         'plotly',
-        'jsonpickle'
+        'jsonpickle',
+        'typeguard'
     ],
     include_package_data=True,
     zip_safe=False,
