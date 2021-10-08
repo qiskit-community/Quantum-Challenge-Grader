@@ -10,32 +10,33 @@ from qc_grader.grade import grade_and_submit
 
 @typechecked
 def grade_ex2a(answer: Dict[str, int]) -> None:
-    grade_and_submit(answer, 'ex2', 'partA')
+    grade_and_submit(answer, '2a')
 
 
 @typechecked
 def grade_ex2b(answer: Dict[str, int]) -> None:
-    grade_and_submit(answer, 'ex2', 'partB')
+    grade_and_submit(answer, '2b')
 
 
 @typechecked
 def grade_ex2c(numpy_results: ElectronicStructureResult) -> None:
     answer = jsonpickle.encode(numpy_results)
-    grade_and_submit(answer, 'ex2', 'partC')
+    grade_and_submit(answer, '2c')
 
 
 @typechecked
 def grade_ex2d(numpy_results: ElectronicStructureResult) -> None:
     answer = jsonpickle.encode(numpy_results)
-    grade_and_submit(answer, 'ex2', 'partD')
+    grade_and_submit(answer, '2d')
 
 
 @typechecked
 def grade_ex2e(numpy_results: ElectronicStructureResult) -> None:
     answer = jsonpickle.encode(numpy_results)
-    grade_and_submit(answer, 'ex2', 'partE')
+    grade_and_submit(answer, '2e')
 
 
 @typechecked
 def grade_ex2f(answer: Any) -> None:
     print('Grading not yet available')
+    # grade_and_submit(answer, '2f')

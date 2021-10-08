@@ -22,4 +22,4 @@ def grade_ex3a(pred_test: np.ndarray, fmap_1: NLocal, fmap_2: NLocal, fmap_3: NL
     }
     answer = pickle.dumps(answer_dict).decode('ISO-8859-1')
 
-    grade_and_submit(answer, 'ex3', 'partA')
+    grade_and_submit(answer, '3a')

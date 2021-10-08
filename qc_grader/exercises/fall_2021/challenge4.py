@@ -16,7 +16,7 @@ def grade_ex4a(quadratic_program: QuadraticProgram) -> None:
         'matrix': objective.quadratic.to_array(symmetric=True),
         'linear coeff': objective.linear.to_array()
     }
-    grade_and_submit(answer_dict, 'ex4', 'partA')
+    grade_and_submit(answer_dict, '4a')
 
 
 @typechecked
@@ -27,9 +27,10 @@ def grade_ex4b(function: Callable) -> None:
         params_order=['L1', 'L2', 'C1', 'C2', 'Cmax']
     )
     if answer:
-        grade_and_submit(answer, 'ex4', 'partB')
+        grade_and_submit(answer, '4b')
 
 
 @typechecked
 def grade_ex4c(answer: Any) -> None:
     print('Grading not yet available')
+    # grade_and_submit(answer, '4c')
