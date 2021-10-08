@@ -13,7 +13,7 @@
 
 import json
 
-from typing import Any, Callable, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from urllib.parse import urljoin
 
 from qiskit import QuantumCircuit, execute
@@ -399,6 +399,40 @@ def prepare_solver(
               'and proceed to grading when it successfully completes.')
 
     return job
+
+
+def run_using_problem_set(
+    solver_func: Callable,
+    lab_id: str,
+    ex_id: Optional[str] = None,
+    params_order: Optional[List[str]] = None
+) -> Optional[Dict[str, Any]]:
+    if not callable(solver_func):
+        print(f'Expected a function, but was given {type(solver_func)}')
+        return None
+
+    server = get_server_endpoint()
+    if not server:
+        print('Could not find a valid grading server or the grading servers are down right now.')
+        return None
+
+    endpoint = server + 'problem-set'
+    index, inputs = get_problem_set(lab_id, ex_id, endpoint)
+
+    if inputs and index is not None and index >= 0:
+        print(f'Running {solver_func.__name__}...', index, len(inputs))
+        if not params_order:
+            function_results = solver_func(*inputs)
+        else:
+            ins = [inputs[x] for x in params_order]
+            function_results = solver_func(*ins)
+        return {
+            'index': index,
+            'result': function_results
+        }
+    else:
+        print('Failed to obtain a valid problem set')
+        return None
 
 
 def grade_circuit(
