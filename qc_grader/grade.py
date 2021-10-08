@@ -428,6 +428,7 @@ def run_using_problem_set(
             function_results = solver_func(*ins)
         return {
             'index': index,
+            'problem-set': inputs,
             'result': function_results
         }
     else:
