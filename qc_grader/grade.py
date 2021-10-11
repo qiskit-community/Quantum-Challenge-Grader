@@ -38,7 +38,7 @@ from .util import (
 def grade_and_submit(
     answer: Any,
     lab_id: str,
-    ex_id: str,
+    ex_id: Optional[str] = None,
     is_job_id: Optional[bool] = False
 ) -> Tuple[bool, Optional[Any]]:
     connected = 'qac-grading' in get_server_endpoint()

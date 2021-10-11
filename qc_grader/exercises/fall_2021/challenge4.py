@@ -25,7 +25,7 @@ def grade_ex4a(quadratic_program: QuadraticProgram) -> None:
     answer = {
         'qp': quadratic_program.export_as_lp_string()
     }
-    grade_and_submit(answer, 'ex4', 'partA')
+    grade_and_submit(answer_dict, '4a')
 
 
 @typechecked
@@ -57,9 +57,10 @@ def grade_ex4b(function: Callable) -> None:
             }
     answer = pickle.dumps(answer_dict).decode('ISO-8859-1')
 
-    grade_and_submit(answer, 'ex4', 'partB')
+    grade_and_submit(answer, '4b')
 
 
 @typechecked
 def grade_ex4c(answer: Any) -> None:
     print('Grading not yet available')
+    # grade_and_submit(answer, '4c')
