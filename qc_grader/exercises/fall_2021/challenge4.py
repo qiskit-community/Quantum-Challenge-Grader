@@ -36,12 +36,8 @@ def grade_ex4b(function: Callable) -> None:
         params_order=['L1', 'L2', 'C1', 'C2', 'Cmax']
     )
 
-    false_inputs = []
-    msg = ""
-
     problem_set_index = answer_dict['index']
     values, weights, max_weight = answer_dict['result']
-
     
     prob = Knapsack(values = values,
                     weights = weights, 
@@ -53,7 +49,6 @@ def grade_ex4b(function: Callable) -> None:
                            seed_transpiler = seed)
     qaoa_mes = QAOA(quantum_instance = qins, reps = 2)
     qaoa = MinimumEigenOptimizer(qaoa_mes)
-
     result = qaoa.solve(qp)
 
     answer_dict = {
