@@ -1,14 +1,11 @@
-from typing import Any
 from typeguard import typechecked
 
 import pickle
-import jsonpickle
 import numpy as np
 
 from qiskit.circuit.library import NLocal
 
 from qc_grader.grade import grade_and_submit
-from qc_grader.util import circuit_to_json
 
 
 @typechecked

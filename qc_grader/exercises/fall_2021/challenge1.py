@@ -1,7 +1,6 @@
 import jsonpickle
 import numpy.typing as npt
 
-from typing import Dict
 from typeguard import typechecked
 
 from qiskit_finance.applications.optimization.portfolio_optimization import PortfolioOptimization

@@ -417,7 +417,7 @@ def run_using_problem_set(
         return None
 
     endpoint = server + 'problem-set'
-    index, inputs = get_problem_set(lab_id, ex_id, endpoint)
+    index, inputs = get_problem_set(lab_id, endpoint)
 
     if inputs and index is not None and index >= 0:
         print(f'Running {solver_func.__name__}...', index, len(inputs))
@@ -603,11 +603,11 @@ def submit_json(
 
 
 def get_problem_set(
-    lab_id: str, ex_id: str, endpoint: str
+    lab_id: str, endpoint: str
 ) -> Tuple[Optional[int], Optional[Any]]:
     problem_set_response = None
 
-    question_id = get_question_id(lab_id, ex_id)
+    question_id = get_question_id(lab_id)
     if question_id < 0:
         print('Invalid or unsupported argument')
         return None, None

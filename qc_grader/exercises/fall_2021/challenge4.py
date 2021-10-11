@@ -1,13 +1,11 @@
 from typing import Any, Callable
 from typeguard import typechecked
-import timeout_decorator
 import pickle
 
 from qiskit import Aer
 from qiskit.algorithms import QAOA
 from qiskit.utils import QuantumInstance
 from qiskit_optimization.problems.quadratic_program import QuadraticProgram
-from qiskit_optimization.algorithms.minimum_eigen_optimizer import MinimumEigenOptimizationResult
 from qiskit_optimization.algorithms import MinimumEigenOptimizer
 from qiskit_optimization.applications import Knapsack
 
@@ -25,14 +23,14 @@ def grade_ex4a(quadratic_program: QuadraticProgram) -> None:
     answer = {
         'qp': quadratic_program.export_as_lp_string()
     }
-    grade_and_submit(answer_dict, '4a')
+    grade_and_submit(answer, '4a')
 
 
 @typechecked
 def grade_ex4b(function: Callable) -> None:
     answer_dict = run_using_problem_set(
         function,
-        'ex4', 'partB',
+        '4b',
         params_order=['L1', 'L2', 'C1', 'C2', 'Cmax']
     )
 
