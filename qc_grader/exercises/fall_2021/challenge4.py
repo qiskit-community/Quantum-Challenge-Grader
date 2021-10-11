@@ -31,7 +31,7 @@ def grade_ex4b(function: Callable) -> None:
     answer_dict = run_using_problem_set(
         function,
         '4b',
-        params_order=['L1', 'L2', 'C1', 'C2', 'Cmax']
+        params_order=['L1', 'L2', 'C1', 'C2', 'C_max']
     )
 
     problem_set_index = answer_dict['index']
