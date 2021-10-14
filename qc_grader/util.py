@@ -46,9 +46,9 @@ def get_provider() -> AccountProvider:
         provider = None
         for p in providers:
             if (
-                "iqc-africa-21" in p.credentials.hub
-                and "q-challenge" in p.credentials.group
-                and "ex1" in p.credentials.project
+                "iqc-fall-21" in p.credentials.hub
+                #and "challenge" in p.credentials.group
+                #and "ex1" in p.credentials.project
             ):
                 # correct provider found
                 provider = p

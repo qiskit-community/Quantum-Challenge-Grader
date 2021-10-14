@@ -98,24 +98,5 @@ def prepare_ex4c(solver_func: Callable) -> IBMQJob:
     )
 
 @typechecked
-def grade_ex4c(function: Callable) -> None:
-    answer_dict = run_using_problem_set(
-        function,
-        '4c',
-        params_order=['L1', 'L2', 'C1', 'C2', 'C_max']
-    )
-
-    problem_set_index = answer_dict['index']
-    values, weights, max_weight = answer_dict['result']
-    qc = function(L1, L2, C1, C2, C_max)
-    job, num_ops, depth = exec_qc(qc, backend)
- 
-
-    answer_dict = {
-            'index': problem_set_index,
-            'result': result
-            }
-    answer = pickle.dumps(answer_dict).decode('ISO-8859-1')
-
-    grade_and_submit(answer, '4b')
-
+def grade_ex4c(job: IBMQJob) -> None:
+    grade_and_submit(job, '4c')
