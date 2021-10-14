@@ -9,11 +9,14 @@ from .challenge2 import (
     grade_ex2b,
     grade_ex2c,
     grade_ex2d,
-    grade_ex2e
+    grade_ex2e,
+    grade_ex2f
 )
 
 from .challenge3 import (
-    grade_ex3a
+    grade_ex3a,
+    grade_ex3b,
+    grade_ex3c
 )
 
 from .challenge4 import (
