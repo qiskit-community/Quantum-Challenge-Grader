@@ -77,15 +77,6 @@ def grade_ex4b(function: Callable) -> None:
     grade_and_submit(answer, '4b')
 
 
-def exec_qc(qc, backend):
-    tqc = transpile(qc, basis_gates=["u1", "u2", "u3", "cx"], optimization_level=0)
-    num_ops = tqc.count_ops()
-    depth = tqc.depth()
-    qobj = assemble(tqc, shots=shots, seed_simulator=seed)
-    job = backend.run(qobj)
-    return job, num_ops, depth
-
-
 def prepare_ex4c(solver_func: Callable) -> IBMQJob:
     return prepare_solver(
         solver_func,
