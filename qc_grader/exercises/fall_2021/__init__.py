@@ -22,5 +22,6 @@ from .challenge3 import (
 from .challenge4 import (
     grade_ex4a,
     grade_ex4b,
+    prepare_ex4c,
     grade_ex4c
 )

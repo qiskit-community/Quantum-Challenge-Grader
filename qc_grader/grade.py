@@ -363,7 +363,7 @@ def prepare_solver(
     server = get_server_endpoint()
     if not server:
         print('Could not find a valid grading server or the grading servers are down right now.')
-        return
+        return None
 
     endpoint = server + 'problem-set'
     index, value = get_problem_set(lab_id, ex_id, endpoint)
@@ -405,8 +405,10 @@ def run_using_problem_set(
     solver_func: Callable,
     lab_id: str,
     ex_id: Optional[str] = None,
-    params_order: Optional[List[str]] = None
-) -> Optional[Dict[str, Any]]:
+    params_order: Optional[List[str]] = None,
+    execute_result: bool = False,
+    **kwargs
+) -> Optional[Union[Dict[str, Any], IBMQJob]]:
     if not callable(solver_func):
         print(f'Expected a function, but was given {type(solver_func)}')
         return None
@@ -422,14 +424,34 @@ def run_using_problem_set(
     if inputs and index is not None and index >= 0:
         print(f'Running {solver_func.__name__}...', index, len(inputs))
         if not params_order:
-            function_results = solver_func(*inputs)
+            function_result = solver_func(*inputs)
         else:
             ins = [inputs[x] for x in params_order]
-            function_results = solver_func(*ins)
-        return {
-            'index': index,
-            'result': function_results
-        }
+            function_result = solver_func(*ins)
+
+        if execute_result:
+            if 'backend' not in kwargs:
+                kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
+
+            # execute experiments
+            print('Starting experiment. Please wait...')
+            job = execute(
+                function_result,
+                qobj_header={
+                    'qc_index': index
+                },
+                **kwargs
+            )
+
+            print(f'You may monitor the job (id: {job.job_id()}) status '
+                   'and proceed to grading when it successfully completes.')
+
+            return job
+        else:
+            return {
+                'index': index,
+                'result': function_result
+            }
     else:
         print('Failed to obtain a valid problem set')
         return None
@@ -602,7 +624,7 @@ def submit_json(
 
 
 def get_problem_set(
-    lab_id: str, ex_id: str, endpoint: str
+    lab_id: str, ex_id: Optional[str], endpoint: str
 ) -> Tuple[Optional[int], Optional[Any]]:
     problem_set_response = None
 
