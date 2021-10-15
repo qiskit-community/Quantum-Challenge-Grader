@@ -19,20 +19,20 @@ def grade_ex2b(answer: Dict[str, int]) -> None:
 
 
 @typechecked
-def grade_ex2c(numpy_results: ElectronicStructureResult) -> None:
-    answer = jsonpickle.encode(numpy_results)
+def grade_ex2c(result: ElectronicStructureResult) -> None:
+    answer = jsonpickle.encode(result)
     grade_and_submit(answer, '2c')
 
 
 @typechecked
-def grade_ex2d(numpy_results: ElectronicStructureResult) -> None:
-    answer = jsonpickle.encode(numpy_results)
+def grade_ex2d(result: ElectronicStructureResult) -> None:
+    answer = jsonpickle.encode(result)
     grade_and_submit(answer, '2d')
 
 
 @typechecked
-def grade_ex2e(numpy_results: ElectronicStructureResult) -> None:
-    answer = jsonpickle.encode(numpy_results)
+def grade_ex2e(result: ElectronicStructureResult) -> None:
+    answer = jsonpickle.encode(result)
     grade_and_submit(answer, '2e')
 
 
