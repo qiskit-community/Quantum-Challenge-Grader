@@ -37,6 +37,7 @@ basis_gates = [
     'mcswap', 'multiplexer', 'kraus', 'roerror'
 ]
 
+
 @typechecked
 def grade_ex4a(quadratic_program: QuadraticProgram) -> None:
     answer = {
@@ -55,23 +56,23 @@ def grade_ex4b(function: Callable) -> None:
 
     problem_set_index = answer_dict['index']
     values, weights, max_weight = answer_dict['result']
-    
-    prob = Knapsack(values = values,
-                    weights = weights, 
-                    max_weight = max_weight)
+
+    prob = Knapsack(values=values,
+                    weights=weights,
+                    max_weight=max_weight)
     qp = prob.to_quadratic_program()
-    qins = QuantumInstance(backend = Aer.get_backend('qasm_simulator'),
-                           shots = shots, 
-                           seed_simulator = seed, 
-                           seed_transpiler = seed)
-    qaoa_mes = QAOA(quantum_instance = qins, reps = 2)
+    qins = QuantumInstance(backend=Aer.get_backend('qasm_simulator'),
+                           shots=shots,
+                           seed_simulator=seed,
+                           seed_transpiler=seed)
+    qaoa_mes = QAOA(quantum_instance=qins, reps=2)
     qaoa = MinimumEigenOptimizer(qaoa_mes)
     result = qaoa.solve(qp)
 
     answer_dict = {
-            'index': problem_set_index,
-            'result': result
-            }
+        'index': problem_set_index,
+        'result': result
+    }
     answer = pickle.dumps(answer_dict).decode('ISO-8859-1')
 
     grade_and_submit(answer, '4b')
@@ -87,6 +88,7 @@ def prepare_ex4c(solver_func: Callable) -> IBMQJob:
         seed_simulator=12345,
         optimization_level=0
     )
+
 
 @typechecked
 def grade_ex4c(job: IBMQJob) -> None:
