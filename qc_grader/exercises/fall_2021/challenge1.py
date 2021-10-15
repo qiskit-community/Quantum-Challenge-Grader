@@ -3,14 +3,14 @@ import numpy.typing as npt
 
 from typeguard import typechecked
 
-from qiskit_finance.applications.optimization.portfolio_optimization import PortfolioOptimization
+from qiskit_optimization import QuadraticProgram
 
 from qc_grader.grade import grade_and_submit
 
 
 @typechecked
-def grade_ex1a(portfolio: PortfolioOptimization) -> None:
-    answer = jsonpickle.encode(portfolio)
+def grade_ex1a(qp: QuadraticProgram) -> None:
+    answer = jsonpickle.encode(qp.export_as_lp_string())
     grade_and_submit(answer, '1a')
 
 
