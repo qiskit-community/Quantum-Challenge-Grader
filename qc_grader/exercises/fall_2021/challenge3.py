@@ -12,7 +12,8 @@ from qc_grader.grade import grade_and_submit
 
 @typechecked
 def grade_ex3a(qc: QuantumCircuit) -> None:
-    grade_and_submit(qc, '3a')
+    answer = pickle.dumps(qc).decode('ISO-8859-1')
+    grade_and_submit(answer, '3a')
 
 
 @typechecked
