@@ -375,7 +375,7 @@ def prepare_solver(
         indices.append(index)
 
         if inputs and index is not None and index >= 0:
-            print(f'Running {solver_func.__name__}... problem set #{index}, input size {len(inputs)}')
+            print(f'Running {solver_func.__name__}... problem set #{index}')
             if not params_order:
                 qc.append(solver_func(*inputs))
             else:
@@ -385,13 +385,13 @@ def prepare_solver(
             print('Failed to obtain a valid problem set')
             return None
 
-        _, cost = _circuit_criteria(
-            qc[n],
-            max_qubits=max_qubits,
-            min_cost=min_cost,
-            check_gates=check_gates
-        )
-        costs.append(cost)
+        # _, cost = _circuit_criteria(
+        #     qc[n],
+        #     max_qubits=max_qubits,
+        #     min_cost=min_cost,
+        #     check_gates=check_gates
+        # )
+        # costs.append(cost)
 
     if 'backend' not in kwargs:
         kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
@@ -401,8 +401,8 @@ def prepare_solver(
     job = execute(
             qc, 
             qobj_header={
-            'qc_index': indices,
-            'qc_cost': costs
+            'qc_index': indices
+            # 'qc_cost': costs
         },
         **kwargs
     )
