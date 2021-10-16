@@ -346,6 +346,7 @@ def prepare_circuit(
 def prepare_solver(
     solver_func: Callable,
     lab_id: str,
+    ex_id: Optional[str] = None,
     max_qubits: Optional[int] = 28,
     min_cost: Optional[int] = None,
     check_gates: Optional[bool] = False,
@@ -371,7 +372,7 @@ def prepare_solver(
     endpoint = server + 'problem-set'
 
     for n in range(num_circuits):
-        index, inputs = get_problem_set(lab_id, endpoint)
+        index, inputs = get_problem_set(lab_id, ex_id, endpoint)
         indices.append(index)
 
         if inputs and index is not None and index >= 0:
@@ -431,7 +432,7 @@ def run_using_problem_set(
         return None
 
     endpoint = server + 'problem-set'
-    index, inputs = get_problem_set(lab_id, endpoint)
+    index, inputs = get_problem_set(lab_id, ex_id, endpoint)
 
     if inputs and index is not None and index >= 0:
         print(f'Running {solver_func.__name__}...', index, len(inputs))
