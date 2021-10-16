@@ -1,8 +1,6 @@
-import jsonpickle
 import pickle
-import numpy.typing as npt
+import jsonpickle
 
-from typing import Dict
 from typeguard import typechecked
 
 from qiskit_optimization import QuadraticProgram
@@ -12,10 +10,8 @@ from qc_grader.grade import grade_and_submit
 
 
 @typechecked
-def grade_ex1a(quadratic_program: QuadraticProgram) -> None:
-    answer = {
-        'qp': quadratic_program.export_as_lp_string()
-    }
+def grade_ex1a(qp: QuadraticProgram) -> None:
+    answer = jsonpickle.encode(qp.export_as_lp_string())
     grade_and_submit(answer, '1a')
 
 
@@ -26,10 +22,8 @@ def grade_ex1b(result: MinimumEigenOptimizationResult) -> None:
 
 
 @typechecked
-def grade_ex1c(quadratic_program: QuadraticProgram) -> None:
-    answer = {
-        'qp': quadratic_program.export_as_lp_string()
-    }
+def grade_ex1c(qp: QuadraticProgram) -> None:
+    answer = jsonpickle.encode(qp.export_as_lp_string())
     grade_and_submit(answer, '1c')
 
 

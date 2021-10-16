@@ -1,4 +1,3 @@
-from typing import Any
 from typeguard import typechecked
 
 import pickle

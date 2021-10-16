@@ -347,13 +347,17 @@ def prepare_solver(
     solver_func: Callable,
     lab_id: str,
     ex_id: Optional[str] = None,
-    problem_set: Optional[Any] = None,
     max_qubits: Optional[int] = 28,
     min_cost: Optional[int] = None,
     check_gates: Optional[bool] = False,
     **kwargs
 ) -> Optional[IBMQJob]:
     job = None
+    params_order=['L1', 'L2', 'C1', 'C2', 'C_max']
+    num_circuits = 5
+    qc = []
+    indices = []
+    costs = []
 
     if not callable(solver_func):
         print(f'Expected a function, but was given {type(solver_func)}')
@@ -366,37 +370,46 @@ def prepare_solver(
         return None
 
     endpoint = server + 'problem-set'
-    index, value = get_problem_set(lab_id, ex_id, endpoint)
 
-    print(f'Running {solver_func.__name__}...')
-    qc_1 = solver_func(problem_set)
+    for n in range(num_circuits):
+        index, inputs = get_problem_set(lab_id, ex_id, endpoint)
+        indices.append(index)
 
-    _, cost = _circuit_criteria(
-        qc_1,
-        max_qubits=max_qubits,
-        min_cost=min_cost,
-        check_gates=check_gates
+        if inputs and index is not None and index >= 0:
+            print(f'Running {solver_func.__name__}... problem set #{index}')
+            if not params_order:
+                qc.append(solver_func(*inputs))
+            else:
+                ins = [inputs[x] for x in params_order]
+                qc.append(solver_func(*ins))
+        else:
+            print('Failed to obtain a valid problem set')
+            return None
+
+        # _, cost = _circuit_criteria(
+        #     qc[n],
+        #     max_qubits=max_qubits,
+        #     min_cost=min_cost,
+        #     check_gates=check_gates
+        # )
+        # costs.append(cost)
+
+    if 'backend' not in kwargs:
+        kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
+
+    # execute experiments
+    print('Starting experiments. Please wait...')
+    job = execute(
+            qc, 
+            qobj_header={
+            'qc_index': indices
+            # 'qc_cost': costs
+        },
+        **kwargs
     )
 
-    if value and index is not None and index >= 0 and cost is not None:
-        qc_2 = solver_func(value)
-
-        if 'backend' not in kwargs:
-            kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
-
-        # execute experiments
-        print('Starting experiments. Please wait...')
-        job = execute(
-            [qc_1, qc_2],
-            qobj_header={
-                'qc_index': [None, index],
-                'qc_cost': cost
-            },
-            **kwargs
-        )
-
-        print(f'You may monitor the job (id: {job.job_id()}) status '
-              'and proceed to grading when it successfully completes.')
+    print(f'You may monitor the job (id: {job.job_id()}) status '
+          'and proceed to grading when it successfully completes.')
 
     return job
 
@@ -427,31 +440,12 @@ def run_using_problem_set(
             function_result = solver_func(*inputs)
         else:
             ins = [inputs[x] for x in params_order]
-            function_result = solver_func(*ins)
-
-        if execute_result:
-            if 'backend' not in kwargs:
-                kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
-
-            # execute experiments
-            print('Starting experiment. Please wait...')
-            job = execute(
-                function_result,
-                qobj_header={
-                    'qc_index': index
-                },
-                **kwargs
-            )
-
-            print(f'You may monitor the job (id: {job.job_id()}) status '
-                   'and proceed to grading when it successfully completes.')
-
-            return job
-        else:
-            return {
-                'index': index,
-                'result': function_result
-            }
+            function_results = solver_func(*ins)
+        return {
+            'index': index,
+            'problem-set': inputs,
+            'result': function_results
+        }
     else:
         print('Failed to obtain a valid problem set')
         return None
