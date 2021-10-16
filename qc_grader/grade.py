@@ -366,7 +366,7 @@ def prepare_solver(
     server = get_server_endpoint()
     if not server:
         print('Could not find a valid grading server or the grading servers are down right now.')
-        return
+        return None
 
     endpoint = server + 'problem-set'
 
@@ -417,8 +417,10 @@ def run_using_problem_set(
     solver_func: Callable,
     lab_id: str,
     ex_id: Optional[str] = None,
-    params_order: Optional[List[str]] = None
-) -> Optional[Dict[str, Any]]:
+    params_order: Optional[List[str]] = None,
+    execute_result: bool = False,
+    **kwargs
+) -> Optional[Union[Dict[str, Any], IBMQJob]]:
     if not callable(solver_func):
         print(f'Expected a function, but was given {type(solver_func)}')
         return None
@@ -434,7 +436,7 @@ def run_using_problem_set(
     if inputs and index is not None and index >= 0:
         print(f'Running {solver_func.__name__}...', index, len(inputs))
         if not params_order:
-            function_results = solver_func(*inputs)
+            function_result = solver_func(*inputs)
         else:
             ins = [inputs[x] for x in params_order]
             function_results = solver_func(*ins)
@@ -615,11 +617,11 @@ def submit_json(
 
 
 def get_problem_set(
-    lab_id: str, endpoint: str
+    lab_id: str, ex_id: Optional[str], endpoint: str
 ) -> Tuple[Optional[int], Optional[Any]]:
     problem_set_response = None
 
-    question_id = get_question_id(lab_id)
+    question_id = get_question_id(lab_id, ex_id)
     if question_id < 0:
         print('Invalid or unsupported argument')
         return None, None

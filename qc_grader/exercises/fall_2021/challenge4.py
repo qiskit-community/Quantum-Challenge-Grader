@@ -1,4 +1,4 @@
-from typing import Any, Callable
+from typing import Any, Callable, Dict, Union
 from typeguard import typechecked
 import pickle
 
