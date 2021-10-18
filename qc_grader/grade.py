@@ -338,8 +338,8 @@ def prepare_circuit(
     )
 
     print(f'You may monitor the job (id: {job.job_id()}) status '
-        'and proceed to grading when it successfully completes.')
-        
+          'and proceed to grading when it successfully completes.')
+
     return job
 
 
@@ -353,11 +353,10 @@ def prepare_solver(
     **kwargs
 ) -> Optional[IBMQJob]:
     job = None
-    params_order=['L1', 'L2', 'C1', 'C2', 'C_max']
+    params_order = ['L1', 'L2', 'C1', 'C2', 'C_max']
     num_circuits = 5
-    qc = []
+    circuits = []
     indices = []
-    costs = []
 
     if not callable(solver_func):
         print(f'Expected a function, but was given {type(solver_func)}')
@@ -378,10 +377,13 @@ def prepare_solver(
         if inputs and index is not None and index >= 0:
             print(f'Running {solver_func.__name__}... problem set #{index}')
             if not params_order:
-                qc.append(solver_func(*inputs))
+                qc = solver_func(*inputs)
             else:
                 ins = [inputs[x] for x in params_order]
-                qc.append(solver_func(*ins))
+                qc = solver_func(*ins)
+
+            qc.metadata = {'qc_index': index}
+            circuits.append(qc)
         else:
             print('Failed to obtain a valid problem set')
             return None
@@ -400,13 +402,12 @@ def prepare_solver(
     # execute experiments
     print('Starting experiments. Please wait...')
     job = execute(
-            qc, 
+            circuits,
             qobj_header={
-            'qc_index': indices
-            # 'qc_cost': costs
-        },
-        **kwargs
-    )
+                'qc_index': indices
+            },
+            **kwargs
+        )
 
     print(f'You may monitor the job (id: {job.job_id()}) status '
           'and proceed to grading when it successfully completes.')
