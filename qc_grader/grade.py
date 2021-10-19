@@ -463,8 +463,17 @@ def prepare_vqe_runtime_program(
     problem: ElectronicStructureProblem,
     **kwargs
 ) -> Optional[IBMQJob]:
-    # check provider
-    # check backend
+    challenge_provider = get_provider()
+    ibmq_qasm_simulator = get_provider().get_backend('ibmq_qasm_simulator')
+
+    # check provider is challenge provider, overwrite if otherwise
+    if runtime_vqe.provider != challenge_provider:
+        print('You are not using the challenge provider. Overwriting provider...')
+        runtime_vqe.provider = challenge_provider
+    # check backend is simulator, overwrite if otherwise
+    if runtime_vqe.backend != ibmq_qasm_simulator:
+        print('You are not using the ibmq_qasm_simulator backend. Overwriting backend...')
+        runtime_vqe.backend = ibmq_qasm_simulator
     # execute experiments
     print('Starting experiment. Please wait...')
     second_q_ops = problem.second_q_ops()
