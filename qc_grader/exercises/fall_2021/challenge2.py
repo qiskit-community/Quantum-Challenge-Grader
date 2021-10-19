@@ -130,19 +130,8 @@ def prepare_ex2f(
 
     return job
 
-    
-@typechecked
-def grade_ex2f(
-        runtime_vqe: VQEProgram,
-        qubit_converter: QubitConverter,
-        problem: ElectronicStructureProblem
-) -> None:
-    # check provider
-    # check backend
-    # create ground state solver
-    runtime_gse = GroundStateEigensolver(qubit_converter, runtime_vqe)
-    print('Running VQE Runtime job, this can take a few minutes.')
-    runtime_vqe_results = runtime_gse.solve(problem)
 
-    answer = jsonpickle.encode(runtime_vqe_results)
+@typechecked
+def grade_ex2f(job: RuntimeJob) -> None:
+    answer = jsonpickle.encode(job.result())
     grade_and_submit(answer, '2f')
