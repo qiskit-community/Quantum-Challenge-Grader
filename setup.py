@@ -53,7 +53,8 @@ setup(
         'ipycytoscape',
         'plotly',
         'jsonpickle',
-        'typeguard'
+        'typeguard',
+        'jupyterplot'
     ],
     include_package_data=True,
     zip_safe=False,

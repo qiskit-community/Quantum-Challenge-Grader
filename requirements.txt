@@ -6,3 +6,4 @@ ipycytoscape
 plotly
 jsonpickle
 typeguard
+jupyterplot
