@@ -1,11 +1,17 @@
-from typing import Any, Dict
+from typing import Dict
 from typeguard import typechecked
 
 from qiskit_nature.results.electronic_structure_result import ElectronicStructureResult
+from qiskit_nature.runtime import VQEProgram
+from qiskit_nature.converters.second_quantization import QubitConverter
+from qiskit_nature.problems.second_quantization.electronic import ElectronicStructureProblem
+
+from qiskit.providers import JobStatus
+from qiskit.providers.ibmq.runtime import RuntimeJob
 
 import jsonpickle
 
-from qc_grader.grade import grade_and_submit
+from qc_grader.grade import grade_and_submit, prepare_vqe_runtime_program
 
 
 @typechecked
@@ -37,6 +43,22 @@ def grade_ex2e(result: ElectronicStructureResult) -> None:
 
 
 @typechecked
-def grade_ex2f(answer: Any) -> None:
-    print('Grading not yet available')
-    # grade_and_submit(answer, '2f')
+def prepare_ex2f(
+    runtime_vqe: VQEProgram,
+    qubit_converter: QubitConverter,
+    problem: ElectronicStructureProblem
+) -> RuntimeJob:
+    return prepare_vqe_runtime_program(runtime_vqe, qubit_converter, problem)
+
+
+@typechecked
+def grade_ex2f(job: RuntimeJob) -> None:
+    job_status = job.status()
+    if job_status in [JobStatus.CANCELLED, JobStatus.ERROR]:
+        print(f'Job did not successfully complete: {job_status.value}.')
+    elif job_status is not JobStatus.DONE:
+        print(f'Job has not yet completed: {job_status.value}.')
+        print(f'Please wait for the job (id: {job.job_id()}) to complete then try again.')
+    else:
+        answer = jsonpickle.encode(job.result())
+        grade_and_submit(answer, '2f')

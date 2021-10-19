@@ -5,8 +5,8 @@ import pickle
 from qiskit import Aer
 from qiskit.algorithms import QAOA
 from qiskit.utils import QuantumInstance
-from qiskit.providers.ibmq.job.ibmqjob import IBMQJob
-from qiskit_optimization.problems.quadratic_program import QuadraticProgram
+from qiskit.providers.ibmq.job import IBMQJob
+from qiskit_optimization.problems import QuadraticProgram
 from qiskit_optimization.algorithms import MinimumEigenOptimizer
 from qiskit_optimization.applications import Knapsack
 
