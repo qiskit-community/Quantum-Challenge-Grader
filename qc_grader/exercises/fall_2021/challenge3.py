@@ -1,17 +1,23 @@
 from typeguard import typechecked
 
 import pickle
+import jsonpickle
 import numpy as np
 
 from qiskit import QuantumCircuit
 from qiskit.circuit.library import NLocal
+from qiskit.quantum_info import Statevector
 
 from qc_grader.grade import grade_and_submit
 
 
 @typechecked
-def grade_ex3a(qc: QuantumCircuit) -> None:
-    answer = pickle.dumps(qc).decode('ISO-8859-1')
+def grade_ex3a(fmap: NLocal) -> None:
+    x = [-0.5, -0.4, 0.3, 0, -0.9]
+    qc = fmap.bind_parameters(x)
+    statevector = Statevector.from_instruction(qc)
+
+    answer = jsonpickle.encode(statevector)
     grade_and_submit(answer, '3a')
 
 
