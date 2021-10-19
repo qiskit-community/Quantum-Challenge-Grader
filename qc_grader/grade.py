@@ -415,6 +415,32 @@ def prepare_solver(
     return job
 
 
+def prepare_runtime_program(
+    circuit: QuantumCircuit,
+    **kwargs
+) -> Optional[IBMQJob]:
+    job = None
+
+    if not isinstance(circuit, QuantumCircuit):
+        print(f'Expected a QuantumCircuit, but was given {type(circuit)}')
+        print(f'Please provide a circuit.')
+        return None
+
+    if 'backend' not in kwargs:
+        kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
+
+    # execute experiments
+    print('Starting experiment. Please wait...')
+    job = provider.runtime.run(program_id="vqe",
+                           options=options,
+                           inputs=program_inputs,
+                           callback=interim_result_callback
+                          )
+
+    print(f'You may monitor the job (id: {job.job_id()}) status '
+          'and proceed to grading when it successfully completes.')
+
+
 def run_using_problem_set(
     solver_func: Callable,
     lab_id: str,
