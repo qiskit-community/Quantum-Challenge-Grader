@@ -13,18 +13,31 @@
 
 import json
 
-from typing import Any, Callable, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from urllib.parse import urljoin
 
 from qiskit import QuantumCircuit, execute
 from qiskit.providers import JobStatus
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
+from qiskit.opflow import PauliSumOp
+from qiskit.quantum_info import SparsePauliOp
 
-from .api import get_server_endpoint, send_request, get_access_token, get_submission_endpoint, notify_provider
+from qiskit_nature.runtime import VQEProgram
+from qiskit_nature.converters.second_quantization import QubitConverter
+from qiskit_nature.problems.second_quantization.electronic import ElectronicStructureProblem
+
+from .api import (
+    get_server_endpoint,
+    send_request,
+    get_access_token,
+    get_submission_endpoint,
+    notify_provider
+)
 from .exercises import get_question_id
 from .util import (
     QObjEncoder,
+    calc_depth,
     circuit_to_json,
     compute_cost,
     get_job,
@@ -38,7 +51,7 @@ from .util import (
 def grade_and_submit(
     answer: Any,
     lab_id: str,
-    ex_id: str,
+    ex_id: Optional[str] = None,
     is_job_id: Optional[bool] = False
 ) -> Tuple[bool, Optional[Any]]:
     connected = 'qac-grading' in get_server_endpoint()
@@ -338,8 +351,8 @@ def prepare_circuit(
     )
 
     print(f'You may monitor the job (id: {job.job_id()}) status '
-        'and proceed to grading when it successfully completes.')
-        
+          'and proceed to grading when it successfully completes.')
+
     return job
 
 
@@ -347,13 +360,17 @@ def prepare_solver(
     solver_func: Callable,
     lab_id: str,
     ex_id: Optional[str] = None,
-    problem_set: Optional[Any] = None,
     max_qubits: Optional[int] = 28,
     min_cost: Optional[int] = None,
     check_gates: Optional[bool] = False,
+    num_experiments: Optional[int] = 4,
+    params_order: Optional[List[str]] = None,
+    test_problem_set: Optional[List[Dict[str, Any]]] = None,
     **kwargs
 ) -> Optional[IBMQJob]:
     job = None
+    circuits = []
+    indices = []
 
     if not callable(solver_func):
         print(f'Expected a function, but was given {type(solver_func)}')
@@ -363,42 +380,201 @@ def prepare_solver(
     server = get_server_endpoint()
     if not server:
         print('Could not find a valid grading server or the grading servers are down right now.')
-        return
+        return None
 
     endpoint = server + 'problem-set'
-    index, value = get_problem_set(lab_id, ex_id, endpoint)
 
-    print(f'Running {solver_func.__name__}...')
-    qc_1 = solver_func(problem_set)
+    if test_problem_set:
+        num_tests = len(test_problem_set)
+        for test_inputs in test_problem_set:
+            indices.append(None)
+            print(f'Running test ({len(indices)}/{num_tests})... ')
+            if not params_order:
+                qc = solver_func(*test_inputs)
+            else:
+                ins = [test_inputs[x] for x in params_order]
+                qc = solver_func(*ins)
+            d, n = calc_depth(qc)
+            qc.metadata = {'qc_depth': json.dumps([d, n])}
+            circuits.append(qc)
 
-    _, cost = _circuit_criteria(
-        qc_1,
-        max_qubits=max_qubits,
-        min_cost=min_cost,
-        check_gates=check_gates
-    )
+    count = 0
+    while count < num_experiments:
+        index, inputs = get_problem_set(lab_id, ex_id, endpoint)
+        if index not in indices:
+            if inputs and index is not None and index >= 0:
+                count += 1
+                print(f'Running "{solver_func.__name__}" ({count}/{num_experiments})... ')
+                if not params_order:
+                    qc = solver_func(*inputs)
+                else:
+                    ins = [inputs[x] for x in params_order]
+                    qc = solver_func(*ins)
 
-    if value and index is not None and index >= 0 and cost is not None:
-        qc_2 = solver_func(value)
+                indices.append(index)
+                qc.metadata = {'qc_index': index}
+                circuits.append(qc)
+            else:
+                print('Failed to obtain a valid problem set')
+                return None
 
-        if 'backend' not in kwargs:
-            kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
+        # _, cost = _circuit_criteria(
+        #     qc[n],
+        #     max_qubits=max_qubits,
+        #     min_cost=min_cost,
+        #     check_gates=check_gates
+        # )
+        # costs.append(cost)
 
-        # execute experiments
-        print('Starting experiments. Please wait...')
-        job = execute(
-            [qc_1, qc_2],
-            qobj_header={
-                'qc_index': [None, index],
-                'qc_cost': cost
-            },
+    if 'backend' not in kwargs:
+        kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
+
+    # execute experiments
+    print('Starting experiments. Please wait...')
+    job = execute(
+            circuits,
             **kwargs
         )
 
-        print(f'You may monitor the job (id: {job.job_id()}) status '
-              'and proceed to grading when it successfully completes.')
+    print(f'You may monitor the job (id: {job.job_id()}) status '
+          'and proceed to grading when it successfully completes.')
 
     return job
+
+
+# for prepare_vqe_runtime_program
+# adapted from VQEProgram in Qiskit Nature
+# https://github.com/Qiskit/qiskit-nature/blob/0.2.2/qiskit_nature/runtime/vqe_program.py
+def _convert_to_paulisumop(operator):
+    """Attempt to convert the operator to a PauliSumOp."""
+    if isinstance(operator, PauliSumOp):
+        return operator
+
+    try:
+        primitive = SparsePauliOp(operator.primitive)
+        return PauliSumOp(primitive, operator.coeff)
+    except Exception as exc:
+        raise ValueError(
+            f"Invalid type of the operator {type(operator)} "
+            "must be PauliSumOp, or castable to one."
+        ) from exc
+
+
+def _wrap_vqe_callback(runtime_vqe) -> Optional[Callable]:
+    """Wraps and returns the given callback to match the signature of the runtime callback."""
+
+    def wrapped_callback(*args):
+        _, data = args  # first element is the job id
+        iteration_count = data[0]
+        params = data[1]
+        mean = data[2]
+        sigma = data[3]
+        return runtime_vqe.callback(iteration_count, params, mean, sigma)
+
+    # if callback is set, return wrapped callback, else return None
+    if runtime_vqe.callback:
+        return wrapped_callback
+    else:
+        return None
+
+
+def prepare_vqe_runtime_program(
+    runtime_vqe: VQEProgram,
+    qubit_converter: QubitConverter,
+    problem: ElectronicStructureProblem,
+    **kwargs
+) -> Optional[IBMQJob]:
+    challenge_provider = get_provider()
+    ibmq_qasm_simulator = get_provider().get_backend('ibmq_qasm_simulator')
+
+    # check provider is challenge provider, overwrite if otherwise
+    if runtime_vqe.provider != challenge_provider:
+        print('You are not using the challenge provider. Overwriting provider...')
+        runtime_vqe.provider = challenge_provider
+    # check backend is simulator, overwrite if otherwise
+    if runtime_vqe.backend != ibmq_qasm_simulator:
+        print('You are not using the ibmq_qasm_simulator backend. Overwriting backend...')
+        runtime_vqe.backend = ibmq_qasm_simulator
+    # execute experiments
+    print('Starting experiment. Please wait...')
+    second_q_ops = problem.second_q_ops()
+
+    operator = qubit_converter.convert(
+        second_q_ops[0],
+        num_particles=problem.num_particles,
+        sector_locator=problem.symmetry_sector_locator,
+    )
+    aux_operators = qubit_converter.convert_match(second_q_ops[1:])
+
+    # try to convert the operators to a PauliSumOp, if it isn't already one
+    operator = _convert_to_paulisumop(operator)
+    if aux_operators is not None:
+        aux_operators = [_convert_to_paulisumop(aux_op) for aux_op in aux_operators]
+
+    # combine the settings with the given operator to runtime inputs
+    inputs = {
+        "operator": operator,
+        "aux_operators": aux_operators,
+        "ansatz": runtime_vqe.ansatz,
+        "optimizer": runtime_vqe.optimizer,
+        "initial_point": runtime_vqe.initial_point,
+        "shots": runtime_vqe.shots,
+        "measurement_error_mitigation": runtime_vqe.measurement_error_mitigation,
+        "store_intermediate": runtime_vqe.store_intermediate,
+    }
+
+    # define runtime options
+    options = {"backend_name": runtime_vqe.backend.name()}
+
+    # send job to runtime and return result
+    job = runtime_vqe.provider.runtime.run(
+        program_id='vqe',
+        inputs=inputs,
+        options=options,
+        callback=_wrap_vqe_callback(runtime_vqe),
+    )
+
+    print(f'You may monitor the job (id: {job.job_id()}) status '
+          'and proceed to grading when it successfully completes.')
+
+    return job
+
+
+def run_using_problem_set(
+    solver_func: Callable,
+    lab_id: str,
+    ex_id: Optional[str] = None,
+    params_order: Optional[List[str]] = None,
+    execute_result: bool = False,
+    **kwargs
+) -> Optional[Union[Dict[str, Any], IBMQJob]]:
+    if not callable(solver_func):
+        print(f'Expected a function, but was given {type(solver_func)}')
+        return None
+
+    server = get_server_endpoint()
+    if not server:
+        print('Could not find a valid grading server or the grading servers are down right now.')
+        return None
+
+    endpoint = server + 'problem-set'
+    index, inputs = get_problem_set(lab_id, ex_id, endpoint)
+
+    if inputs and index is not None and index >= 0:
+        print(f'Running "{solver_func.__name__}"...')
+        if not params_order:
+            function_results = solver_func(*inputs)
+        else:
+            ins = [inputs[x] for x in params_order]
+            function_results = solver_func(*ins)
+        return {
+            'index': index,
+            'problem-set': inputs,
+            'result': function_results
+        }
+    else:
+        print('Failed to obtain a valid problem set')
+        return None
 
 
 def grade_circuit(
@@ -568,7 +744,7 @@ def submit_json(
 
 
 def get_problem_set(
-    lab_id: str, ex_id: str, endpoint: str
+    lab_id: str, ex_id: Optional[str], endpoint: str
 ) -> Tuple[Optional[int], Optional[Any]]:
     problem_set_response = None
 
@@ -639,8 +815,8 @@ def submit_answer(payload: dict, max_content_length: Optional[int] = None) -> bo
         score = submit_response.get('score', None)
 
         success = status == 'valid' or status is True
-        # if success:
-        #     notify_provider(access_token)
+        if success:
+            notify_provider(access_token)
 
         handle_submit_response(status, cause=cause, score=score)
         return success
