@@ -561,7 +561,7 @@ def run_using_problem_set(
     index, inputs = get_problem_set(lab_id, ex_id, endpoint)
 
     if inputs and index is not None and index >= 0:
-        print(f'Running {solver_func.__name__}...', index, len(inputs))
+        print(f'Running "{solver_func.__name__}"...')
         if not params_order:
             function_result = solver_func(*inputs)
         else:
