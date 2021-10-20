@@ -12,6 +12,7 @@ from qiskit import IBMQ, QuantumCircuit, assemble
 from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
 from qiskit.circuit import Barrier, Gate, Instruction, Measure
 from qiskit.circuit.library import UGate, U3Gate, CXGate
+from qiskit.compiler import transpile
 from qiskit.providers.aer.noise import NoiseModel
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
@@ -46,9 +47,9 @@ def get_provider() -> AccountProvider:
         provider = None
         for p in providers:
             if (
-                "iqc-africa-21" in p.credentials.hub
-                and "q-challenge" in p.credentials.group
-                and "ex1" in p.credentials.project
+                "iqc-fall-21" in p.credentials.hub
+                #and "challenge" in p.credentials.group
+                #and "ex1" in p.credentials.project
             ):
                 # correct provider found
                 provider = p
@@ -184,3 +185,12 @@ def uses_multiqubit_gate(circuit: QuantumCircuit) -> bool:
             return True
 
     return False
+
+
+def calc_depth(qc: QuantumCircuit):
+    tqc = transpile(
+        qc, basis_gates=['u1', 'u2', 'u3', 'cx'], optimization_level=0
+    )
+    num_ops = tqc.count_ops()
+    depth = tqc.depth()
+    return depth, num_ops

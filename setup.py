@@ -51,7 +51,10 @@ setup(
         'requests',
         'networkx',
         'ipycytoscape',
-        'plotly'
+        'plotly',
+        'jsonpickle',
+        'typeguard',
+        'jupyterplot'
     ],
     include_package_data=True,
     zip_safe=False,

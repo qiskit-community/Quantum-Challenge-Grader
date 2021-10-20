@@ -8,10 +8,9 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-__version__ = '0.7.6'
+__version__ = '0.8.0'
 
-challenge_name = 'IBM Quantum Challenge Africa'
+challenge_name = 'IBM Quantum Challenge Fall 2021'
 challenge_version = '2021'
 
-from qc_grader.exercises.africa_2021 import *
-
+from qc_grader.exercises.fall_2021 import *

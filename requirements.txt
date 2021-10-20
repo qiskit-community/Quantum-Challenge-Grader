@@ -4,3 +4,6 @@ requests
 networkx
 ipycytoscape
 plotly
+jsonpickle
+typeguard
+jupyterplot
