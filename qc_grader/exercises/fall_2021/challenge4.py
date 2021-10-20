@@ -21,7 +21,7 @@ precision_limit = 0.75
 shots = 1024
 backend = Aer.get_backend("qasm_simulator")
 
-criteria: dict = {
+criteria: Dict[str, Any] = {
     'max_qubits': 28,
     'min_cost': 1000,
     'check_gates': True
@@ -36,6 +36,19 @@ basis_gates = [
     'mcx', 'mcy', 'mcz',
     'mcu1', 'mcu2', 'mcu3',
     'mcswap', 'multiplexer', 'kraus', 'roerror'
+]
+
+test_problem_set = [
+    {'L1': [2, 2, 3, 2, 3, 2, 2],
+     'L2': [3, 3, 4, 3, 4, 3, 4],
+     'C1': [2, 2, 2, 2, 2, 2, 2],
+     'C2': [4, 4, 4, 3, 3, 3, 3],
+     'C_max': 19},
+    {'L1': [2, 2, 2, 3, 3, 3, 2],
+     'L2': [3, 3, 4, 4, 4, 4, 4],
+     'C1': [2, 2, 2, 2, 3, 2, 2],
+     'C2': [4, 3, 4, 4, 4, 3, 3],
+     'C_max': 20}
 ]
 
 
@@ -91,7 +104,9 @@ def prepare_ex4c(solver_func: Callable) -> IBMQJob:
         basis_gates=basis_gates,
         shots=1000,
         seed_simulator=12345,
-        optimization_level=0
+        optimization_level=0,
+        test_problem_set=test_problem_set,
+        params_order=['L1', 'L2', 'C1', 'C2', 'C_max']
     )
 
 
