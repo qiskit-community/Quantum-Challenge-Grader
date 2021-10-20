@@ -37,6 +37,7 @@ from .api import (
 from .exercises import get_question_id
 from .util import (
     QObjEncoder,
+    calc_depth,
     circuit_to_json,
     compute_cost,
     get_job,
@@ -362,11 +363,12 @@ def prepare_solver(
     max_qubits: Optional[int] = 28,
     min_cost: Optional[int] = None,
     check_gates: Optional[bool] = False,
+    num_experiments: Optional[int] = 4,
+    params_order: Optional[List[str]] = None,
+    test_problem_set: Optional[List[Dict[str, Any]]] = None,
     **kwargs
 ) -> Optional[IBMQJob]:
     job = None
-    params_order = ['L1', 'L2', 'C1', 'C2', 'C_max']
-    num_circuits = 5
     circuits = []
     indices = []
 
@@ -382,23 +384,39 @@ def prepare_solver(
 
     endpoint = server + 'problem-set'
 
-    for n in range(num_circuits):
-        index, inputs = get_problem_set(lab_id, ex_id, endpoint)
-        indices.append(index)
-
-        if inputs and index is not None and index >= 0:
-            print(f'Running {solver_func.__name__}... problem set #{index}')
+    if test_problem_set:
+        num_tests = len(test_problem_set)
+        for test_inputs in test_problem_set:
+            indices.append(None)
+            print(f'Running test ({len(indices)}/{num_tests})... ')
             if not params_order:
-                qc = solver_func(*inputs)
+                qc = solver_func(*test_inputs)
             else:
-                ins = [inputs[x] for x in params_order]
+                ins = [test_inputs[x] for x in params_order]
                 qc = solver_func(*ins)
-
-            qc.metadata = {'qc_index': index}
+            d, n = calc_depth(qc)
+            qc.metadata = {'qc_depth': json.dumps([d, n])}
             circuits.append(qc)
-        else:
-            print('Failed to obtain a valid problem set')
-            return None
+
+    count = 0
+    while count < num_experiments:
+        index, inputs = get_problem_set(lab_id, ex_id, endpoint)
+        if index not in indices:
+            if inputs and index is not None and index >= 0:
+                count += 1
+                print(f'Running "{solver_func.__name__}" ({count}/{num_experiments})... ')
+                if not params_order:
+                    qc = solver_func(*inputs)
+                else:
+                    ins = [inputs[x] for x in params_order]
+                    qc = solver_func(*ins)
+
+                indices.append(index)
+                qc.metadata = {'qc_index': index}
+                circuits.append(qc)
+            else:
+                print('Failed to obtain a valid problem set')
+                return None
 
         # _, cost = _circuit_criteria(
         #     qc[n],
@@ -415,9 +433,6 @@ def prepare_solver(
     print('Starting experiments. Please wait...')
     job = execute(
             circuits,
-            qobj_header={
-                'qc_index': indices
-            },
             **kwargs
         )
 
@@ -546,7 +561,7 @@ def run_using_problem_set(
     index, inputs = get_problem_set(lab_id, ex_id, endpoint)
 
     if inputs and index is not None and index >= 0:
-        print(f'Running {solver_func.__name__}...', index, len(inputs))
+        print(f'Running "{solver_func.__name__}"...')
         if not params_order:
             function_result = solver_func(*inputs)
         else:
