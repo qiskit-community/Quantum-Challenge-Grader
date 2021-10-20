@@ -563,7 +563,7 @@ def run_using_problem_set(
     if inputs and index is not None and index >= 0:
         print(f'Running "{solver_func.__name__}"...')
         if not params_order:
-            function_result = solver_func(*inputs)
+            function_results = solver_func(*inputs)
         else:
             ins = [inputs[x] for x in params_order]
             function_results = solver_func(*ins)

@@ -8,6 +8,7 @@ from qiskit.utils import QuantumInstance
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit_optimization.problems import QuadraticProgram
 from qiskit_optimization.algorithms import MinimumEigenOptimizer
+from qiskit_optimization.algorithms.minimum_eigen_optimizer import MinimumEigenOptimizationResult
 from qiskit_optimization.applications import Knapsack
 
 from qc_grader.grade import grade_and_submit, run_using_problem_set, prepare_solver, get_problem_set
@@ -59,6 +60,20 @@ def grade_ex4a(quadratic_program: QuadraticProgram) -> None:
     grade_and_submit(answer, '4a')
 
 
+def run_qaoa(values: list, weights: list, max_weight: int) -> MinimumEigenOptimizationResult:
+    prob = Knapsack(values=values,
+                    weights=weights,
+                    max_weight=max_weight)
+    qp = prob.to_quadratic_program()
+    qins = QuantumInstance(backend=Aer.get_backend('qasm_simulator'),
+                           shots=shots,
+                           seed_simulator=seed,
+                           seed_transpiler=seed)
+    qaoa_mes = QAOA(quantum_instance=qins, reps=2)
+    qaoa = MinimumEigenOptimizer(qaoa_mes)
+    return qaoa.solve(qp)
+
+
 @typechecked
 def grade_ex4b(function: Callable) -> None:
     answer_dict = run_using_problem_set(
@@ -70,17 +85,7 @@ def grade_ex4b(function: Callable) -> None:
     problem_set_index = answer_dict['index']
     values, weights, max_weight = answer_dict['result']
 
-    prob = Knapsack(values=values,
-                    weights=weights,
-                    max_weight=max_weight)
-    qp = prob.to_quadratic_program()
-    qins = QuantumInstance(backend=Aer.get_backend('qasm_simulator'),
-                           shots=shots,
-                           seed_simulator=seed,
-                           seed_transpiler=seed)
-    qaoa_mes = QAOA(quantum_instance=qins, reps=2)
-    qaoa = MinimumEigenOptimizer(qaoa_mes)
-    result = qaoa.solve(qp)
+    result = run_qaoa(values, weights, max_weight)
 
     answer_dict = {
         'index': problem_set_index,
