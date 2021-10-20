@@ -27,7 +27,13 @@ from qiskit_nature.runtime import VQEProgram
 from qiskit_nature.converters.second_quantization import QubitConverter
 from qiskit_nature.problems.second_quantization.electronic import ElectronicStructureProblem
 
-from .api import get_server_endpoint, send_request, get_access_token, get_submission_endpoint, notify_provider
+from .api import (
+    get_server_endpoint,
+    send_request,
+    get_access_token,
+    get_submission_endpoint,
+    notify_provider
+)
 from .exercises import get_question_id
 from .util import (
     QObjEncoder,
@@ -809,8 +815,8 @@ def submit_answer(payload: dict, max_content_length: Optional[int] = None) -> bo
         score = submit_response.get('score', None)
 
         success = status == 'valid' or status is True
-        # if success:
-        #     notify_provider(access_token)
+        if success:
+            notify_provider(access_token)
 
         handle_submit_response(status, cause=cause, score=score)
         return success
