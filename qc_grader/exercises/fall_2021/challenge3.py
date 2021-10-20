@@ -8,7 +8,6 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 
-from qiskit import QuantumCircuit
 from qiskit.circuit.library import NLocal
 from qiskit.quantum_info import Statevector
 from qiskit_machine_learning.kernels.quantum_kernel import QuantumKernel
@@ -33,30 +32,30 @@ def grade_ex3b(amplitude: float) -> None:
 
 @typechecked
 def grade_ex3c(
-    pred_public: np.ndarray, 
-    sample_train: np.ndarray, 
-    standard_scaler: StandardScaler, 
-    pca: PCA, 
+    pred_public: np.ndarray,
+    sample_train: np.ndarray,
+    standard_scaler: StandardScaler,
+    pca: PCA,
     min_max_scaler: MinMaxScaler,
     kernel_0: QuantumKernel,
-    kernel_2: QuantumKernel, 
+    kernel_2: QuantumKernel,
     kernel_3: QuantumKernel,
-    svc_0: SVC, 
-    svc_2: SVC, 
+    svc_0: SVC,
+    svc_2: SVC,
     svc_3: SVC
 ) -> None:
     answer_dict = {
-            'pred_public': pred_public, 
-            'sample_train': sample_train, 
-            'standard_scaler': standard_scaler, 
-            'pca': pca, 
-            'min_max_scaler': min_max_scaler,
-            'kernel_0': kernel_0,
-            'kernel_2': kernel_2, 
-            'kernel_3': kernel_3,
-            'svc_0': svc_0, 
-            'svc_2': svc_2, 
-            'svc_3': svc_3
+        'pred_public': pred_public,
+        'sample_train': sample_train,
+        'standard_scaler': standard_scaler,
+        'pca': pca,
+        'min_max_scaler': min_max_scaler,
+        'kernel_0': kernel_0,
+        'kernel_2': kernel_2,
+        'kernel_3': kernel_3,
+        'svc_0': svc_0,
+        'svc_2': svc_2,
+        'svc_3': svc_3
     }
     answer = pickle.dumps(answer_dict).decode('ISO-8859-1')
 
