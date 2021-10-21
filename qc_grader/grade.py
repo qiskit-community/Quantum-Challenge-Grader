@@ -482,19 +482,23 @@ def prepare_vqe_runtime_program(
     runtime_vqe: VQEProgram,
     qubit_converter: QubitConverter,
     problem: ElectronicStructureProblem,
+    staging: False,
     **kwargs
 ) -> Optional[IBMQJob]:
-    challenge_provider = get_provider()
-    ibmq_qasm_simulator = get_provider().get_backend('ibmq_qasm_simulator')
+    # not overwriting provider and backend for staging
+    if not staging:
+        challenge_provider = get_provider()
+        ibmq_qasm_simulator = get_provider().get_backend('ibmq_qasm_simulator')
 
-    # check provider is challenge provider, overwrite if otherwise
-    if runtime_vqe.provider != challenge_provider:
-        print('You are not using the challenge provider. Overwriting provider...')
-        runtime_vqe.provider = challenge_provider
-    # check backend is simulator, overwrite if otherwise
-    if runtime_vqe.backend != ibmq_qasm_simulator:
-        print('You are not using the ibmq_qasm_simulator backend. Overwriting backend...')
-        runtime_vqe.backend = ibmq_qasm_simulator
+        # check provider is challenge provider, overwrite if otherwise
+        if runtime_vqe.provider != challenge_provider:
+            print('You are not using the challenge provider. Overwriting provider...')
+            runtime_vqe.provider = challenge_provider
+        # check backend is simulator, overwrite if otherwise
+        if runtime_vqe.backend != ibmq_qasm_simulator:
+            print('You are not using the ibmq_qasm_simulator backend. Overwriting backend...')
+            runtime_vqe.backend = ibmq_qasm_simulator
+
     # execute experiments
     print('Starting experiment. Please wait...')
     second_q_ops = problem.second_q_ops()
