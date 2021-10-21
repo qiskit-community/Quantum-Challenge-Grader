@@ -62,7 +62,7 @@ Once running open a browser and go to `http://localhost:8888/lab` to access the 
 Pre-requisites:
 
 - [IBM Quantum account](https://quantum-computing.ibm.com/)
-- [Python](https://www.python.org/) (3.7 or later) environment with
+- [Python](https://www.python.org/) (3.8 or later) environment with
     - Classic [Jupyter Notebook](https://jupyter.readthedocs.io/en/latest/install/notebook-classic.html) interface or [JupyterLab](https://jupyterlab.readthedocs.io/en/stable/getting_started/installation.html)
     - [Qiskit](https://qiskit.org/documentation/index.html)
         - `pip install qiskit[all]`
