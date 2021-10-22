@@ -490,8 +490,8 @@ def prepare_vqe_runtime_program(
     problem: ElectronicStructureProblem,
     **kwargs
 ) -> Optional[IBMQJob]:
-    # not overwriting provider and backend for staging
-    if is_staging():
+    # overwriting provider and backend if it's not staging
+    if not is_staging():
         challenge_provider = get_provider()
         ibmq_qasm_simulator = get_provider().get_backend('ibmq_qasm_simulator')
 
