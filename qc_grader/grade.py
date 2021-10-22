@@ -553,10 +553,11 @@ def run_using_problem_set(
     solver_func: Callable,
     lab_id: str,
     ex_id: Optional[str] = None,
+    num_experiments: Optional[int] = 3,
     params_order: Optional[List[str]] = None,
     execute_result: bool = False,
     **kwargs
-) -> Optional[Union[Dict[str, Any], IBMQJob]]:
+) -> Optional[Union[List[Dict[str, Any]], IBMQJob]]:
     if not callable(solver_func):
         print(f'Expected a function, but was given {type(solver_func)}')
         return None
@@ -567,23 +568,34 @@ def run_using_problem_set(
         return None
 
     endpoint = server + 'problem-set'
-    index, inputs = get_problem_set(lab_id, ex_id, endpoint)
 
-    if inputs and index is not None and index >= 0:
-        print(f'Running "{solver_func.__name__}"...')
-        if not params_order:
-            function_results = solver_func(*inputs)
-        else:
-            ins = [inputs[x] for x in params_order]
-            function_results = solver_func(*ins)
-        return {
-            'index': index,
-            'problem-set': inputs,
-            'result': function_results
-        }
-    else:
-        print('Failed to obtain a valid problem set')
-        return None
+    count = 0
+    indices = []
+    result_dicts = []
+    while count < num_experiments:
+        index, inputs = get_problem_set(lab_id, ex_id, endpoint)
+        if index not in indices:
+            if inputs and index is not None and index >= 0:
+                count += 1
+                print(f'Running "{solver_func.__name__}"...')
+                if not params_order:
+                    function_results = solver_func(*inputs)
+                else:
+                    ins = [inputs[x] for x in params_order]
+                    function_results = solver_func(*ins)
+
+                indices.append(index)
+                result_dict = {
+                    'index': index,
+                    'problem-set': inputs,
+                    'result': function_results
+                }
+                result_dicts.append(result_dict)
+            else:
+                print('Failed to obtain a valid problem set')
+                return None
+
+    return result_dicts
 
 
 def grade_circuit(
