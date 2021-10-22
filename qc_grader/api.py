@@ -97,6 +97,10 @@ def get_submission_endpoint() -> Optional[str]:
     return _api_submit_url
 
 
+def is_staging() --> bool:
+    return 'auth-dev' in os.getenv('QXAuthURL', 'auth-dev'):
+
+
 def get_access_token() -> str:
     iqx_token = os.getenv('QXToken')
     baseurl = get_auth_endpoint()
