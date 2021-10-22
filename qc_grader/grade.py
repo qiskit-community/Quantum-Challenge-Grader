@@ -412,6 +412,11 @@ def prepare_solver(
                     ins = [inputs[x] for x in params_order]
                     qc = solver_func(*ins)
 
+                if qc.num_qubits > max_qubits:
+                    print(f'Your circuit has {qc.num_qubits} qubits, which exceeds the maximum allowed.')
+                    print(f'Please reduce the number of qubits in your circuit to below {max_qubits}.')
+                    return None
+
                 indices.append(index)
                 qc.metadata = {'qc_index': index}
                 circuits.append(qc)
@@ -426,11 +431,6 @@ def prepare_solver(
         #     check_gates=check_gates
         # )
         # costs.append(cost)
-
-        if circuit.num_qubits > max_qubits:
-            print(f'Your circuit has {circuit.num_qubits} qubits, which exceeds the maximum allowed.')
-            print(f'Please reduce the number of qubits in your circuit to below {max_qubits}.')
-            return
 
     if 'backend' not in kwargs:
         kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
