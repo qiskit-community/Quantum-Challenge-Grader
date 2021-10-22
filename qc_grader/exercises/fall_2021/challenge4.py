@@ -76,22 +76,25 @@ def run_qaoa(values: list, weights: list, max_weight: int) -> MinimumEigenOptimi
 
 @typechecked
 def grade_ex4b(function: Callable) -> None:
-    answer_dict = run_using_problem_set(
+    result_dicts = run_using_problem_set(
         function,
         '4b',
         params_order=['L1', 'L2', 'C1', 'C2', 'C_max']
     )
 
-    problem_set_index = answer_dict['index']
-    values, weights, max_weight = answer_dict['result']
+    answer_dicts = []
+    for result_dict in result_dicts:
+        problem_set_index = result_dict['index']
+        values, weights, max_weight = result_dict['result']
 
-    result = run_qaoa(values, weights, max_weight)
+        result = run_qaoa(values, weights, max_weight)
 
-    answer_dict = {
-        'index': problem_set_index,
-        'result': result
-    }
-    answer = pickle.dumps(answer_dict).decode('ISO-8859-1')
+        answer_dict = {
+            'index': problem_set_index,
+            'result': result
+        }
+        answer_dicts.append(answer_dict)
+        answer = pickle.dumps(answer_dicts).decode('ISO-8859-1')
 
     grade_and_submit(answer, '4b')
 
