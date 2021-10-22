@@ -98,7 +98,7 @@ def get_submission_endpoint() -> Optional[str]:
 
 
 def is_staging() -> bool:
-    return 'auth-dev' in os.getenv('QXAuthURL', 'auth-dev'):
+    return 'auth-dev' in os.getenv('QXAuthURL', 'auth-dev')
 
 
 def get_access_token() -> str:
