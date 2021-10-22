@@ -555,9 +555,8 @@ def run_using_problem_set(
     ex_id: Optional[str] = None,
     num_experiments: Optional[int] = 3,
     params_order: Optional[List[str]] = None,
-    execute_result: bool = False,
     **kwargs
-) -> Optional[Union[List[Dict[str, Any]], IBMQJob]]:
+) -> List[Dict[str, Any]]:
     if not callable(solver_func):
         print(f'Expected a function, but was given {type(solver_func)}')
         return None
