@@ -32,7 +32,8 @@ from .api import (
     send_request,
     get_access_token,
     get_submission_endpoint,
-    notify_provider
+    notify_provider,
+    is_staging
 )
 from .exercises import get_question_id
 from .util import (
@@ -426,6 +427,11 @@ def prepare_solver(
         # )
         # costs.append(cost)
 
+        if circuit.num_qubits > max_qubits:
+            print(f'Your circuit has {circuit.num_qubits} qubits, which exceeds the maximum allowed.')
+            print(f'Please reduce the number of qubits in your circuit to below {max_qubits}.')
+            return
+
     if 'backend' not in kwargs:
         kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
 
@@ -482,11 +488,10 @@ def prepare_vqe_runtime_program(
     runtime_vqe: VQEProgram,
     qubit_converter: QubitConverter,
     problem: ElectronicStructureProblem,
-    staging: False,
     **kwargs
 ) -> Optional[IBMQJob]:
     # not overwriting provider and backend for staging
-    if not staging:
+    if is_staging():
         challenge_provider = get_provider()
         ibmq_qasm_simulator = get_provider().get_backend('ibmq_qasm_simulator')
 
