@@ -23,8 +23,8 @@ backend = Aer.get_backend("qasm_simulator")
 
 criteria: Dict[str, Any] = {
     'max_qubits': 28,
-    'min_cost': 1000,
-    'check_gates': True
+    'min_cost': None,
+    'check_gates': False
 }
 
 basis_gates = [

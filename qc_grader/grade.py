@@ -32,7 +32,8 @@ from .api import (
     send_request,
     get_access_token,
     get_submission_endpoint,
-    notify_provider
+    notify_provider,
+    is_staging
 )
 from .exercises import get_question_id
 from .util import (
@@ -426,6 +427,11 @@ def prepare_solver(
         # )
         # costs.append(cost)
 
+        if circuit.num_qubits > max_qubits:
+            print(f'Your circuit has {circuit.num_qubits} qubits, which exceeds the maximum allowed.')
+            print(f'Please reduce the number of qubits in your circuit to below {max_qubits}.')
+            return
+
     if 'backend' not in kwargs:
         kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
 
@@ -484,17 +490,20 @@ def prepare_vqe_runtime_program(
     problem: ElectronicStructureProblem,
     **kwargs
 ) -> Optional[IBMQJob]:
-    challenge_provider = get_provider()
-    ibmq_qasm_simulator = get_provider().get_backend('ibmq_qasm_simulator')
+    # overwriting provider and backend if it's not staging
+    if not is_staging():
+        challenge_provider = get_provider()
+        ibmq_qasm_simulator = get_provider().get_backend('ibmq_qasm_simulator')
 
-    # check provider is challenge provider, overwrite if otherwise
-    if runtime_vqe.provider != challenge_provider:
-        print('You are not using the challenge provider. Overwriting provider...')
-        runtime_vqe.provider = challenge_provider
-    # check backend is simulator, overwrite if otherwise
-    if runtime_vqe.backend != ibmq_qasm_simulator:
-        print('You are not using the ibmq_qasm_simulator backend. Overwriting backend...')
-        runtime_vqe.backend = ibmq_qasm_simulator
+        # check provider is challenge provider, overwrite if otherwise
+        if runtime_vqe.provider != challenge_provider:
+            print('You are not using the challenge provider. Overwriting provider...')
+            runtime_vqe.provider = challenge_provider
+        # check backend is simulator, overwrite if otherwise
+        if runtime_vqe.backend != ibmq_qasm_simulator:
+            print('You are not using the ibmq_qasm_simulator backend. Overwriting backend...')
+            runtime_vqe.backend = ibmq_qasm_simulator
+
     # execute experiments
     print('Starting experiment. Please wait...')
     second_q_ops = problem.second_q_ops()
