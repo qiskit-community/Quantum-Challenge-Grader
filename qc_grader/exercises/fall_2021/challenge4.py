@@ -1,6 +1,7 @@
 from typing import Any, Callable, Dict, Union
 from typeguard import typechecked
 import pickle
+import numpy as np
 
 from qiskit import Aer
 from qiskit.algorithms import QAOA
@@ -60,7 +61,7 @@ def grade_ex4a(quadratic_program: QuadraticProgram) -> None:
     grade_and_submit(answer, '4a')
 
 
-def run_qaoa(values: list, weights: list, max_weight: int) -> MinimumEigenOptimizationResult:
+def run_qaoa(values: list, weights: list, max_weight: int) -> np.ndarray:
     prob = Knapsack(values=values,
                     weights=weights,
                     max_weight=max_weight)
@@ -71,7 +72,8 @@ def run_qaoa(values: list, weights: list, max_weight: int) -> MinimumEigenOptimi
                            seed_transpiler=seed)
     qaoa_mes = QAOA(quantum_instance=qins, reps=2)
     qaoa = MinimumEigenOptimizer(qaoa_mes)
-    return qaoa.solve(qp)
+    result = qaoa.solve(qp)
+    return result.x
 
 
 @typechecked
