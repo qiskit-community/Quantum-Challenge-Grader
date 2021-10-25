@@ -25,14 +25,8 @@ def grade_ex1b(vqe: VQE, qp: QuadraticProgram) -> None:
 
 
 @typechecked
-def grade_ex1c(qp: QuadraticProgram) -> None:
-    answer = jsonpickle.encode(qp.export_as_lp_string())
-    grade_and_submit(answer, '1c')
-
-
-@typechecked
-def grade_ex1d(qaoa: QAOA, qp: QuadraticProgram) -> None:
+def grade_ex1c(qaoa: QAOA, qp: QuadraticProgram) -> None:
     meo = MinimumEigenOptimizer(qaoa)
     result = meo.solve(qp)
     answer = pickle.dumps(result).decode('ISO-8859-1')
-    grade_and_submit(answer, '1d')
+    grade_and_submit(answer, '1c')
