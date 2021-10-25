@@ -576,7 +576,7 @@ def run_using_problem_set(
         if index not in indices:
             if inputs and index is not None and index >= 0:
                 count += 1
-                print(f'Running "{solver_func.__name__}"...')
+                print(f'Running "{solver_func.__name__}" ({count}/{num_experiments})... ')
                 if not params_order:
                     function_results = solver_func(*inputs)
                 else:
