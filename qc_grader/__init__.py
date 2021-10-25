@@ -8,7 +8,10 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-__version__ = '0.8.3'
+import warnings
+warnings.filterwarnings("ignore")
+
+__version__ = '0.8.4'
 
 challenge_name = 'IBM Quantum Challenge Fall 2021'
 challenge_version = '2021'
