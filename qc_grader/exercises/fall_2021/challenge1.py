@@ -18,6 +18,9 @@ def grade_ex1a(qp: QuadraticProgram) -> None:
 
 @typechecked
 def grade_ex1b(vqe: VQE, qp: QuadraticProgram) -> None:
+    if isinstance(vqe, QAOA):
+        print("Oops 😕! Please use VQE instead of QAOA algorithm to solve this exercise.")
+        return
     meo = MinimumEigenOptimizer(vqe)
     result = meo.solve(qp)
     answer = pickle.dumps(result).decode('ISO-8859-1')
