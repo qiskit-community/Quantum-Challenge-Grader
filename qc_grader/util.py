@@ -28,6 +28,22 @@ class QObjEncoder(json.encoder.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
+def get_challenge_provider() -> AccountProvider:
+    provider = get_provider()
+    if (
+        "iqc-fall-21" in provider.credentials.hub
+        and "challenge" in provider.credentials.group
+    ):
+        # correct provider found
+        return provider
+    else:
+        print('You have been not assigned to a challenge provider yet.',
+              'Note that you need to pass at least one exercise,',
+              'and it may take up to 12 hours to get assigned.',
+              'Meanwhile, please proceed to other exercises and try again later.')
+        return None
+
+
 def get_provider() -> AccountProvider:
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
@@ -48,7 +64,7 @@ def get_provider() -> AccountProvider:
         for p in providers:
             if (
                 "iqc-fall-21" in p.credentials.hub
-                #and "challenge" in p.credentials.group
+                and "challenge" in p.credentials.group
                 #and "ex1" in p.credentials.project
             ):
                 # correct provider found
