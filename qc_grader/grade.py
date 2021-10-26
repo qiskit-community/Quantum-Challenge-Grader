@@ -19,6 +19,7 @@ from urllib.parse import urljoin
 from qiskit import QuantumCircuit, execute
 from qiskit.providers import JobStatus
 from qiskit.providers.ibmq.job import IBMQJob
+from qiskit.providers.ibmq.runtime import RuntimeJob
 from qiskit.qobj import PulseQobj, QasmQobj
 from qiskit.opflow import PauliSumOp
 from qiskit.quantum_info import SparsePauliOp
@@ -44,6 +45,7 @@ from .util import (
     get_job,
     get_job_urls,
     get_provider,
+    get_challenge_provider,
     qobj_to_json,
     uses_multiqubit_gate
 )
@@ -488,21 +490,30 @@ def prepare_vqe_runtime_program(
     runtime_vqe: VQEProgram,
     qubit_converter: QubitConverter,
     problem: ElectronicStructureProblem,
+    real_device: bool,
     **kwargs
-) -> Optional[IBMQJob]:
-    # overwriting provider and backend if it's not staging
-    if not is_staging():
-        challenge_provider = get_provider()
-        ibmq_qasm_simulator = get_provider().get_backend('ibmq_qasm_simulator')
+) -> Optional[RuntimeJob]:
+    # overwriting provider and backend if they are not challenge provider and simulator
+    challenge_provider = get_challenge_provider()
+    if challenge_provider:
+        ibmq_qasm_simulator = challenge_provider.get_backend('ibmq_qasm_simulator')
+        ibm_perth = challenge_provider.get_backend('ibm_perth')
+    else:
+        return None
 
-        # check provider is challenge provider, overwrite if otherwise
-        if runtime_vqe.provider != challenge_provider:
-            print('You are not using the challenge provider. Overwriting provider...')
-            runtime_vqe.provider = challenge_provider
-        # check backend is simulator, overwrite if otherwise
-        if runtime_vqe.backend != ibmq_qasm_simulator:
-            print('You are not using the ibmq_qasm_simulator backend. Overwriting backend...')
-            runtime_vqe.backend = ibmq_qasm_simulator
+    # check provider is challenge provider, overwrite if otherwise
+    if runtime_vqe.provider != challenge_provider:
+        print('You are not using the challenge provider. Overwriting provider...')
+        runtime_vqe.provider = challenge_provider
+
+    # 
+    if real_device:
+        if runtime_vqe.backend != ibm_perth:
+            print('You are not using the ibm_perth backend, even though you set "real_device=True".',
+                  'Please change your backend setting.')
+    elif runtime_vqe.backend != ibmq_qasm_simulator:
+        print('You are not using the ibmq_qasm_simulator backend. Overwriting backend...')
+        runtime_vqe.backend = ibmq_qasm_simulator
 
     # execute experiments
     print('Starting experiment. Please wait...')
