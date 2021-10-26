@@ -11,7 +11,7 @@
 import warnings
 warnings.filterwarnings("ignore")
 
-__version__ = '0.8.4'
+__version__ = '0.8.5'
 
 challenge_name = 'IBM Quantum Challenge Fall 2021'
 challenge_version = '2021'
