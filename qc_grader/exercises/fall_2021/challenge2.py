@@ -1,15 +1,13 @@
 from typing import Dict, Optional
-from typeguard import typechecked
-
-from qiskit_nature.results.electronic_structure_result import ElectronicStructureResult
-from qiskit_nature.runtime import VQEProgram
-from qiskit_nature.converters.second_quantization import QubitConverter
-from qiskit_nature.problems.second_quantization.electronic import ElectronicStructureProblem
-
-from qiskit.providers import JobStatus
-from qiskit.providers.ibmq.runtime import RuntimeJob
 
 import jsonpickle
+from qiskit.providers import JobStatus
+from qiskit.providers.ibmq.runtime import RuntimeJob
+from qiskit_nature.converters.second_quantization import QubitConverter
+from qiskit_nature.problems.second_quantization.electronic import ElectronicStructureProblem
+from qiskit_nature.results.electronic_structure_result import ElectronicStructureResult
+from qiskit_nature.runtime import VQEProgram
+from typeguard import typechecked
 
 from qc_grader.grade import grade_and_submit, prepare_vqe_runtime_program
 
@@ -44,10 +42,10 @@ def grade_ex2e(result: ElectronicStructureResult) -> None:
 
 @typechecked
 def prepare_ex2f(
-    runtime_vqe: VQEProgram,
-    qubit_converter: QubitConverter,
-    problem: ElectronicStructureProblem,
-    real_device: bool=False
+        runtime_vqe: VQEProgram,
+        qubit_converter: QubitConverter,
+        problem: ElectronicStructureProblem,
+        real_device: bool = False
 ) -> Optional[RuntimeJob]:
     return prepare_vqe_runtime_program(runtime_vqe, qubit_converter, problem, real_device)
 
