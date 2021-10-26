@@ -1,16 +1,14 @@
-from typeguard import typechecked
-
 import pickle
+
 import jsonpickle
 import numpy as np
-
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sklearn.decomposition import PCA
-from sklearn.svm import SVC
-
 from qiskit.circuit.library import NLocal
 from qiskit.quantum_info import Statevector
 from qiskit_machine_learning.kernels.quantum_kernel import QuantumKernel
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.svm import SVC
+from typeguard import typechecked
 
 from qc_grader.grade import grade_and_submit
 

@@ -1,19 +1,17 @@
-from typing import Any, Callable, Dict, Union
-from typeguard import typechecked
 import pickle
-import numpy as np
+from typing import Any, Callable, Dict
 
+import numpy as np
 from qiskit import Aer
 from qiskit.algorithms import QAOA
-from qiskit.utils import QuantumInstance
 from qiskit.providers.ibmq.job import IBMQJob
-from qiskit_optimization.problems import QuadraticProgram
+from qiskit.utils import QuantumInstance
 from qiskit_optimization.algorithms import MinimumEigenOptimizer
-from qiskit_optimization.algorithms.minimum_eigen_optimizer import MinimumEigenOptimizationResult
 from qiskit_optimization.applications import Knapsack
+from qiskit_optimization.problems import QuadraticProgram
+from typeguard import typechecked
 
-from qc_grader.grade import grade_and_submit, run_using_problem_set, prepare_solver, get_problem_set
-from qc_grader.api import get_server_endpoint
+from qc_grader.grade import grade_and_submit, run_using_problem_set, prepare_solver
 
 seed = 42
 time_limit_4b = 20
