@@ -509,8 +509,9 @@ def prepare_vqe_runtime_program(
     # 
     if real_device:
         if runtime_vqe.backend != ibm_perth:
-            print('You are not using the ibm_perth backend, even though you set "real_device=True".',
+            print('You are not using the ibm_perth backend, even though you set "real_device=True".\n'+\
                   'Please change your backend setting.')
+            return None
     elif runtime_vqe.backend != ibmq_qasm_simulator:
         print('You are not using the ibmq_qasm_simulator backend. Overwriting backend...')
         runtime_vqe.backend = ibmq_qasm_simulator
