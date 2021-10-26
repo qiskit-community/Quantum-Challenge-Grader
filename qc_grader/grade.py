@@ -490,12 +490,14 @@ def prepare_vqe_runtime_program(
     runtime_vqe: VQEProgram,
     qubit_converter: QubitConverter,
     problem: ElectronicStructureProblem,
+    real_device: bool,
     **kwargs
 ) -> Optional[RuntimeJob]:
     # overwriting provider and backend if they are not challenge provider and simulator
     challenge_provider = get_challenge_provider()
     if challenge_provider:
         ibmq_qasm_simulator = challenge_provider.get_backend('ibmq_qasm_simulator')
+        ibm_perth = challenge_provider.get_backend('ibm_perth')
     else:
         return None
 
@@ -504,8 +506,12 @@ def prepare_vqe_runtime_program(
         print('You are not using the challenge provider. Overwriting provider...')
         runtime_vqe.provider = challenge_provider
 
-    # check backend is simulator, overwrite if otherwise:w
-    if runtime_vqe.backend != ibmq_qasm_simulator:
+    # 
+    if real_device:
+        if runtime_vqe.backend != ibm_perth:
+            print('You are not using the ibm_perth backend, even though you set "real_device=True".',
+                  'Please change your backend setting.')
+    elif runtime_vqe.backend != ibmq_qasm_simulator:
         print('You are not using the ibmq_qasm_simulator backend. Overwriting backend...')
         runtime_vqe.backend = ibmq_qasm_simulator
 

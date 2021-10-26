@@ -46,9 +46,10 @@ def grade_ex2e(result: ElectronicStructureResult) -> None:
 def prepare_ex2f(
     runtime_vqe: VQEProgram,
     qubit_converter: QubitConverter,
-    problem: ElectronicStructureProblem
+    problem: ElectronicStructureProblem,
+    real_device: bool=False
 ) -> Optional[RuntimeJob]:
-    return prepare_vqe_runtime_program(runtime_vqe, qubit_converter, problem)
+    return prepare_vqe_runtime_program(runtime_vqe, qubit_converter, problem, real_device)
 
 
 @typechecked
