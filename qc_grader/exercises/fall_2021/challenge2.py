@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 from typeguard import typechecked
 
 from qiskit_nature.results.electronic_structure_result import ElectronicStructureResult
@@ -47,7 +47,7 @@ def prepare_ex2f(
     runtime_vqe: VQEProgram,
     qubit_converter: QubitConverter,
     problem: ElectronicStructureProblem
-) -> RuntimeJob:
+) -> Optional[RuntimeJob]:
     return prepare_vqe_runtime_program(runtime_vqe, qubit_converter, problem)
 
 
