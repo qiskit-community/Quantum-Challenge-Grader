@@ -18,7 +18,8 @@ seed = 42
 time_limit_4b = 20
 time_limit_4c = 12
 precision_limit = 0.75
-shots = 512
+shots_4b = 1024
+shots_4c = 512
 backend = Aer.get_backend("qasm_simulator")
 
 criteria: Dict[str, Any] = {
@@ -66,7 +67,7 @@ def run_qaoa(values: list, weights: list, max_weight: int) -> np.ndarray:
                     max_weight=max_weight)
     qp = prob.to_quadratic_program()
     qins = QuantumInstance(backend=Aer.get_backend('qasm_simulator'),
-                           shots=shots,
+                           shots=shots_4b,
                            seed_simulator=seed,
                            seed_transpiler=seed)
     qaoa_mes = QAOA(quantum_instance=qins, reps=2)
@@ -109,7 +110,7 @@ def prepare_ex4c(solver_func: Callable) -> IBMQJob:
         '4c',
         **criteria,
         basis_gates=basis_gates,
-        shots=1000,
+        shots=shots_4c,
         seed_simulator=12345,
         optimization_level=0,
         test_problem_set=test_problem_set,
