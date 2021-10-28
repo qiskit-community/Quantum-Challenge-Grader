@@ -425,7 +425,11 @@ def prepare_solver(
                 return None
 
             indices.append(index)
-            qc.metadata = {'qc_index': index}
+            d, n = calc_depth(qc)
+            qc.metadata = {
+                'qc_index': index,
+                'qc_depth': json.dumps([d, n])
+            }
             circuits.append(qc)
         else:
             print('Failed to obtain a valid problem set')
