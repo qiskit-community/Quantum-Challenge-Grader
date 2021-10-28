@@ -368,7 +368,6 @@ def prepare_solver(
     check_gates: Optional[bool] = False,
     num_experiments: Optional[int] = 4,
     params_order: Optional[List[str]] = None,
-    # test_problem_set: Optional[List[Dict[str, Any]]] = None,
     **kwargs
 ) -> Optional[IBMQJob]:
     job = None
@@ -386,20 +385,6 @@ def prepare_solver(
         return None
 
     endpoint = server + 'problem-set'
-
-    # if test_problem_set:
-    #     num_tests = len(test_problem_set)
-    #     for test_inputs in test_problem_set:
-    #         indices.append(None)
-    #         print(f'Running test ({len(indices)}/{num_tests})... ')
-    #         if not params_order:
-    #             qc = solver_func(*test_inputs)
-    #         else:
-    #             ins = [test_inputs[x] for x in params_order]
-    #             qc = solver_func(*ins)
-    #         d, n = calc_depth(qc)
-    #         qc.metadata = {'qc_depth': json.dumps([d, n])}
-    #         circuits.append(qc)
 
     count = 0
     while count < num_experiments:
@@ -426,14 +411,6 @@ def prepare_solver(
             else:
                 print('Failed to obtain a valid problem set')
                 return None
-
-        # _, cost = _circuit_criteria(
-        #     qc[n],
-        #     max_qubits=max_qubits,
-        #     min_cost=min_cost,
-        #     check_gates=check_gates
-        # )
-        # costs.append(cost)
 
     if 'backend' not in kwargs:
         kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')

@@ -12,7 +12,6 @@ from qiskit_optimization.problems import QuadraticProgram
 from typeguard import typechecked
 
 from qc_grader.grade import grade_and_submit, run_using_problem_set, prepare_solver
-from qc_grader.util import get_challenge_provider
 
 seed = 42
 time_limit_4b = 20
@@ -38,26 +37,6 @@ basis_gates = [
     'mcu1', 'mcu2', 'mcu3',
     'mcswap', 'multiplexer', 'kraus', 'roerror'
 ]
-
-# test_problem_set = [
-#     {
-#         'L1': [3, 7, 3, 4, 2, 6, 2, 2, 4, 6, 6],
-#         'L2': [7, 8, 7, 6, 6, 9, 6, 7, 6, 7, 7],
-#         'C1': [2, 2, 2, 3, 2, 4, 2, 2, 2, 2, 2],
-#         'C2': [4, 3, 3, 4, 4, 5, 3, 4, 4, 3, 4],
-#         'C_max': 33,
-#         'optimal_value': 67
-#     },
-#     {
-#         'L1': [2, 2, 3, 7, 2, 4, 5, 5, 2, 3, 4],
-#         'L2': [6, 6, 9, 8, 9, 5, 7, 7, 5, 6, 8],
-#         'C1': [4, 2, 2, 3, 2, 3, 2, 2, 3, 4, 3],
-#         'C2': [5, 5, 4, 4, 3, 5, 3, 3, 4, 5, 5],
-#         'C_max': 38,
-#         'optimal_value': 66
-#     }
-# ]
-
 
 @typechecked
 def grade_ex4a(quadratic_program: QuadraticProgram) -> None:
@@ -116,7 +95,6 @@ def prepare_ex4c(solver_func: Callable) -> IBMQJob:
         shots=shots_4c,
         seed_simulator=12345,
         optimization_level=0,
-        #test_problem_set=test_problem_set,
         params_order=['L1', 'L2', 'C1', 'C2', 'C_max']
     )
 
