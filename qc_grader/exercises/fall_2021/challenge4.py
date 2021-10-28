@@ -12,12 +12,13 @@ from qiskit_optimization.problems import QuadraticProgram
 from typeguard import typechecked
 
 from qc_grader.grade import grade_and_submit, run_using_problem_set, prepare_solver
+from qc_grader.util import get_challenge_provider
 
 seed = 42
 time_limit_4b = 20
 time_limit_4c = 12
 precision_limit = 0.75
-shots = 1024
+shots = 512
 backend = Aer.get_backend("qasm_simulator")
 
 criteria: Dict[str, Any] = {
@@ -100,6 +101,9 @@ def grade_ex4b(function: Callable) -> None:
 
 
 def prepare_ex4c(solver_func: Callable) -> IBMQJob:
+    # provider = get_challenge_provider()
+    # if provider:
+        # backend = get_challenge_provider().get_backend('ibmq_qasm_simulator')
     return prepare_solver(
         solver_func,
         '4c',
@@ -110,6 +114,7 @@ def prepare_ex4c(solver_func: Callable) -> IBMQJob:
         optimization_level=0,
         test_problem_set=test_problem_set,
         params_order=['L1', 'L2', 'C1', 'C2', 'C_max']
+        # backend=backend
     )
 
 
