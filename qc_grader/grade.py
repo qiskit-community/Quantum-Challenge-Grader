@@ -368,7 +368,7 @@ def prepare_solver(
     check_gates: Optional[bool] = False,
     num_experiments: Optional[int] = 4,
     params_order: Optional[List[str]] = None,
-    test_problem_set: Optional[List[Dict[str, Any]]] = None,
+    # test_problem_set: Optional[List[Dict[str, Any]]] = None,
     **kwargs
 ) -> Optional[IBMQJob]:
     job = None
@@ -387,19 +387,19 @@ def prepare_solver(
 
     endpoint = server + 'problem-set'
 
-    if test_problem_set:
-        num_tests = len(test_problem_set)
-        for test_inputs in test_problem_set:
-            indices.append(None)
-            print(f'Running test ({len(indices)}/{num_tests})... ')
-            if not params_order:
-                qc = solver_func(*test_inputs)
-            else:
-                ins = [test_inputs[x] for x in params_order]
-                qc = solver_func(*ins)
-            d, n = calc_depth(qc)
-            qc.metadata = {'qc_depth': json.dumps([d, n])}
-            circuits.append(qc)
+    # if test_problem_set:
+    #     num_tests = len(test_problem_set)
+    #     for test_inputs in test_problem_set:
+    #         indices.append(None)
+    #         print(f'Running test ({len(indices)}/{num_tests})... ')
+    #         if not params_order:
+    #             qc = solver_func(*test_inputs)
+    #         else:
+    #             ins = [test_inputs[x] for x in params_order]
+    #             qc = solver_func(*ins)
+    #         d, n = calc_depth(qc)
+    #         qc.metadata = {'qc_depth': json.dumps([d, n])}
+    #         circuits.append(qc)
 
     count = 0
     while count < num_experiments:
@@ -420,7 +420,8 @@ def prepare_solver(
                     return None
 
                 indices.append(index)
-                qc.metadata = {'qc_index': index}
+                d, n = calc_depth(qc)
+                qc.metadata = {'qc_index': index, 'qc_depth': json.dumps([d, n])}
                 circuits.append(qc)
             else:
                 print('Failed to obtain a valid problem set')
