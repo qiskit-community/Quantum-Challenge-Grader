@@ -402,8 +402,11 @@ def prepare_solver(
             circuits.append(qc)
 
     count = 0
-    while count < num_experiments:
-        index, inputs = get_problem_set(lab_id, ex_id, endpoint)
+    _, problem_sets = get_problem_set(lab_id, ex_id, endpoint)
+    for problem_set in problem_sets:
+        index = problem_set['index']
+        inputs = problem_set['value']
+
         if index not in indices:
             if inputs and index is not None and index >= 0:
                 count += 1
@@ -415,8 +418,11 @@ def prepare_solver(
                     qc = solver_func(*ins)
 
                 if qc.num_qubits > max_qubits:
-                    print(f'Your circuit has {qc.num_qubits} qubits, which exceeds the maximum allowed.')
-                    print(f'Please reduce the number of qubits in your circuit to below {max_qubits}.')
+                    print(
+                        f'Your circuit has {qc.num_qubits} qubits, '
+                        'which exceeds the maximum allowed.\n'
+                        f'Please reduce the number of qubits in your circuit to below {max_qubits}.'
+                    )
                     return None
 
                 indices.append(index)
@@ -777,7 +783,7 @@ def submit_json(
 
 def get_problem_set(
     lab_id: str, ex_id: Optional[str], endpoint: str
-) -> Tuple[Optional[int], Optional[Any]]:
+) -> Union[List[Dict[str, Any]], Tuple[int, Any]]:
     problem_set_response = None
 
     question_id = get_question_id(lab_id, ex_id)
