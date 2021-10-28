@@ -102,9 +102,6 @@ def grade_ex4b(function: Callable) -> None:
 
 
 def prepare_ex4c(solver_func: Callable) -> IBMQJob:
-    # provider = get_challenge_provider()
-    # if provider:
-        # backend = get_challenge_provider().get_backend('ibmq_qasm_simulator')
     return prepare_solver(
         solver_func,
         '4c',
@@ -115,7 +112,6 @@ def prepare_ex4c(solver_func: Callable) -> IBMQJob:
         optimization_level=0,
         test_problem_set=test_problem_set,
         params_order=['L1', 'L2', 'C1', 'C2', 'C_max']
-        # backend=backend
     )
 
 
