@@ -387,44 +387,41 @@ def prepare_solver(
 
     endpoint = server + 'problem-set'
 
-    if test_problem_set:
-        num_tests = len(test_problem_set)
-        for test_inputs in test_problem_set:
-            indices.append(None)
-            print(f'Running test ({len(indices)}/{num_tests})... ')
-            if not params_order:
-                qc = solver_func(*test_inputs)
-            else:
-                ins = [test_inputs[x] for x in params_order]
-                qc = solver_func(*ins)
-            d, n = calc_depth(qc)
-            qc.metadata = {'qc_depth': json.dumps([d, n])}
-            circuits.append(qc)
-
     count = 0
-    while count < num_experiments:
-        index, inputs = get_problem_set(lab_id, ex_id, endpoint)
-        if index not in indices:
-            if inputs and index is not None and index >= 0:
-                count += 1
-                print(f'Running "{solver_func.__name__}" ({count}/{num_experiments})... ')
-                if not params_order:
-                    qc = solver_func(*inputs)
-                else:
-                    ins = [inputs[x] for x in params_order]
-                    qc = solver_func(*ins)
+    _, problem_sets = get_problem_set(lab_id, ex_id, endpoint)
+    for problem_set in problem_sets:
+        index = problem_set['index']
+        inputs = problem_set['value']
 
-                if qc.num_qubits > max_qubits:
-                    print(f'Your circuit has {qc.num_qubits} qubits, which exceeds the maximum allowed.')
-                    print(f'Please reduce the number of qubits in your circuit to below {max_qubits}.')
-                    return None
-
-                indices.append(index)
-                qc.metadata = {'qc_index': index}
-                circuits.append(qc)
+        if inputs and index is not None and index >= 0:
+            count += 1
+            print(f'Running "{solver_func.__name__}" ({count}/{len(problem_sets)})... ')
+            if not params_order:
+                qc = solver_func(*inputs)
             else:
-                print('Failed to obtain a valid problem set')
+                ins = [inputs[x] for x in params_order]
+                qc = solver_func(*ins)
+
+            if qc.num_qubits > max_qubits:
+                print(
+                    f'Your circuit has {qc.num_qubits} qubits, '
+                    'which exceeds the maximum allowed.\n'
+                    f'Please reduce the number of qubits in your circuit to below {max_qubits}.'
+                )
                 return None
+
+            indices.append(index)
+            if count < 5:
+                d, n = calc_depth(qc)
+
+            qc.metadata = {
+                'qc_index': index,
+                'qc_depth': json.dumps([d, n]) if count < 5 else ''
+            }
+            circuits.append(qc)
+        else:
+            print('Failed to obtain a valid problem set')
+            return None
 
         # _, cost = _circuit_criteria(
         #     qc[n],
@@ -777,7 +774,7 @@ def submit_json(
 
 def get_problem_set(
     lab_id: str, ex_id: Optional[str], endpoint: str
-) -> Tuple[Optional[int], Optional[Any]]:
+) -> Union[List[Dict[str, Any]], Tuple[int, Any]]:
     problem_set_response = None
 
     question_id = get_question_id(lab_id, ex_id)
