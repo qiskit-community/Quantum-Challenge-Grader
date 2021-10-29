@@ -387,20 +387,6 @@ def prepare_solver(
 
     endpoint = server + 'problem-set'
 
-    if test_problem_set:
-        num_tests = len(test_problem_set)
-        for test_inputs in test_problem_set:
-            indices.append(None)
-            print(f'Running test ({len(indices)}/{num_tests})... ')
-            if not params_order:
-                qc = solver_func(*test_inputs)
-            else:
-                ins = [test_inputs[x] for x in params_order]
-                qc = solver_func(*ins)
-            d, n = calc_depth(qc)
-            qc.metadata = {'qc_depth': json.dumps([d, n])}
-            circuits.append(qc)
-
     count = 0
     _, problem_sets = get_problem_set(lab_id, ex_id, endpoint)
     for problem_set in problem_sets:
@@ -425,10 +411,12 @@ def prepare_solver(
                 return None
 
             indices.append(index)
-            d, n = calc_depth(qc)
+            if count < 5:
+                d, n = calc_depth(qc)
+
             qc.metadata = {
                 'qc_index': index,
-                'qc_depth': json.dumps([d, n])
+                'qc_depth': json.dumps([d, n]) if count < 5 else ''
             }
             circuits.append(qc)
         else:
