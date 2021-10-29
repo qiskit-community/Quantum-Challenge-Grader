@@ -108,7 +108,6 @@ def prepare_ex4c(solver_func: Callable) -> IBMQJob:
         shots=1000,
         seed_simulator=12345,
         optimization_level=0,
-        test_problem_set=test_problem_set,
         params_order=['L1', 'L2', 'C1', 'C2', 'C_max']
     )
 
