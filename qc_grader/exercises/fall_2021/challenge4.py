@@ -105,8 +105,8 @@ def prepare_ex4c(solver_func: Callable) -> IBMQJob:
         '4c',
         **criteria,
         basis_gates=basis_gates,
-        shots=512,
-        seed_simulator=42,
+        shots=1000,
+        seed_simulator=12345,
         optimization_level=0,
         params_order=['L1', 'L2', 'C1', 'C2', 'C_max']
     )
