@@ -57,7 +57,7 @@ def grade_and_submit(
     ex_id: Optional[str] = None,
     is_job_id: Optional[bool] = False
 ) -> Tuple[bool, Optional[Any]]:
-    connected = 'qac-grading' in get_server_endpoint()
+    connected = False  # 'qac-grading' in get_server_endpoint()
 
     if isinstance(answer, QuantumCircuit):
         grade_function = submit_circuit if connected else grade_circuit
