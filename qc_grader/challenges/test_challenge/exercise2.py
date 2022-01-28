@@ -14,6 +14,8 @@
 from pathlib import Path
 from typeguard import typechecked
 
+from qiskit import QuantumCircuit
+
 from qc_grader.grader.grade import grade
 
 
@@ -21,20 +23,5 @@ challenge_id = Path(__file__).parent.name
 
 
 @typechecked
-def grade_ex1a(answer: str) -> None:
-    grade(answer, 1, challenge_id)
-
-
-@typechecked
-def grade_ex1b(answer: str) -> None:
-    grade(answer, 2, challenge_id)
-
-
-@typechecked
-def grade_ex1c(answer: int) -> None:
-    grade(answer, 3, challenge_id)
-
-
-@typechecked
-def grade_ex1d(answer: str) -> None:
-    grade(answer, 4, challenge_id)
+def grade_ex2a(qc: QuantumCircuit) -> None:
+    grade(qc, 5, challenge_id)
