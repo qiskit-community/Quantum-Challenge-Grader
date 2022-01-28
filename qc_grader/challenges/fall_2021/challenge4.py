@@ -1,7 +1,10 @@
+import numpy as np
 import pickle
+
+from pathlib import Path
+from typeguard import typechecked
 from typing import Any, Callable, Dict
 
-import numpy as np
 from qiskit import Aer
 from qiskit.algorithms import QAOA
 from qiskit.providers.ibmq.job import IBMQJob
@@ -9,9 +12,12 @@ from qiskit.utils import QuantumInstance
 from qiskit_optimization.algorithms import MinimumEigenOptimizer
 from qiskit_optimization.applications import Knapsack
 from qiskit_optimization.problems import QuadraticProgram
-from typeguard import typechecked
 
-from qc_grader.grade import grade_and_submit, run_using_problem_set, prepare_solver
+from qc_grader.grader.grade import grade, prepare_solver, run_using_problem_set
+
+
+challenge_id = Path(__file__).parent.name
+
 
 seed = 42
 time_limit_4b = 20
@@ -56,7 +62,7 @@ def grade_ex4a(quadratic_program: QuadraticProgram) -> None:
     answer = {
         'qp': quadratic_program.export_as_lp_string()
     }
-    grade_and_submit(answer, '4a')
+    grade(answer, 14, challenge_id)  # 4a
 
 
 def run_qaoa(values: list, weights: list, max_weight: int) -> np.ndarray:
@@ -78,7 +84,8 @@ def run_qaoa(values: list, weights: list, max_weight: int) -> np.ndarray:
 def grade_ex4b(function: Callable) -> None:
     result_dicts = run_using_problem_set(
         function,
-        '4b',
+        15,  # 4b
+        challenge_id,
         params_order=['L1', 'L2', 'C1', 'C2', 'C_max']
     )
 
@@ -96,13 +103,14 @@ def grade_ex4b(function: Callable) -> None:
         answer_dicts.append(answer_dict)
         answer = pickle.dumps(answer_dicts).decode('ISO-8859-1')
 
-    grade_and_submit(answer, '4b')
+    grade(answer, 15, challenge_id)  # 4b
 
 
 def prepare_ex4c(solver_func: Callable) -> IBMQJob:
     return prepare_solver(
         solver_func,
-        '4c',
+        16,  # 4c
+        challenge_id,
         **criteria,
         basis_gates=basis_gates,
         shots=512,
@@ -114,4 +122,4 @@ def prepare_ex4c(solver_func: Callable) -> IBMQJob:
 
 @typechecked
 def grade_ex4c(job: IBMQJob) -> None:
-    grade_and_submit(job, '4c')
+    grade(job, 16, challenge_id)  # 4c

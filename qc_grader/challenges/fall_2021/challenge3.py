@@ -1,16 +1,22 @@
-import pickle
-
 import jsonpickle
 import numpy as np
-from qiskit.circuit.library import NLocal
-from qiskit.quantum_info import Statevector
-from qiskit_machine_learning.kernels.quantum_kernel import QuantumKernel
+import pickle
+
+from pathlib import Path
+
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.svm import SVC
 from typeguard import typechecked
 
-from qc_grader.grade import grade_and_submit
+from qiskit.circuit.library import NLocal
+from qiskit.quantum_info import Statevector
+from qiskit_machine_learning.kernels.quantum_kernel import QuantumKernel
+
+from qc_grader.grader.grade import grade
+
+
+challenge_id = Path(__file__).parent.name
 
 
 @typechecked
@@ -20,12 +26,12 @@ def grade_ex3a(fmap: NLocal) -> None:
     statevector = Statevector.from_instruction(qc)
 
     answer = jsonpickle.encode(statevector)
-    grade_and_submit(answer, '3a')
+    grade(answer, 11, challenge_id)  # 3a
 
 
 @typechecked
 def grade_ex3b(amplitude: float) -> None:
-    grade_and_submit(amplitude, '3b')
+    grade(amplitude, 12, challenge_id)  # 3b
 
 
 @typechecked
@@ -57,4 +63,4 @@ def grade_ex3c(
     }
     answer = pickle.dumps(answer_dict).decode('ISO-8859-1')
 
-    grade_and_submit(answer, '3c')
+    grade(answer, 13, challenge_id)  # 3c

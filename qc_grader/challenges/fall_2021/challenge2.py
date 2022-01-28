@@ -1,43 +1,50 @@
+import jsonpickle
+
+from pathlib import Path
+from typeguard import typechecked
 from typing import Dict, Optional
 
-import jsonpickle
 from qiskit.providers import JobStatus
 from qiskit.providers.ibmq.runtime import RuntimeJob
 from qiskit_nature.converters.second_quantization import QubitConverter
 from qiskit_nature.problems.second_quantization.electronic import ElectronicStructureProblem
 from qiskit_nature.results.electronic_structure_result import ElectronicStructureResult
 from qiskit_nature.runtime import VQEProgram
-from typeguard import typechecked
 
-from qc_grader.grade import grade_and_submit, prepare_vqe_runtime_program
+from qc_grader.grader.grade import grade
+
+from .helpers import prepare_vqe_runtime_program
+
+
+challenge_id = Path(__file__).parent.name
 
 
 @typechecked
 def grade_ex2a(answer: Dict[str, int]) -> None:
-    grade_and_submit(answer, '2a')
+    grade(answer, 5, challenge_id)  # 2a
 
 
 @typechecked
 def grade_ex2b(answer: Dict[str, int]) -> None:
-    grade_and_submit(answer, '2b')
+    grade(answer, 6, challenge_id)  # 2b
 
 
 @typechecked
 def grade_ex2c(result: ElectronicStructureResult) -> None:
     answer = jsonpickle.encode(result)
-    grade_and_submit(answer, '2c')
+    grade(answer, 7, challenge_id)  # 2c
 
 
 @typechecked
 def grade_ex2d(result: ElectronicStructureResult) -> None:
     answer = jsonpickle.encode(result)
-    grade_and_submit(answer, '2d')
+    grade(answer, 8, challenge_id)  # 2d
 
 
 @typechecked
 def grade_ex2e(result: ElectronicStructureResult) -> None:
     answer = jsonpickle.encode(result)
-    grade_and_submit(answer, '2e')
+    grade(answer, 9, challenge_id)  # 23
 
 
 @typechecked
@@ -60,4 +67,4 @@ def grade_ex2f(job: RuntimeJob) -> None:
         print(f'Please wait for the job (id: {job.job_id()}) to complete then try again.')
     else:
         answer = jsonpickle.encode(job.result())
-        grade_and_submit(answer, '2f')
+        grade(answer, 10, challenge_id)  # 2f

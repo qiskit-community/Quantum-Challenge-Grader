@@ -1,18 +1,23 @@
+import jsonpickle
 import pickle
 
-import jsonpickle
+from pathlib import Path
+
 from qiskit.algorithms.minimum_eigen_solvers import VQE, QAOA
 from qiskit_optimization import QuadraticProgram
 from qiskit_optimization.algorithms.minimum_eigen_optimizer import MinimumEigenOptimizer
 from typeguard import typechecked
 
-from qc_grader.grade import grade_and_submit
+from qc_grader.grader.grade import grade
+
+
+challenge_id = Path(__file__).parent.name
 
 
 @typechecked
 def grade_ex1a(qp: QuadraticProgram) -> None:
     answer = jsonpickle.encode(qp.export_as_lp_string())
-    grade_and_submit(answer, '1a')
+    grade(answer, 1, challenge_id)  # 1a
 
 
 @typechecked
@@ -23,7 +28,7 @@ def grade_ex1b(vqe: VQE, qp: QuadraticProgram) -> None:
     meo = MinimumEigenOptimizer(vqe)
     result = meo.solve(qp)
     answer = pickle.dumps(result).decode('ISO-8859-1')
-    grade_and_submit(answer, '1b')
+    grade(answer, 2, challenge_id)  # 1b
 
 
 @typechecked
@@ -31,4 +36,4 @@ def grade_ex1c(qaoa: QAOA, qp: QuadraticProgram) -> None:
     meo = MinimumEigenOptimizer(qaoa)
     result = meo.solve(qp)
     answer = pickle.dumps(result).decode('ISO-8859-1')
-    grade_and_submit(answer, '1c')
+    grade(answer, 4, challenge_id)  # 1c
