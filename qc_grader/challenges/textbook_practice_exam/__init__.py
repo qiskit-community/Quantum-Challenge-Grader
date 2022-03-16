@@ -11,7 +11,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-from .intro_practice_exam import (
+from .textbook_practice_exam import (
     grade_problem1c,
     grade_problem2a,
     grade_problem2b,
