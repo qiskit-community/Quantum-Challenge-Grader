@@ -13,7 +13,7 @@
 
 from pathlib import Path
 from typeguard import typechecked
-from Qiskit import QuantumCircuit
+from qiskit import QuantumCircuit
 
 from qc_grader.grader.grade import grade
 
