@@ -12,5 +12,6 @@
 # that they have been altered from the originals.
 
 from .lab1 import (
-    grade_lab1
+    grade_lab1_not,
+    grade_lab1_xor
 )
