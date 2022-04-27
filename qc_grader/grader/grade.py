@@ -36,9 +36,10 @@ def grade(
     answer: Any,
     question_id: Union[str, int],
     challenge_id: str,
-    do_submit: Optional[bool] = False
+    do_submit: Optional[bool] = False,
+    **kwargs: bool
 ) -> ValidationResult:
-    payload = serialize_answer(answer)
+    payload = serialize_answer(answer, **kwargs)
 
     if do_submit:
         endpoint = get_submission_endpoint(question_id, challenge_id)

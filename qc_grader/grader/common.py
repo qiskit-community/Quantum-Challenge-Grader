@@ -70,7 +70,9 @@ def circuit_to_json(
 ) -> str:
     if byte_string:
         import pickle
-        return pickle.dumps(qc).decode('ISO-8859-1')
+        return json.dumps({
+            'qc': pickle.dumps(qc).decode('ISO-8859-1')
+        }, cls=QObjEncoder)
     else:
         return json.dumps(circuit_to_dict(qc, parameter_binds), cls=QObjEncoder)
 
@@ -274,11 +276,11 @@ def serialize_job(job: IBMQJob) -> Optional[Dict[str, str]]:
     })
 
 
-def serialize_answer(answer: Any) -> Optional[str]:
+def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
     if isinstance(answer, IBMQJob):
         payload = serialize_job(answer)
     elif isinstance(answer, QuantumCircuit):
-        payload = circuit_to_json(answer)
+        payload = circuit_to_json(answer, **kwargs)
     elif isinstance(answer, (PulseQobj, QasmQobj)):
         payload = qobj_to_json(answer)
     elif isinstance(answer, (complex, float, int)):
