@@ -11,7 +11,7 @@ challenge_id = Path(__file__).parent.name
 @typechecked
 def grade_ex4a(**kwargs: Union[int, float]) -> None:
     answer = kwargs
-    grade(answer, 12, challenge_id)  # 4a
+    grade(answer, 13, challenge_id)  # 4a
 
 
 @typechecked
@@ -23,4 +23,4 @@ def grade_ex4b(
         'list_operator': list_operator,
         'register_length': register_length
     }
-    grade(answer, 13, challenge_id)  # 4b
+    grade(answer, 14, challenge_id)  # 4b

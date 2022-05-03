@@ -15,7 +15,8 @@ from .exercise2 import (
 from .exercise3 import (
     grade_ex3a,
     grade_ex3b,
-    grade_ex3c
+    grade_ex3c,
+    grade_ex3d
 )
 
 from .exercise4 import (
