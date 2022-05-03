@@ -8,7 +8,6 @@ Grading client for the IBM Quantum Challenge grading service.
 Follow one of these steps to install the grading client.
 
 - [Run in IBM Quantum Lab](#run-in-ibm-quantum-lab)
-- [Run in Docker](#run-in-docker)
 - [Run locally](#run-locally)
 
 
@@ -19,42 +18,11 @@ Pre-requisites:
 - [IBM Quantum account](https://quantum-computing.ibm.com/)
 
 The grader comes pre-installed in Quantum Lab and does not need to be installed.
+You can confirm and check version with the following command in a notebook cell:
 
-
-### Run in Docker
-
-Pre-requisites:
-
-- [IBM Quantum account](https://quantum-computing.ibm.com/)
-- [Docker](https://www.docker.com/products/docker-desktop) installed
-
-To install the [dockerized grader client](https://hub.docker.com/r/qiskitcommunity/qc-grader) environment:
-
-1. Create an `env` setting the following parameters. All parameters are optional and can be changed later
-    
-    - `QXToken` - IBM Quantum API Token (can be found in **Account Details**)
-    - `QC_GH_REPO` - the org/repo name where exercise notebooks can be downloaded (e.g., `qiskit-community/ibm-quantum-challenge-2021`)
-    - `QC_GH_BRANCH` - the branch in the repo to download notebooks (e.g., `main`)
-
-    > **Note**: All parameters are optional and can be updated later
-
-    Example `env` file:
-
-    ```
-    QC_GH_REPO=qiskit-community/ibm-quantum-challenge-2021
-    QC_GH_BRANCH=main
-    QXToken=1df75f29d97a46caa689bae3e3f05f477376c81b7a1157b7fe413811f6cb13c0c032f3
-    ```
-
-1. From a command prompt, run
-
-    ```
-    docker run -it -p 8888:8888 --env-file=<env_file> qiskitcommunity/qc-grader
-    ```
-
-    where `<env_file>` is the path to the `env` created in step (1).
-
-Once running open a browser and go to `http://localhost:8888/lab` to access the Jupyter environment. Additional information is available in the `README.md` in the Jupyter environment.
+```
+!pip show qc_grader
+```
 
 
 ### Run locally
@@ -77,8 +45,7 @@ To install the grader locally:
     pip install git+https://github.com/qiskit-community/Quantum-Challenge-Grader.git
     ```
 1. Configure the following environment variables
-    
-    - `QC_GRADING_ENDPOINT` - the URL to the grading server
+
     - `QXAuthURL` - IBM Quantum Authentication API URL
     - `QXToken` - IBM Quantum API Token (can be found in **Account Details**)
 
@@ -94,14 +61,14 @@ quantum-challenge` folder in the **Lab files** panel
 1. Run the notebook cells, answering the exercises and submitting solution for grading. For example
 
     ```python
-    from qc_grader import grade_lab1_ex1 
+    from qc_grader.challenges.challenge_2021 import grade_lab1_ex1 
 
     grade_lab1_ex1(qc_1)
     ```
     
     
     ```python
-    from qc_grader import grade_lab1_ex2 
+    from qc_grader.challenges.challenge_2021 import grade_lab1_ex2 
 
     grade_lab1_ex2(qc_2)
     ```

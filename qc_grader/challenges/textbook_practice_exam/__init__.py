@@ -1,4 +1,7 @@
-# (C) Copyright IBM 2020.
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# (C) Copyright IBM 2022
 #
 # This code is licensed under the Apache License, Version 2.0. You may
 # obtain a copy of this license in the LICENSE.txt file in the root directory
@@ -8,7 +11,9 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-import warnings
-warnings.filterwarnings("ignore")
-
-__version__ = '0.9.0'
+from .textbook_practice_exam import (
+    grade_problem1c,
+    grade_problem2a,
+    grade_problem2b,
+    grade_problem2c,
+)
