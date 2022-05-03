@@ -1,4 +1,7 @@
-# (C) Copyright IBM 2020.
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# (C) Copyright IBM 2022
 #
 # This code is licensed under the Apache License, Version 2.0. You may
 # obtain a copy of this license in the LICENSE.txt file in the root directory
@@ -8,7 +11,11 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-import warnings
-warnings.filterwarnings("ignore")
+from .exercise1 import (
+    grade_ex1a,
+    grade_ex1b,
+    grade_ex1c,
+    grade_ex1d
+)
 
-__version__ = '0.9.0'
+from .exercise2 import grade_ex2a
