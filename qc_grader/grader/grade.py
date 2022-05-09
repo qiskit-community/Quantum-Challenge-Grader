@@ -19,6 +19,7 @@ from qiskit import execute
 from qiskit.providers.ibmq.job import IBMQJob
 
 from .api import (
+    get_access_token,
     get_grading_endpoint,
     get_problem_set_endpoint,
     get_submission_endpoint,
@@ -39,18 +40,24 @@ def grade(
     do_submit: Optional[bool] = False,
     **kwargs: bool
 ) -> ValidationResult:
-    payload = serialize_answer(answer, **kwargs)
+    serialized_answer = serialize_answer(answer, **kwargs)
 
     if do_submit:
         endpoint = get_submission_endpoint(question_id, challenge_id)
+        payload = {
+            'question_name': question_id,
+            'challenge_id': challenge_id,
+            'content': serialized_answer
+        }
     else:
         endpoint = get_grading_endpoint(question_id, challenge_id)
+        payload = {'answer': serialized_answer}
 
-    if payload and endpoint:
+    if serialized_answer and endpoint:
         print(f'{"Submitting" if do_submit else "Grading"} your answer. Please wait...')
 
         return grade_answer(
-            {'answer': payload},
+            payload,
             endpoint,
             do_submit=do_submit
         )
@@ -65,12 +72,28 @@ def grade_answer(
     max_content_length: Optional[int] = None
 ) -> ValidationResult:
     try:
+        if do_submit:
+            access_token = get_access_token()
+            query = {'access_token': access_token}
+        else:
+            query = None
+
         answer_response = send_request(
-            endpoint, body=payload, max_content_length=max_content_length
+            endpoint,
+            body=payload,
+            query=query,
+            max_content_length=max_content_length
         )
-        status = answer_response.get('status', None)
-        cause = answer_response.get('cause', None)
-        score = answer_response.get('score', None)
+    
+        if do_submit:
+            data = answer_response.get('data', {})
+            status = data.get('grading_validation', None)
+            cause = data.get('grading_error', None)
+            score = data.get('grading_score', None)
+        else:
+            status = answer_response.get('status', None)
+            cause = answer_response.get('cause', None)
+            score = answer_response.get('score', None)
 
         if do_submit:
             handle_submit_response(status, score=score, cause=cause)
