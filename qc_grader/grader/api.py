@@ -33,7 +33,7 @@ grading_endpoints: List[str] = [
 
 # possible challenge api endpoints: https://challenges-api-dev.quantum-computing.ibm.com
 submission_endpoints: List[str] = [
-    'http://127.0.0.1:1337',
+    'http://127.0.0.1:8055',
     f'https://challenges-api{"-dev" if is_staging else ""}.quantum-computing.ibm.com'
 ]
 
@@ -119,7 +119,7 @@ def get_submission_endpoint(
               'the API servers are down right now.')
         return None
 
-    return f'{normalize_slash(_api_submit_url)}challenges/{challenge_id}/validate/{question_id}'
+    return f'{normalize_slash(_api_submit_url)}items/answers'
 
 
 def get_access_token() -> str:
