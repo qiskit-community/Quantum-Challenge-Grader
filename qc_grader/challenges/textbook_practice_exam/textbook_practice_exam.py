@@ -17,6 +17,7 @@ from qiskit import QuantumCircuit
 
 from qc_grader.grader.grade import grade
 
+
 challenge_id = Path(__file__).parent.name
 
 

@@ -13,7 +13,6 @@ _challenge_id = 'spring-2022'
 def grade_ex2a(qc: QuantumCircuit) -> None:
     grade(qc, '2a', _challenge_id, byte_string=True)
 
-
 @typechecked
 def grade_ex2b(prob_densities: List[List[float]]) -> None:
     grade(prob_densities, '2b', _challenge_id)
