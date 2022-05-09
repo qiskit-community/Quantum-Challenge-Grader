@@ -25,10 +25,10 @@ challenge_id = Path(__file__).parent.name
 @typechecked
 def grade_lab1_not(answer: QuantumCircuit) -> None:
     answer.metadata = {'problem': 'NOT'}
-    grade(answer, 1, challenge_id)
+    grade(answer, 'lab1', challenge_id)
 
 
 @typechecked
 def grade_lab1_xor(answer: QuantumCircuit) -> None:
     answer.metadata = {'problem': 'XOR'}
-    grade(answer, 1, challenge_id)
+    grade(answer, 'lab1', challenge_id)

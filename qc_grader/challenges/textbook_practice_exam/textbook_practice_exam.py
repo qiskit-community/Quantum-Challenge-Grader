@@ -17,24 +17,25 @@ from qiskit import QuantumCircuit
 
 from qc_grader.grader.grade import grade
 
+
 challenge_id = Path(__file__).parent.name
 
 
 @typechecked
 def grade_problem1c(answer: QuantumCircuit) -> None:
-    grade(answer, 1, challenge_id)  # 1c
+    grade(answer, 'problem1c', challenge_id)
 
 
 @typechecked
 def grade_problem2a(answer: QuantumCircuit) -> None:
-    grade(answer, 2, challenge_id)  # 2a
+    grade(answer, 'problem2a', challenge_id)
 
 
 @typechecked
 def grade_problem2b(answer: QuantumCircuit) -> None:
-    grade(answer, 3, challenge_id)  # 2b
+    grade(answer, 'problem2b', challenge_id)
 
 
 @typechecked
 def grade_problem2c(answer: QuantumCircuit) -> None:
-    grade(answer, 4, challenge_id)  # 2c
+    grade(answer, 'problem2c', challenge_id)
