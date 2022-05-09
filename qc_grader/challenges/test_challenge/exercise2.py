@@ -24,4 +24,4 @@ challenge_id = Path(__file__).parent.name
 
 @typechecked
 def grade_ex2a(qc: QuantumCircuit) -> None:
-    grade(qc, 5, challenge_id)
+    grade(qc, 'test-circuit', challenge_id)
