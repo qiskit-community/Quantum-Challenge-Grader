@@ -285,6 +285,8 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = qobj_to_json(answer)
     elif isinstance(answer, (complex, float, int)):
         payload = str(answer)
+    elif isinstance(answer, str):
+        payload = answer
     else:
         payload = json.dumps(answer, skipkeys=True, cls=QObjEncoder)
 
