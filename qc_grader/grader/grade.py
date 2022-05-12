@@ -38,7 +38,7 @@ def grade(
     question_id: Union[str, int],
     challenge_id: str,
     do_submit: Optional[bool] = False,
-    **kwargs: bool
+    **kwargs: Any
 ) -> ValidationResult:
     serialized_answer = serialize_answer(answer, **kwargs)
 
@@ -59,7 +59,8 @@ def grade(
         return grade_answer(
             payload,
             endpoint,
-            do_submit=do_submit
+            do_submit=do_submit,
+            max_content_length=kwargs['max_content_length'] if 'max_content_length' in kwargs else None
         )
 
     return False, None
