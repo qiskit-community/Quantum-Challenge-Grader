@@ -22,5 +22,6 @@ def grade_ex2b(prob_densities: Union[np.ndarray, List[List[float]]]) -> None:
 
 
 @typechecked
-def grade_ex2c(prob_densitiy_localization: List[List[float]]) -> None:
-    grade(prob_densitiy_localization, '2c', _challenge_id, do_submit=True)
+def grade_ex2c(prob_densitiy_localization: Union[np.ndarray, List[List[float]]]) -> None:
+    answer = prob_densitiy_localization.tolist() if type(prob_densitiy_localization) == np.ndarray else prob_densitiy_localization
+    grade(answer, '2c', _challenge_id, do_submit=True)
