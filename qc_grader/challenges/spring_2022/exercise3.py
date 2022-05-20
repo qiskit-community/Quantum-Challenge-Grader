@@ -15,10 +15,10 @@ _challenge_id = 'spring_2022'
 def grade_ex3a(get_imbalance: Callable) -> None:
     _, states = get_problem_set('3a', _challenge_id)
 
-    answer = {}
+    answer = []
     for s in states:
         state = Statevector(np.loads(s.encode('ISO-8859-1')))
-        answer[get_imbalance(state)] = s
+        answer.append((get_imbalance(state), s))
 
     grade(answer, '3a', _challenge_id, do_submit=True, max_content_length=2*1024*1024)
 
