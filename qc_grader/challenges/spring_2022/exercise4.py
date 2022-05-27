@@ -10,7 +10,7 @@ _challenge_id = 'spring_2022'
 @typechecked
 def grade_ex4a(**kwargs: Union[int, float]) -> None:
     answer = kwargs
-    grade(answer, '4a', _challenge_id, do_submit=True)
+    grade(answer, '4a', _challenge_id)
 
 
 @typechecked
@@ -22,4 +22,4 @@ def grade_ex4b(
         'list_operator': list_operator,
         'register_length': register_length
     }
-    grade(answer, '4b', _challenge_id, do_submit=True)
+    grade(answer, '4b', _challenge_id)
