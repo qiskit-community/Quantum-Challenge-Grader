@@ -20,14 +20,14 @@ def grade_ex3a(get_imbalance: Callable) -> None:
         state = Statevector(np.loads(s.encode('ISO-8859-1')))
         answer.append((get_imbalance(state), s))
 
-    grade(answer, '3a', _challenge_id, do_submit=True, max_content_length=2*1024*1024)
+    grade(answer, '3a', _challenge_id, max_content_length=2*1024*1024)
 
 
 @typechecked
 def grade_ex3b(vn_entropies: Dict[int, List[float]]) -> None:
-    grade(vn_entropies, '3b', _challenge_id, do_submit=True)
+    grade(vn_entropies, '3b', _challenge_id)
 
 
 @typechecked
 def grade_ex3c(vector_state_imbalances: Dict[int, List[float]]) -> None:
-    grade(vector_state_imbalances, '3c', _challenge_id, do_submit=True)
+    grade(vector_state_imbalances, '3c', _challenge_id)
