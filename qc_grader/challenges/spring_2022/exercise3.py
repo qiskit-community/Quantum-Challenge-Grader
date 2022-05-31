@@ -1,7 +1,7 @@
 from typing import Any, Callable, Dict, List
 from typeguard import typechecked
 
-import numpy as np
+import pickle
 
 from qiskit.quantum_info import Statevector
 
@@ -17,7 +17,7 @@ def grade_ex3a(get_imbalance: Callable) -> None:
 
     answer = []
     for s in states:
-        state = Statevector(np.loads(s.encode('ISO-8859-1')))
+        state = Statevector(pickle.loads(s.encode('ISO-8859-1')))
         answer.append((get_imbalance(state), s))
 
     grade(answer, '3a', _challenge_id, max_content_length=2*1024*1024)
