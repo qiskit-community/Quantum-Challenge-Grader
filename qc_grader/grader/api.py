@@ -14,7 +14,6 @@
 import os
 import requests
 
-from telnetlib import STATUS
 from urllib.parse import urljoin
 
 from typing import Dict, List, Mapping, Optional, Union
@@ -40,6 +39,7 @@ submission_endpoints: List[str] = [
 _api_auth_url: Optional[str] = os.getenv('QXAuthURL')
 _api_grade_url: Optional[str] = os.getenv('QC_GRADING_ENDPOINT')
 _api_submit_url: Optional[str] = os.getenv('QC_API_ENDPOINT')
+_do_submit: Optional[Union[bool, str]] = os.getenv('QC_DO_SUBMIT')
 
 
 def get_auth_endpoint() -> Optional[str]:
@@ -239,3 +239,13 @@ def notify_provider(access_token: str, challenge_id: str) -> None:
                 'X-Access-Token': access_token
             }
         )
+
+
+def should_submit() -> bool:
+    global _do_submit
+    if _do_submit is None:
+        endpoint = get_grading_endpoint('', '')
+        _do_submit = endpoint is not None and endpoint.startswith('https://qac-grading')
+    else:
+        _do_submit = str(_do_submit).lower() in ['true', '1', 'yes', 'y', 't']
+    return bool(_do_submit)

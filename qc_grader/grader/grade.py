@@ -23,7 +23,8 @@ from .api import (
     get_grading_endpoint,
     get_problem_set_endpoint,
     get_submission_endpoint,
-    send_request
+    send_request,
+    should_submit
 )
 from .common import (
     ValidationResult,
@@ -37,10 +38,10 @@ def grade(
     answer: Any,
     question_id: Union[str, int],
     challenge_id: str,
-    do_submit: Optional[bool] = False,
     **kwargs: Any
 ) -> ValidationResult:
     serialized_answer = serialize_answer(answer, **kwargs)
+    do_submit = should_submit()
 
     if do_submit:
         endpoint = get_submission_endpoint(question_id, challenge_id)
