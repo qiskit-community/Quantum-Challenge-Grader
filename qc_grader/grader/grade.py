@@ -24,7 +24,7 @@ from .api import (
     get_problem_set_endpoint,
     get_submission_endpoint,
     send_request,
-    should_submit
+    do_grade_only
 )
 from .common import (
     ValidationResult,
@@ -41,7 +41,7 @@ def grade(
     **kwargs: Any
 ) -> ValidationResult:
     serialized_answer = serialize_answer(answer, **kwargs)
-    do_submit = should_submit()
+    do_submit = not do_grade_only()
 
     if do_submit:
         endpoint = get_submission_endpoint(question_id, challenge_id)
