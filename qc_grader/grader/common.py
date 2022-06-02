@@ -21,6 +21,7 @@ import warnings
 from qiskit import IBMQ, QuantumCircuit
 from qiskit.circuit import Barrier, Gate, Instruction, Measure, Parameter
 from qiskit.circuit.library import UGate, U3Gate, CXGate
+from qiskit.opflow.primitive_ops.pauli_op import PauliOp
 from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
 from qiskit.providers.aer.noise import NoiseModel
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
@@ -83,6 +84,13 @@ def qobj_to_json(qobj: Union[PulseQobj, QasmQobj]) -> str:
 
 def paulisumop_to_json(op: PauliSumOp) -> str:
     return json.dumps(op.primitive.to_list(), cls=QObjEncoder)
+
+
+def pauliop_to_json(op: PauliOp) -> str:
+    return json.dumps({
+        'primitive': op.primitive.to_label(),
+        'coeff': op.coeff
+    }, cls=QObjEncoder)
 
 
 def noisemodel_to_json(noise_model: NoiseModel) -> str:
