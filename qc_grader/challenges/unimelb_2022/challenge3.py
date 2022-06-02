@@ -26,12 +26,12 @@ def grade_ex3a(fmap: NLocal) -> None:
     statevector = Statevector.from_instruction(qc)
 
     answer = jsonpickle.encode(statevector)
-    grade(answer, 11, challenge_id)  # 3a
+    grade(answer, '3a', challenge_id)
 
 
 @typechecked
 def grade_ex3b(amplitude: float) -> None:
-    grade(amplitude, 12, challenge_id)  # 3b
+    grade(amplitude, '3b', challenge_id)
 
 
 @typechecked
@@ -63,4 +63,4 @@ def grade_ex3c(
     }
     answer = pickle.dumps(answer_dict).decode('ISO-8859-1')
 
-    grade(answer, 13, challenge_id)  # 3c
+    grade(answer, '3c', challenge_id)

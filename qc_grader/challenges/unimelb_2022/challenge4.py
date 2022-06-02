@@ -62,7 +62,7 @@ def grade_ex4a(quadratic_program: QuadraticProgram) -> None:
     answer = {
         'qp': quadratic_program.export_as_lp_string()
     }
-    grade(answer, 14, challenge_id)  # 4a
+    grade(answer, '4a', challenge_id)
 
 
 def run_qaoa(values: list, weights: list, max_weight: int) -> np.ndarray:
@@ -84,7 +84,7 @@ def run_qaoa(values: list, weights: list, max_weight: int) -> np.ndarray:
 def grade_ex4b(function: Callable) -> None:
     result_dicts = run_using_problem_set(
         function,
-        15,  # 4b
+        '4b',
         challenge_id,
         params_order=['L1', 'L2', 'C1', 'C2', 'C_max']
     )
@@ -103,13 +103,13 @@ def grade_ex4b(function: Callable) -> None:
         answer_dicts.append(answer_dict)
         answer = pickle.dumps(answer_dicts).decode('ISO-8859-1')
 
-    grade(answer, 15, challenge_id)  # 4b
+    grade(answer, '4b', challenge_id)
 
 
 def prepare_ex4c(solver_func: Callable) -> IBMQJob:
     return prepare_solver(
         solver_func,
-        16,  # 4c
+        '4c',
         challenge_id,
         **criteria,
         basis_gates=basis_gates,
@@ -122,4 +122,4 @@ def prepare_ex4c(solver_func: Callable) -> IBMQJob:
 
 @typechecked
 def grade_ex4c(job: IBMQJob) -> None:
-    grade(job, 16, challenge_id)  # 4c
+    grade(job, '4c', challenge_id)

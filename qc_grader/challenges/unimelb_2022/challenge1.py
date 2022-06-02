@@ -17,7 +17,7 @@ challenge_id = Path(__file__).parent.name
 @typechecked
 def grade_ex1a(qp: QuadraticProgram) -> None:
     answer = jsonpickle.encode(qp.export_as_lp_string())
-    grade(answer, 1, challenge_id)  # 1a
+    grade(answer, '1a', challenge_id)
 
 
 @typechecked
@@ -28,7 +28,7 @@ def grade_ex1b(vqe: VQE, qp: QuadraticProgram) -> None:
     meo = MinimumEigenOptimizer(vqe)
     result = meo.solve(qp)
     answer = pickle.dumps(result).decode('ISO-8859-1')
-    grade(answer, 2, challenge_id)  # 1b
+    grade(answer, '1b', challenge_id)
 
 
 @typechecked
@@ -36,4 +36,4 @@ def grade_ex1c(qaoa: QAOA, qp: QuadraticProgram) -> None:
     meo = MinimumEigenOptimizer(qaoa)
     result = meo.solve(qp)
     answer = pickle.dumps(result).decode('ISO-8859-1')
-    grade(answer, 4, challenge_id)  # 1c
+    grade(answer, '1c', challenge_id)

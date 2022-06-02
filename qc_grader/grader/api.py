@@ -39,7 +39,7 @@ submission_endpoints: List[str] = [
 _api_auth_url: Optional[str] = os.getenv('QXAuthURL')
 _api_grade_url: Optional[str] = os.getenv('QC_GRADING_ENDPOINT')
 _api_submit_url: Optional[str] = os.getenv('QC_API_ENDPOINT')
-_do_submit: Optional[Union[bool, str]] = os.getenv('QC_DO_SUBMIT')
+_grade_only: Optional[Union[bool, str]] = os.getenv('QC_GRADE_ONLY')
 
 
 def get_auth_endpoint() -> Optional[str]:
@@ -241,11 +241,11 @@ def notify_provider(access_token: str, challenge_id: str) -> None:
         )
 
 
-def should_submit() -> bool:
-    global _do_submit
-    if _do_submit is None:
+def do_grade_only() -> bool:
+    global _grade_only
+    if _grade_only is None:
         endpoint = get_grading_endpoint('', '')
-        _do_submit = endpoint is not None and endpoint.startswith('https://qac-grading')
+        _grade_only = endpoint is not None and not endpoint.startswith('https://qac-grading')
     else:
-        _do_submit = str(_do_submit).lower() in ['true', '1', 'yes', 'y', 't']
-    return bool(_do_submit)
+        _grade_only = str(_grade_only).lower() in ['true', '1', 'yes', 'y', 't']
+    return bool(_grade_only)

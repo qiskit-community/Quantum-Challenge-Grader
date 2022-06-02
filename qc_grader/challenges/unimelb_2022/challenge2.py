@@ -21,30 +21,30 @@ challenge_id = Path(__file__).parent.name
 
 @typechecked
 def grade_ex2a(answer: Dict[str, int]) -> None:
-    grade(answer, 5, challenge_id)  # 2a
+    grade(answer, '2a', challenge_id)
 
 
 @typechecked
 def grade_ex2b(answer: Dict[str, int]) -> None:
-    grade(answer, 6, challenge_id)  # 2b
+    grade(answer, '2b', challenge_id)
 
 
 @typechecked
 def grade_ex2c(result: ElectronicStructureResult) -> None:
     answer = jsonpickle.encode(result)
-    grade(answer, 7, challenge_id)  # 2c
+    grade(answer, '2c', challenge_id)
 
 
 @typechecked
 def grade_ex2d(result: ElectronicStructureResult) -> None:
     answer = jsonpickle.encode(result)
-    grade(answer, 8, challenge_id)  # 2d
+    grade(answer, '2d', challenge_id)
 
 
 @typechecked
 def grade_ex2e(result: ElectronicStructureResult) -> None:
     answer = jsonpickle.encode(result)
-    grade(answer, 9, challenge_id)  # 23
+    grade(answer, '2e', challenge_id)
 
 
 @typechecked
@@ -67,4 +67,4 @@ def grade_ex2f(job: RuntimeJob) -> None:
         print(f'Please wait for the job (id: {job.job_id()}) to complete then try again.')
     else:
         answer = jsonpickle.encode(job.result())
-        grade(answer, 10, challenge_id)  # 2f
+        grade(answer, '2f', challenge_id)
