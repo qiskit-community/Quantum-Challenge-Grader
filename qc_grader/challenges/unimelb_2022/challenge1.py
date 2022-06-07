@@ -27,7 +27,7 @@ def grade_ex1b(vqe: VQE, qp: QuadraticProgram) -> None:
         return
     meo = MinimumEigenOptimizer(vqe)
     result = meo.solve(qp)
-    answer = pickle.dumps(result).decode('ISO-8859-1')
+    answer = pickle.dumps(result).hex(' ', -4)
     grade(answer, '1b', challenge_id)
 
 
@@ -35,5 +35,5 @@ def grade_ex1b(vqe: VQE, qp: QuadraticProgram) -> None:
 def grade_ex1c(qaoa: QAOA, qp: QuadraticProgram) -> None:
     meo = MinimumEigenOptimizer(qaoa)
     result = meo.solve(qp)
-    answer = pickle.dumps(result).decode('ISO-8859-1')
+    answer = pickle.dumps(result).hex(' ', -4)
     grade(answer, '1c', challenge_id)
