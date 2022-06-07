@@ -61,6 +61,6 @@ def grade_ex3c(
         'svc_2': svc_2,
         'svc_3': svc_3
     }
-    answer = pickle.dumps(answer_dict).decode('ISO-8859-1')
+    answer = pickle.dumps(answer_dict).hex(' ', -4)
 
     grade(answer, '3c', challenge_id)
