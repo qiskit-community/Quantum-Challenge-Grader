@@ -101,7 +101,7 @@ def grade_ex4b(function: Callable) -> None:
             'result': result
         }
         answer_dicts.append(answer_dict)
-        answer = pickle.dumps(answer_dicts).decode('ISO-8859-1')
+        answer = pickle.dumps(answer_dicts).hex(' ', -4)
 
     grade(answer, '4b', challenge_id)
 
