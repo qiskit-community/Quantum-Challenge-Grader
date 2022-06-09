@@ -21,6 +21,8 @@ import warnings
 from qiskit import IBMQ, QuantumCircuit
 from qiskit.circuit import Barrier, Gate, Instruction, Measure, Parameter
 from qiskit.circuit.library import UGate, U3Gate, CXGate
+from qiskit.opflow.primitive_ops.circuit_op import CircuitOp
+from qiskit.opflow.evolutions.evolved_op import EvolvedOp
 from qiskit.opflow.primitive_ops.pauli_op import PauliOp
 from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
 from qiskit.providers.aer.noise import NoiseModel
@@ -80,6 +82,20 @@ def circuit_to_json(
 
 def qobj_to_json(qobj: Union[PulseQobj, QasmQobj]) -> str:
     return json.dumps(qobj.to_dict(), cls=QObjEncoder)
+
+
+def circuitop_to_json(op: CircuitOp) -> str:
+    return json.dumps({
+        'primitive': circuit_to_dict(op.to_circuit()),
+        'coeff': op.coeff
+    }, cls=QObjEncoder)
+
+
+def evolvedop_to_json(op: EvolvedOp) -> str:
+    return json.dumps({
+        'primitive': circuit_to_dict(op.primitive.to_circuit()),
+        'coeff': op.coeff
+    }, cls=QObjEncoder)
 
 
 def paulisumop_to_json(op: PauliSumOp) -> str:
