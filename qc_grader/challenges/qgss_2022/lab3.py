@@ -1,6 +1,6 @@
 import numpy
 
-from typing import List
+from typing import List, Dict
 from typeguard import typechecked
 
 from qiskit import QuantumCircuit
@@ -19,11 +19,7 @@ def grade_lab3_ex1(qc: QuantumCircuit) -> None:
 
 
 @typechecked
-def grade_lab3_ex2(zero_state_count: int, one_state_count: int) -> None:
-    answer = {
-        '0': zero_state_count,
-        '1': one_state_count
-    }
+def grade_lab3_ex2(answer: Dict[str, int]) -> None:
     grade(answer, 'ex3-2', _challenge_id)
 
 
