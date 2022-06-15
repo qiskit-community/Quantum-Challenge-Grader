@@ -12,5 +12,6 @@
 # that they have been altered from the originals.
 
 from .custom import (
-    grade_custom_unitary
+    grade_custom_unitary,
+    encrypt_solution
 )
