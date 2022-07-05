@@ -72,7 +72,7 @@ def prepare_vqe_runtime_program(
         runtime_vqe.provider = challenge_provider
 
     if real_device:
-        if runtime_vqe.backend != (ibm_perth or ibmq_jakarta or ibm_lagos):
+        if runtime_vqe.backend != ibm_perth and runtime_vqe.backend != ibmq_jakarta and runtime_vqe.backend != ibm_lagos):
             print('You are not using the assigned backends, even though you set "real_device=True".\n'+\
                   'Please change your backend setting.')
             return None
