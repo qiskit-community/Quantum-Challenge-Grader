@@ -289,6 +289,10 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = serialize_job(answer)
     elif isinstance(answer, QuantumCircuit):
         payload = circuit_to_json(answer, **kwargs)
+    elif isinstance(answer, PauliSumOp):
+        payload = paulisumop_to_json(answer)
+    elif isinstance(answer, PauliOp):
+        payload = pauliop_to_json(answer)
     elif isinstance(answer, (PulseQobj, QasmQobj)):
         payload = qobj_to_json(answer)
     elif isinstance(answer, (complex, float, int)):
