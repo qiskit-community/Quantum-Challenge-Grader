@@ -64,7 +64,11 @@ def grade_lab2_ex7(answer: numpy.ndarray) -> None:
 
 @typechecked
 def grade_lab2_ex8(op: EvolvedOp) -> None:
-    answer = pickle.dumps(op).hex(' ', -4)
+    answer = {
+        'primitive': paulisumop_to_json(op.primitive),
+        'coeff': op.coeff,
+        'primitive_coeff': str(op.primitive.coeff)
+    }
     grade(answer, 'ex2-8', _challenge_id)
 
 
