@@ -47,7 +47,7 @@ setup(
     ]),
     install_requires=[
         'numpy',
-        'qiskit>=0.25',
+        'qiskit>=0.37',
         'requests',
         'networkx',
         'ipycytoscape',
