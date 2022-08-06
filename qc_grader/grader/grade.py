@@ -123,7 +123,7 @@ def handle_grade_response(
         if score is not None:
             print(f'Your score is {score}.')
     elif status == 'invalid':
-        print(f'\nOops 😕! {cause}')
+        print(f'\nOops 😕! {"Your answer is incorrect" if cause is None else cause}')
         print('Please review your answer and try again.')
     elif status == 'notFinished':
         print(f'Job has not finished: {cause}')
