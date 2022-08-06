@@ -54,17 +54,23 @@ def grade(
         endpoint = get_grading_endpoint(question_id, challenge_id)
         payload = {'answer': serialized_answer}
 
+    status = False
+    info = None
+
     if serialized_answer and endpoint:
         print(f'{"Submitting" if do_submit else "Grading"} your answer. Please wait...')
 
-        return grade_answer(
+        status, info = grade_answer(
             payload,
             endpoint,
             do_submit=do_submit,
             max_content_length=kwargs['max_content_length'] if 'max_content_length' in kwargs else None
         )
+    else:
+        handle_grade_response('failed')
 
-    return False, None
+    if 'return_response' in kwargs and kwargs['return_response'] == True:
+        return status, info
 
 
 def grade_answer(
