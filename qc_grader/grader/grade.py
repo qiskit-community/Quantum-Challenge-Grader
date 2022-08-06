@@ -69,7 +69,7 @@ def grade(
     else:
         handle_grade_response('failed')
 
-    if 'return_response' in kwargs and kwargs['return_response'] == True:
+    if 'return_response' in kwargs and kwargs['return_response'] is True:
         return status, info
 
 
