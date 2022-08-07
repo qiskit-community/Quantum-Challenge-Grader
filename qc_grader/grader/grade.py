@@ -36,12 +36,19 @@ from .common import (
 
 def grade(
     answer: Any,
-    question_id: Union[str, int],
-    challenge_id: str,
+    question: Union[str, int],
+    challenge: Optional[str] = None,
     **kwargs: Any
 ) -> ValidationResult:
     serialized_answer = serialize_answer(answer, **kwargs)
     do_submit = not do_grade_only()
+
+    if challenge is None and '/' in str(question):
+        challenge_id = question.split('/')[0]
+        question_id = question.split('/')[1]
+    else:
+        question_id = question
+        challenge_id = challenge
 
     if do_submit:
         endpoint = get_submission_endpoint(question_id, challenge_id)
