@@ -2,6 +2,7 @@ from typeguard import typechecked
 from typing import Callable, List
 from qiskit import Aer, execute
 from qiskit.primitives import SamplerResult, EstimatorResult
+from qiskit import QuantumCircuit
 from qc_grader.grader.grade import grade, get_problem_set
 
 _challenge_id = 'fall_2022'

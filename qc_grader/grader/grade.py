@@ -36,12 +36,19 @@ from .common import (
 
 def grade(
     answer: Any,
-    question_id: Union[str, int],
-    challenge_id: str,
+    question: Union[str, int],
+    challenge: Optional[str] = None,
     **kwargs: Any
 ) -> ValidationResult:
     serialized_answer = serialize_answer(answer, **kwargs)
     do_submit = not do_grade_only()
+
+    if challenge is None and '/' in str(question):
+        challenge_id = question.split('/')[0]
+        question_id = question.split('/')[1]
+    else:
+        question_id = question
+        challenge_id = challenge
 
     if do_submit:
         endpoint = get_submission_endpoint(question_id, challenge_id)
@@ -54,17 +61,23 @@ def grade(
         endpoint = get_grading_endpoint(question_id, challenge_id)
         payload = {'answer': serialized_answer}
 
+    status = False
+    info = None
+
     if serialized_answer and endpoint:
         print(f'{"Submitting" if do_submit else "Grading"} your answer. Please wait...')
 
-        return grade_answer(
+        status, info = grade_answer(
             payload,
             endpoint,
             do_submit=do_submit,
             max_content_length=kwargs['max_content_length'] if 'max_content_length' in kwargs else None
         )
+    else:
+        handle_grade_response('failed')
 
-    return False, None
+    if 'return_response' in kwargs and kwargs['return_response'] is True:
+        return status, info
 
 
 def grade_answer(
@@ -117,7 +130,7 @@ def handle_grade_response(
         if score is not None:
             print(f'Your score is {score}.')
     elif status == 'invalid':
-        print(f'\nOops 😕! {cause}')
+        print(f'\nOops 😕! {"Your answer is incorrect" if cause is None else cause}')
         print('Please review your answer and try again.')
     elif status == 'notFinished':
         print(f'Job has not finished: {cause}')
