@@ -23,6 +23,7 @@ from qiskit.circuit import Barrier, Gate, Instruction, Measure, Parameter
 from qiskit.circuit.library import UGate, U3Gate, CXGate
 from qiskit.opflow.primitive_ops.pauli_op import PauliOp
 from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
+from qiskit.primitives import SamplerResult, EstimatorResult
 from qiskit.providers.aer.noise import NoiseModel
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
@@ -95,6 +96,12 @@ def pauliop_to_json(op: PauliOp) -> str:
 
 def noisemodel_to_json(noise_model: NoiseModel) -> str:
     return json.dumps(noise_model.to_dict(), cls=QObjEncoder)
+
+def SamplerResult_to_json(op: SamplerResult) -> str:
+    return json.dumps({
+        'metadata': op.metadata,
+        'coeff': op.quasi_dists
+    }, cls=QObjEncoder)
 
 
 def to_json(result: Any, skip: List[str] = []) -> str:
@@ -295,6 +302,8 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = pauliop_to_json(answer)
     elif isinstance(answer, (PulseQobj, QasmQobj)):
         payload = qobj_to_json(answer)
+    elif isinstance(answer, SamplerResult):
+        payload = SamplerResult_to_json(answer)
     elif isinstance(answer, (complex, float, int)):
         payload = str(answer)
     elif isinstance(answer, str):
