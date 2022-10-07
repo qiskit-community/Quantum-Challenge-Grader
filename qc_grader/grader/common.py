@@ -27,7 +27,7 @@ from qiskit.providers.aer.noise import NoiseModel
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
-
+from qiskit.primitives import SamplerResult, EstimatorResult
 
 ValidationResult = Tuple[bool, Optional[Union[str, int, float]]]
 
@@ -96,6 +96,12 @@ def pauliop_to_json(op: PauliOp) -> str:
 def noisemodel_to_json(noise_model: NoiseModel) -> str:
     return json.dumps(noise_model.to_dict(), cls=QObjEncoder)
 
+
+def EstimatorResult_to_json(op: EstimatorResult) ->str:
+    return json.dumps({
+        'values':op.values,
+        'metadata':op.metadata
+    },cls=QObjEncoder)
 
 def to_json(result: Any, skip: List[str] = []) -> str:
     if result is None:
@@ -297,6 +303,8 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = qobj_to_json(answer)
     elif isinstance(answer, (complex, float, int)):
         payload = str(answer)
+    elif isinstance(answer, EstimatorResult):
+        payload=EstimatorResult_to_json(answer)
     elif isinstance(answer, str):
         payload = answer
     else:
