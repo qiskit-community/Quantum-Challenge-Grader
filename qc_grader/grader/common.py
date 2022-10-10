@@ -30,6 +30,7 @@ from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
 
+
 ValidationResult = Tuple[bool, Optional[Union[str, int, float]]]
 
 
