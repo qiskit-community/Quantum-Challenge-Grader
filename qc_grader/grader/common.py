@@ -23,6 +23,8 @@ from qiskit.circuit import Barrier, Gate, Instruction, Measure, Parameter
 from qiskit.circuit.library import UGate, U3Gate, CXGate
 from qiskit.opflow.primitive_ops.pauli_op import PauliOp
 from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
+from qiskit.primitives import SamplerResult, EstimatorResult
+from qiskit.providers.aer.jobs import AerJob
 from qiskit.providers.aer.noise import NoiseModel
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
@@ -97,11 +99,19 @@ def noisemodel_to_json(noise_model: NoiseModel) -> str:
     return json.dumps(noise_model.to_dict(), cls=QObjEncoder)
 
 
-def EstimatorResult_to_json(op: EstimatorResult) ->str:
+def samplerresult_to_json(op: SamplerResult) -> str:
     return json.dumps({
-        'values':op.values,
-        'metadata':op.metadata
-    },cls=QObjEncoder)
+        'metadata': op.metadata,
+        'quasi_dists': op.quasi_dists
+    }, cls=QObjEncoder)
+
+
+def estimatorresult_to_json(op: EstimatorResult) -> str:
+    return json.dumps({
+        'metadata': op.metadata,
+        'values': op.values
+    }, cls=QObjEncoder)
+
 
 def to_json(result: Any, skip: List[str] = []) -> str:
     if result is None:
@@ -290,9 +300,27 @@ def serialize_job(job: IBMQJob) -> Optional[Dict[str, str]]:
     })
 
 
+def serialize_aerjob_result(job: AerJob) -> Optional[Dict[str, str]]:
+    from qiskit.providers import JobStatus
+
+    job_status = job.status()
+
+    if job_status in [JobStatus.CANCELLED, JobStatus.ERROR]:
+        print(f'Job did not successfully complete: {job_status.value}.')
+        return None
+    elif job_status is not JobStatus.DONE:
+        print(f'Job has not yet completed: {job_status.value}.')
+        print(f'Please wait for the job (id: {job.job_id()}) to complete then try again.')
+        return None
+
+    return json.dumps(job.result().to_dict())
+
+
 def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
     if isinstance(answer, IBMQJob):
         payload = serialize_job(answer)
+    elif isinstance(answer, AerJob):
+        payload = serialize_aerjob_result(answer)
     elif isinstance(answer, QuantumCircuit):
         payload = circuit_to_json(answer, **kwargs)
     elif isinstance(answer, PauliSumOp):
@@ -301,10 +329,12 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = pauliop_to_json(answer)
     elif isinstance(answer, (PulseQobj, QasmQobj)):
         payload = qobj_to_json(answer)
+    elif isinstance(answer, SamplerResult):
+        payload = samplerresult_to_json(answer)
+    elif isinstance(answer, EstimatorResult):
+        payload = estimatorresult_to_json(answer)
     elif isinstance(answer, (complex, float, int)):
         payload = str(answer)
-    elif isinstance(answer, EstimatorResult):
-        payload=EstimatorResult_to_json(answer)
     elif isinstance(answer, str):
         payload = answer
     else:
