@@ -73,16 +73,20 @@ def circuit_to_dict(
 
 def circuit_to_json(
     qc: QuantumCircuit,
-    parameter_binds: Optional[List] = None,
-    byte_string: bool = False
+    parameter_binds: Optional[List] = None
 ) -> str:
-    if byte_string:
-        import pickle
-        return json.dumps({
-            'qc': pickle.dumps(qc).decode('ISO-8859-1')
-        }, cls=QObjEncoder)
+    if qc.num_parameters == 0 or parameter_binds is not None:
+        circuit = circuit_to_dict(qc, parameter_binds)
+        byte_string = False
     else:
-        return json.dumps(circuit_to_dict(qc, parameter_binds), cls=QObjEncoder)
+        import pickle
+        circuit = pickle.dumps(qc).decode('ISO-8859-1')
+        byte_string = True
+
+    return json.dumps({
+        'qc': circuit,
+        'byte_string': byte_string
+    }, cls=QObjEncoder)
 
 
 def qobj_to_json(qobj: Union[PulseQobj, QasmQobj]) -> str:
