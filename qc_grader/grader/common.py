@@ -30,6 +30,11 @@ from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
 
+from qiskit_ibm_runtime.qiskit.primitives import (
+    SamplerResult as sampler_result,
+    EstimatorResult as estimator_result
+)
+
 
 ValidationResult = Tuple[bool, Optional[Union[str, int, float]]]
 
@@ -99,14 +104,18 @@ def noisemodel_to_json(noise_model: NoiseModel) -> str:
     return json.dumps(noise_model.to_dict(), cls=QObjEncoder)
 
 
-def samplerresult_to_json(op: SamplerResult) -> str:
+def samplerresult_to_json(
+    op: Union[SamplerResult, sampler_result]
+) -> str:
     return json.dumps({
         'metadata': op.metadata,
         'quasi_dists': op.quasi_dists
     }, cls=QObjEncoder)
 
 
-def estimatorresult_to_json(op: EstimatorResult) -> str:
+def estimatorresult_to_json(
+    op: Union[EstimatorResult, estimator_result]
+) -> str:
     return json.dumps({
         'metadata': op.metadata,
         'values': op.values
@@ -329,9 +338,9 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = pauliop_to_json(answer)
     elif isinstance(answer, (PulseQobj, QasmQobj)):
         payload = qobj_to_json(answer)
-    elif isinstance(answer, SamplerResult):
+    elif isinstance(answer, (SamplerResult, sampler_result)):
         payload = samplerresult_to_json(answer)
-    elif isinstance(answer, EstimatorResult):
+    elif isinstance(answer, (EstimatorResult, estimator_result)):
         payload = estimatorresult_to_json(answer)
     elif isinstance(answer, (complex, float, int)):
         payload = str(answer)

@@ -1,11 +1,16 @@
 from typeguard import typechecked
 
-from typing import Callable, List
+from typing import Callable, List, Union
 
 from qiskit import Aer, execute
 
 from qiskit.primitives import SamplerResult, EstimatorResult
 from qiskit.providers.aer.jobs import AerJob
+
+from qiskit_ibm_runtime.qiskit.primitives import (
+    SamplerResult as sampler_result,
+    EstimatorResult as estimator_result
+)
 
 from qc_grader.grader.grade import grade, get_problem_set
 
@@ -32,12 +37,16 @@ def grade_lab1_ex1(job: AerJob):
 
 
 @typechecked
-def grade_lab1_ex2(result: SamplerResult) -> None:
+def grade_lab1_ex2(
+    result: Union[SamplerResult, sampler_result]
+) -> None:
     grade(result, 'ex1-2', _challenge_id)
 
 
 @typechecked
-def grade_lab1_ex3(result: EstimatorResult) -> None:
+def grade_lab1_ex3(
+    result: Union[EstimatorResult, estimator_result]
+) -> None:
     grade(result, 'ex1-3', _challenge_id)
 
 
@@ -48,7 +57,9 @@ def grade_lab1_ex4(answer: List) -> None:
 
 # TODO: the circuit is not defined yet so the type might be changed
 @typechecked
-def grade_lab1_ex5(result: SamplerResult) -> None:
+def grade_lab1_ex5(
+    result: Union[SamplerResult, sampler_result]
+) -> None:
     grade(result.quasi_dists[0], 'ex1-5', _challenge_id)
 
 
