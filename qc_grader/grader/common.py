@@ -73,7 +73,8 @@ def circuit_to_dict(
 
 def circuit_to_json(
     qc: QuantumCircuit,
-    parameter_binds: Optional[List] = None
+    parameter_binds: Optional[List] = None,
+    byte_string: bool = False
 ) -> str:
     if qc.num_parameters == 0 or parameter_binds is not None:
         circuit = circuit_to_dict(qc, parameter_binds)
