@@ -18,5 +18,5 @@ def grade_lab3_ex2(attempt: QuasiDistribution) -> None:
     grade(QuasiDistribution, 'ex3-2', _challenge_id)
 
 @typechecked
-def grade_lab3_ex3(attempt_etgl: function) -> None:
+def grade_lab3_ex3(attempt_etgl: callable) -> None:
     grade(function, 'ex3-3', _challenge_id)
