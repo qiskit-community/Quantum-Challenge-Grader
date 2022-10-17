@@ -2,7 +2,7 @@ from typing import List
 from typeguard import typechecked
 
 from qiskit import QuantumCircuit
-
+import numpy as np
 from qc_grader.grader.grade import grade
 
 _challenge_id = 'fall_2022'
@@ -47,7 +47,7 @@ def grade_lab2_ex4(answer_kernel: List[float]) -> None:
 
 @typechecked
 def grade_lab2_ex5(
-    answer_predict: List[int],
+    answer_predict: np.ndarray,
     answer_kernel: List[float]
 ) -> None:
     answer = {
