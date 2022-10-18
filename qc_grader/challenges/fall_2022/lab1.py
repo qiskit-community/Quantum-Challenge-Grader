@@ -38,26 +38,30 @@ def grade_lab1_ex1(job: AerJob):
 
 @typechecked
 def grade_lab1_ex2(
-    result: SamplerResult
+    result: Union[SamplerResult, sampler_result]
 ) -> None:
     grade(result, 'ex1-2', _challenge_id)
 
 
 @typechecked
 def grade_lab1_ex3(
-    result: EstimatorResult
+    result: Union[EstimatorResult, estimator_result]
 ) -> None:
     grade(result, 'ex1-3', _challenge_id)
 
 
 @typechecked
-def grade_lab1_ex4(result: List) -> None:
-    grade(result, 'ex1-4', _challenge_id)
+def grade_lab1_ex4(answer: List) -> None:
+    grade(answer, 'ex1-4', _challenge_id)
 
 
+# TODO: the circuit is not defined yet so the type might be changed
 @typechecked
-def grade_lab1_ex5(result: List) -> None:
-    grade(result, 'ex1-5', _challenge_id)
+def grade_lab1_ex5(
+    result: Union[SamplerResult, sampler_result]
+) -> None:
+    grade(result.quasi_dists[0], 'ex1-5', _challenge_id)
+
 
 @typechecked
 def grade_lab1_ex6(message: str) -> None:
