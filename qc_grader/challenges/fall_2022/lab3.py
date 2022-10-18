@@ -1,19 +1,22 @@
-from typeguard import typechecked
 
+import random
+
+from typeguard import typechecked
 from typing import Callable
 
 from qiskit import QuantumCircuit
-from qiskit.result import QuasiDistribution
-from qc_grader.grader.grade import grade, get_problem_set
-import random
+from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
+
+from qc_grader.grader.grade import grade
+from qc_grader.grader.common import circuit_to_json
 
 _challenge_id = 'fall_2022'
 
 @typechecked
 def grade_lab3_ex1(attempt_qc: QuantumCircuit, attempt_n: int) -> None:
     answer = {
-        'attempt_qc': attempt_qc,
-        'attempt_n': attempt_n
+        'attempt_n': attempt_n,
+        'attempt_qc': circuit_to_json(attempt_qc)
     }
     grade(answer, 'ex3-1', _challenge_id)
 
