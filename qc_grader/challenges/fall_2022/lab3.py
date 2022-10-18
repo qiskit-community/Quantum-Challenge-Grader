@@ -11,7 +11,7 @@ _challenge_id = 'fall_2022'
 
 @typechecked
 def grade_lab3_ex1(attempt_qc: QuantumCircuit) -> None:
-    grade(QuantumCircuit, 'ex3-1', _challenge_id)
+    grade(attempt_qc, 'ex3-1', _challenge_id)
 
 @typechecked
 def grade_lab3_ex2(attempt: QuasiDistribution) -> None:
