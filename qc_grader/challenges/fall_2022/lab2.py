@@ -30,12 +30,12 @@ def grade_lab2_ex2(
 def grade_lab2_ex3(
     answer_sim: List[float],
     answer_noise: List[float],
-    answer_zne: List[float]
+    answer_em: List[float]
 ) -> None:
     answer = {
         'sim': answer_sim,
         'noise': answer_noise,
-        'zne': answer_zne
+        'em': answer_em
     }
     grade(answer, 'ex2-3', _challenge_id)
 
