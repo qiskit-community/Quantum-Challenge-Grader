@@ -15,10 +15,10 @@ def grade_lab3_ex1(attempt_qc: QuantumCircuit) -> None:
 
 @typechecked
 def grade_lab3_ex2(attempt: QuasiDistribution) -> None:
-    grade(QuasiDistribution, 'ex3-2', _challenge_id)
+    grade(attempt, 'ex3-2', _challenge_id)
 
 @typechecked
-def grade_lab3_ex3(attempt_etgl: callable) -> None:
+def grade_lab3_ex3(attempt_etgl: Callable) -> None:
     n = random.randint(2,4)
     qc = attempt_etgl(n)
     answer = {
