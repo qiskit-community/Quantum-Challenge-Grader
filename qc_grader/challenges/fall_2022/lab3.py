@@ -10,12 +10,17 @@ import random
 _challenge_id = 'fall_2022'
 
 @typechecked
-def grade_lab3_ex1(attempt_qc: QuantumCircuit) -> None:
-    grade(attempt_qc, 'ex3-1', _challenge_id)
+def grade_lab3_ex1(attempt_qc: QuantumCircuit, attempt_n: int) -> None:
+    answer = {
+        'attempt_qc': attempt_qc,
+        'attempt_n': attempt_n
+    }
+    grade(answer, 'ex3-1', _challenge_id)
 
 @typechecked
-def grade_lab3_ex2(attempt: QuasiDistribution) -> None:
-    grade(attempt, 'ex3-2', _challenge_id)
+def grade_lab3_ex2(attempt_ising: PauliSumOp) -> None:
+    grade(attempt_ising, 'ex3-2', _challenge_id)
+
 
 @typechecked
 def grade_lab3_ex3(attempt_etgl: Callable) -> None:
