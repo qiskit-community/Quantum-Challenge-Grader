@@ -27,6 +27,7 @@ from qiskit.primitives import SamplerResult, EstimatorResult
 from qiskit.providers.aer.jobs import AerJob
 from qiskit.providers.aer.noise import NoiseModel
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
+from networkx.classes import Graph
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
 from qiskit.result import QuasiDistribution
@@ -123,8 +124,8 @@ def Graph_to_json(
     op: Graph
 ) -> str:
     return json.dumps({
-        'incoming_graph_data': op.incoming_graph_data,
-        'attr': op.attr
+        'nodes': list(op.nodes(data=True)),
+        'edges': list(op.edges(data=True))
     }, cls=QObjEncoder)
 
 
