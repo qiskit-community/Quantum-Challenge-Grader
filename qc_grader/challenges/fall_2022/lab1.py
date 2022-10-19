@@ -13,6 +13,7 @@ from qiskit_ibm_runtime.qiskit.primitives import (
 )
 
 from qc_grader.grader.grade import grade, get_problem_set
+from qc_grader.grader.common import samplerresult_to_json, estimatorresult_to_json
 
 _challenge_id = 'fall_2022'
 
@@ -58,9 +59,13 @@ def grade_lab1_ex4(answer: List) -> None:
 # TODO: the circuit is not defined yet so the type might be changed
 @typechecked
 def grade_lab1_ex5(
-    result: Union[SamplerResult, sampler_result]
+    result: List
 ) -> None:
-    grade(result.quasi_dists[0], 'ex1-5', _challenge_id)
+    answer = {
+        'sampler_result': samplerresult_to_json(result[0]),
+        'estimator_result': [estimatorresult_to_json(r) for r in result[1]]
+    }
+    grade(answer, 'ex1-5', _challenge_id)
 
 
 @typechecked
