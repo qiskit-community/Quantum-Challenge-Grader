@@ -2,7 +2,7 @@ from typing import List
 from typeguard import typechecked
 
 from qiskit import QuantumCircuit
-
+import numpy as np
 from qc_grader.grader.grade import grade
 
 _challenge_id = 'fall_2022'
@@ -30,12 +30,12 @@ def grade_lab2_ex2(
 def grade_lab2_ex3(
     answer_sim: List[float],
     answer_noise: List[float],
-    answer_zne: List[float]
+    answer_em: List[float]
 ) -> None:
     answer = {
         'sim': answer_sim,
         'noise': answer_noise,
-        'zne': answer_zne
+        'em': answer_em
     }
     grade(answer, 'ex2-3', _challenge_id)
 
@@ -47,11 +47,20 @@ def grade_lab2_ex4(answer_kernel: List[float]) -> None:
 
 @typechecked
 def grade_lab2_ex5(
-    answer_predict: List[int],
+    answer_predict: np.ndarray,
     answer_kernel: List[float]
 ) -> None:
     answer = {
         'predict': answer_predict,
         'kernel': answer_kernel
     }
-    grade(answer, 'ex2-5', _challenge_id)
+    status, _ = grade(answer, 'ex2-5', _challenge_id, return_response=True)
+    if status:
+        print("""
+You successfully fixed your quantum computers and scanners. Now you can use them to find your way home.  
+
+You use the newly-fixed scanners to analyze your surroundings, and discover there are even more little worlds orbiting the black hole than you first thought. 
+
+One of the worlds is your optimal target for a slingshot maneuver. 
+And one of worlds is where future you is stuck, in its own little bubble of time.
+        """)

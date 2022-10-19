@@ -29,6 +29,8 @@ from qiskit.providers.aer.noise import NoiseModel
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
+from qiskit.result import QuasiDistribution
+from networkx import Graph
 
 from qiskit_ibm_runtime.qiskit.primitives import (
     SamplerResult as sampler_result,
@@ -117,6 +119,14 @@ def samplerresult_to_json(
         'quasi_dists': op.quasi_dists
     }, cls=QObjEncoder)
 
+def Graph_to_json(
+    op: Graph
+) -> str:
+    return json.dumps({
+        'incoming_graph_data': op.incoming_graph_data,
+        'attr': op.attr
+    }, cls=QObjEncoder)
+
 
 def estimatorresult_to_json(
     op: Union[EstimatorResult, estimator_result]
@@ -126,6 +136,14 @@ def estimatorresult_to_json(
         'values': op.values
     }, cls=QObjEncoder)
 
+def QuasiDistribution_to_json(
+    op: QuasiDistribution
+) -> str:
+    return json.dumps({
+        'data': op.data,
+        'shots': op.shots,
+        'stddev_upper_bound': op.stddev_upper_bound
+    }, cls=QObjEncoder)
 
 def to_json(result: Any, skip: List[str] = []) -> str:
     if result is None:
@@ -345,6 +363,8 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = qobj_to_json(answer)
     elif isinstance(answer, (SamplerResult, sampler_result)):
         payload = samplerresult_to_json(answer)
+    elif isinstance(answer, Graph):
+        payload = Graph_to_json(answer)
     elif isinstance(answer, (EstimatorResult, estimator_result)):
         payload = estimatorresult_to_json(answer)
     elif isinstance(answer, (complex, float, int)):
