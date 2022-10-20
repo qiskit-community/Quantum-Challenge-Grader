@@ -120,7 +120,7 @@ def samplerresult_to_json(
         'quasi_dists': op.quasi_dists
     }, cls=QObjEncoder)
 
-def Graph_to_json(
+def graph_to_json(
     op: Graph
 ) -> str:
     return json.dumps({
@@ -364,10 +364,10 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = qobj_to_json(answer)
     elif isinstance(answer, (SamplerResult, sampler_result)):
         payload = samplerresult_to_json(answer)
-    elif isinstance(answer, Graph):
-        payload = Graph_to_json(answer)
     elif isinstance(answer, (EstimatorResult, estimator_result)):
         payload = estimatorresult_to_json(answer)
+    elif isinstance(answer, Graph):
+        payload = graph_to_json(answer)
     elif isinstance(answer, (complex, float, int)):
         payload = str(answer)
     elif isinstance(answer, str):
