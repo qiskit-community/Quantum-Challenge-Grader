@@ -3,21 +3,22 @@ import random
 
 from typeguard import typechecked
 from typing import Callable
-from numpy import ndarray
 
 from networkx.classes import Graph
+from numpy import ndarray
 
 from qiskit import QuantumCircuit
-from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
-from qiskit.result import QuasiDistribution
 from qiskit.algorithms.minimum_eigen_solvers.vqe import VQEResult
+from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
 from qiskit.primitives import SamplerResult
-from qiskit.result import ProbDistribution
+from qiskit.result import ProbDistribution, QuasiDistribution
 
 from qc_grader.grader.grade import grade
 from qc_grader.grader.common import graph_to_json, circuit_to_json
 
+
 _challenge_id = 'fall_2022'
+
 
 @typechecked
 def grade_lab3_ex1(attempt_graph: Graph, attempt_n: int) -> None:

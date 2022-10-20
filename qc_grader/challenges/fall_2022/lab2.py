@@ -1,9 +1,12 @@
-from typing import List
 from typeguard import typechecked
+from typing import List
+
+import numpy as np
 
 from qiskit import QuantumCircuit
-import numpy as np
+
 from qc_grader.grader.grade import grade
+
 
 _challenge_id = 'fall_2022'
 

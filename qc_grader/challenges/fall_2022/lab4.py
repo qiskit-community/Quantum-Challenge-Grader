@@ -1,18 +1,17 @@
-from typing import Callable
 from typeguard import typechecked
+from typing import Callable
+
+import numpy as np
+
+from qiskit.algorithms import MinimumEigensolverResult
+from qiskit_nature.drivers import Molecule
+from qiskit.tools.jupyter import *
+from qiskit.visualization import *
+from qiskit_nature import settings
 
 from qc_grader.grader.grade import grade
 
-from qiskit_nature.drivers import Molecule
 
-from qiskit import QuantumCircuit
-from qiskit.tools.jupyter import *
-from qiskit.visualization import *
-
-from qiskit.algorithms import MinimumEigensolverResult
-import numpy as np
-
-from qiskit_nature import settings
 settings.dict_aux_operators = True
 settings.dict_aux_operators = True
 
@@ -75,12 +74,3 @@ def grade_lab4_ex5(temp_dipoles_dict: dict, temp_nu_dipoles : np.ndarray, dip_to
         'dip_tot': dip_tot
     }
     grade(answer, 'ex4-5', _challenge_id)
-
-
-@typechecked
-def grade_lab4_ex6(qc: QuantumCircuit) -> None:
-    grade(qc, 'ex4-6', _challenge_id)
-    
-@typechecked
-def grade_lab4_ex7(qc: QuantumCircuit) -> None:
-    grade(qc, 'ex4-7', _challenge_id)

@@ -1,9 +1,7 @@
 from typeguard import typechecked
-
 from typing import Callable, List, Union
 
 from qiskit import Aer, execute
-
 from qiskit.primitives import SamplerResult, EstimatorResult
 from qiskit.providers.aer.jobs import AerJob
 
@@ -14,6 +12,7 @@ from qiskit_ibm_runtime.qiskit.primitives import (
 
 from qc_grader.grader.grade import grade, get_problem_set
 from qc_grader.grader.common import samplerresult_to_json, estimatorresult_to_json
+
 
 _challenge_id = 'fall_2022'
 
