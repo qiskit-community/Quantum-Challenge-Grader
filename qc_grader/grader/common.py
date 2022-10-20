@@ -31,6 +31,7 @@ from networkx.classes import Graph
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
 from qiskit.result import QuasiDistribution
+from qiskit.algorithms.minimum_eigen_solvers.vqe import VQEResult
 
 from qiskit_ibm_runtime.qiskit.primitives import (
     SamplerResult as sampler_result,
@@ -143,6 +144,7 @@ def estimatorresult_to_json(
         'values': op.values
     }, cls=QObjEncoder)
 
+
 def quasidistribution_to_json(
     op: QuasiDistribution
 ) -> str:
@@ -151,6 +153,16 @@ def quasidistribution_to_json(
         'shots': op.shots,
         'stddev_upper_bound': op.stddev_upper_bound
     }, cls=QObjEncoder)
+
+
+def vqeresult_to_json(
+    result: VQEResult
+) -> str:
+    return json.dumps({
+        'eigenvalue': result.eigenvalue
+        # TODO: figure out what other parmeters need to be included
+    }, cls=QObjEncoder)
+
 
 def to_json(result: Any, skip: List[str] = []) -> str:
     if result is None:
@@ -376,6 +388,8 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = graph_to_json(answer)
     elif isinstance(answer, QuasiDistribution):
         payload = quasidistribution_to_json(answer)
+    elif isinstance(answer, VQEResult):
+        payload = vqeresult_to_json(answer)
     elif isinstance(answer, (complex, float, int)):
         payload = str(answer)
     elif isinstance(answer, str):
