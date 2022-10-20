@@ -27,15 +27,17 @@ from qiskit.primitives import SamplerResult, EstimatorResult
 from qiskit.providers.aer.jobs import AerJob
 from qiskit.providers.aer.noise import NoiseModel
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
+from networkx.classes import Graph
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
 from qiskit.result import QuasiDistribution
-from networkx import Graph
 
 from qiskit_ibm_runtime.qiskit.primitives import (
     SamplerResult as sampler_result,
     EstimatorResult as estimator_result
 )
+
+from networkx import Graph
 
 
 ValidationResult = Tuple[bool, Optional[Union[str, int, float]]]
@@ -53,8 +55,12 @@ class QObjEncoder(json.encoder.JSONEncoder):
     def default(self, obj: Any) -> Any:
         import numpy as np
 
+        if isinstance(obj, np.integer):
+            return {'__class__': 'np.integer', 'int': int(obj)}
+        if isinstance(obj, np.floating):
+            return {'__class__': 'np.floating', 'float': float(obj)}
         if isinstance(obj, np.ndarray):
-            return {'__class__': 'ndarray', 'list': obj.tolist()}
+            return {'__class__': 'np.ndarray', 'list': obj.tolist()}
         if isinstance(obj, complex):
             return {'__class__': 'complex', 're': obj.real, 'im': obj.imag}
 
@@ -119,12 +125,13 @@ def samplerresult_to_json(
         'quasi_dists': op.quasi_dists
     }, cls=QObjEncoder)
 
-def Graph_to_json(
-    op: Graph
+
+def graph_to_json(
+    g: Graph
 ) -> str:
     return json.dumps({
-        'incoming_graph_data': op.incoming_graph_data,
-        'attr': op.attr
+        'nodes': list(g.nodes(data=True)),
+        'edges': list(g.edges(data=True))
     }, cls=QObjEncoder)
 
 
@@ -363,10 +370,10 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = qobj_to_json(answer)
     elif isinstance(answer, (SamplerResult, sampler_result)):
         payload = samplerresult_to_json(answer)
-    elif isinstance(answer, Graph):
-        payload = Graph_to_json(answer)
     elif isinstance(answer, (EstimatorResult, estimator_result)):
         payload = estimatorresult_to_json(answer)
+    elif isinstance(answer, Graph):
+        payload = graph_to_json(answer)
     elif isinstance(answer, (complex, float, int)):
         payload = str(answer)
     elif isinstance(answer, str):

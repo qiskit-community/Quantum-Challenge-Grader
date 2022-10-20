@@ -4,19 +4,21 @@ import random
 from typeguard import typechecked
 from typing import Callable
 
+from networkx.classes import Graph
+
 from qiskit import QuantumCircuit
 from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
 
 from qc_grader.grader.grade import grade
-from qc_grader.grader.common import circuit_to_json
+from qc_grader.grader.common import graph_to_json
 
 _challenge_id = 'fall_2022'
 
 @typechecked
-def grade_lab3_ex1(attempt_qc: QuantumCircuit, attempt_n: int) -> None:
+def grade_lab3_ex1(attempt_graph: Graph, attempt_n: int) -> None:
     answer = {
         'attempt_n': attempt_n,
-        'attempt_qc': circuit_to_json(attempt_qc)
+        'attempt_graph': graph_to_json(attempt_graph)
     }
     grade(answer, 'ex3-1', _challenge_id)
 
