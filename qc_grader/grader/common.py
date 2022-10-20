@@ -143,11 +143,11 @@ def estimatorresult_to_json(
         'values': op.values
     }, cls=QObjEncoder)
 
-def QuasiDistribution_to_json(
+def quasidistribution_to_json(
     op: QuasiDistribution
 ) -> str:
     return json.dumps({
-        'data': op.data,
+        'data': str(op),
         'shots': op.shots,
         'stddev_upper_bound': op.stddev_upper_bound
     }, cls=QObjEncoder)
@@ -374,6 +374,8 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = estimatorresult_to_json(answer)
     elif isinstance(answer, Graph):
         payload = graph_to_json(answer)
+    elif isinstance(answer, QuasiDistribution):
+        payload = quasidistribution_to_json(answer)
     elif isinstance(answer, (complex, float, int)):
         payload = str(answer)
     elif isinstance(answer, str):
