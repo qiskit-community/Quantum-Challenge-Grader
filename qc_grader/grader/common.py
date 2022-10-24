@@ -395,6 +395,8 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = graph_to_json(answer)
     elif isinstance(answer, QuasiDistribution):
         payload = quasidistribution_to_json(answer)
+    elif isinstance(answer, ProbDistribution):
+        payload = probdistribution_to_json(answer)
     elif isinstance(answer, VQEResult):
         payload = vqeresult_to_json(answer)
     elif isinstance(answer, (complex, float, int)):
