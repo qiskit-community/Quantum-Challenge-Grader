@@ -14,8 +14,13 @@ from qiskit.primitives import SamplerResult
 from qiskit.result import ProbDistribution, QuasiDistribution
 
 from qc_grader.grader.grade import grade
-from qc_grader.grader.common import graph_to_json, circuit_to_json, paulisumop_to_json, quasidistribution_to_json, vqeresult_to_json, samplerresult_to_json, probdistribution_to_json
-
+from qc_grader.grader.common import (
+    graph_to_json,
+    circuit_to_json,
+    vqeresult_to_json,
+    samplerresult_to_json,
+    probdistribution_to_json
+)
 
 _challenge_id = 'fall_2022'
 
