@@ -36,8 +36,7 @@ def grade_lab3_ex2(attempt_ising: PauliSumOp) -> None:
 
 @typechecked
 def grade_lab3_ex3(attempt_qc: QuantumCircuit) -> None:
-    answer = circuit_to_json(attempt_qc)
-    grade(answer, 'ex3-3', _challenge_id)
+    grade(attempt_qc, 'ex3-3', _challenge_id)
 
 
 @typechecked
