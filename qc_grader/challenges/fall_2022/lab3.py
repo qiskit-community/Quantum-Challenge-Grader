@@ -30,8 +30,7 @@ def grade_lab3_ex1(attempt_graph: Graph, attempt_n: int) -> None:
 
 @typechecked
 def grade_lab3_ex2(attempt_ising: PauliSumOp) -> None:
-    answer = paulisumop_to_json(attempt_ising)
-    grade(answer, 'ex3-2', _challenge_id)
+    grade(attempt_ising, 'ex3-2', _challenge_id)
 
 
 @typechecked
@@ -41,8 +40,7 @@ def grade_lab3_ex3(attempt_qc: QuantumCircuit) -> None:
 
 @typechecked
 def grade_lab3_ex4(attempt: QuasiDistribution) -> None:
-    answer = quasidistribution_to_json(attempt)
-    grade(answer, 'ex3-4', _challenge_id)
+    grade(attempt, 'ex3-4', _challenge_id)
 
 
 @typechecked
@@ -58,8 +56,7 @@ def grade_lab3_ex5(attempt_etgl: Callable) -> None:
 
 @typechecked
 def grade_lab3_ex6(result: VQEResult) -> None:
-    answer = vqeresult_to_json(VQEResult)
-    grade(answer, 'ex3-6', _challenge_id)
+    grade(result, 'ex3-6', _challenge_id)
 
 
 @typechecked
