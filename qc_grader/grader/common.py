@@ -30,7 +30,7 @@ from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
 from networkx.classes import Graph
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
-from qiskit.result import QuasiDistribution
+from qiskit.result import ProbDistribution, QuasiDistribution
 from qiskit.algorithms.minimum_eigen_solvers.vqe import VQEResult
 
 from qiskit_ibm_runtime.qiskit.primitives import (
@@ -154,7 +154,14 @@ def quasidistribution_to_json(
         'stddev_upper_bound': op.stddev_upper_bound
     }, cls=QObjEncoder)
 
-
+def probdistribution_to_json(
+    op: ProbDistribution
+) -> str:
+    return json.dumps({
+        'data': str(op),
+        'shots': op.shots,
+    }, cls=QObjEncoder)
+    
 def vqeresult_to_json(
     result: VQEResult
 ) -> str:
@@ -388,6 +395,8 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = graph_to_json(answer)
     elif isinstance(answer, QuasiDistribution):
         payload = quasidistribution_to_json(answer)
+    elif isinstance(answer, ProbDistribution):
+        payload = probdistribution_to_json(answer)
     elif isinstance(answer, VQEResult):
         payload = vqeresult_to_json(answer)
     elif isinstance(answer, (complex, float, int)):

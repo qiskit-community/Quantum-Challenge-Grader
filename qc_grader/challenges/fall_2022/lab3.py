@@ -14,8 +14,13 @@ from qiskit.primitives import SamplerResult
 from qiskit.result import ProbDistribution, QuasiDistribution
 
 from qc_grader.grader.grade import grade
-from qc_grader.grader.common import graph_to_json, circuit_to_json
-
+from qc_grader.grader.common import (
+    graph_to_json,
+    circuit_to_json,
+    vqeresult_to_json,
+    samplerresult_to_json,
+    probdistribution_to_json
+)
 
 _challenge_id = 'fall_2022'
 
@@ -64,14 +69,26 @@ def grade_lab3_ex7(
     sampler_result: SamplerResult,
     result_prob_dist: ProbDistribution
 ) -> None:
-    grade(sampler_result, result_prob_dist, 'ex3-7', _challenge_id) 
+    answer = {
+        'sampler_result': samplerresult_to_json(sampler_result),
+        'result_prob_dist': probdistribution_to_json(result_prob_dist)
+    }
+    grade(answer, 'ex3-7', _challenge_id) 
 
 
 @typechecked
 def grade_lab3_ex8(model_3: QuantumCircuit, result_m3: VQEResult) -> None:
-    grade(model_3, result_m3, 'ex3-8', _challenge_id) 
+    answer = {
+        'qc': circuit_to_json(model_3),
+        'vqeresult': vqeresult_to_json(result_m3)
+    }
+    grade(answer, 'ex3-8', _challenge_id)
 
 
 @typechecked
 def grade_lab3_ex9(vqe_result: VQEResult, bitstring: ndarray) -> None:
-    grade(vqe_result, bitstring, 'ex3-9', _challenge_id) 
+    answer = {
+        'vqe_result': vqeresult_to_json(vqe_result),
+        'bitstring': bitstring
+   }
+    grade(answer, bitstring, 'ex3-9', _challenge_id) 
