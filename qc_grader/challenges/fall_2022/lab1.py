@@ -37,16 +37,12 @@ def grade_lab1_ex1(job: AerJob):
 
 
 @typechecked
-def grade_lab1_ex2(
-    result: Union[SamplerResult, sampler_result]
-) -> None:
+def grade_lab1_ex2(result: SamplerResult) -> None:
     grade(result, 'ex1-2', _challenge_id)
 
 
 @typechecked
-def grade_lab1_ex3(
-    result: Union[EstimatorResult, estimator_result]
-) -> None:
+def grade_lab1_ex2(result: EstimatorResult) -> None:
     grade(result, 'ex1-3', _challenge_id)
 
 
