@@ -21,7 +21,7 @@ _challenge_id = 'fall_2022'
 @typechecked
 def grade_lab4_ex1(h3p: Molecule) -> None:
     answer = {
-        'geometry': h3p.gemoetry,
+        'geometry': h3p.geometry,
         'multiplicity': h3p.multiplicity,
         'charge': h3p.charge
     }
