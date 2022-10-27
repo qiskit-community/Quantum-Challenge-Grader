@@ -8,7 +8,7 @@ from networkx.classes import Graph
 from numpy import ndarray
 
 from qiskit import QuantumCircuit
-from qiskit.algorithms.minimum_eigensolvers.vqe import VQEResult
+from qiskit.algorithms.minimum_eigen_solvers.vqe import VQEResult
 from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
 from qiskit.primitives import SamplerResult
 from qiskit.result import ProbDistribution, QuasiDistribution
