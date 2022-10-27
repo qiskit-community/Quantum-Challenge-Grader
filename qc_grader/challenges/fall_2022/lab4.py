@@ -92,7 +92,7 @@ def grade_lab4_ex5(
 
 @typechecked
 def grade_lab4_final_1(react_energy: float) -> None:  # Placeholder
-    status, _ = grade(react_energy, 'ex4-6', _challenge_id)
+    status, _ = grade(react_energy, 'ex4-6', _challenge_id, return_response=True)
     if status:
         print("""
 Congratulations!
