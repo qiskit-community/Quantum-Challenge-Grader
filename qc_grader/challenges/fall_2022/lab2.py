@@ -60,10 +60,10 @@ def grade_lab2_ex5(
     status, _ = grade(answer, 'ex2-5', _challenge_id, return_response=True)
     if status:
         print("""
-You successfully fixed your quantum computers and scanners. Now you can use them to find your way home.  
+You successfully fixed your quantum computers and scanners. Now you can use them to find your way home.
 
-You use the newly-fixed scanners to analyze your surroundings, and discover there are even more little worlds orbiting the black hole than you first thought. 
+You use the newly-fixed scanners to analyze your surroundings, and discover there are even more little worlds orbiting the black hole than you first thought.
 
-One of the worlds is your optimal target for a slingshot maneuver. 
+One of the worlds is your optimal target for a slingshot maneuver.
 And one of worlds is where future you is stuck, in its own little bubble of time.
         """)

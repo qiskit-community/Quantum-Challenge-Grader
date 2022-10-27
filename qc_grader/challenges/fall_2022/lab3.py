@@ -90,5 +90,22 @@ def grade_lab3_ex9(vqe_result: VQEResult, bitstring: ndarray) -> None:
     answer = {
         'vqe_result': vqeresult_to_json(vqe_result),
         'bitstring': bitstring
-   }
-    grade(answer, bitstring, 'ex3-9', _challenge_id) 
+    }
+    status, _ = grade(answer, 'ex3-9', _challenge_id, return_response=True)
+    if status:
+        print("""
+Congratulations!
+You've successfully carved a clear path for your slingshot by targeting and collecting 
+certain orbiting objects with your drones.
+
+You are almost ready to perform your slingshot. As you move your starship into position,
+you wonder curiously about the other you out there.
+
+Have they ceased to exist now that you haven't followed their path by selecting this planet?
+Do they somehow exist in an alternate reality?
+
+You can never know.
+
+Nonetheless, you look out the window at the planets you didn't select, and whisper an aching,
+heartfelt, "Thank you."
+        """)

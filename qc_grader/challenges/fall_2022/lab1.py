@@ -69,4 +69,17 @@ def grade_lab1_ex5(
 
 @typechecked
 def grade_lab1_ex6(message: str) -> None:
-    grade(message, 'ex1-6', _challenge_id)
+    status, _ = grade(message, 'ex1-6', _challenge_id, return_response=True)
+    if status:
+        print("""
+Congratulations!
+You successfully trigger the decoding sequence.
+
+The author and timestamp are unscrambled first, and you discover the message was sent from...you. 
+
+From hundreds of years in the future.
+
+The message is one of your own logs, a log you haven’t recorded...yet?
+
+Listen to the unscrambled Captain's Log here: https://www.youtube.com/watch?v=tBEcjZn56_E
+        """)
