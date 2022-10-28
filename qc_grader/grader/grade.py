@@ -126,7 +126,10 @@ def handle_grade_response(
     status: Optional[str], score: Optional[int] = None, cause: Optional[str] = None
 ) -> None:
     if status == 'valid':
-        print('\nCongratulations 🎉! Your answer is correct.')
+        if cause is not None:
+            print(cause)
+        else:
+            print('\nCongratulations 🎉! Your answer is correct.')
         if score is not None:
             print(f'Your score is {score}.')
     elif status == 'invalid':
@@ -144,7 +147,10 @@ def handle_submit_response(
     status: Union[str, bool], cause: Optional[str] = None, score: Optional[int] = None
 ) -> None:
     if status == 'valid' or status is True:
-        print('Congratulations 🎉! Your answer is correct and has been submitted.')
+        if cause is not None:
+            print(cause)
+        else:
+            print('Congratulations 🎉! Your answer is correct and has been submitted.')
         if score is not None:
             print(f'Your score is {score}.')
     elif status == 'invalid' or status is False:

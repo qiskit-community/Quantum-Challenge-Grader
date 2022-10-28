@@ -92,14 +92,4 @@ def grade_lab4_ex5(
 
 @typechecked
 def grade_lab4_final_1(react_energy: float) -> None:  # Placeholder
-    status, _ = grade(react_energy, 'ex4-6', _challenge_id, return_response=True)
-    if status:
-        print("""
-Congratulations!
-Your scanners successfully identify an abundant cosmic cloud close to the tail of your slingshot's path.
-
-You perform the gravity assist maneuver, and you succeed. You escape!
-
-Watch the finale video here: https://youtu.be/cARUHc3JsC0
-(Transcript in video description.)
-        """)
+    grade(react_energy, 'ex4-6', _challenge_id)
