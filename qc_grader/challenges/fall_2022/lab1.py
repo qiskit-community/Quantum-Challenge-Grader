@@ -71,12 +71,16 @@ def grade_lab1_ex5(
         'estimator_result': [estimatorresult_to_json(r) for r in result[1]]
     }
     status, _, resp = grade(answer, 'ex1-5', _challenge_id, return_response=True)
-    info = json.loads(str(resp))
-    if status:
-        handle_submit_response(status, cause=info['img'])
-    else:
-        handle_submit_response(status, cause=info['msg'])
-        display_special_message(info['img'])
+    try:
+        info = json.loads(str(resp))
+        if status:
+            handle_submit_response(status, cause=info['img'])
+        else:
+            handle_submit_response(status, cause=info['msg'])
+            if 'img' in info:
+                display_special_message(info['img'])
+    except Exception:
+        handle_submit_response(status, cause=str(resp))
 
 
 @typechecked
