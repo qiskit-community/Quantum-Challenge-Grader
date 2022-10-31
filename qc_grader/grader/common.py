@@ -121,12 +121,9 @@ def noisemodel_to_json(noise_model: NoiseModel) -> str:
 def samplerresult_to_json(
     op: Union[SamplerResult, sampler_result]
 ) -> str:
-    quasiList = []
-    for quasi in op.quasi_dists:
-        quasiList.append(quasi)
     return json.dumps({
         'metadata': op.metadata,
-        'quasi_dists': quasiList
+        'quasi_dists': [quasidistribution_to_json(d) for d in op.quasi_dists]
     }, cls=QObjEncoder)
 
 
@@ -153,8 +150,8 @@ def quasidistribution_to_json(
 ) -> str:
     return json.dumps({
         'data': str(op),
-        'shots': op.shots,
-        'stddev_upper_bound': op.stddev_upper_bound
+        'shots': op.shots if hasattr(op, 'shots') else None,
+        'stddev_upper_bound': op.stddev_upper_bound if hasattr(op, 'stddev_upper_bound') else None
     }, cls=QObjEncoder)
 
 def probdistribution_to_json(
