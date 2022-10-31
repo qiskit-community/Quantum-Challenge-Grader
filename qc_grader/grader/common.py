@@ -121,9 +121,12 @@ def noisemodel_to_json(noise_model: NoiseModel) -> str:
 def samplerresult_to_json(
     op: Union[SamplerResult, sampler_result]
 ) -> str:
+    quasiList = []
+    for quasi in op.quasi_dists:
+        quasiList.append(quasi)
     return json.dumps({
         'metadata': op.metadata,
-        'quasi_dists': op.quasi_dists
+        'quasi_dists': quasiList
     }, cls=QObjEncoder)
 
 
