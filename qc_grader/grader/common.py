@@ -31,7 +31,7 @@ from networkx.classes import Graph
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
 from qiskit.result import ProbDistribution, QuasiDistribution
-from qiskit.algorithms.minimum_eigen_solvers.vqe import VQEResult
+from qiskit.algorithms.minimum_eigensolvers.vqe import VQEResult
 
 from qiskit_ibm_runtime.qiskit.primitives import (
     SamplerResult as sampler_result,

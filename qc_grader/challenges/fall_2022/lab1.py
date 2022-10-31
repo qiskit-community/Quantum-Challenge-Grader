@@ -1,3 +1,5 @@
+import json
+
 from typeguard import typechecked
 from typing import Callable, List, Union
 
@@ -10,7 +12,11 @@ from qiskit_ibm_runtime.qiskit.primitives import (
     EstimatorResult as estimator_result
 )
 
-from qc_grader.grader.grade import grade, get_problem_set
+from qc_grader.grader.grade import (
+    grade, get_problem_set,
+    handle_submit_response,
+    display_special_message
+)
 from qc_grader.grader.common import samplerresult_to_json, estimatorresult_to_json
 
 
@@ -64,7 +70,13 @@ def grade_lab1_ex5(
         'sampler_result': samplerresult_to_json(result[0]),
         'estimator_result': [estimatorresult_to_json(r) for r in result[1]]
     }
-    grade(answer, 'ex1-5', _challenge_id)
+    status, _, resp = grade(answer, 'ex1-5', _challenge_id, return_response=True)
+    info = json.loads(str(resp))
+    if status:
+        handle_submit_response(status, cause=info['img'])
+    else:
+        handle_submit_response(status, cause=info['msg'])
+        display_special_message(info['img'])
 
 
 @typechecked
