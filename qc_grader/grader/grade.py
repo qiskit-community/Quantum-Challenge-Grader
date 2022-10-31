@@ -122,12 +122,22 @@ def grade_answer(
         return False, None
 
 
+def display_special_message(message: str, preamble='') -> None:
+    if message.startswith('data:image/'):
+        from IPython.display import display
+        from ipywidgets import HTML
+        print(preamble)
+        display(HTML(f'<img src="{message}" />'))
+    else:
+        print(message)
+
+
 def handle_grade_response(
     status: Optional[str], score: Optional[int] = None, cause: Optional[str] = None
 ) -> None:
     if status == 'valid':
         if cause is not None:
-            print(cause)
+            display_special_message(cause, preamble='\nCongratulations 🎉! Your answer is correct.')
         else:
             print('\nCongratulations 🎉! Your answer is correct.')
         if score is not None:
@@ -148,7 +158,7 @@ def handle_submit_response(
 ) -> None:
     if status == 'valid' or status is True:
         if cause is not None:
-            print(cause)
+            display_special_message(cause)
         else:
             print('Congratulations 🎉! Your answer is correct and has been submitted.')
         if score is not None:
