@@ -158,7 +158,7 @@ def handle_submit_response(
 ) -> None:
     if status == 'valid' or status is True:
         if cause is not None:
-            display_special_message(cause)
+            display_special_message(cause, preamble='\nCongratulations 🎉! Your answer is correct.')
         else:
             print('Congratulations 🎉! Your answer is correct and has been submitted.')
         if score is not None:
