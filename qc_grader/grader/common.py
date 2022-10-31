@@ -123,7 +123,7 @@ def samplerresult_to_json(
 ) -> str:
     return json.dumps({
         'metadata': op.metadata,
-        'quasi_dists': op.quasi_dists
+        'quasi_dists': [quasidistribution_to_json(d) for d in op.quasi_dists]
     }, cls=QObjEncoder)
 
 
@@ -150,8 +150,8 @@ def quasidistribution_to_json(
 ) -> str:
     return json.dumps({
         'data': str(op),
-        'shots': op.shots,
-        'stddev_upper_bound': op.stddev_upper_bound
+        'shots': op.shots if hasattr(op, 'shots') else None,
+        'stddev_upper_bound': op.stddev_upper_bound if hasattr(op, 'stddev_upper_bound') else None
     }, cls=QObjEncoder)
 
 def probdistribution_to_json(
