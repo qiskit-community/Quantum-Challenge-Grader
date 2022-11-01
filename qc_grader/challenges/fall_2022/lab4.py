@@ -12,6 +12,7 @@ from qiskit_nature import settings
 
 from qc_grader.grader.grade import grade, get_problem_set
 
+from .helpers import prepare_vqe_run
 
 settings.dict_aux_operators = True
 settings.dict_aux_operators = True
@@ -91,5 +92,21 @@ def grade_lab4_ex5(
 
 
 @typechecked
-def grade_lab4_final_1(react_energy: float) -> None:  # Placeholder
-    grade(react_energy, 'ex4-6', _challenge_id)
+def grade_lab4_final(
+    ansatz_list: list, 
+    ops_list: list, 
+    problem_reduced_list: list,
+    initial_point_list: Optional[list] = [None, None, None],
+    optimizer_list: Optional[list] = [None, None, None],
+    zne_strategy=None
+): 
+   
+    result_list, sol_list, job_list = prepare_vqe_run(
+        ansatz_list, 
+        ops_list, 
+        problem_reduced_list,
+        initial_point_list,
+        optimizer_list,
+        zne_strategy)
+    
+    grade(result_list, sol_list, job_list, 'ex4-6', _challenge_id)
