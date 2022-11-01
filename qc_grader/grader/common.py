@@ -14,11 +14,13 @@
 from functools import wraps
 import json
 import logging
+import inspect
 
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 import warnings
 
 from qiskit import IBMQ, QuantumCircuit
+from qiskit.algorithms.optimizers import OptimizerResult
 from qiskit.circuit import Barrier, Gate, Instruction, Measure, Parameter
 from qiskit.circuit.library import UGate, U3Gate, CXGate
 from qiskit.opflow.primitive_ops.pauli_op import PauliOp
@@ -116,6 +118,21 @@ def pauliop_to_json(op: PauliOp) -> str:
 
 def noisemodel_to_json(noise_model: NoiseModel) -> str:
     return json.dumps(noise_model.to_dict(), cls=QObjEncoder)
+
+
+def optimizerresult_to_json(
+    op: OptimizerResult
+) -> str:
+    result = {}
+    for name, value in inspect.getmembers(op):
+        if (
+            not name.startswith('_')
+            and not inspect.ismethod(value)
+            and not inspect.isfunction(value)
+            and hasattr(op, name)
+        ):
+            result[name] = value
+    return json.dumps(result)
 
 
 def samplerresult_to_json(
