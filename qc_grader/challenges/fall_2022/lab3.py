@@ -26,12 +26,8 @@ _challenge_id = 'fall_2022'
 
 
 @typechecked
-def grade_lab3_ex1(attempt_graph: Graph, attempt_n: int) -> None:
-    answer = {
-        'attempt_n': attempt_n,
-        'attempt_graph': graph_to_json(attempt_graph)
-    }
-    grade(answer, 'ex3-1', _challenge_id)
+def grade_lab3_ex1(n: Int, num_qubits: Int) -> None:
+    grade(n, num_qubits, 'ex3-1', _challenge_id)
 
 @typechecked
 def grade_lab3_ex2(attempt_ising: PauliSumOp) -> None:
