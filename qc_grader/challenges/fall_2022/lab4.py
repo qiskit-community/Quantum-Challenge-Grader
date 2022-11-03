@@ -109,4 +109,10 @@ def grade_lab4_final(
         zne_strategy
     )
 
-    grade(result_list, sol_list, job_list, 'ex4-6', _challenge_id)
+    answer = {
+        'result_list': result_list,
+        'sol_list': sol_list,
+        'job_list': job_list
+    }
+
+    grade(answer, 'ex4-6', _challenge_id)
