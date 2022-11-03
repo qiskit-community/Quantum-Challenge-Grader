@@ -12,7 +12,6 @@ from qiskit_nature import settings
 
 from qc_grader.grader.grade import grade, get_problem_set
 
-from .helpers import prepare_vqe_run
 
 settings.dict_aux_operators = True
 settings.dict_aux_operators = True
@@ -100,6 +99,7 @@ def grade_lab4_final(
     optimizer_list: Optional[list] = [None, None, None],
     zne_strategy=None
 ):
+    from .helpers import prepare_vqe_run
     result_list, sol_list, job_list = prepare_vqe_run(
         ansatz_list,
         ops_list,
