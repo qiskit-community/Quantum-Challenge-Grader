@@ -1,5 +1,5 @@
 from typeguard import typechecked
-from typing import Callable
+from typing import Callable, Optional
 
 import numpy as np
 
@@ -12,7 +12,6 @@ from qiskit_nature import settings
 
 from qc_grader.grader.grade import grade, get_problem_set
 
-from .helpers import prepare_vqe_run
 
 settings.dict_aux_operators = True
 settings.dict_aux_operators = True
@@ -80,7 +79,7 @@ def grade_lab4_ex4(react_vqe_ev: complex) -> None:
 @typechecked
 def grade_lab4_ex5(
     temp_dipoles_dict: dict,
-    temp_nu_dipoles : np.ndarray,
+    temp_nu_dipoles: np.ndarray,
     dip_tot: float
 ) -> None:
     answer = {
@@ -93,20 +92,27 @@ def grade_lab4_ex5(
 
 @typechecked
 def grade_lab4_final(
-    ansatz_list: list, 
-    ops_list: list, 
+    ansatz_list: list,
+    ops_list: list,
     problem_reduced_list: list,
     initial_point_list: Optional[list] = [None, None, None],
     optimizer_list: Optional[list] = [None, None, None],
     zne_strategy=None
-): 
-   
+):
+    from .helpers import prepare_vqe_run
     result_list, sol_list, job_list = prepare_vqe_run(
-        ansatz_list, 
-        ops_list, 
+        ansatz_list,
+        ops_list,
         problem_reduced_list,
         initial_point_list,
         optimizer_list,
-        zne_strategy)
-    
-    grade(result_list, sol_list, job_list, 'ex4-6', _challenge_id)
+        zne_strategy
+    )
+
+    answer = {
+        'result_list': result_list,
+        'sol_list': sol_list,
+        'job_list': job_list
+    }
+
+    grade(answer, 'ex4-6', _challenge_id)
