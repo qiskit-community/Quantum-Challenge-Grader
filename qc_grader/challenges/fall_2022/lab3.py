@@ -4,7 +4,6 @@ import random
 from typeguard import typechecked
 from typing import Callable
 
-from networkx.classes import Graph
 from numpy import ndarray
 
 from qiskit import QuantumCircuit
@@ -15,7 +14,6 @@ from qiskit.result import ProbDistribution, QuasiDistribution
 
 from qc_grader.grader.grade import grade
 from qc_grader.grader.common import (
-    graph_to_json,
     circuit_to_json,
     vqeresult_to_json,
     samplerresult_to_json,
@@ -26,10 +24,10 @@ _challenge_id = 'fall_2022'
 
 
 @typechecked
-def grade_lab3_ex1(attempt_graph: Graph, attempt_n: int) -> None:
+def grade_lab3_ex1(n: int, num_qubits: int) -> None:
     answer = {
-        'attempt_n': attempt_n,
-        'attempt_graph': graph_to_json(attempt_graph)
+        'nodes': n,
+        'qubits': num_qubits
     }
     grade(answer, 'ex3-1', _challenge_id)
 
