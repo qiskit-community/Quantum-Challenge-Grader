@@ -1,7 +1,6 @@
 # Importing standard Qiskit libraries
 from qiskit.tools.jupyter import *
 from qiskit.visualization import *
-from typing import Any, Dict, Optional, Tuple
 
 # Import necessary libraries and packages
 import numpy as np
