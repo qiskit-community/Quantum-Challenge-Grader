@@ -46,7 +46,7 @@ def grade_lab4_ex2(
 @typechecked
 def grade_lab4_ex3(construct_problem: Callable, custom_vqe: Callable) -> None:
     from qiskit.utils import algorithm_globals
-    algorithm_globals.random_seed = 12
+    algorithm_globals.random_seed = 1024
 
     estimator = Estimator()
     _, molecule = get_problem_set('ex4-3', _challenge_id)
