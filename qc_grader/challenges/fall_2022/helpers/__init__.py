@@ -32,13 +32,16 @@ def prepare_vqe_run(
     sol_list = []
     result_list = []
     job_list = []
+    
+    backend = FakeLagos()
+    backend.set_options(seed_simulator=1024)
 
     if zne_strategy is None:
-        estimator = BackendEstimator(backend=FakeLagos())
+        estimator = BackendEstimator(backend=backend)
     else:
         # Define Estimator with the fake backend
         ZNEEstimator = zne(BackendEstimator)
-        estimator = ZNEEstimator(backend=FakeLagos(), zne_strategy=zne_strategy)
+        estimator = ZNEEstimator(backend=backend, zne_strategy=zne_strategy)
 
     for i in range(3):
         print("Running VQE.......", i+1)
