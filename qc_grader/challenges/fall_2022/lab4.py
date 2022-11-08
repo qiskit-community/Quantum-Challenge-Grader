@@ -80,12 +80,14 @@ def grade_lab4_ex4(react_vqe_ev: complex) -> None:
 def grade_lab4_ex5(
     temp_dipoles_dict: dict,
     temp_nu_dipoles: np.ndarray,
-    dip_tot: float
+    dip_tot: float,
+    lang: str
 ) -> None:
     answer = {
         'temp_dipoles_dict': temp_dipoles_dict,
         'temp_nu_dipoles': temp_nu_dipoles,
-        'dip_tot': dip_tot
+        'dip_tot': dip_tot,
+        'lang': lang
     }
     grade(answer, 'ex4-5', _challenge_id)
 
@@ -110,6 +112,7 @@ def grade_lab4_final(
     )
 
     answer = {
+        'ansatz_list': ansatz_list,
         'result_list': result_list,
         'sol_list': sol_list,
         'job_list': job_list
