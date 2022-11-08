@@ -115,7 +115,7 @@ def grade_lab4_final(
         'ansatz_list': ansatz_list,
         'result_list': result_list,
         'sol_list': sol_list,
-        'job_list': job_list
+        'job_list': len(job_list)
     }
 
     grade(answer, 'ex4-6', _challenge_id)
