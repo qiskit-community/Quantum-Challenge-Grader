@@ -1,5 +1,4 @@
 from .lab1 import (
-    prepare_lab1_ex1,
     grade_lab1_ex1,
     grade_lab1_ex2,
     grade_lab1_ex3,
