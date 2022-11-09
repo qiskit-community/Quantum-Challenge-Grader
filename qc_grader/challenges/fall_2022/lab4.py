@@ -10,7 +10,7 @@ from qiskit.tools.jupyter import *
 from qiskit.visualization import *
 from qiskit_nature import settings
 
-from qc_grader.grader.grade import grade, get_problem_set
+from qc_grader.grader.grade import grade, get_problem_set, handle_submit_response
 
 
 settings.dict_aux_operators = True
@@ -68,7 +68,8 @@ def grade_lab4_ex3(construct_problem: Callable, custom_vqe: Callable) -> None:
         'job': len(jobs)
     }
 
-    grade(answer, 'ex4-3', _challenge_id)
+    status, _, cause = grade(answer, 'ex4-3', _challenge_id, return_response=True)
+    handle_submit_response(status, cause=cause)
 
 
 @typechecked

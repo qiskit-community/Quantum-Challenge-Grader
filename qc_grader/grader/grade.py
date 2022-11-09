@@ -136,7 +136,7 @@ def display_special_message(message: str, preamble='') -> None:
 def handle_grade_response(
     status: Optional[str], score: Optional[int] = None, cause: Optional[str] = None
 ) -> None:
-    if status == 'valid':
+    if status == 'valid' or status is True:
         if cause is not None:
             display_special_message(cause, preamble='\nCongratulations 🎉! Your answer is correct.')
         else:
