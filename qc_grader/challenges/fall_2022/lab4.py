@@ -119,4 +119,5 @@ def grade_lab4_final(
         'job_list': len(job_list)
     }
 
-    grade(answer, 'ex4-6', _challenge_id)
+    status, _, cause = grade(answer, 'ex4-6', _challenge_id, return_response=True)
+    handle_submit_response(status, cause=cause)
