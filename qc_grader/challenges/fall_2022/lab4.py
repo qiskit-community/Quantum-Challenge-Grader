@@ -11,7 +11,7 @@ from qiskit.visualization import *
 from qiskit_nature import settings
 
 from qc_grader.grader.grade import grade, get_problem_set, handle_submit_response
-
+from qc_grader.grader.common import circuit_to_json
 
 settings.dict_aux_operators = True
 settings.dict_aux_operators = True
@@ -111,9 +111,12 @@ def grade_lab4_final(
         optimizer_list,
         zne_strategy
     )
+    ansatz = []
+    for circuit in ansatz_list:
+        ansatz.append(circuit_to_json(circuit))
 
     answer = {
-        'ansatz_list': ansatz_list,
+        'ansatz_list': ansatz,
         'result_list': result_list,
         'sol_list': sol_list,
         'job_list': len(job_list)
