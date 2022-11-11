@@ -64,7 +64,7 @@ def grade_lab4_ex3(construct_problem: Callable, custom_vqe: Callable) -> None:
 
     answer = {
         'real_solution_m': real_solution_m,
-        'Energy_m': Energy_H_m[-1].real,
+        'Energy_m': Energy_H_m[-1].real if len(Energy_H_m) else None,
         'job': len(jobs)
     }
 

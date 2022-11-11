@@ -132,7 +132,7 @@ def optimizerresult_to_json(
             and hasattr(op, name)
         ):
             result[name] = value
-    return json.dumps(result)
+    return json.dumps(result, cls=QObjEncoder)
 
 
 def samplerresult_to_json(
