@@ -1,5 +1,4 @@
 numpy
-qiskit>=0.37
 requests
 networkx
 ipycytoscape

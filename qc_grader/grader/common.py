@@ -14,19 +14,33 @@
 from functools import wraps
 import json
 import logging
+import inspect
 
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 import warnings
 
 from qiskit import IBMQ, QuantumCircuit
+from qiskit.algorithms.optimizers import OptimizerResult
 from qiskit.circuit import Barrier, Gate, Instruction, Measure, Parameter
 from qiskit.circuit.library import UGate, U3Gate, CXGate
 from qiskit.opflow.primitive_ops.pauli_op import PauliOp
 from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
+from qiskit.primitives import SamplerResult, EstimatorResult
+from qiskit.providers.aer.jobs import AerJob
 from qiskit.providers.aer.noise import NoiseModel
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
+from networkx.classes import Graph
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
+from qiskit.result import ProbDistribution, QuasiDistribution
+from qiskit.algorithms.minimum_eigensolvers.vqe import VQEResult
+
+from qiskit_ibm_runtime.qiskit.primitives import (
+    SamplerResult as sampler_result,
+    EstimatorResult as estimator_result
+)
+
+from networkx import Graph
 
 
 ValidationResult = Tuple[bool, Optional[Union[str, int, float]]]
@@ -44,8 +58,12 @@ class QObjEncoder(json.encoder.JSONEncoder):
     def default(self, obj: Any) -> Any:
         import numpy as np
 
+        if isinstance(obj, np.integer):
+            return {'__class__': 'np.integer', 'int': int(obj)}
+        if isinstance(obj, np.floating):
+            return {'__class__': 'np.floating', 'float': float(obj)}
         if isinstance(obj, np.ndarray):
-            return {'__class__': 'ndarray', 'list': obj.tolist()}
+            return {'__class__': 'np.ndarray', 'list': obj.tolist()}
         if isinstance(obj, complex):
             return {'__class__': 'complex', 're': obj.real, 'im': obj.imag}
 
@@ -69,13 +87,18 @@ def circuit_to_json(
     parameter_binds: Optional[List] = None,
     byte_string: bool = False
 ) -> str:
-    if byte_string:
-        import pickle
-        return json.dumps({
-            'qc': pickle.dumps(qc).decode('ISO-8859-1')
-        }, cls=QObjEncoder)
+    if qc.num_parameters == 0 or parameter_binds is not None:
+        circuit = circuit_to_dict(qc, parameter_binds)
+        byte_string = False
     else:
-        return json.dumps(circuit_to_dict(qc, parameter_binds), cls=QObjEncoder)
+        import pickle
+        circuit = pickle.dumps(qc).decode('ISO-8859-1')
+        byte_string = True
+
+    return json.dumps({
+        'qc': circuit,
+        'byte_string': byte_string
+    }, cls=QObjEncoder)
 
 
 def qobj_to_json(qobj: Union[PulseQobj, QasmQobj]) -> str:
@@ -95,6 +118,74 @@ def pauliop_to_json(op: PauliOp) -> str:
 
 def noisemodel_to_json(noise_model: NoiseModel) -> str:
     return json.dumps(noise_model.to_dict(), cls=QObjEncoder)
+
+
+def optimizerresult_to_json(
+    op: OptimizerResult
+) -> str:
+    result = {}
+    for name, value in inspect.getmembers(op):
+        if (
+            not name.startswith('_')
+            and not inspect.ismethod(value)
+            and not inspect.isfunction(value)
+            and hasattr(op, name)
+        ):
+            result[name] = value
+    return json.dumps(result, cls=QObjEncoder)
+
+
+def samplerresult_to_json(
+    op: Union[SamplerResult, sampler_result]
+) -> str:
+    return json.dumps({
+        'metadata': op.metadata,
+        'quasi_dists': [quasidistribution_to_json(d) for d in op.quasi_dists]
+    }, cls=QObjEncoder)
+
+
+def graph_to_json(
+    g: Graph
+) -> str:
+    return json.dumps({
+        'nodes': list(g.nodes(data=True)),
+        'edges': list(g.edges(data=True))
+    }, cls=QObjEncoder)
+
+
+def estimatorresult_to_json(
+    op: Union[EstimatorResult, estimator_result]
+) -> str:
+    return json.dumps({
+        'metadata': op.metadata,
+        'values': op.values
+    }, cls=QObjEncoder)
+
+
+def quasidistribution_to_json(
+    op: QuasiDistribution
+) -> str:
+    return json.dumps({
+        'data': str(op),
+        'shots': op.shots if hasattr(op, 'shots') else None,
+        'stddev_upper_bound': op.stddev_upper_bound if hasattr(op, 'stddev_upper_bound') else None
+    }, cls=QObjEncoder)
+
+def probdistribution_to_json(
+    op: ProbDistribution
+) -> str:
+    return json.dumps({
+        'data': str(op),
+        'shots': op.shots,
+    }, cls=QObjEncoder)
+    
+def vqeresult_to_json(
+    result: VQEResult
+) -> str:
+    return json.dumps({
+        'eigenvalue': result.eigenvalue
+        # TODO: figure out what other parmeters need to be included
+    }, cls=QObjEncoder)
 
 
 def to_json(result: Any, skip: List[str] = []) -> str:
@@ -284,9 +375,27 @@ def serialize_job(job: IBMQJob) -> Optional[Dict[str, str]]:
     })
 
 
+def serialize_aerjob_result(job: AerJob) -> Optional[Dict[str, str]]:
+    from qiskit.providers import JobStatus
+
+    job_status = job.status()
+
+    if job_status in [JobStatus.CANCELLED, JobStatus.ERROR]:
+        print(f'Job did not successfully complete: {job_status.value}.')
+        return None
+    elif job_status is not JobStatus.DONE:
+        print(f'Job has not yet completed: {job_status.value}.')
+        print(f'Please wait for the job (id: {job.job_id()}) to complete then try again.')
+        return None
+
+    return json.dumps(job.result().to_dict())
+
+
 def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
     if isinstance(answer, IBMQJob):
         payload = serialize_job(answer)
+    elif isinstance(answer, AerJob):
+        payload = serialize_aerjob_result(answer)
     elif isinstance(answer, QuantumCircuit):
         payload = circuit_to_json(answer, **kwargs)
     elif isinstance(answer, PauliSumOp):
@@ -295,6 +404,18 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = pauliop_to_json(answer)
     elif isinstance(answer, (PulseQobj, QasmQobj)):
         payload = qobj_to_json(answer)
+    elif isinstance(answer, (SamplerResult, sampler_result)):
+        payload = samplerresult_to_json(answer)
+    elif isinstance(answer, (EstimatorResult, estimator_result)):
+        payload = estimatorresult_to_json(answer)
+    elif isinstance(answer, Graph):
+        payload = graph_to_json(answer)
+    elif isinstance(answer, QuasiDistribution):
+        payload = quasidistribution_to_json(answer)
+    elif isinstance(answer, ProbDistribution):
+        payload = probdistribution_to_json(answer)
+    elif isinstance(answer, VQEResult):
+        payload = vqeresult_to_json(answer)
     elif isinstance(answer, (complex, float, int)):
         payload = str(answer)
     elif isinstance(answer, str):
