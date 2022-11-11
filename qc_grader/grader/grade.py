@@ -39,7 +39,7 @@ def grade(
     question: Union[str, int],
     challenge: Optional[str] = None,
     **kwargs: Any
-) -> ValidationResult:
+) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:
     serialized_answer = serialize_answer(answer, **kwargs)
     do_submit = not do_grade_only()
 
@@ -61,31 +61,30 @@ def grade(
         endpoint = get_grading_endpoint(question_id, challenge_id)
         payload = {'answer': serialized_answer}
 
-    status = False
-    info = None
-
     if serialized_answer and endpoint:
         print(f'{"Submitting" if do_submit else "Grading"} your answer. Please wait...')
 
-        status, info = grade_answer(
+        result = grade_answer(
             payload,
             endpoint,
             do_submit=do_submit,
-            max_content_length=kwargs['max_content_length'] if 'max_content_length' in kwargs else None
+            max_content_length=kwargs['max_content_length'] if 'max_content_length' in kwargs else None,
+            return_response=kwargs['return_response'] if 'return_response' in kwargs else False
         )
+
+        if 'return_response' in kwargs and kwargs['return_response'] is True:
+            return result
     else:
         handle_grade_response('failed')
-
-    if 'return_response' in kwargs and kwargs['return_response'] is True:
-        return status, info
 
 
 def grade_answer(
     payload: Dict[str, str],
     endpoint: str,
     do_submit: Optional[bool] = False,
-    max_content_length: Optional[int] = None
-) -> ValidationResult:
+    max_content_length: Optional[int] = None,
+    return_response: Optional[bool] = False
+) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:
     try:
         if do_submit:
             access_token = get_access_token()
@@ -110,23 +109,38 @@ def grade_answer(
             cause = answer_response.get('cause', None)
             score = answer_response.get('score', None)
 
+        if return_response:
+            s = status == 'valid' or status is True
+            return s, score, cause
+
         if do_submit:
             handle_submit_response(status, score=score, cause=cause)
         else:
             handle_grade_response(status, score=score, cause=cause)
 
-        s = status == 'valid' or status is True
-        return s, score
     except Exception as err:
         print(f'Failed: {err}')
-        return False, None
+        return False, None, str(err)
+
+
+def display_special_message(message: str, preamble='') -> None:
+    if message.startswith('data:image/'):
+        from IPython.display import display
+        from ipywidgets import HTML
+        print(preamble)
+        display(HTML(f'<img src="{message}" />'))
+    else:
+        print(message)
 
 
 def handle_grade_response(
     status: Optional[str], score: Optional[int] = None, cause: Optional[str] = None
 ) -> None:
-    if status == 'valid':
-        print('\nCongratulations 🎉! Your answer is correct.')
+    if status == 'valid' or status is True:
+        if cause is not None:
+            display_special_message(cause, preamble='\nCongratulations 🎉! Your answer is correct.')
+        else:
+            print('\nCongratulations 🎉! Your answer is correct.')
         if score is not None:
             print(f'Your score is {score}.')
     elif status == 'invalid':
@@ -144,7 +158,10 @@ def handle_submit_response(
     status: Union[str, bool], cause: Optional[str] = None, score: Optional[int] = None
 ) -> None:
     if status == 'valid' or status is True:
-        print('Congratulations 🎉! Your answer is correct and has been submitted.')
+        if cause is not None:
+            display_special_message(cause, preamble='\nCongratulations 🎉! Your answer is correct.')
+        else:
+            print('Congratulations 🎉! Your answer is correct and has been submitted.')
         if score is not None:
             print(f'Your score is {score}.')
     elif status == 'invalid' or status is False:
