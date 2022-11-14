@@ -48,7 +48,7 @@ def grade_lab3_ex4(attempt: QuasiDistribution) -> None:
 
 @typechecked
 def grade_lab3_ex5(attempt_etgl: Callable) -> None:
-    n = random.randint(2, 4)
+    n = random.randint(3, 5)
     qc = attempt_etgl(n)
     answer = {
         'input': n,
