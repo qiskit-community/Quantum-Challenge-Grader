@@ -88,7 +88,7 @@ def grade_answer(
     try:
         access_token = get_access_token()
         if access_token:
-            header = {'x-access-token': access_token}
+            header = {'Authorization': f'Bearer {access_token}'}
         else:
             header = None
 
@@ -188,7 +188,13 @@ def get_problem_set(
         return None, None
 
     try:
-        problem_set_response = send_request(endpoint, method='GET')
+        access_token = get_access_token()
+        if access_token:
+            header = {'Authorization': f'Bearer {access_token}'}
+        else:
+            header = None
+
+        problem_set_response = send_request(endpoint, method='GET', header=header)
     except Exception as err:
         print('Unable to obtain the problem set')
 
