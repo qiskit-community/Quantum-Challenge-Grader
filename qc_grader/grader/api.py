@@ -122,8 +122,10 @@ def get_submission_endpoint(
     return f'{normalize_slash(_api_submit_url)}items/answers'
 
 
-def get_access_token() -> str:
+def get_access_token() -> Optional[str]:
     iqx_token = os.getenv('QXToken')
+    if iqx_token is None:
+        return None
     baseurl = get_auth_endpoint()
     endpoint = urljoin(baseurl, './users/loginWithToken')
     response = requests.post(endpoint, json={'apiToken': iqx_token})
