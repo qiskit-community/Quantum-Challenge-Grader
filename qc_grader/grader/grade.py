@@ -86,16 +86,16 @@ def grade_answer(
     return_response: Optional[bool] = False
 ) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:
     try:
-        if do_submit:
-            access_token = get_access_token()
-            query = {'access_token': access_token}
+        access_token = get_access_token()
+        if access_token:
+            header = {'Authorization': f'Bearer {access_token}'}
         else:
-            query = None
+            header = None
 
         answer_response = send_request(
             endpoint,
             body=payload,
-            query=query,
+            header=header,
             max_content_length=max_content_length
         )
     
@@ -188,7 +188,13 @@ def get_problem_set(
         return None, None
 
     try:
-        problem_set_response = send_request(endpoint, method='GET')
+        access_token = get_access_token()
+        if access_token:
+            header = {'Authorization': f'Bearer {access_token}'}
+        else:
+            header = None
+
+        problem_set_response = send_request(endpoint, method='GET', header=header)
     except Exception as err:
         print('Unable to obtain the problem set')
 
