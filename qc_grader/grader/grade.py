@@ -61,7 +61,7 @@ def grade(
         endpoint = get_grading_endpoint(question_id, challenge_id)
         payload = {'answer': serialized_answer}
 
-    if serialized_answer and endpoint:
+    if serialized_answer is not None and endpoint:
         print(f'{"Submitting" if do_submit else "Grading"} your answer. Please wait...')
 
         result = grade_answer(
