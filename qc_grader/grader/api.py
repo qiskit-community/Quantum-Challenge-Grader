@@ -212,7 +212,7 @@ def send_request(
         headers=header
     )
 
-    if not response.ok or response.status_code != 200:
+    if response.status_code != 200:
         if response.status_code == 403:
             result = f'Unable to access service ({response.reason})'
         else:
@@ -223,7 +223,7 @@ def send_request(
                 if 'message' in result:
                     result = result['message']
             except Exception:
-                result = f' Response reason - {response.reason}'
+                result = f' Not successful - {response.reason}'
         raise Exception(result)
 
     return response.json()
