@@ -122,8 +122,10 @@ def get_submission_endpoint(
     return f'{normalize_slash(_api_submit_url)}items/answers'
 
 
-def get_access_token() -> str:
+def get_access_token() -> Optional[str]:
     iqx_token = os.getenv('QXToken')
+    if iqx_token is None:
+        return None
     baseurl = get_auth_endpoint()
     endpoint = urljoin(baseurl, './users/loginWithToken')
     response = requests.post(endpoint, json={'apiToken': iqx_token})
@@ -210,7 +212,7 @@ def send_request(
         headers=header
     )
 
-    if not response.ok:
+    if response.status_code != 200:
         if response.status_code == 403:
             result = f'Unable to access service ({response.reason})'
         else:
@@ -221,7 +223,7 @@ def send_request(
                 if 'message' in result:
                     result = result['message']
             except Exception:
-                result = response.reason
+                result = f' Not successful - {response.reason}'
         raise Exception(result)
 
     return response.json()
