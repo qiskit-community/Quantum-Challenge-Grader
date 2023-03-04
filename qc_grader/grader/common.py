@@ -35,11 +35,6 @@ from qiskit.qobj import PulseQobj, QasmQobj
 from qiskit.result import ProbDistribution, QuasiDistribution
 from qiskit.algorithms.minimum_eigensolvers.vqe import VQEResult
 
-from qiskit_ibm_runtime.qiskit.primitives import (
-    SamplerResult as sampler_result,
-    EstimatorResult as estimator_result
-)
-
 from networkx import Graph
 
 
@@ -136,7 +131,7 @@ def optimizerresult_to_json(
 
 
 def samplerresult_to_json(
-    op: Union[SamplerResult, sampler_result]
+    op: SamplerResult
 ) -> str:
     return json.dumps({
         'metadata': op.metadata,
@@ -154,7 +149,7 @@ def graph_to_json(
 
 
 def estimatorresult_to_json(
-    op: Union[EstimatorResult, estimator_result]
+    op: EstimatorResult
 ) -> str:
     return json.dumps({
         'metadata': op.metadata,
@@ -404,9 +399,9 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = pauliop_to_json(answer)
     elif isinstance(answer, (PulseQobj, QasmQobj)):
         payload = qobj_to_json(answer)
-    elif isinstance(answer, (SamplerResult, sampler_result)):
+    elif isinstance(answer, SamplerResult):
         payload = samplerresult_to_json(answer)
-    elif isinstance(answer, (EstimatorResult, estimator_result)):
+    elif isinstance(answer, EstimatorResult):
         payload = estimatorresult_to_json(answer)
     elif isinstance(answer, Graph):
         payload = graph_to_json(answer)
