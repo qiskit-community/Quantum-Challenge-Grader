@@ -1,7 +1,8 @@
+import networkx as nx
 
 from typeguard import typechecked
 
-from typing import Callable, Dict, Tuple
+from typing import Callable, Dict
 
 from qiskit import QuantumCircuit
 
@@ -47,7 +48,7 @@ def grade_prob2_ex1(tsp_function: Callable) -> None:
 def grade_prob2_ex2(result: SamplingVQEResult) -> None:
     
     tsp = Tsp.create_random_instance(3, seed=123)
-    adj_matrix = nx.to_numpy_matrix(tsp.graph)
+    adj_matrix = nx.to_numpy_array(tsp.graph)
     
     x = tsp.sample_most_likely(result.eigenstate)
     solution_order = tsp.interpret(x)
