@@ -12,6 +12,8 @@ from qc_grader.grader.common import (
     circuit_to_json
 )
 
+from qiskit.algorithms.minimum_eigensolvers.sampling_vqe import SamplingVQEResult
+from qiskit_optimization.applications import Tsp
 
 _challenge_id = 'programming_challenge_aus'
 
@@ -42,9 +44,16 @@ def grade_prob2_ex1(tsp_function: Callable) -> None:
 
 
 @typechecked
-def grade_prob2_ex2(result, solution_order: Tuple, solution_distance: float) -> None:
+def grade_prob2_ex2(result: SamplingVQEResult) -> None:
+    
+    tsp = Tsp.create_random_instance(3, seed=123)
+    adj_matrix = nx.to_numpy_matrix(tsp.graph)
+    
+    x = tsp.sample_most_likely(result.eigenstate)
+    solution_order = tsp.interpret(x)
+    solution_distance = tsp.tsp_value(solution_order, adj_matrix)
+    
     answer = {
-        'vqe_energy': result.eigenvalue,
         'solution_order': solution_order,
         'solution_distance': solution_distance
     }
