@@ -35,7 +35,7 @@ def grade_prob2_ex1(tsp_function: Callable) -> None:
 
     answer = {}
     for i in inputs.keys():
-        distance, order = tsp_function(inputs[i], i)
+        distance, order = tsp_function(inputs[i], int(i))
         answer[i] = {
             'distance': distance,
             'order': order
