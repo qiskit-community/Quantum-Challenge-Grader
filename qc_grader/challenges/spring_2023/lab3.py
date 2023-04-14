@@ -31,3 +31,8 @@ def grade_ex3b(circuit: QuantumCircuit) -> None:
 @typechecked
 def grade_ex3c(circuit: QuantumCircuit) -> None:
     grade(circuit, 'ex3c', _challenge_id)
+
+
+@typechecked
+def grade_ex3d(step1_bit: int) -> None:
+    grade(step1_bit, 'ex3d', _challenge_id)
