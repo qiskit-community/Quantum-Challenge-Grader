@@ -8,7 +8,7 @@ _challenge_id = 'quantum_explorers23'
 
 
 @typechecked
-def grade_badge1_ex1(answer: List[int]) -> None:
+def grade_badge1_ex1(answer1: List[int]) -> None:
     status, _, message = grade(
         answer,
         'badge1_ex1',
@@ -19,7 +19,7 @@ def grade_badge1_ex1(answer: List[int]) -> None:
     
     
 @typechecked
-def grade_badge1_ex2(answer: List[int]) -> None:
+def grade_badge1_ex2(answer2: List[int]) -> None:
     status, _, message = grade(
         answer,
         'badge1_ex2',
@@ -30,7 +30,7 @@ def grade_badge1_ex2(answer: List[int]) -> None:
     
 
 @typechecked
-def grade_badge1_ex3(answer: List[int]) -> None:
+def grade_badge1_ex3(answer3: List[int]) -> None:
     status, _, message = grade(
         answer,
         'badge1_ex3',
@@ -41,7 +41,7 @@ def grade_badge1_ex3(answer: List[int]) -> None:
     
     
 @typechecked
-def grade_badge1_score(answer: List[int]) -> None:
+def grade_badge1_score(check_score: List[int]) -> None:
     status, _, message = grade(
         answer,
         'badge1_score',
