@@ -21,7 +21,7 @@ def grade_badge1_ex1(answer1: List[int]) -> None:
 @typechecked
 def grade_badge1_ex2(answer2: List[int]) -> None:
     status, _, message = grade(
-        answer,
+        answer2,
         'badge1_ex2',
         _challenge_id, 
         return_response=True
