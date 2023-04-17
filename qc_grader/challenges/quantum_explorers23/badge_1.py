@@ -10,7 +10,7 @@ _challenge_id = 'quantum_explorers23'
 @typechecked
 def grade_badge1_ex1(answer1: List[int]) -> None:
     status, _, message = grade(
-        answer,
+        answer1,
         'badge1_ex1',
         _challenge_id, 
         return_response=True
