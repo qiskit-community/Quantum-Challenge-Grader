@@ -22,7 +22,7 @@ import warnings
 from qiskit import IBMQ, QuantumCircuit
 from qiskit.algorithms.optimizers import OptimizerResult
 from qiskit.circuit import Barrier, Gate, Instruction, Measure, Parameter
-from qiskit.circuit.library import UGate, U3Gate, CXGate
+from qiskit.circuit.library import UGate, U3Gate, CXGate, TwoLocal
 from qiskit.opflow.primitive_ops.pauli_op import PauliOp
 from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
 from qiskit.primitives import SamplerResult, EstimatorResult
@@ -78,11 +78,11 @@ def circuit_to_dict(
 
 
 def circuit_to_json(
-    qc: QuantumCircuit,
+    qc: Union[TwoLocal, QuantumCircuit],
     parameter_binds: Optional[List] = None,
     byte_string: bool = False
 ) -> str:
-    if qc.num_parameters == 0 or parameter_binds is not None:
+    if not isinstance(qc, TwoLocal) and (qc.num_parameters == 0 or parameter_binds is not None):
         circuit = circuit_to_dict(qc, parameter_binds)
         byte_string = False
     else:
@@ -411,6 +411,8 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = probdistribution_to_json(answer)
     elif isinstance(answer, VQEResult):
         payload = vqeresult_to_json(answer)
+    elif isinstance(answer, TwoLocal):
+        payload = circuit_to_json(answer)
     elif isinstance(answer, (complex, float, int)):
         payload = str(answer)
     elif isinstance(answer, str):
