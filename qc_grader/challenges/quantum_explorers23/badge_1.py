@@ -1,5 +1,6 @@
 from typing import List
 from typeguard import typechecked
+from qiskit import QuantumCircuit
 
 from qc_grader.grader.grade import grade
 
@@ -38,6 +39,18 @@ def grade_badge1_ex3(answer3: List[int]) -> None:
         return_response=True
     )
     print('Thank you for submitting your answer')
+    
+    
+    
+@typechecked
+def grade_badge1_ex16(circuit: QuantumCircuit) -> None:
+    status, _, message = grade(
+        circuit,
+        'badge1_ex16',
+        _challenge_id, 
+        return_response=True
+    )
+
     
     
 @typechecked
