@@ -14,4 +14,4 @@ def grade_badge2_ex1(answer: str) -> None:
         _challenge_id, 
         return_response=True
     )
-    print('Thank you for submitting your answer')
+    print(message)
