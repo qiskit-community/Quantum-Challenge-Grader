@@ -2,7 +2,8 @@ from .badge_1 import (
     grade_badge1_ex1,
     grade_badge1_ex2,
     grade_badge1_ex3,
-    grade_badge1_ex16
+    grade_badge1_ex16,
+    grade_badge1_score
 )
 
 from .badge_2 import (
