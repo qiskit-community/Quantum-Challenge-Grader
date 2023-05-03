@@ -8,6 +8,15 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
+from .lab1 import (
+    grade_ex1a,
+    grade_ex1b,
+    grade_ex1c,
+    grade_ex1d,
+    grade_ex1e
+)
+
+
 from .lab2 import (
     grade_ex2a,
     grade_ex2b,

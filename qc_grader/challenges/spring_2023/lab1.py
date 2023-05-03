@@ -20,25 +20,25 @@ _challenge_id = 'spring_2023'
 
 
 @typechecked
-def grade_ex2a(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex2a', _challenge_id)
+def grade_ex1a(answer: int) -> None:
+    grade(answer, 'ex1a', _challenge_id)
 
 
 @typechecked
-def grade_ex2b(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex2b', _challenge_id)
+def grade_ex1b(circuit: QuantumCircuit) -> None:
+    grade(circuit, 'ex1b', _challenge_id, byte_string=True)
 
 
 @typechecked
-def grade_ex2c(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex2c', _challenge_id)
+def grade_ex1c(circuit: QuantumCircuit) -> None:
+    grade(circuit, 'ex1c', _challenge_id)
 
 
 @typechecked
-def grade_ex2d(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex2d', _challenge_id, byte_string=True)
+def grade_ex1d(circuit: QuantumCircuit) -> None:
+    grade(circuit, 'ex1d', _challenge_id, byte_string=True)
 
 
 @typechecked
-def grade_ex2e(counts: Dict[str, int]) -> None:
-    grade(counts, 'ex2e', _challenge_id)
+def grade_ex1e(circuit: QuantumCircuit) -> None:
+    grade(circuit, 'ex1e', _challenge_id, byte_string=True)
