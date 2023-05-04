@@ -82,7 +82,7 @@ def circuit_to_json(
     parameter_binds: Optional[List] = None,
     byte_string: bool = False
 ) -> str:
-    if not isinstance(qc, TwoLocal) and (qc.num_parameters == 0 or parameter_binds is not None):
+    if not byte_string and not isinstance(qc, TwoLocal) and (qc.num_parameters == 0 or parameter_binds is not None):
         circuit = circuit_to_dict(qc, parameter_binds)
         byte_string = False
     else:
