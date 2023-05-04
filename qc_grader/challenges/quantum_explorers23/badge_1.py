@@ -179,9 +179,9 @@ def grade_badge1_ex16(circuit: QuantumCircuit) -> None:
     
     
 @typechecked
-def grade_badge1_score() -> None:
+def grade_badge1_score(lang: str) -> None:
     status, _, message = grade(
-        '',
+        lang,
         'badge1_score',
         _challenge_id, 
         return_response=True
