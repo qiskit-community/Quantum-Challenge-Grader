@@ -40,5 +40,5 @@ def grade_ex1d(circuit: QuantumCircuit) -> None:
 
 
 @typechecked
-def grade_ex1e(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex1e', _challenge_id, byte_string=True)
+def grade_ex1e(circuit: QuantumCircuit, max_trials: int) -> None:
+    grade(circuit, max_trials, 'ex1e', _challenge_id, byte_string=True)
