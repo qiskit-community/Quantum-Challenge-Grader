@@ -22,12 +22,12 @@ _challenge_id = 'spring_2023'
 
 @typechecked
 def grade_ex5a(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex5a', _challenge_id)
+    grade(circuit, 'ex5a', _challenge_id, byte_string=True)
 
 
 @typechecked
 def grade_ex5b(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex5b', _challenge_id)
+    grade(circuit, 'ex5b', _challenge_id, byte_string=True)
 
 
 @typechecked
