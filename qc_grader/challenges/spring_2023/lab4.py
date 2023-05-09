@@ -21,19 +21,19 @@ _challenge_id = 'spring_2023'
 
 @typechecked
 def grade_ex4a(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex4a', _challenge_id)
+    grade(circuit, 'ex4a', _challenge_id, byte_string=True)
 
 
 @typechecked
 def grade_ex4b(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex4b', _challenge_id)
+    grade(circuit, 'ex4b', _challenge_id, byte_string=True)
 
 
 @typechecked
 def grade_ex4c(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex4c', _challenge_id)
+    grade(circuit, 'ex4c', _challenge_id, byte_string=True)
 
 
 @typechecked
 def grade_ex4d(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex4d', _challenge_id)
+    grade(circuit, 'ex4d', _challenge_id, byte_string=True)
