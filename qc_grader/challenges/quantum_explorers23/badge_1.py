@@ -166,10 +166,10 @@ def grade_badge1_ex15(answer15: List[int]) -> None:
 
 
 @typechecked
-def grade_badge1_ex16(circuit: QuantumCircuit) -> None:
+def grade_badge1_code(circuit: QuantumCircuit) -> None:
     status, _, message = grade(
         circuit,
-        'badge1_ex16',
+        'badge1_code',
         _challenge_id, 
         return_response=True
     )
