@@ -9,6 +9,7 @@
 # that they have been altered from the originals.
 
 from typeguard import typechecked
+from typing import Dict
 
 from qiskit import QuantumCircuit
 
@@ -19,20 +20,20 @@ _challenge_id = 'spring_2023'
 
 
 @typechecked
-def grade_ex3a(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex3a', _challenge_id, byte_string=True)
+def grade_ex4a(circuit: QuantumCircuit) -> None:
+    grade(circuit, 'ex4a', _challenge_id, byte_string=True)
 
 
 @typechecked
-def grade_ex3b(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex3b', _challenge_id, byte_string=True)
+def grade_ex4b(circuit: QuantumCircuit) -> None:
+    grade(circuit, 'ex4b', _challenge_id, byte_string=True)
 
 
 @typechecked
-def grade_ex3c(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex3c', _challenge_id, byte_string=True)
+def grade_ex4c(circuit: QuantumCircuit) -> None:
+    grade(circuit, 'ex4c', _challenge_id, byte_string=True)
 
 
 @typechecked
-def grade_ex3d(step1_bit: int) -> None:
-    grade(step1_bit, 'ex3d', _challenge_id)
+def grade_ex4d(circuit: QuantumCircuit) -> None:
+    grade(circuit, 'ex4d', _challenge_id, byte_string=True)

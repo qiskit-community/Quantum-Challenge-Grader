@@ -10,29 +10,33 @@
 
 from typeguard import typechecked
 
+from typing import Callable
+
 from qiskit import QuantumCircuit
 
-from qc_grader.grader.grade import grade
+from qc_grader.grader.grade import grade, get_problem_set
 
 
 _challenge_id = 'spring_2023'
 
 
 @typechecked
-def grade_ex3a(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex3a', _challenge_id, byte_string=True)
+def grade_ex5a(circuit: QuantumCircuit) -> None:
+    grade(circuit, 'ex5a', _challenge_id, byte_string=True)
 
 
 @typechecked
-def grade_ex3b(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex3b', _challenge_id, byte_string=True)
+def grade_ex5b(circuit: QuantumCircuit) -> None:
+    grade(circuit, 'ex5b', _challenge_id, byte_string=True)
 
 
 @typechecked
-def grade_ex3c(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'ex3c', _challenge_id, byte_string=True)
+def grade_ex5c(test_ghz_func: Callable) -> None:
+    _, inputs = get_problem_set('ex5c', _challenge_id)
 
+    answer = []
+    for i in inputs:
+        result = test_ghz_func(i)
+        answer.append((i, result))
 
-@typechecked
-def grade_ex3d(step1_bit: int) -> None:
-    grade(step1_bit, 'ex3d', _challenge_id)
+    grade(answer, 'ex5c', _challenge_id)
