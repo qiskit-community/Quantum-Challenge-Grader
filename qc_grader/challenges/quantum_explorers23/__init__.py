@@ -14,6 +14,7 @@ from .badge_1 import (
     grade_badge1_ex13,
     grade_badge1_ex14,
     grade_badge1_ex15,
+    grade_badge1_code,
     grade_badge1_score
 )
 
