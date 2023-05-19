@@ -21,3 +21,7 @@ from .badge_1 import (
 from .badge_2 import (
     grade_badge2_ex1
 )
+
+from .badge_3 import (
+    grade_badge3_ex1
+)
