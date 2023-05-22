@@ -143,6 +143,26 @@ def grade_badge5_ex13(answer13: List[int]) -> None:
         return_response=True
     )
     print(message)
+    
+@typechecked
+def grade_badge5_ex14(answer14: List[int]) -> None:
+    status, _, message = grade(
+        answer14,
+        'badge5_ex14',
+        _challenge_id, 
+        return_response=True
+    )
+    print(message)
+    
+@typechecked
+def grade_badge5_ex15(answer15: List[int]) -> None:
+    status, _, message = grade(
+        answer15,
+        'badge5_ex15',
+        _challenge_id, 
+        return_response=True
+    )
+    print(message)
 
 
 @typechecked
