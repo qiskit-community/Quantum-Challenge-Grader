@@ -4,6 +4,7 @@ from typeguard import typechecked
 from qiskit import QuantumCircuit
 
 from qc_grader.grader.grade import grade
+from qiskit_machine_learning.algorithms.classifiers.qsvc import QSVC
 
 
 _challenge_id = 'quantum_explorers23'
@@ -166,9 +167,9 @@ def grade_badge5_ex15(answer15: List[int]) -> None:
 
 
 @typechecked
-def grade_badge5_code(qsvc: qiskit_machine_learning.algorithms.classifiers.qsvc.QSVC) -> None:
+def grade_badge5_code(qsvc: QSVC) -> None:
     status, _, message = grade(
-        circuit,
+        qsvc,
         'badge5_code',
         _challenge_id, 
         return_response=True
