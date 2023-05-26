@@ -1,8 +1,6 @@
 from typing import List
 from typeguard import typechecked
 
-from qiskit import QuantumCircuit
-
 from qc_grader.grader.grade import grade
 from qiskit_machine_learning.algorithms.classifiers.qsvc import QSVC
 
