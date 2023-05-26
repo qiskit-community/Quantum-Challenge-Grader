@@ -8,6 +8,7 @@ from .lab1 import (
     grade_lab1_ex7,
     grade_lab1_ex8,
     grade_lab1_ex9,
+    grade_lab1_ex10
 )
 
 from .lab4 import (

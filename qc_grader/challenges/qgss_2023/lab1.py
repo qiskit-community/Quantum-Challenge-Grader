@@ -48,3 +48,7 @@ def grade_lab1_ex8(qc: QuantumCircuit) -> None:
 @typechecked
 def grade_lab1_ex9(answer_list: List[Dict]) -> None:
     grade(answer_list, 'ex1-9', _challenge_id)
+
+@typechecked
+def grade_lab1_ex10(qc: QuantumCircuit) -> None:
+    grade(qc, 'ex1-10', _challenge_id)
