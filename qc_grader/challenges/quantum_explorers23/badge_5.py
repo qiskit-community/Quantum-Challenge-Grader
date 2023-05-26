@@ -170,7 +170,7 @@ def grade_badge5_ex15(answer15: List[int]) -> None:
 @typechecked
 def grade_badge5_code(qsvc: qiskit_machine_learning.algorithms.classifiers.qsvc.QSVC) -> None:
     status, _, message = grade(
-        circuit,
+        qsvc,
         'badge5_code',
         _challenge_id, 
         return_response=True
