@@ -19,7 +19,8 @@ from .lab3 import (
     grade_lab3_ex5,
     grade_lab3_ex6,
     grade_lab3_ex7,
-    grade_lab3_ex8
+    grade_lab3_ex8,
+    grade_lab3_ex9
 )
 
 from .lab4 import (
