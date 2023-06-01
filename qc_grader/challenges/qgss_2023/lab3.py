@@ -4,6 +4,8 @@ from typeguard import typechecked
 from typing import List, Dict
 from fractions import Fraction
 from qiskit.quantum_info import Operator
+from math import gcd
+
 
 
 from qiskit.quantum_info import Statevector, Operator
