@@ -1,14 +1,10 @@
-import numpy as np 
 from typeguard import typechecked
 
-from typing import List, Dict
+from typing import List, Dict, Callable
 from fractions import Fraction
 from qiskit.quantum_info import Operator
-from math import gcd
 
-
-
-from qiskit.quantum_info import Statevector, Operator
+from qiskit.quantum_info import Operator
 from qiskit import QuantumCircuit
 
 from qc_grader.grader.grade import grade
@@ -52,5 +48,5 @@ def grade_lab3_ex8(fraction_integers: List[Fraction]) -> None:
     grade(fraction_integers, 'ex3-8', _challenge_id)
 
 @typechecked
-def grade_lab3_ex9(shor_qpe: function) -> None:
+def grade_lab3_ex9(shor_qpe: Callable) -> None:
     grade(shor_qpe, 'ex3-9', _challenge_id)
