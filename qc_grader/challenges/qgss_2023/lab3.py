@@ -23,7 +23,13 @@ def grade_lab3_ex2(answer_list : List) -> None:
 
 @typechecked
 def grade_lab3_ex3(qpe_circuits : List[QuantumCircuit]) -> None:
-    grade(qpe_circuits, 'ex3-3', _challenge_id)
+    min_depth_qpe = qpe_circuits[0]
+    max_depth_qpe = qpe_circuits[1]
+
+    min_depth_ops = sum([val for key, val in min_depth_qpe.count_ops().items()])
+    max_depth_ops = sum([val for key, val in max_depth_qpe.count_ops().items()])
+
+    grade([min_depth_ops, max_depth_ops], 'ex3-3', _challenge_id)
 
 
 @typechecked
@@ -49,4 +55,7 @@ def grade_lab3_ex8(fraction_integers: List[Fraction]) -> None:
 
 @typechecked
 def grade_lab3_ex9(shor_qpe: Callable) -> None:
-    grade(shor_qpe, 'ex3-9', _challenge_id)
+    _, inputs = get_problem_set('ex3-9', _challenge_id)
+
+    shor_qpe_results = shor_qpe(inputs[0], inputs[1])
+    grade(shor_qpe_results, 'ex3-9', _challenge_id)
