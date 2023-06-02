@@ -11,6 +11,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
+from fractions import Fraction
 from functools import wraps
 import json
 import logging
@@ -61,6 +62,8 @@ class QObjEncoder(json.encoder.JSONEncoder):
             return {'__class__': 'np.ndarray', 'list': obj.tolist()}
         if isinstance(obj, complex):
             return {'__class__': 'complex', 're': obj.real, 'im': obj.imag}
+        if isinstance(obj, Fraction):
+            return {'__class__': 'Fraction', 'numerator': obj.numerator, 'denominator': obj.denominator}
 
         return json.JSONEncoder.default(self, obj)
 
