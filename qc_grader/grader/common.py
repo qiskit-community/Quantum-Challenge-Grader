@@ -411,6 +411,8 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = probdistribution_to_json(answer)
     elif isinstance(answer, VQEResult):
         payload = vqeresult_to_json(answer)
+    elif isinstance(answer, NoiseModel):
+        payload = noisemodel_to_json(answer)
     elif isinstance(answer, TwoLocal):
         payload = circuit_to_json(answer)
     elif isinstance(answer, (complex, float, int)):
