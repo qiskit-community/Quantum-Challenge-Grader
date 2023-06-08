@@ -1,14 +1,9 @@
-from typing import List
 from typeguard import typechecked
+from typing import List, Dict
 
-from qc_grader.grader.grade import grade
-
-####coding question imports
 import json
 
-from typeguard import typechecked
-from typing import Callable, List, Dict
-
+from qc_grader.grader.grade import grade
 from qc_grader.grader.common import (
     samplerresult_to_json,
     probdistribution_to_json
