@@ -3,22 +3,18 @@ from typeguard import typechecked
 
 from qc_grader.grader.grade import grade
 
+####coding question imports
 import json
 
 from typeguard import typechecked
-from typing import Callable, List
-
-from qiskit.primitives import SamplerResult
-
-from qiskit_ibm_runtime.qiskit.primitives import (
-    SamplerResult as sampler_result
-)
+from typing import Callable, List, Dict
 
 from qc_grader.grader.common import (
     samplerresult_to_json,
     probdistribution_to_json
 )
 
+#################
 
 _challenge_id = 'quantum_explorers23'
 
@@ -180,7 +176,7 @@ def grade_badge4_ex15(answer15: List[int]) -> None:
 
 
 @typechecked
-def grade_badge4_code(sampler_results: List, quasi_dists: List) -> None: 
+def grade_badge4_code(sampler_results: List, quasi_dists: List) -> Dict: 
     answer = {
         'sampler_results': [samplerresult_to_json(r) for r in sampler_results],
         'quasi_dists': [probdistribution_to_json(d) for d in quasi_dists], 
