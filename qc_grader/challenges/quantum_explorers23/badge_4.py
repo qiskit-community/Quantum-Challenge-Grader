@@ -171,7 +171,7 @@ def grade_badge4_ex15(answer15: List[int]) -> None:
 
 
 @typechecked
-def grade_badge4_code(sampler_results: List, quasi_dists: List) -> Dict: 
+def grade_badge4_code(sampler_results: List, quasi_dists: List) -> None: 
     answer = {
         'sampler_results': [samplerresult_to_json(r) for r in sampler_results],
         'quasi_dists': [probdistribution_to_json(d) for d in quasi_dists], 
