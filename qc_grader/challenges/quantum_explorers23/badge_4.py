@@ -1,24 +1,15 @@
-from typing import List
 from typeguard import typechecked
-
-from qc_grader.grader.grade import grade
+from typing import List, Dict
 
 import json
 
-from typeguard import typechecked
-from typing import Callable, List
-
-from qiskit.primitives import SamplerResult
-
-from qiskit_ibm_runtime.qiskit.primitives import (
-    SamplerResult as sampler_result
-)
-
+from qc_grader.grader.grade import grade
 from qc_grader.grader.common import (
     samplerresult_to_json,
     probdistribution_to_json
 )
 
+#################
 
 _challenge_id = 'quantum_explorers23'
 
