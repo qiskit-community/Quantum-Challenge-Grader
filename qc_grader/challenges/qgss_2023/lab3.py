@@ -7,7 +7,7 @@ from qiskit.quantum_info import Operator
 from qiskit.quantum_info import Operator
 from qiskit import QuantumCircuit
 
-from qc_grader.grader.grade import grade
+from qc_grader.grader.grade import grade, get_problem_set
 
 
 _challenge_id = 'qgss_2023'
@@ -23,8 +23,8 @@ def grade_lab3_ex2(answer_list : List) -> None:
 
 @typechecked
 def grade_lab3_ex3(qpe_circuits : List[QuantumCircuit]) -> None:
-    min_depth_qpe = qpe_circuits[0]
-    max_depth_qpe = qpe_circuits[1]
+    min_depth_qpe = qpe_circuits[1]
+    max_depth_qpe = qpe_circuits[0]
 
     min_depth_ops = sum([val for key, val in min_depth_qpe.count_ops().items()])
     max_depth_ops = sum([val for key, val in max_depth_qpe.count_ops().items()])
