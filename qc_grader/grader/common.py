@@ -30,6 +30,7 @@ from qiskit.primitives import SamplerResult, EstimatorResult
 from qiskit.providers.aer.jobs import AerJob
 from qiskit.providers.aer.noise import NoiseModel
 from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
+from qiskit.quantum_info import SparsePauliOp
 from networkx.classes import Graph
 from qiskit.providers.ibmq.job import IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
@@ -64,6 +65,8 @@ class QObjEncoder(json.encoder.JSONEncoder):
             return {'__class__': 'complex', 're': obj.real, 'im': obj.imag}
         if isinstance(obj, Fraction):
             return {'__class__': 'Fraction', 'numerator': obj.numerator, 'denominator': obj.denominator}
+        if isinstance(obj, Parameter):
+            return {'__class__': 'Parameter', 'name': obj.name, 'uuid': str(obj._uuid)}
 
         return json.JSONEncoder.default(self, obj)
 
@@ -101,6 +104,10 @@ def circuit_to_json(
 
 def qobj_to_json(qobj: Union[PulseQobj, QasmQobj]) -> str:
     return json.dumps(qobj.to_dict(), cls=QObjEncoder)
+
+
+def sparsepauliop_to_json(op: SparsePauliOp) -> str:
+    return json.dumps(op.to_list(), cls=QObjEncoder)
 
 
 def paulisumop_to_json(op: PauliSumOp) -> str:
@@ -400,6 +407,8 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = paulisumop_to_json(answer)
     elif isinstance(answer, PauliOp):
         payload = pauliop_to_json(answer)
+    elif isinstance(answer, SparsePauliOp):
+        payload = sparsepauliop_to_json(answer)
     elif isinstance(answer, (PulseQobj, QasmQobj)):
         payload = qobj_to_json(answer)
     elif isinstance(answer, SamplerResult):
