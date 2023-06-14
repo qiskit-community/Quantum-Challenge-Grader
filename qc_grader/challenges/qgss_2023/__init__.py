@@ -11,6 +11,13 @@ from .lab1 import (
     grade_lab1_ex10,
 )
 
+from .lab2 import (
+    grade_lab2_ex1,
+    grade_lab2_ex2,
+    grade_lab2_ex3,
+    grade_lab2_ex4,
+)
+
 from .lab3 import (
     grade_lab3_ex1,
     grade_lab3_ex2,
