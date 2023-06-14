@@ -65,3 +65,28 @@ from .badge_5 import (
     grade_badge5_code,
     grade_badge5_score
 )
+
+
+from .badge_6 import (
+    grade_badge6_ex1,
+    grade_badge6_ex2,
+    grade_badge6_ex3,
+    grade_badge6_ex4,
+    grade_badge6_ex5,
+    grade_badge6_ex6,
+    grade_badge6_ex7,
+    grade_badge6_ex8,
+    grade_badge6_ex9,
+    grade_badge6_ex10,
+    grade_badge6_ex11,
+    grade_badge6_ex12,
+    grade_badge6_ex13,
+    grade_badge6_ex14,
+    grade_badge6_ex15,
+    grade_badge6_code,
+    grade_badge6_score
+)
+
+from .badge_7 import (
+    grade_badge7_ex1
+)
