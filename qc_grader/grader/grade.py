@@ -38,6 +38,7 @@ def grade(
     answer: Any,
     question: Union[str, int],
     challenge: Optional[str] = None,
+    return_response: Optional[str] = False,
     **kwargs: Any
 ) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:
     serialized_answer = serialize_answer(answer, **kwargs)
@@ -69,10 +70,10 @@ def grade(
             endpoint,
             do_submit=do_submit,
             max_content_length=kwargs['max_content_length'] if 'max_content_length' in kwargs else None,
-            return_response=kwargs['return_response'] if 'return_response' in kwargs else False
+            return_response=return_response
         )
 
-        if 'return_response' in kwargs and kwargs['return_response'] is True:
+        if return_response:
             return result
     else:
         handle_grade_response('failed')
