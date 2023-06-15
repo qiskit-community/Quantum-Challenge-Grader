@@ -5,7 +5,7 @@ from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
 from qiskit.opflow import PauliSumOp
 from qiskit.quantum_info import SparsePauliOp
-from qiskit.result.distributions.quasi import QuasiDistribution
+from qiskit.primitives.base.sampler_result import SamplerResult
 
 from qc_grader.grader.grade import grade
 from qc_grader.grader.common import circuit_to_json, serialize_answer
@@ -52,9 +52,9 @@ def grade_lab2_ex3(
 
 
 @typechecked
-def grade_lab2_ex4(tele_counts: Dict, quasi_dist: QuasiDistribution) -> None:
+def grade_lab2_ex4(tele_counts: Dict, result: SamplerResult) -> None:
     answer = {
         'tele_counts': tele_counts,
-        'quasi_dist': quasi_dist
+        'result': serialize_answer(result)
     }
     grade(answer, "ex2-4", _challenge_id)
