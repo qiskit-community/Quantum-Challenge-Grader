@@ -1,11 +1,11 @@
 from typeguard import typechecked
-from typing import Dict, Sequence, Union
+from typing import Dict, List, Sequence, Union
 
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
 from qiskit.opflow import PauliSumOp
 from qiskit.quantum_info import SparsePauliOp
-from qiskit.result.result import Result
+from qiskit.result.distributions.quasi import QuasiDistribution
 
 from qc_grader.grader.grade import grade
 from qc_grader.grader.common import circuit_to_json, serialize_answer
@@ -52,9 +52,9 @@ def grade_lab2_ex3(
 
 
 @typechecked
-def grade_lab2_ex4(tele_counts: Dict, result: Result) -> None:
+def grade_lab2_ex4(tele_counts: Dict, quasi_dist: QuasiDistribution) -> None:
     answer = {
         'tele_counts': tele_counts,
-        'result': result
+        'quasi_dist': quasi_dist
     }
     grade(answer, "ex2-4", _challenge_id)
