@@ -5,6 +5,7 @@ from qc_grader.grader.grade import grade
 from qiskit.algorithms.minimum_eigensolvers import SamplingVQEResult
 from qiskit_optimization.applications import Tsp
 from qiskit_optimization.problems import QuadraticProgram
+import networkx as nx
 
 
 _challenge_id = 'quantum_explorers23'
@@ -172,10 +173,12 @@ def grade_badge6_ex15(answer15: List[int]) -> None:
 def grade_badge6_code(tsp: Tsp, qubo: QuadraticProgram, result: SamplingVQEResult) -> None:
 
     x = tsp.sample_most_likely(result.eigenstate)
+    z = tsp.interpret(x)
+    adj_matrix = nx.to_numpy_array(tsp.graph)
 
     answer = {
         'is_feasible': qubo.is_feasible(x),
-        'z': tsp.interpret(x)
+        'solution objective': tsp.tsp_value(z, adj_matrix)
     }
 
     status, _, message = grade(
