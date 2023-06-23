@@ -2,7 +2,9 @@ from typing import List
 from typeguard import typechecked
 
 from qc_grader.grader.grade import grade
-
+from qiskit.algorithms.minimum_eigensolvers import SamplingVQEResult
+from qiskit_optimization.applications import Tsp
+from qiskit_optimization.problems import QuadraticProgram
 
 
 _challenge_id = 'quantum_explorers23'
@@ -167,10 +169,18 @@ def grade_badge6_ex15(answer15: List[int]) -> None:
 ##### coding question
 
 @typechecked
-def grade_badge6_code(ans: List) -> None:
+def grade_badge6_code(tsp: Tsp, qubo: QuadraticProgram, result: SamplingVQEResult) -> None: # replace variable name and type with appropriate
+
+    x = tsp.sample_most_likely(result.eigenstate)
+
+    answer = {
+        'is_feasible': qubo.is_feasible(x),
+        'z': tsp.interpret(x)
+    }
+
     status, _, message = grade(
-        ans,
-        'badge6_code',
+        answer,
+        'badge6_code', #ignore this line and all lines below.
         _challenge_id, 
         return_response=True
     )
