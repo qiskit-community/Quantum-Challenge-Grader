@@ -169,7 +169,7 @@ def grade_badge6_ex15(answer15: List[int]) -> None:
 ##### coding question
 
 @typechecked
-def grade_badge6_code(tsp: Tsp, qubo: QuadraticProgram, result: SamplingVQEResult) -> None: # replace variable name and type with appropriate
+def grade_badge6_code(tsp: Tsp, qubo: QuadraticProgram, result: SamplingVQEResult) -> None:
 
     x = tsp.sample_most_likely(result.eigenstate)
 
@@ -180,7 +180,7 @@ def grade_badge6_code(tsp: Tsp, qubo: QuadraticProgram, result: SamplingVQEResul
 
     status, _, message = grade(
         answer,
-        'badge6_code', #ignore this line and all lines below.
+        'badge6_code',
         _challenge_id, 
         return_response=True
     )
