@@ -178,7 +178,7 @@ def grade_badge6_code(tsp: Tsp, qubo: QuadraticProgram, result: SamplingVQEResul
 
     answer = {
         'is_feasible': qubo.is_feasible(x),
-        'solution objective': tsp.tsp_value(z, adj_matrix)
+        'solution_objective': tsp.tsp_value(z, adj_matrix)
     }
 
     status, _, message = grade(
