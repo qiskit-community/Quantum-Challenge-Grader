@@ -1,5 +1,6 @@
 from typing import List
 from typeguard import typechecked
+import numpy as np
 
 from qc_grader.grader.grade import grade
 from qiskit_machine_learning.algorithms.classifiers.qsvc import QSVC
@@ -166,8 +167,20 @@ def grade_badge5_ex15(answer15: List[int]) -> None:
 
 @typechecked
 def grade_badge5_code(qsvc: QSVC) -> None:
+
+    x_test = np.array([[5.34070751, 3.45575192, 4.39822972],
+       [4.08407045, 2.51327412, 4.08407045],
+       [0.62831853, 5.65486678, 4.08407045],
+       [5.96902604, 4.39822972, 0.62831853],
+       [5.96902604, 4.39822972, 5.96902604],
+       [0.        , 5.96902604, 4.08407045]])
+    
+    y_test = np.array([0, 0, 0, 1, 1, 0])
+
+    test_score = qsvc.score(x_test, y_test)
+
     status, _, message = grade(
-        qsvc,
+        test_score,
         'badge5_code',
         _challenge_id, 
         return_response=True
