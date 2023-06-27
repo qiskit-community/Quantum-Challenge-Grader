@@ -168,7 +168,7 @@ def grade_badge5_ex15(answer15: List[int]) -> None:
 @typechecked
 def grade_badge5_code(qsvc: QSVC) -> None:
 
-    x_train = np.array([[1.25663706, 5.02654825, 3.76991118],
+    x_full = np.array([[1.25663706, 5.02654825, 3.76991118],
        [3.76991118, 0.        , 0.62831853],
        [4.08407045, 3.76991118, 1.88495559],
        [0.62831853, 2.82743339, 2.51327412],
@@ -199,14 +199,14 @@ def grade_badge5_code(qsvc: QSVC) -> None:
        [5.96902604, 4.39822972, 5.96902604],
        [0.        , 5.96902604, 4.08407045]])
     
-    y_train = np.array([0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1,
+    y_full = np.array([0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1,
        1, 0, 0, 0, 0, 1, 1, 0])
 
     # Split the dataset into a training set and a test set
     # 80% for training, 20% for testing”
-    train_size = int(0.8 * len(x_train))
-    x_test = x_train[train_size:]
-    y_test = y_train[train_size:]
+    train_size = int(0.8 * len(x_full))
+    x_test = x_full[train_size:]
+    y_test = y_full[train_size:]
 
     test_score = qsvc.score(x_test, y_test)
 
