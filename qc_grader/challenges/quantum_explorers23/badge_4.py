@@ -6,7 +6,7 @@ import json
 from qc_grader.grader.grade import grade
 from qc_grader.grader.common import (
     samplerresult_to_json,
-    probdistribution_to_json
+    quasidistribution_to_json
 )
 
 #################
@@ -174,7 +174,7 @@ def grade_badge4_ex15(answer15: List[int]) -> None:
 def grade_badge4_code(sampler_results: List, quasi_dists: List) -> None: 
     answer = {
         'sampler_results': [samplerresult_to_json(r) for r in sampler_results],
-        'quasi_dists': [probdistribution_to_json(d) for d in quasi_dists], 
+        'quasi_dists': [quasidistribution_to_json(d) for d in quasi_dists], 
     }
     status, _, message = grade(
         answer, 
