@@ -45,9 +45,11 @@ def grade_lab3_ex5(count_data_list : List[Dict]) -> None:
 
 
 @typechecked
-def grade_lab3_ex6(unitary_result: Operator) -> None:
+def grade_lab3_ex6(unitary_result: Operator, unitary_circ: QuantumCircuit) -> None:
+    op_dict = unitary_circ.count_ops()
     unitary_result_data = unitary_result.data
-    grade(unitary_result_data, 'ex3-6', _challenge_id)
+    validation_dict = {"operators":op_dict, "unitary":unitary_result_data}
+    grade(validation_dict, 'ex3-6', _challenge_id)
 
 
 @typechecked
