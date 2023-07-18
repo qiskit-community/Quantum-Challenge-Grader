@@ -66,5 +66,5 @@ def grade_lab3_ex8(fraction_integers: List[Fraction]) -> None:
 def grade_lab3_ex9(shor_qpe: Callable) -> None:
     _, inputs = get_problem_set('ex3-9', _challenge_id)
 
-    shor_qpe_results = shor_qpe(inputs[0], inputs[1])
+    shor_qpe_results = shor_qpe(inputs[0])
     grade(shor_qpe_results, 'ex3-9', _challenge_id)
