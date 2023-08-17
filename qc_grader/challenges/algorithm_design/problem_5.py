@@ -10,7 +10,7 @@ _challenge_id = 'algorithm_design'
 
 
 @typechecked
-def grade_problem_5a(cost_function: callable, k: int, ansatz_list: TwoLocal, weight_vector: list[float], hamiltonian: SparsePauliOp, estimator: Estimator) -> float:
+def grade_problem_5a(cost_function: callable, k: int, ansatz_list: TwoLocal, weight_vector: list[float], hamiltonian: SparsePauliOp, estimator: Estimator) -> None:
     evaluation_points = (2*np.pi*np.random.rand(50, 8)).tolist()
     user_values = []
     for theta in evaluation_points:
