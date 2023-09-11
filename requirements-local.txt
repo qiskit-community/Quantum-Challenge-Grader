@@ -1,4 +1,6 @@
-qiskit[all]~=0.39.0
+qiskit[all]==0.43.1
+qiskit-ibm-runtime~=0.11.1
+qiskit-ibm-provider~=0.6.1
+qiskit-aer
 qiskit_nature
 qiskit-finance
-qiskit-ibm-runtime~=0.7.0
