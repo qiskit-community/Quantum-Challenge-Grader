@@ -4,7 +4,7 @@ from typing import List, Dict
 from typeguard import typechecked
 
 from qiskit import QuantumCircuit
-from qiskit.providers.aer.noise import NoiseModel
+from qiskit_aer.noise import NoiseModel
 
 from qc_grader.grader.common import noisemodel_to_json
 from qc_grader.grader.grade import grade

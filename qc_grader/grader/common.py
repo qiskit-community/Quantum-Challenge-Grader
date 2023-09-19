@@ -27,8 +27,8 @@ from qiskit.circuit.library import UGate, U3Gate, CXGate, TwoLocal
 from qiskit.opflow.primitive_ops.pauli_op import PauliOp
 from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
 from qiskit.primitives import SamplerResult, EstimatorResult
-from qiskit.providers.aer.jobs import AerJob
-from qiskit.providers.aer.noise import NoiseModel
+from qiskit_aer.jobs import AerJob
+from qiskit_aer.noise import NoiseModel
 from qiskit_ibm_provider import IBMProvider, IBMProviderError
 from qiskit.quantum_info import SparsePauliOp
 from networkx.classes import Graph
