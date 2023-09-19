@@ -7,7 +7,7 @@ from typing import Any, Callable, Dict
 
 from qiskit import Aer
 from qiskit.algorithms import QAOA
-from qiskit.providers.ibmq.job import IBMQJob
+from qiskit_ibm_provider.job import IBMCircuitJob as IBMQJob
 from qiskit.utils import QuantumInstance
 from qiskit_optimization.algorithms import MinimumEigenOptimizer
 from qiskit_optimization.applications import Knapsack

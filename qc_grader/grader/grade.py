@@ -16,7 +16,7 @@ import json
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from qiskit import execute
-from qiskit.providers.ibmq.job import IBMQJob
+from qiskit_ibm_provider.job import IBMCircuitJob as IBMQJob
 
 from .api import (
     get_access_token,

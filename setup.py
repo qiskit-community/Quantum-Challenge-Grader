@@ -36,8 +36,7 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
-        'Programming Language :: Python :: 3.7',
-        "Programming Language :: Python :: 3.8",
+        'Programming Language :: Python :: 3.10',
         'Topic :: Scientific/Engineering',
     ],
     keywords='qiskit quantum challenge grader',
@@ -46,15 +45,10 @@ setup(
         'qc_grader.*'
     ]),
     install_requires=[
-        'numpy',
-        'qiskit>=0.37',
-        'requests',
-        'networkx',
         'ipycytoscape',
         'plotly',
         'jsonpickle',
-        'typeguard',
-        'jupyterplot'
+        'typeguard'
     ],
     include_package_data=True,
     zip_safe=False,

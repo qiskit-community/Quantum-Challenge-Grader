@@ -1,6 +1,6 @@
 from typing import Callable, Optional
 
-from qiskit.providers.ibmq.runtime import RuntimeJob
+from qiskit_ibm_runtime import RuntimeJob
 from qiskit.opflow import PauliSumOp
 from qiskit.quantum_info import SparsePauliOp
 

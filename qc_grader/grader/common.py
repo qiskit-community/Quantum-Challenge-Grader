@@ -29,10 +29,10 @@ from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
 from qiskit.primitives import SamplerResult, EstimatorResult
 from qiskit.providers.aer.jobs import AerJob
 from qiskit.providers.aer.noise import NoiseModel
-from qiskit.providers.ibmq import AccountProvider, IBMQProviderError
+from qiskit_ibm_provider import IBMProvider, IBMProviderError
 from qiskit.quantum_info import SparsePauliOp
 from networkx.classes import Graph
-from qiskit.providers.ibmq.job import IBMQJob
+from qiskit_ibm_provider.job import IBMCircuitJob as IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
 from qiskit.result import ProbDistribution, QuasiDistribution
 from qiskit.algorithms.minimum_eigensolvers.vqe import VQEResult
@@ -284,11 +284,11 @@ def get_provider(
     group: Optional[str] = None,
     project: Optional[str] = None,
     load_account_fallback: Optional[bool] = True
-) -> AccountProvider:
+) -> IBMProvider:
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
 
-        ibmq_logger = logging.getLogger('qiskit.providers.ibmq')
+        ibmq_logger = logging.getLogger('qiskit_ibm_provider')
         current_level = ibmq_logger.level
         ibmq_logger.setLevel(logging.ERROR)
 
@@ -298,7 +298,7 @@ def get_provider(
         if hub or group or project:
             try:
                 providers = IBMQ.providers()
-            except IBMQProviderError:
+            except IBMProviderError:
                 IBMQ.load_account()
                 providers = IBMQ.providers()
 
