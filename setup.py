@@ -24,6 +24,18 @@ def get_version(rel_path):
         raise RuntimeError("Unable to find version string.")
 
 
+with open('requirements.txt') as f:
+    REQUIREMENTS = f.read().splitlines()
+
+
+with open('requirements-qiskit.txt') as f:
+    QISKIT_REQUIREMENTS = f.read().splitlines()
+
+
+with open('requirements-jupyter.txt') as f:
+    JUPYTER_REQUIREMENTS = f.read().splitlines()
+
+
 setup(
     name='qc_grader',
     version=get_version('qc_grader/__init__.py'),
@@ -44,13 +56,12 @@ setup(
         'qc_grader',
         'qc_grader.*'
     ]),
-    install_requires=[
-        'ipycytoscape',
-        'plotly',
-        'jsonpickle',
-        'typeguard'
-    ],
+    install_requires=REQUIREMENTS,
     include_package_data=True,
     zip_safe=False,
-    python_requires='>=3.7',
+    python_requires='>=3.10',
+    extras_require={
+        'qiskit': QISKIT_REQUIREMENTS,
+        'jupyter': JUPYTER_REQUIREMENTS
+    },
 )

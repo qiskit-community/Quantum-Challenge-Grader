@@ -1,0 +1,8 @@
+qiskit[all]~=0.44.0
+qiskit-ibm-runtime~=0.11.3
+qiskit-ibm-provider~=0.6.3
+qiskit-aer
+qiskit_nature
+qiskit-finance
+qiskit_machine_learning
+qiskit_optimization

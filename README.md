@@ -33,7 +33,6 @@ Pre-requisites:
 - [Python](https://www.python.org/) (3.10 or later) environment with
     - Classic [Jupyter Notebook](https://jupyter.readthedocs.io/en/latest/install/notebook-classic.html) interface or [JupyterLab](https://jupyterlab.readthedocs.io/en/stable/getting_started/installation.html)
     - [Qiskit](https://qiskit.org/documentation/index.html)
-        - `pip install -r requirements.txt`
 
 To install the grader locally:
 
@@ -42,6 +41,13 @@ To install the grader locally:
     ```
     pip install git+https://github.com/qiskit-community/Quantum-Challenge-Grader.git
     ```
+
+    Alternatively, if you also need to install JupyterLab and Qiskit along with the grader you can instead run:
+
+    ```
+    pip install 'qc-grader[qiskit,jupyter] @ git+https://github.com/qiskit-community/Quantum-Challenge-Grader.git'
+    ```
+
 1. Configure the following environment variables
 
     - `QXAuthURL` - IBM Quantum Authentication API URL
