@@ -45,7 +45,7 @@ To install the grader locally:
     Alternatively, if you also need to install JupyterLab and Qiskit along with the grader you can instead run:
 
     ```
-    pip install 'git+https://github.com/qiskit-community/Quantum-Challenge-Grader.git[qiskit,jupyter]'
+    pip install 'qc-grader[qiskit,jupyter] @ git+https://github.com/qiskit-community/Quantum-Challenge-Grader.git'
     ```
 
 1. Configure the following environment variables
