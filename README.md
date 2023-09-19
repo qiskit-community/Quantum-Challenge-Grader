@@ -30,12 +30,10 @@ You can confirm and check version with the following command in a notebook cell:
 Pre-requisites:
 
 - [IBM Quantum account](https://quantum-computing.ibm.com/)
-- [Python](https://www.python.org/) (3.8 or later) environment with
+- [Python](https://www.python.org/) (3.10 or later) environment with
     - Classic [Jupyter Notebook](https://jupyter.readthedocs.io/en/latest/install/notebook-classic.html) interface or [JupyterLab](https://jupyterlab.readthedocs.io/en/stable/getting_started/installation.html)
     - [Qiskit](https://qiskit.org/documentation/index.html)
-        - `pip install qiskit[all]`
-    - [qiskit_textbook](https://github.com/qiskit-community/qiskit-textbook#installing-the-qiskit_textbook-package) package
-        - `pip install git+https://github.com/qiskit-community/qiskit-textbook.git#subdirectory=qiskit-textbook-src`
+        - `pip install -r requirements.txt`
 
 To install the grader locally:
 
