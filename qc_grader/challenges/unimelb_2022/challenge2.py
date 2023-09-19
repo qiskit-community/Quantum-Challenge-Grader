@@ -5,7 +5,7 @@ from typeguard import typechecked
 from typing import Dict, Optional
 
 from qiskit.providers import JobStatus
-from qiskit.providers.ibmq.runtime import RuntimeJob
+from qiskit_ibm_runtime import RuntimeJob
 from qiskit_nature.converters.second_quantization import QubitConverter
 from qiskit_nature.problems.second_quantization.electronic import ElectronicStructureProblem
 from qiskit_nature.results.electronic_structure_result import ElectronicStructureResult
