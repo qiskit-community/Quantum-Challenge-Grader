@@ -6,12 +6,107 @@ from qc_grader.grader.grade import grade
 _challenge_id = 'quantum_explorers23'
 
 
-@typechecked
-def grade_badge7_ex1(answer: str) -> None:
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+
+_challenge_id = 'quantum_explorers23'
+
+# @typechecked
+def grade_badge7_ex1(answer: List[Dict]) -> None:
     status, _, message = grade(
         answer,
         'badge7_ex1',
         _challenge_id, 
+        return_response=True
+    )
+    print(message)
+
+# @typechecked
+def grade_badge7_ex2(answer: List) -> None:
+    status, _, message = grade(
+        answer,
+        'badge7_ex2',
+        _challenge_id, 
+        return_response=True
+    )
+    print(message)
+
+# @typechecked
+def grade_badge7_ex3(answer: QuasiDistribution) -> None:
+    status, _, message = grade(
+        answer,
+        'badge7_ex3',
+        _challenge_id, 
+        return_response=True
+    )
+    print(message)
+
+# @typechecked
+def grade_badge7_ex4(answer: QuantumCircuit) -> None:
+    status, _, message = grade(
+        answer,
+        'badge7_ex4',
+        _challenge_id, 
+        return_response=True
+    )
+    print(message)
+
+# @typechecked
+def grade_badge7_ex5(answer: QuantumCircuit) -> None:
+    answer_op = Operator(answer.remove_final_measurements(inplace=False))
+
+    status, _, message = grade(
+        answer_op,
+        'badge7_ex5',
+        _challenge_id, 
+        return_response=True
+    )
+    print(message)
+
+# @typechecked
+def grade_badge7_ex6(answer: Callable) -> None:
+    test_data = SamplerResult([{0: 0.1, 1: 0.2, 2: 0, 3: 0,
+                                   4: 0.3, 5: 0.4, 6: 0, 7: 0}],
+                                   [{}])
+    post_select_dist = answer(test_data)[0]
+    
+    status, _, message = grade(
+        post_select_dist,
+        'badge7_ex6',
+        _challenge_id, 
+        return_response=True
+    )
+    print(message)
+
+# @typechecked
+def grade_badge7_ex7(answer: List) -> None:
+    status, _, message = grade(
+        answer,
+        'badge7_ex7',
+        _challenge_id, 
+        return_response=True
+    )
+    print(message)
+
+# @typechecked
+def grade_badge7_ex8(answer: List) -> None:
+    status, _, message = grade(
+        answer,
+        'badge7_ex8',
+        _challenge_id, 
+        return_response=True
+    )
+    print(message)
+
+
+    #####
+
+
+@typechecked
+def grade_badge7_score(lang: str) -> None:
+    status, _, message = grade(
+        lang,
+        'badge7_score',
+        _challenge_id,
         return_response=True
     )
     print(message)
