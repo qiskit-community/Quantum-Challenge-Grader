@@ -1,14 +1,16 @@
 from typeguard import typechecked
+from typing import Callable, Dict, List
+
+from qiskit import QuantumCircuit
+from qiskit.primitives import SamplerResult
+from qiskit.quantum_info import Operator
+from qiskit.result import QuasiDistribution
 
 from qc_grader.grader.grade import grade
 
 
 _challenge_id = 'quantum_explorers23'
 
-
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
-
-_challenge_id = 'quantum_explorers23'
 
 # @typechecked
 def grade_badge7_ex1(answer: List[Dict]) -> None:
