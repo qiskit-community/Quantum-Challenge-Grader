@@ -55,9 +55,10 @@ def grade_badge7_ex4(answer: QuantumCircuit) -> None:
 # @typechecked
 def grade_badge7_ex5(answer: QuantumCircuit) -> None:
     answer_op = Operator(answer.remove_final_measurements(inplace=False))
+    answer_data = answer_op.data
 
     status, _, message = grade(
-        answer_op,
+        answer_data,
         'badge7_ex5',
         _challenge_id, 
         return_response=True
