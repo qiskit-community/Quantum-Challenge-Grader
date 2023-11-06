@@ -88,5 +88,13 @@ from .badge_6 import (
 )
 
 from .badge_7 import (
-    grade_badge7_ex1
+    grade_badge7_ex1,
+    grade_badge7_ex2,
+    grade_badge7_ex3,
+    grade_badge7_ex4,
+    grade_badge7_ex5,
+    grade_badge7_ex6,
+    grade_badge7_ex7,
+    grade_badge7_ex8,
+    grade_badge7_score
 )
