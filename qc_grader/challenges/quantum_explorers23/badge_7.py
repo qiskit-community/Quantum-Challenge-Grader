@@ -6,6 +6,7 @@ from qiskit.primitives import SamplerResult
 from qiskit.quantum_info import Operator
 from qiskit.result import QuasiDistribution
 
+from qc_grader.grader.common import circuit_to_json
 from qc_grader.grader.grade import grade
 
 
@@ -13,9 +14,12 @@ _challenge_id = 'quantum_explorers23'
 
 
 # @typechecked
-def grade_badge7_ex1(answer: List[Dict]) -> None:
+def grade_badge7_ex1(answer: List[QuantumCircuit]) -> None:
+    circuits = [
+        circuit_to_json(qc, byte_string=True) for qc in answer
+    ]
     status, _, message = grade(
-        answer,
+        circuits,
         'badge7_ex1',
         _challenge_id, 
         return_response=True
@@ -23,7 +27,7 @@ def grade_badge7_ex1(answer: List[Dict]) -> None:
     print(message)
 
 # @typechecked
-def grade_badge7_ex2(answer: List) -> None:
+def grade_badge7_ex2(answer: List[float]) -> None:
     status, _, message = grade(
         answer,
         'badge7_ex2',
