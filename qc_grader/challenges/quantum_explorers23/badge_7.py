@@ -13,7 +13,7 @@ _challenge_id = 'quantum_explorers23'
 
 
 # @typechecked
-def grade_badge7_ex1(answer: List[Dict]) -> None:
+def grade_badge7_ex1(answer: List[QuantumCircuit]) -> None:
     status, _, message = grade(
         answer,
         'badge7_ex1',
@@ -23,7 +23,7 @@ def grade_badge7_ex1(answer: List[Dict]) -> None:
     print(message)
 
 # @typechecked
-def grade_badge7_ex2(answer: List) -> None:
+def grade_badge7_ex2(answer: List[float]) -> None:
     status, _, message = grade(
         answer,
         'badge7_ex2',
