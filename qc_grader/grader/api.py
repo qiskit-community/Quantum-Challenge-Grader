@@ -24,16 +24,16 @@ from .common import MaxContentError, normalize_slash
 
 is_staging: bool = 'auth-dev' in os.getenv('QXAuthURL', 'auth-dev')
 
-# possible challenge grading endpoints: https://qac-grading-dev.quantum-computing.ibm.com
+# possible challenge grading endpoints: https://qac-grading-dev.quantum.ibm.com
 grading_endpoints: List[str] = [
     'http://127.0.0.1:5000',
-    f'https://qac-grading{"-dev" if is_staging else ""}.quantum-computing.ibm.com'
+    f'https://qac-grading{"-dev" if is_staging else ""}.quantum.ibm.com'
 ]
 
-# possible challenge api endpoints: https://challenges-api-dev.quantum-computing.ibm.com
+# possible challenge api endpoints: https://challenges-api-dev.quantum.ibm.com
 submission_endpoints: List[str] = [
     'http://127.0.0.1:8055',
-    f'https://challenges-api{"-dev" if is_staging else ""}.quantum-computing.ibm.com'
+    f'https://challenges-api{"-dev" if is_staging else ""}.quantum.ibm.com'
 ]
 
 _api_auth_url: Optional[str] = os.getenv('QXAuthURL')
@@ -43,17 +43,17 @@ _grade_only: Optional[Union[bool, str]] = os.getenv('QC_GRADE_ONLY')
 
 
 def get_auth_endpoint() -> Optional[str]:
-    # https://auth-dev.quantum-computing.ibm.com/api
+    # https://auth-dev.quantum.ibm.com/api
     global _api_auth_url
     if not _api_auth_url:
-        _api_auth_url = f'https://auth{"-dev" if is_staging else ""}.quantum-computing.ibm.com/api'
+        _api_auth_url = f'https://auth{"-dev" if is_staging else ""}.quantum.ibm.com/api'
     return normalize_slash(_api_auth_url)
 
 
 def get_problem_set_endpoint(
     question_id: Union[str, int], challenge_id: str
 ) -> Optional[str]:
-    # https://qac-grading-dev.quantum-computing.ibm.com
+    # https://qac-grading-dev.quantum.ibm.com
     global _api_grade_url
     if not _api_grade_url:
         for endpoint in grading_endpoints:
@@ -77,7 +77,7 @@ def get_problem_set_endpoint(
 def get_grading_endpoint(
     question_id: Union[str, int], challenge_id: str
 ) -> Optional[str]:
-    # https://qac-grading-dev.quantum-computing.ibm.com
+    # https://qac-grading-dev.quantum.ibm.com
     global _api_grade_url
     if not _api_grade_url:
         for endpoint in grading_endpoints:
@@ -101,7 +101,7 @@ def get_grading_endpoint(
 def get_submission_endpoint(
     question_id: Union[str, int], challenge_id: str
 ) -> Optional[str]:
-    # https://challenges-api-dev.quantum-computing.ibm.com
+    # https://challenges-api-dev.quantum.ibm.com
     global _api_submit_url
     if not _api_submit_url:
         for endpoint in submission_endpoints:
