@@ -15,7 +15,7 @@ Follow one of these steps to install the grading client.
 
 Pre-requisites:
 
-- [IBM Quantum account](https://quantum-computing.ibm.com/)
+- [IBM Quantum account](https://quantum.ibm.com/)
 
 The grader comes pre-installed in Quantum Lab and does not need to be installed.
 You can confirm and check version with the following command in a notebook cell:
@@ -29,7 +29,7 @@ You can confirm and check version with the following command in a notebook cell:
 
 Pre-requisites:
 
-- [IBM Quantum account](https://quantum-computing.ibm.com/)
+- [IBM Quantum account](https://quantum.ibm.com/)
 - [Python](https://www.python.org/) (3.10 or later) environment with
     - Classic [Jupyter Notebook](https://jupyter.readthedocs.io/en/latest/install/notebook-classic.html) interface or [JupyterLab](https://jupyterlab.readthedocs.io/en/stable/getting_started/installation.html)
     - [Qiskit](https://qiskit.org/documentation/index.html)

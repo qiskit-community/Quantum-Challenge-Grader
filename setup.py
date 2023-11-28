@@ -40,7 +40,7 @@ setup(
     name='qc_grader',
     version=get_version('qc_grader/__init__.py'),
     description='Grading client for the IBM Quantum Challenge',
-    url='https://quantum-computing.ibm.com/',
+    url='https://quantum.ibm.com/',
     author='IBM Quantum Community Team',
     author_email='va@us.ibm.com',
     license="Apache 2.0",
