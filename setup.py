@@ -54,7 +54,9 @@ setup(
     keywords='qiskit quantum challenge grader',
     packages=find_packages(include=[
         'qc_grader',
-        'qc_grader.*'
+        'qc_grader.*',
+        'qc_grader_json',
+        'qc_grader_json.*',
     ]),
     install_requires=REQUIREMENTS,
     include_package_data=True,
