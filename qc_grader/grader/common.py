@@ -20,12 +20,11 @@ import inspect
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 import warnings
 
-from qiskit import IBMQ, QuantumCircuit
-from qiskit.algorithms.optimizers import OptimizerResult
+from qiskit import QuantumCircuit
+from qiskit_algorithms.optimizers import OptimizerResult
 from qiskit.circuit import Barrier, Gate, Instruction, Measure, Parameter
 from qiskit.circuit.library import UGate, U3Gate, CXGate, TwoLocal
-from qiskit.opflow.primitive_ops.pauli_op import PauliOp
-from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
+from qiskit.quantum_info.operators import Pauli as PauliOp
 from qiskit.primitives import SamplerResult, EstimatorResult
 from qiskit_aer.jobs import AerJob
 from qiskit_aer.noise import NoiseModel
@@ -35,7 +34,7 @@ from networkx.classes import Graph
 from qiskit_ibm_provider.job import IBMCircuitJob as IBMQJob
 from qiskit.qobj import PulseQobj, QasmQobj
 from qiskit.result import ProbDistribution, QuasiDistribution
-from qiskit.algorithms.minimum_eigensolvers.vqe import VQEResult
+from qiskit_algorithms.minimum_eigensolvers.vqe import VQEResult
 
 from networkx import Graph
 
@@ -108,10 +107,6 @@ def qobj_to_json(qobj: Union[PulseQobj, QasmQobj]) -> str:
 
 def sparsepauliop_to_json(op: SparsePauliOp) -> str:
     return json.dumps(op.to_list(), cls=QObjEncoder)
-
-
-def paulisumop_to_json(op: PauliSumOp) -> str:
-    return json.dumps(op.primitive.to_list(), cls=QObjEncoder)
 
 
 def pauliop_to_json(op: PauliOp) -> str:
@@ -297,25 +292,13 @@ def get_provider(
         # get providers
         if hub or group or project:
             try:
-                providers = IBMQ.providers()
+                provider = IBMProvider(instance=f'{hub}/{group}/{project}')
             except IBMProviderError:
-                IBMQ.load_account()
-                providers = IBMQ.providers()
-
-            # get correct provider
-            for p in providers:
-                if (
-                    (hub in p.credentials.hub if hub else True)
-                    and (group in p.credentials.group if group else True)
-                    and (project in p.credentials.project if project else True)
-                ):
-                    # correct provider found
-                    provider = p
-                    break
+                pass
 
         # handle no correct provider found
         if provider is None and load_account_fallback:
-            provider = IBMQ.load_account()
+            provider = IBMProvider()
 
         ibmq_logger.setLevel(current_level)
         return provider
@@ -403,8 +386,6 @@ def serialize_answer(answer: Any, **kwargs: bool) -> Optional[str]:
         payload = serialize_aerjob_result(answer)
     elif isinstance(answer, QuantumCircuit):
         payload = circuit_to_json(answer, **kwargs)
-    elif isinstance(answer, PauliSumOp):
-        payload = paulisumop_to_json(answer)
     elif isinstance(answer, PauliOp):
         payload = pauliop_to_json(answer)
     elif isinstance(answer, SparsePauliOp):

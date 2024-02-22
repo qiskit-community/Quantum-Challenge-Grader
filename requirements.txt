@@ -3,3 +3,4 @@ jsonpickle==3.0.3
 
 ipycytoscape
 plotly
+networkx==3.2.1
