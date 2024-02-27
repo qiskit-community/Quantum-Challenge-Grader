@@ -15,7 +15,7 @@ import json
 
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-from qiskit import execute
+from qiskit import transpile
 from qiskit_ibm_provider.job import IBMCircuitJob as IBMQJob
 
 from .api import (
@@ -333,6 +333,9 @@ def prepare_solver(
             circuits,
             **kwargs
         )
+
+    new_circuits = transpile(circuits, **kwargs)
+    job = kwargs['backend'].run(new_circuits)
 
     print(f'You may monitor the job (id: {job.job_id()}) status '
           'and proceed to grading when it successfully completes.')
