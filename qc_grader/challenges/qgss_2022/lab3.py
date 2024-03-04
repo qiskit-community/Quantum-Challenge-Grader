@@ -6,7 +6,7 @@ from typeguard import typechecked
 from qiskit import QuantumCircuit
 from qiskit_aer.noise import NoiseModel
 
-from qc_grader.grader.common import noisemodel_to_json
+from qc_grader.common.serializer import noisemodel_to_json
 from qc_grader.grader.grade import grade
 
 

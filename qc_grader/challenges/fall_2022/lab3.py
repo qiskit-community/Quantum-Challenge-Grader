@@ -13,7 +13,7 @@ from qiskit.primitives import SamplerResult
 from qiskit.result import ProbDistribution, QuasiDistribution
 
 from qc_grader.grader.grade import grade
-from qc_grader.grader.common import (
+from qc_grader.common.serializer import (
     circuit_to_json,
     vqeresult_to_json,
     samplerresult_to_json,

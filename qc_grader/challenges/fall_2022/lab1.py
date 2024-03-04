@@ -15,7 +15,7 @@ from qc_grader.grader.grade import (
     handle_submit_response,
     display_special_message
 )
-from qc_grader.grader.common import (
+from qc_grader.common.serializer import (
     circuit_to_json,
     samplerresult_to_json,
     estimatorresult_to_json
