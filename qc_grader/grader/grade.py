@@ -18,8 +18,8 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from qiskit import transpile
 from qiskit_ibm_provider.job import IBMCircuitJob as IBMQJob
 
-from qc_grader.common import calc_depth, get_provider
-from qc_grader.common.serializer import serialize_answer
+from qc_grader.grader.common import calc_depth, get_provider
+from qc_grader.custom_encoder import to_json as serialize_answer
 
 from .api import (
     get_access_token,

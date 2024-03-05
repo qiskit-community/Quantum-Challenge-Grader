@@ -6,7 +6,7 @@ from qiskit.primitives import SamplerResult
 from qiskit.quantum_info import Operator
 from qiskit.result import QuasiDistribution
 
-from qc_grader.common.serializer import circuit_to_json
+from qc_grader.custom_encoder.serializer import circuit_to_json
 from qc_grader.grader.grade import grade
 
 

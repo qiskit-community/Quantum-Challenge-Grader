@@ -9,7 +9,7 @@ from qiskit import QuantumCircuit
 from qc_grader.grader.grade import (
     grade, get_problem_set
 )
-from qc_grader.common.serializer import (
+from qc_grader.custom_encoder.serializer import (
     circuit_to_json
 )
 

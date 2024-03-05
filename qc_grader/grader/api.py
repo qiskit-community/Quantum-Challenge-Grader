@@ -19,7 +19,7 @@ from urllib.parse import urljoin
 from typing import Dict, List, Mapping, Optional, Union
 
 from qc_grader import __version__
-from qc_grader.common import normalize_slash
+from qc_grader.grader.common import normalize_slash
 
 
 is_staging: bool = 'auth-dev' in os.getenv('QXAuthURL', 'auth-dev')

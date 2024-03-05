@@ -3,7 +3,7 @@ from typing import List
 
 
 from qc_grader.grader.grade import grade
-from qc_grader.common.serializer import (
+from qc_grader.custom_encoder.serializer import (
     samplerresult_to_json,
     quasidistribution_to_json
 )

@@ -8,7 +8,7 @@ from qiskit.circuit import Instruction
 from qiskit.opflow.primitive_ops.pauli_sum_op import PauliSumOp
 
 from qc_grader.grader.grade import grade
-from qc_grader.common.serializer import paulisumop_to_json
+from qc_grader.custom_encoder.serializer import paulisumop_to_json
 
 
 _challenge_id = 'qgss_2022'

@@ -8,7 +8,7 @@ from qiskit_nature.runtime import VQEProgram
 from qiskit_nature.converters.second_quantization import QubitConverter
 from qiskit_nature.problems.second_quantization.electronic import ElectronicStructureProblem
 
-from qc_grader.common import get_provider
+from qc_grader.grader.common import get_provider
 
 
 # for prepare_vqe_runtime_program
