@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# (C) Copyright IBM 2022
+# (C) Copyright IBM 2024
 #
 # This code is licensed under the Apache License, Version 2.0. You may
 # obtain a copy of this license in the LICENSE.txt file in the root directory
@@ -19,7 +19,7 @@ from urllib.parse import urljoin
 from typing import Dict, List, Mapping, Optional, Union
 
 from qc_grader import __version__
-from .common import MaxContentError, normalize_slash
+from qc_grader.grader.common import normalize_slash
 
 
 is_staging: bool = 'auth-dev' in os.getenv('QXAuthURL', 'auth-dev')
@@ -40,6 +40,14 @@ _api_auth_url: Optional[str] = os.getenv('QXAuthURL')
 _api_grade_url: Optional[str] = os.getenv('QC_GRADING_ENDPOINT')
 _api_submit_url: Optional[str] = os.getenv('QC_API_ENDPOINT')
 _grade_only: Optional[Union[bool, str]] = os.getenv('QC_GRADE_ONLY')
+
+
+class MaxContentError(BaseException):
+    def __init__(self, content_length: int, max_content_length: int) -> None:
+        self.message = f'Max content length ({max_content_length}) exceeded: {content_length}'
+
+    def __str__(self) -> str:
+        return self.message
 
 
 def get_auth_endpoint() -> Optional[str]:

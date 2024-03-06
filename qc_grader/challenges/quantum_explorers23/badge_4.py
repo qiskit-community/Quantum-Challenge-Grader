@@ -1,10 +1,9 @@
 from typeguard import typechecked
-from typing import List, Dict
+from typing import List
 
-import json
 
 from qc_grader.grader.grade import grade
-from qc_grader.grader.common import (
+from qc_grader.custom_encoder.serializer import (
     samplerresult_to_json,
     quasidistribution_to_json
 )

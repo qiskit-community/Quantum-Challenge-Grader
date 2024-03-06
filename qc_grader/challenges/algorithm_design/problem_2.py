@@ -1,7 +1,7 @@
 from typeguard import typechecked
 from qiskit.circuit.library import TwoLocal
 from qc_grader.grader.grade import grade
-from qc_grader.grader.common import circuit_to_json
+from qc_grader.custom_encoder.serializer import circuit_to_json
 
 
 _challenge_id = 'algorithm_design'

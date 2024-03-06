@@ -6,7 +6,7 @@ from typing import Dict
 from qiskit import QuantumCircuit
 
 from qc_grader.grader.grade import grade
-from qc_grader.grader.common import circuit_to_json
+from qc_grader.custom_encoder.serializer import circuit_to_json
 
 
 _challenge_id = 'algo_queen_2023'
