@@ -1,5 +1,5 @@
 qiskit[visualization]~=1.0.0
-qiskit-ibm-runtime~=0.19.1
+qiskit-ibm-runtime~=0.21.0
 qiskit-aer~=0.13.3
 qiskit-algorithms~=0.3.0
 qiskit-ibm-provider~=0.9.0
