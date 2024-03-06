@@ -1,5 +1,5 @@
 from typeguard import typechecked
-from typing import Dict, List, Sequence, Union
+from typing import Dict, Sequence, Union
 
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
@@ -8,7 +8,8 @@ from qiskit.quantum_info import SparsePauliOp
 from qiskit.primitives.base.sampler_result import SamplerResult
 
 from qc_grader.grader.grade import grade
-from qc_grader.grader.common import circuit_to_json, serialize_answer
+from qc_grader.custom_encoder.serializer import circuit_to_json
+from qc_grader.custom_encoder import to_json as serialize_answer
 
 
 _challenge_id = "qgss_2023"
