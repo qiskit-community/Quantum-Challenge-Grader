@@ -1,12 +1,12 @@
 from typeguard import typechecked
-from typing import Callable, Dict, List
+from typing import Callable, List
 
 from qiskit import QuantumCircuit
 from qiskit.primitives import SamplerResult
 from qiskit.quantum_info import Operator
 from qiskit.result import QuasiDistribution
 
-from qc_grader.grader.common import circuit_to_json
+from qc_grader.custom_encoder.serializer import circuit_to_json
 from qc_grader.grader.grade import grade
 
 
