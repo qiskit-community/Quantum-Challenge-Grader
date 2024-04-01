@@ -40,16 +40,19 @@ def circuit_to_bytes(qc: Union[TwoLocal, QuantumCircuit]) -> dict:
     return circuit
 
 
-def dump_np_int(obj: numpy.integer):
-    return {'__class__': 'np.integer', 'int': int(obj)}
+def dump_numpy_integer(obj: numpy.integer):
+    return {'__class__': 'numpy.integer', 'int': int(obj)}
 
 
-def dump_np_floating(obj: numpy.floating):
-    return {'__class__': 'np.floating', 'float': float(obj)}
+def dump_numpy_floating(obj: numpy.floating):
+    return {'__class__': 'numpy.floating', 'float': float(obj)}
 
 
-def dump_np_ndarray(obj: numpy.ndarray):
-    return {'__class__': 'np.ndarray', 'list': obj.tolist()}
+def dump_numpy_ndarray(obj: numpy.ndarray):
+    with BytesIO() as container:
+        numpy.save(container, obj, allow_pickle=False)
+        array = container.getvalue()
+    return {'__class__': 'numpy.ndarray', 'ndarray': array.decode('ISO-8859-1')}
 
 
 def dump_complex(obj: complex):
@@ -154,6 +157,5 @@ def dump_graph(obj: Graph):
 def serialize_object(obj: Any):
     import pickle
     return {
-        'obj': pickle.dumps(obj).decode('ISO-8859-1'),
-        'byte_string': True
+        'obj': pickle.dumps(obj).decode('ISO-8859-1')
     }

@@ -29,4 +29,4 @@ def grade_ex2a(qc: QuantumCircuit) -> None:
 
 @typechecked
 def grade_ex2b(qc: QuantumCircuit) -> None:
-    grade(qc, 'test-circuit-2', challenge_id, byte_string=True)
+    grade(qc, 'test-circuit-2', challenge_id, to_bytes=True)
