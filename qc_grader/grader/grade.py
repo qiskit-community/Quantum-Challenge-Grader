@@ -19,7 +19,7 @@ from qiskit import transpile
 from qiskit_ibm_provider.job import IBMCircuitJob as IBMQJob
 
 from qc_grader.grader.common import calc_depth, get_provider
-from qc_grader.custom_encoder import to_json as serialize_answer
+from qc_grader.custom_encoder import to_json
 
 from .api import (
     get_access_token,
@@ -38,7 +38,7 @@ def grade(
     return_response: Optional[str] = False,
     **kwargs: Any
 ) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:
-    serialized_answer = serialize_answer(answer, **kwargs)
+    serialized_answer = to_json(answer, **kwargs)
     do_submit = not do_grade_only()
 
     if challenge is None and '/' in str(question):
