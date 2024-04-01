@@ -12,21 +12,4 @@
 # that they have been altered from the originals.
 
 
-import json as JSON
-
-from typing import Any
-
-from qc_grader.custom_encoder.json import GraderJSONEncoder
-
-
-def to_json(obj: Any, **kwargs) -> str:
-    if isinstance(obj, (complex, float, int)):
-        return str(obj)
-    elif isinstance(obj, str):
-        return obj
-    else:
-        return JSON.dumps(obj, skipkeys=True, cls=GraderJSONEncoder, **kwargs)
-
-
-def from_json(str: str, **kwargs) -> Any:
-    pass
+from .json_encoder import to_json
