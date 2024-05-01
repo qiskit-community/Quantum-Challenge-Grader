@@ -66,7 +66,7 @@ def grade(
             payload,
             endpoint,
             do_submit=do_submit,
-            max_content_length=kwargs['max_content_length'] if 'max_content_length' in kwargs else None,
+            max_content_length=kwargs.get('max_content_length', None),
             return_response=return_response
         )
 
@@ -96,7 +96,7 @@ def grade_answer(
             header=header,
             max_content_length=max_content_length
         )
-    
+
         if do_submit:
             data = answer_response.get('data', {})
             status = data.get('grading_validation', None)
@@ -251,6 +251,7 @@ def run_using_problem_set(
                 return None
 
     return result_dicts
+
 
 def prepare_solver(
     solver_func: Callable,

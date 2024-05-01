@@ -99,6 +99,7 @@ def get_job(
 def cached(key_function: Callable) -> Callable:
     def _decorator(f: Any) -> Callable:
         f.__cache = {}
+
         @wraps(f)
         def _decorated(*args: Any, **kwargs: Any) -> int:
             key = key_function(*args, **kwargs)
