@@ -105,7 +105,7 @@ def dump_estimator_result(obj: EstimatorResult):
 def dump_prob_distribution(obj: ProbDistribution):
     return {
         '__class__': 'ProbDistribution',
-        'data': str(op),
+        'data': str(obj),
         'shots': obj.shots,
     }
 
