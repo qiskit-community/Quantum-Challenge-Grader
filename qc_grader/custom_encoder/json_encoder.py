@@ -47,7 +47,6 @@ class GraderJSONEncoder(json.JSONEncoder):
         super(GraderJSONEncoder, self).__init__(**kwargs)
         self.to_bytes = to_bytes
 
-
     def default(self, obj: Any) -> Any:
         if self.to_bytes:
             _json = serializer.serialize_object(obj)
