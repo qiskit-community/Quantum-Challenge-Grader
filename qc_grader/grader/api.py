@@ -22,7 +22,7 @@ from qc_grader import __version__
 from qc_grader.grader.common import normalize_slash
 
 
-is_staging: bool = 'auth-dev' in os.getenv('QXAuthURL', 'auth-dev')
+is_staging: bool = 'auth-dev' in os.getenv('QXAuthURL', 'auth')
 
 # possible challenge grading endpoints: https://qac-grading-dev.quantum.ibm.com
 grading_endpoints: List[str] = [
