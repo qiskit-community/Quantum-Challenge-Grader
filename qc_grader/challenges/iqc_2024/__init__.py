@@ -25,8 +25,7 @@ from .lab3 import (
 
 from .lab4 import (
     grade_lab4_ex1,
-    grade_lab4_ex2,
-    grade_lab4_ex3
+    grade_lab4_ex2
 )
 
 from .lab5 import (
