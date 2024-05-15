@@ -15,10 +15,7 @@ import json
 
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-from qiskit import transpile
-from qiskit_ibm_provider.job import IBMCircuitJob as IBMQJob
 
-from qc_grader.grader.common import calc_depth, get_provider
 from qc_grader.custom_encoder import to_json
 
 from .api import (
@@ -251,91 +248,3 @@ def run_using_problem_set(
                 return None
 
     return result_dicts
-
-
-def prepare_solver(
-    solver_func: Callable,
-    question_id: Union[str, int],
-    challenge_id: str,
-    max_qubits: Optional[int] = 28,
-    min_cost: Optional[int] = None,
-    check_gates: Optional[bool] = False,
-    num_experiments: Optional[int] = 4,
-    params_order: Optional[List[str]] = None,
-    test_problem_set: Optional[List[Dict[str, Any]]] = None,
-    **kwargs
-) -> Optional[IBMQJob]:
-    job = None
-    circuits = []
-    indices = []
-
-    if not callable(solver_func):
-        print(f'Expected a function, but was given {type(solver_func)}')
-        print(f'Please provide a function that returns a QuantumCircuit.')
-        return None
-
-    endpoint = get_grading_endpoint(question_id, challenge_id)
-    if not endpoint:
-        return None
-
-    count = 0
-    _, problem_sets = get_problem_set(question_id, challenge_id)
-    for problem_set in problem_sets:
-        index = problem_set['index']
-        inputs = problem_set['value']
-
-        if inputs and index is not None and index >= 0:
-            count += 1
-            print(f'Running "{solver_func.__name__}" ({count}/{len(problem_sets)})... ')
-            if not params_order:
-                qc = solver_func(*inputs)
-            else:
-                ins = [inputs[x] for x in params_order]
-                qc = solver_func(*ins)
-
-            if qc.num_qubits > max_qubits:
-                print(
-                    f'Your circuit has {qc.num_qubits} qubits, '
-                    'which exceeds the maximum allowed.\n'
-                    f'Please reduce the number of qubits in your circuit to below {max_qubits}.'
-                )
-                return None
-
-            indices.append(index)
-            if count < 5:
-                d, n = calc_depth(qc)
-
-            qc.metadata = {
-                'qc_index': index,
-                'qc_depth': json.dumps([d, n]) if count < 5 else ''
-            }
-            circuits.append(qc)
-        else:
-            print('Failed to obtain a valid problem set')
-            return None
-
-        # _, cost = _circuit_criteria(
-        #     qc[n],
-        #     max_qubits=max_qubits,
-        #     min_cost=min_cost,
-        #     check_gates=check_gates
-        # )
-        # costs.append(cost)
-
-    if 'backend' not in kwargs:
-        kwargs['backend'] = get_provider().get_backend('ibmq_qasm_simulator')
-
-    # execute experiments
-    print('Starting experiments. Please wait...')
-    job = execute(
-            circuits,
-            **kwargs
-        )
-
-    new_circuits = transpile(circuits, **kwargs)
-    job = kwargs['backend'].run(new_circuits)
-
-    print(f'You may monitor the job (id: {job.job_id()}) status '
-          'and proceed to grading when it successfully completes.')
-
-    return job
