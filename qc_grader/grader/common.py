@@ -21,8 +21,7 @@ from typing import Any, Callable, Optional, Tuple, Union
 from qiskit import QuantumCircuit
 from qiskit.circuit import Barrier, Gate, Instruction, Measure
 from qiskit.circuit.library import UGate, U3Gate, CXGate
-from qiskit_ibm_provider import IBMProvider, IBMProviderError
-from qiskit_ibm_provider.job import IBMCircuitJob as IBMQJob
+from qiskit_ibm_runtime import QiskitRuntimeService
 
 
 ValidationResult = Tuple[bool, Optional[Union[str, int, float]]]
@@ -37,63 +36,29 @@ def get_provider(
     group: Optional[str] = None,
     project: Optional[str] = None,
     load_account_fallback: Optional[bool] = True
-) -> IBMProvider:
+) -> QiskitRuntimeService:
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
 
-        ibmq_logger = logging.getLogger('qiskit_ibm_provider')
+        ibmq_logger = logging.getLogger('qiskit_runtime_service')
         current_level = ibmq_logger.level
         ibmq_logger.setLevel(logging.ERROR)
 
-        provider = None
+        service = None
 
         # get providers
         if hub or group or project:
             try:
-                provider = IBMProvider(instance=f'{hub}/{group}/{project}')
-            except IBMProviderError:
+                service = QiskitRuntimeService(channel="ibm_quantum", instance=f'{hub}/{group}/{project}')
+            except Exception:
                 pass
 
         # handle no correct provider found
-        if provider is None and load_account_fallback:
-            provider = IBMProvider()
+        if service is None and load_account_fallback:
+            service = QiskitRuntimeService(channel="ibm_quantum")
 
         ibmq_logger.setLevel(current_level)
-        return provider
-
-
-def get_job_urls(
-    job: Union[str, IBMQJob],
-    hub: Optional[str] = None,
-    group: Optional[str] = None,
-    project: Optional[str] = None,
-    load_account_fallback: Optional[bool] = True
-) -> Tuple[Optional[str], Optional[str]]:
-    try:
-        job_id = job.job_id() if isinstance(job, IBMQJob) else job
-        provider = get_provider(hub, group, project, load_account_fallback)
-        download_url = provider._api_client.account_api.job(job_id).download_url()['url']
-        result_url = provider._api_client.account_api.job(job_id).result_url()['url']
-        return download_url, result_url
-    except Exception:
-        return None, None
-
-
-def get_job(
-    job_id: str,
-    hub: Optional[str] = None,
-    group: Optional[str] = None,
-    project: Optional[str] = None,
-    load_account_fallback: Optional[bool] = True
-) -> Optional[IBMQJob]:
-    try:
-        provider = get_provider(hub, group, project, load_account_fallback)
-        job = provider.backends.retrieve_job(job_id)
-        return job
-    except Exception:
-        pass
-
-    return None
+        return service
 
 
 def cached(key_function: Callable) -> Callable:
