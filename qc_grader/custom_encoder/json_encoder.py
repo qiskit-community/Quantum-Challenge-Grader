@@ -24,8 +24,7 @@ from qiskit.circuit import Parameter
 from qiskit.circuit.library import TwoLocal
 from qiskit.primitives import SamplerResult, EstimatorResult
 from qiskit.qobj import PulseQobj
-from qiskit.quantum_info import Operator, SparsePauliOp, Statevector
-from qiskit.quantum_info.operators import Pauli as PauliOp
+from qiskit.quantum_info import Operator, Pauli, SparsePauliOp, Statevector
 from qiskit.result import ProbDistribution, QuasiDistribution
 from qiskit_aer.noise import NoiseModel
 from qiskit_algorithms.minimum_eigensolvers.vqe import VQEResult
@@ -88,8 +87,8 @@ class GraderJSONEncoder(json.JSONEncoder):
                 return serializer.dump_sparse_pauli_op(obj)
             case NoiseModel.__name__:
                 return serializer.dump_noise_model(obj)
-            case PauliOp.__name__:
-                return serializer.dump_pauli_op(obj)
+            case Pauli.__name__:
+                return serializer.dump_pauli(obj)
             case PulseQobj.__name__:
                 return serializer.dump_pulse_qobj(obj)
             case Graph.__name__:
