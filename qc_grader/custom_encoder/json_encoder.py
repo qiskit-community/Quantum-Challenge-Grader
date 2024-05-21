@@ -27,7 +27,7 @@ from qiskit.qobj import PulseQobj
 from qiskit.quantum_info import Operator, Pauli, SparsePauliOp, Statevector
 from qiskit.result import ProbDistribution, QuasiDistribution
 from qiskit_aer.noise import NoiseModel
-from qiskit_algorithms.minimum_eigensolvers.vqe import VQEResult
+# from qiskit_algorithms.minimum_eigensolvers.vqe import VQEResult
 
 from . import serializer
 
@@ -77,8 +77,8 @@ class GraderJSONEncoder(json.JSONEncoder):
                 return serializer.dump_quasi_distribution(obj)
             case ProbDistribution.__name__:
                 return serializer.dump_prob_distribution(obj)
-            case VQEResult.__name__:
-                return serializer.dump_vqe_result(obj)
+            # case VQEResult.__name__:
+            #     return serializer.dump_vqe_result(obj)
             case Statevector.__name__:
                 return serializer.dump_state_vector(obj)
             case Operator.__name__:
