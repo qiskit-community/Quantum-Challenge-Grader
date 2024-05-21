@@ -1,7 +1,6 @@
 from .lab0 import (
     grade_lab0_ex1,
-    grade_lab0_ex2,
-    grade_lab0_ex3
+    grade_lab0_ex2
 )
 
 
