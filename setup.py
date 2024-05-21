@@ -42,7 +42,6 @@ setup(
     description='Grading client for the IBM Quantum Challenge',
     url='https://quantum.ibm.com/',
     author='IBM Quantum Community Team',
-    author_email='va@us.ibm.com',
     license="Apache 2.0",
     classifiers=[
         "License :: OSI Approved :: Apache Software License",
