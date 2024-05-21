@@ -27,7 +27,7 @@ from qiskit.quantum_info import Operator, SparsePauliOp, Statevector
 from qiskit.quantum_info.operators import Pauli as PauliOp
 from qiskit.result import ProbDistribution, QuasiDistribution
 from qiskit_aer.noise import NoiseModel
-from qiskit_algorithms.minimum_eigensolvers.vqe import VQEResult
+# from qiskit_algorithms.minimum_eigensolvers.vqe import VQEResult
 
 from networkx.classes import Graph
 
@@ -110,12 +110,12 @@ def dump_prob_distribution(obj: ProbDistribution):
     }
 
 
-def dump_vqe_result(obj: VQEResult):
-    return {
-        '__class__': 'VQEResult',
-        'eigenvalue': obj.eigenvalue
-        # TODO: figure out what other parmeters need to be included
-    }
+# def dump_vqe_result(obj: VQEResult):
+#     return {
+#         '__class__': 'VQEResult',
+#         'eigenvalue': obj.eigenvalue
+#         # TODO: figure out what other parmeters need to be included
+#     }
 
 
 def dump_state_vector(obj: Statevector):
