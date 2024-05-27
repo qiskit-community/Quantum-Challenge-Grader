@@ -1,6 +1,3 @@
-import pickle
-import jsonpickle
-
 from typeguard import typechecked
 
 from typing import Callable
@@ -17,11 +14,9 @@ def grade_lab5_ex1(
    swap_depth: int,
    cut_depth: float
 ) -> None:
-   answer_dict = {
+   answer = {
      'gates_cut': gates_cut,
      'swap_depth': swap_depth,
      'cut_depth': cut_depth
    }
-   answer = pickle.dumps(answer_dict).decode('ISO-8859-1')
-   
    grade(answer, 'lab5-ex1', _challenge_id) 
