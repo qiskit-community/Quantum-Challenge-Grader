@@ -1,6 +1,7 @@
 from typing import List
 from typeguard import typechecked
 
+from scipy.optimize._optimize import OptimizeResult
 
 from qiskit import QuantumCircuit
 
@@ -36,5 +37,5 @@ def grade_lab3_ex2(
 
 
 @typechecked
-def grade_lab3_ex3(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'lab3-ex3', _challenge_id)
+def grade_lab3_ex3(optimize_result: OptimizeResult) -> None:
+    grade(optimize_result, 'lab3-ex3', _challenge_id)
