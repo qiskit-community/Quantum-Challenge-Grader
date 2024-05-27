@@ -7,9 +7,10 @@ from qiskit import QuantumCircuit
 from qiskit.transpiler import InstructionProperties
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 from qiskit.providers import BackendV2
+from qiskit.providers.fake_provider import GenericBackendV2
 from qiskit.quantum_info import SparsePauliOp
 from qiskit.circuit.library import RealAmplitudes
-from qiskit.primitives import StatevectorEstimator
+from qiskit.primitives import StatevectorEstimator, BackendEstimator
 
 from qiskit_aer import AerSimulator
 from zne import zne, ZNEStrategy
@@ -35,6 +36,8 @@ def create_test_backend():
     control_flow=True,
     coupling_map = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]]
     )
+
+    error_rate = 5e-4
 
     for i in range(backend.num_qubits):
         qarg = (i,)
@@ -124,7 +127,7 @@ def grade_lab3_ex6(zne_strategy: ZNEStrategy, optimize_result: OptimizeResult) -
         
         qc = QuantumCircuit(5)
         qc.prepare_state(amplitudes, range(5))
-        classifier = qc.compose(ansatz)
+        classifier = qc.compose(ANSATZ)
         classifier = classifier.decompose(reps=6)
         transpiled_classifier = pm.run(classifier)
         transpiled_obs = OBS.apply_layout(layout=transpiled_classifier.layout)
