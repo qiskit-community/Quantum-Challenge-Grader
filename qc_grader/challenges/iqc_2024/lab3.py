@@ -22,7 +22,16 @@ def grade_lab3_ex1(list_coefficients: List[List[complex]], list_labels: List[int
 
 
 @typechecked
-def grade_lab3_ex2(answer: str) -> None:
+def grade_lab3_ex2(
+    num_qubits: int,
+    reps: int,
+    entanglement: str
+) -> None:
+    answer = {
+        'num_qubits': num_qubits,
+        'reps': reps
+        'entanglement': entanglement
+    }
     grade(answer, 'lab3-ex2', _challenge_id)
 
 
