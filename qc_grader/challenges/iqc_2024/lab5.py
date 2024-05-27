@@ -15,7 +15,7 @@ def grade_lab5_ex1(
    cut_depth: float
 ) -> None:
    answer = {
-     'gates_cut': gates_cut,
+     'gates_cut': list(gates_cut),
      'swap_depth': swap_depth,
      'cut_depth': cut_depth
    }
