@@ -45,3 +45,9 @@ def grade_lab3_ex3(optimize_result: OptimizeResult) -> None:
 @typechecked
 def grade_lab3_ex4(backend: BackendV2) -> None:
     grade(backend.coupling_map, 'lab3-ex4', _challenge_id)
+
+@typechecked
+def grade_lab3_ex5(backend: BackendV2) -> None:
+    basis_gates=['rz', 'x', 'sx', 'cx', 'measure']
+    gate_error_list = [next(iter(backend.target[gate].values())).error for gate in basis_gates]
+    grade(gate_error_list, 'lab3-ex5', _challenge_id)
