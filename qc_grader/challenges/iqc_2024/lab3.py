@@ -4,7 +4,15 @@ from typeguard import typechecked
 from scipy.optimize._optimize import OptimizeResult
 
 from qiskit import QuantumCircuit
-from qiskit.providers import BackendV2, InstructionProperties
+from qiskit.transpiler import InstructionProperties
+from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
+from qiskit.providers import BackendV2
+from qiskit.quantum_info import SparsePauliOp
+from qiskit.circuit.library import RealAmplitudes
+from qiskit.primitives import StatevectorEstimator
+
+from qiskit_aer import AerSimulator
+from zne import zne, ZNEStrategy
 
 from qc_grader.grader.grade import grade
 
@@ -43,10 +51,10 @@ def create_test_backend():
 @typechecked
 def grade_lab3_ex1(list_coefficients: List[List[complex]], list_labels: List[int]) -> None:
 
-    answer = {
-        'list_coefficients': list_coefficients,
-        'list_labels': list_labels,
-    }
+    if list_coefficients == CORRECT_LIST_COEFFICIENTS and list_labels == CORRECT_LIST_LABELS:
+        answer = True
+    else:
+        answer = False
 
     grade(answer, 'lab3-ex1', _challenge_id)
 
@@ -59,7 +67,7 @@ def grade_lab3_ex2(
 ) -> None:
     answer = {
         'num_qubits': num_qubits,
-        'reps': reps
+        'reps': reps,
         'entanglement': entanglement
     }
     grade(answer, 'lab3-ex2', _challenge_id)
