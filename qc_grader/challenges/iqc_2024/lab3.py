@@ -4,6 +4,7 @@ from typeguard import typechecked
 from scipy.optimize._optimize import OptimizeResult
 
 from qiskit import QuantumCircuit
+from qiskit.providers import BackendV2
 
 from qc_grader.grader.grade import grade
 
@@ -39,3 +40,8 @@ def grade_lab3_ex2(
 @typechecked
 def grade_lab3_ex3(optimize_result: OptimizeResult) -> None:
     grade(optimize_result, 'lab3-ex3', _challenge_id)
+
+
+@typechecked
+def grade_lab3_ex4(backend: BackendV2) -> None:
+    grade(backend.coupling_map, 'lab3-ex4', _challenge_id)
