@@ -11,7 +11,13 @@ _challenge_id = 'iqc_2024'
 
 
 @typechecked
-def grade_lab3_ex1(answer: List[int]) -> None:
+def grade_lab3_ex1(list_coefficients: List[List[complex]], list_labels: List[int]) -> None:
+
+    answer = {
+        'list_coefficients': list_coefficients,
+        'list_labels': list_labels,
+    }
+
     grade(answer, 'lab3-ex1', _challenge_id)
 
 
