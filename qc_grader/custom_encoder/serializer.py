@@ -23,8 +23,7 @@ from qiskit.circuit import Parameter
 from qiskit.circuit.library import TwoLocal
 from qiskit.primitives import SamplerResult, EstimatorResult
 from qiskit.qobj import PulseQobj
-from qiskit.quantum_info import Operator, SparsePauliOp, Statevector
-from qiskit.quantum_info.operators import Pauli as PauliOp
+from qiskit.quantum_info import Operator, Pauli, SparsePauliOp, Statevector
 from qiskit.result import ProbDistribution, QuasiDistribution
 from qiskit_aer.noise import NoiseModel
 # from qiskit_algorithms.minimum_eigensolvers.vqe import VQEResult
@@ -126,11 +125,10 @@ def dump_operator(obj: Operator):
     return {'__class__': 'Operator', 'data': obj.data}
 
 
-def dump_pauli_op(obj: PauliOp):
+def dump_pauli(obj: Pauli):
     return {
-        '__class__': 'PauliOp',
-        'primitive': obj.primitive.to_label(),
-        'coeff': obj.coeff
+        '__class__': 'Pauli',
+        'label': obj.to_label()
     }
 
 
