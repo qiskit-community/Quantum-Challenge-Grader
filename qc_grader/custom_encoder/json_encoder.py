@@ -57,6 +57,8 @@ class GraderJSONEncoder(json.JSONEncoder):
                 return serializer.dump_numpy_integer(obj)
             case numpy.floating.__name__:
                 return serializer.dump_numpy_floating(obj)
+            case numpy.bool_.__name__:
+                return serializer.dump_numpy_bool(obj)
             case numpy.ndarray.__name__:
                 return serializer.dump_numpy_ndarray(obj)
             case complex.__name__:

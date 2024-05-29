@@ -47,6 +47,10 @@ def dump_numpy_floating(obj: numpy.floating):
     return {'__class__': 'numpy.floating', 'float': float(obj)}
 
 
+def dump_numpy_bool(obj: numpy.bool_):
+    return {'__class__': 'numpy.bool)', 'float': bool(obj)}
+
+
 def dump_numpy_ndarray(obj: numpy.ndarray):
     with BytesIO() as container:
         numpy.save(container, obj, allow_pickle=False)
