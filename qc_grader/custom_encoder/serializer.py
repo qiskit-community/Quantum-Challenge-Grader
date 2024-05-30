@@ -104,6 +104,12 @@ def dump_estimator_result(obj: EstimatorResult):
         'values': obj.values
     }
 
+def dump_primitive_result(obj: PrimitiveResult):
+    return {
+        '__class__': 'PrimitiveResult',
+        'metadata': obj.metadata,
+        'values': obj[0].data.evs
+    }
 
 def dump_prob_distribution(obj: ProbDistribution):
     return {
