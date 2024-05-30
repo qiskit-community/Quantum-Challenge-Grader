@@ -27,7 +27,7 @@ def grade_lab0_ex2(plt: BarContainer, job: PrimitiveJob) -> None:
         print(f'Please wait for Job to complete succesfully before grading: {status}')
     else:
         answer = {
-            'job_result': job.result(),
+            'job_result': job.result()[0].data.evs,
             'pyplot': {
                 'type': type(plt).__name__,
                 'values': plt.datavalues,
