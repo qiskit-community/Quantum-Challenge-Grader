@@ -10,7 +10,20 @@ _challenge_id = 'iqc_2024'
 
 @typechecked
 def grade_lab5_ex1(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'lab5-ex1', _challenge_id)
+    from qiskit_ibm_runtime import SamplerV2 as Sampler
+    from qiskit_aer import AerSimulator
+
+    backend = AerSimulator()
+    sampler = Sampler(backend)
+    job = sampler.run([circuit])
+    counts = job.result()[0].data.c.get_counts()
+
+    answer = {
+     'counts': counts,
+     'circuit': circuit
+    }
+    
+    grade(answer, 'lab5-ex1', _challenge_id)
 
 @typechecked
 def grade_lab5_ex2(
