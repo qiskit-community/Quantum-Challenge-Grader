@@ -40,7 +40,12 @@ def grade_lab5_ex2(
 
 @typechecked
 def grade_lab5_ex3(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'lab5-ex3', _challenge_id)
+    answer{
+        'ops': circuit.count_ops(),
+        'lay': circuit.layout.final_index_layout()
+    }
+    
+    grade(answer, 'lab5-ex3', _challenge_id)
 
 @typechecked
 def grade_lab5_ex4(circuit: QuantumCircuit) -> None:
