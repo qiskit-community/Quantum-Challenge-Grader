@@ -39,4 +39,8 @@ from .lab4 import (
 
 from .lab5 import (
     grade_lab5_ex1,
+    grade_lab5_ex2,
+    grade_lab5_ex3,
+    grade_lab5_ex4,
+    grade_lab5_ex5
 )
