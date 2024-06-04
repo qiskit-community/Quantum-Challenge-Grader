@@ -36,14 +36,6 @@ def grade_lab2_ex2(func: callable) -> None:
 
 @typechecked
 def grade_lab2_ex3(answer: list) -> None:
-<<<<<<< HEAD
-    grade(answer, 'lab2-ex3', _challenge_id)
-
-
-@typechecked
-def grade_lab2_ex4(answer: list) -> None:
-    grade(answer, 'lab2-ex4', _challenge_id)
-=======
     grade([
         (len(answer[0].to_flow_controller().tasks), len(answer[0].init.to_flow_controller().tasks), len(answer[0].layout.to_flow_controller().tasks), len(answer[0].routing.to_flow_controller().tasks)),
         (len(answer[1].to_flow_controller().tasks), len(answer[1].init.to_flow_controller().tasks), len(answer[1].layout.to_flow_controller().tasks), len(answer[1].routing.to_flow_controller().tasks)),
@@ -76,7 +68,6 @@ def grade_lab2_ex4(pm: StagedPassManager) -> None:
         'routing_tasks': routing_tasks,
         'translation_tasks': translation_tasks
     }, 'lab2-ex4', _challenge_id)
->>>>>>> upstream/main
 
 
 @typechecked
