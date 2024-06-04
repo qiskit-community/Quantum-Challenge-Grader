@@ -39,4 +39,11 @@ from .lab4 import (
 
 from .lab5 import (
     grade_lab5_ex1,
+<<<<<<< HEAD
+=======
+    grade_lab5_ex2,
+    grade_lab5_ex3,
+    grade_lab5_ex4,
+    grade_lab5_ex5
+>>>>>>> upstream/main
 )

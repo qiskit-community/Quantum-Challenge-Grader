@@ -53,6 +53,7 @@ def create_test_backend():
 
 @typechecked
 def grade_lab3_ex1(list_coefficients: List[List[complex]], list_labels: List[int]) -> None:
+<<<<<<< HEAD
 
     if list_coefficients == CORRECT_LIST_COEFFICIENTS and list_labels == CORRECT_LIST_LABELS:
         answer = True
@@ -60,6 +61,13 @@ def grade_lab3_ex1(list_coefficients: List[List[complex]], list_labels: List[int
         answer = False
 
     grade(answer, 'lab3-ex1', _challenge_id)
+=======
+    grade({
+        'list_coefficients': list_coefficients,
+        'list_labels': list_labels,
+        'eq': list_coefficients == CORRECT_LIST_COEFFICIENTS and list_labels == CORRECT_LIST_LABELS
+    }, 'lab3-ex1', _challenge_id)
+>>>>>>> upstream/main
 
 
 @typechecked

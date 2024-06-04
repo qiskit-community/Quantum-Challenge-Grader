@@ -21,7 +21,7 @@ from typing import Any, Union
 from qiskit import QuantumCircuit, qpy
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import TwoLocal
-from qiskit.primitives import SamplerResult, EstimatorResult
+from qiskit.primitives import SamplerResult, EstimatorResult, PrimitiveResult
 from qiskit.qobj import PulseQobj
 from qiskit.quantum_info import Operator, Pauli, SparsePauliOp, Statevector
 from qiskit.result import ProbDistribution, QuasiDistribution
@@ -45,6 +45,10 @@ def dump_numpy_integer(obj: numpy.integer):
 
 def dump_numpy_floating(obj: numpy.floating):
     return {'__class__': 'numpy.floating', 'float': float(obj)}
+
+
+def dump_numpy_bool(obj: numpy.bool_):
+    return {'__class__': 'numpy.bool)', 'float': bool(obj)}
 
 
 def dump_numpy_ndarray(obj: numpy.ndarray):
@@ -100,6 +104,12 @@ def dump_estimator_result(obj: EstimatorResult):
         'values': obj.values
     }
 
+def dump_primitive_result(obj: PrimitiveResult):
+    return {
+        '__class__': 'PrimitiveResult',
+        'metadata': obj.metadata,
+        'values': obj[0].data.evs
+    }
 
 def dump_prob_distribution(obj: ProbDistribution):
     return {
