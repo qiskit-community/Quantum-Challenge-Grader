@@ -61,6 +61,8 @@ class GraderJSONEncoder(json.JSONEncoder):
                 return serializer.dump_numpy_bool(obj)
             case numpy.ndarray.__name__:
                 return serializer.dump_numpy_ndarray(obj)
+            case numpy.complex128.__name__:
+                return serializer.dump_numpy_complex(obj)
             case complex.__name__:
                 return serializer.dump_complex(obj)
             case Fraction.__name__:
