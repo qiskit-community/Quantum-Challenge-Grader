@@ -2,18 +2,12 @@ from typeguard import typechecked
 
 from qiskit import transpile
 from qiskit.circuit.random import random_circuit
-<<<<<<< HEAD
-from qiskit.transpiler import PassManager
-from qiskit_ibm_runtime.fake_provider import FakeTorino
-
-=======
 from qiskit.transpiler import PassManager, StagedPassManager
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 from qiskit_ibm_runtime.fake_provider import FakeTorino
 
 from scipy.optimize._optimize import OptimizeResult
 
->>>>>>> upstream/main
 from qc_grader.grader.grade import grade
 
 

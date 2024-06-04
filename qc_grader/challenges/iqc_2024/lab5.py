@@ -9,9 +9,6 @@ from qc_grader.grader.grade import grade, get_problem_set
 _challenge_id = 'iqc_2024'
 
 @typechecked
-<<<<<<< HEAD
-def grade_lab5_ex1(
-=======
 def grade_lab5_ex1(circuit: QuantumCircuit) -> None:
     from qiskit_ibm_runtime import SamplerV2 as Sampler
     from qiskit_aer import AerSimulator
@@ -30,7 +27,6 @@ def grade_lab5_ex1(circuit: QuantumCircuit) -> None:
 
 @typechecked
 def grade_lab5_ex2(
->>>>>>> upstream/main
    gates_cut: set,
    swap_depth: int,
    cut_depth: float
