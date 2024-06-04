@@ -36,9 +36,6 @@ def grade_lab5_ex2(
      'swap_depth': swap_depth,
      'cut_depth': cut_depth
    }
-<<<<<<< HEAD
-   grade(answer, 'lab5-ex1', _challenge_id) 
-=======
    grade(answer, 'lab5-ex2', _challenge_id) 
 
 @typechecked
@@ -61,4 +58,3 @@ def grade_lab5_ex5(circuit: QuantumCircuit) -> None:
         'lay': circuit.layout.final_index_layout()
     }
     grade(answer, 'lab5-ex5', _challenge_id)
->>>>>>> upstream/main
