@@ -2,9 +2,18 @@ from typeguard import typechecked
 
 from qiskit import transpile
 from qiskit.circuit.random import random_circuit
+<<<<<<< HEAD
 from qiskit.transpiler import PassManager
 from qiskit_ibm_runtime.fake_provider import FakeTorino
 
+=======
+from qiskit.transpiler import PassManager, StagedPassManager
+from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
+from qiskit_ibm_runtime.fake_provider import FakeTorino
+
+from scipy.optimize._optimize import OptimizeResult
+
+>>>>>>> upstream/main
 from qc_grader.grader.grade import grade
 
 
@@ -33,12 +42,47 @@ def grade_lab2_ex2(func: callable) -> None:
 
 @typechecked
 def grade_lab2_ex3(answer: list) -> None:
+<<<<<<< HEAD
     grade(answer, 'lab2-ex3', _challenge_id)
 
 
 @typechecked
 def grade_lab2_ex4(answer: list) -> None:
     grade(answer, 'lab2-ex4', _challenge_id)
+=======
+    grade([
+        (len(answer[0].to_flow_controller().tasks), len(answer[0].init.to_flow_controller().tasks), len(answer[0].layout.to_flow_controller().tasks), len(answer[0].routing.to_flow_controller().tasks)),
+        (len(answer[1].to_flow_controller().tasks), len(answer[1].init.to_flow_controller().tasks), len(answer[1].layout.to_flow_controller().tasks), len(answer[1].routing.to_flow_controller().tasks)),
+        (len(answer[2].to_flow_controller().tasks), len(answer[2].init.to_flow_controller().tasks), len(answer[2].layout.to_flow_controller().tasks), len(answer[2].routing.to_flow_controller().tasks)),
+        (len(answer[3].to_flow_controller().tasks), len(answer[3].init.to_flow_controller().tasks), len(answer[3].layout.to_flow_controller().tasks), len(answer[3].routing.to_flow_controller().tasks))   
+    ], 'lab2-ex3', _challenge_id)
+
+
+@typechecked
+def grade_lab2_ex4(pm: StagedPassManager) -> None:
+
+    layout_tasks = []
+    for controller_group in pm.layout.to_flow_controller().tasks:
+        tasks = getattr(controller_group, "tasks", [])
+        for task in tasks:  
+            layout_tasks.append(str(type(task).__name__))
+    
+    routing_tasks = []
+    for controller_group in pm.routing.to_flow_controller().tasks:
+        tasks = getattr(controller_group, "tasks", [])
+        for task in tasks:  
+            routing_tasks.append(str(type(task).__name__))
+    
+    translation_tasks = []
+    for task in pm.translation.to_flow_controller().tasks:
+        translation_tasks.append(type(task).__name__)
+
+    grade({
+        'layout_tasks': layout_tasks,
+        'routing_tasks': routing_tasks,
+        'translation_tasks': translation_tasks
+    }, 'lab2-ex4', _challenge_id)
+>>>>>>> upstream/main
 
 
 @typechecked

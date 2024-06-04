@@ -22,7 +22,7 @@ from typing import Any
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import TwoLocal
-from qiskit.primitives import SamplerResult, EstimatorResult
+from qiskit.primitives import SamplerResult, EstimatorResult, PrimitiveResult
 from qiskit.qobj import PulseQobj
 from qiskit.quantum_info import Operator, Pauli, SparsePauliOp, Statevector
 from qiskit.result import ProbDistribution, QuasiDistribution
@@ -57,6 +57,8 @@ class GraderJSONEncoder(json.JSONEncoder):
                 return serializer.dump_numpy_integer(obj)
             case numpy.floating.__name__:
                 return serializer.dump_numpy_floating(obj)
+            case numpy.bool_.__name__:
+                return serializer.dump_numpy_bool(obj)
             case numpy.ndarray.__name__:
                 return serializer.dump_numpy_ndarray(obj)
             case complex.__name__:
@@ -73,6 +75,8 @@ class GraderJSONEncoder(json.JSONEncoder):
                 return serializer.dump_sampler_result(obj)
             case EstimatorResult.__name__:
                 return serializer.dump_estimator_result(obj)
+            case PrimitiveResult.__name__:
+                return serializer.dump_primitive_result(obj)
             case QuasiDistribution.__name__:
                 return serializer.dump_quasi_distribution(obj)
             case ProbDistribution.__name__:

@@ -100,4 +100,8 @@ def grade_lab1_ex6(cost_func: Callable) -> None:
 
 @typechecked
 def grade_lab1_ex7(optimize_result: OptimizeResult) -> None:
+<<<<<<< HEAD
     grade(optimize_result, 'lab1-ex7', _challenge_id)
+=======
+    grade(dict(optimize_result), 'lab1-ex7', _challenge_id)
+>>>>>>> upstream/main
