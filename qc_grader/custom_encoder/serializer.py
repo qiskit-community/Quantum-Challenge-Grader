@@ -57,6 +57,8 @@ def dump_numpy_ndarray(obj: numpy.ndarray):
         array = container.getvalue()
     return {'__class__': 'numpy.ndarray', 'ndarray': array.decode('ISO-8859-1')}
 
+def dump_numpy_complex(obj: numpy.complex128):
+    return {'__class__': 'complex', 're': obj.real, 'im': obj.imag}
 
 def dump_complex(obj: complex):
     return {'__class__': 'complex', 're': obj.real, 'im': obj.imag}
