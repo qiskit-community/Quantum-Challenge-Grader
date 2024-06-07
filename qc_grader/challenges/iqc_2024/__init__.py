@@ -20,13 +20,8 @@ from .lab2 import (
 )
 
 from .lab3 import (
-    grade_lab3_ckt_ex1,
-    grade_lab3_ckt_ex2,
-    grade_lab3_qs_ex1,
     grade_lab3_ait_ex1,
     grade_lab3_ait_ex2,
-    # grade_lab3_qca_ex1,
-    # grade_lab3_qca_ex2
 )
 
 from .lab4 import grade_lab4_ex1, grade_lab4_ex2, grade_lab4_ex3
