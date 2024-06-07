@@ -1,3 +1,4 @@
 qiskit[visualization]==1.0.2
 qiskit-ibm-runtime~=0.23.0
 qiskit-aer~=0.14.1
+qiskit-transpiler-service==0.4.0
