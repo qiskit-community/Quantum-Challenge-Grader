@@ -73,7 +73,7 @@ def grade_lab3_ait_ex1(transpiler_ai_false: TranspilerService) -> None:
 
 
 @typechecked
-def grade_lab3_ait_ex2(circuit: QuantumCircuit) -> None:
+def grade_lab3_ait_ex2(transpiler_ai_true: TranspilerService) -> None:
     grade(
         [
             transpiler_ai_true.ai,
