@@ -11,4 +11,4 @@
 import warnings
 warnings.filterwarnings('ignore')
 
-__version__ = '0.18.9'
+__version__ = '0.18.10'

@@ -3,9 +3,6 @@ from typeguard import typechecked
 from typing import Callable
 
 from qiskit import QuantumCircuit
-from qiskit_serverless.core.function import QiskitFunction
-from qiskit import QuantumCircuit
-from qiskit_serverless.core.job import Job
 from qiskit.quantum_info import SparsePauliOp
 
 from qc_grader.grader.grade import grade, get_problem_set
