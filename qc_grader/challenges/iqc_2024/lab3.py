@@ -37,9 +37,7 @@ def grade_lab3_ait_ex2(transpiler_ai_true: TranspilerService) -> None:
     )
 
 
-typechecked
-
-
+@typechecked
 def grade_lab3_ckt_ex1(
     gates_connecting_to_cut: set,
     isa_toffoli_depth: int,
