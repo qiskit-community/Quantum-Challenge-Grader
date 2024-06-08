@@ -48,7 +48,7 @@ def grade_lab3_ckt_ex1(
         "swap_depth": isa_toffoli_depth,
         "cut_depth": isa_qpd_toffoli_depth_mean,
     }
-    grade(answer, "lab3_ckt_ex1", _challenge_id)
+    grade(answer, "lab3-ckt-ex1", _challenge_id)
 
 
 @typechecked
@@ -64,4 +64,4 @@ def grade_lab3_ckt_ex2(
         "n_subex": n_subexperiment,
         "cut_depth": isa_qpd_toffoli_depth_2_mean,
     }
-    grade(answer, "lab3_ckt_ex2", _challenge_id)
+    grade(answer, "lab3-ckt-ex2", _challenge_id)
