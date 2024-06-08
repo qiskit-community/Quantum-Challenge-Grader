@@ -13,7 +13,6 @@ _challenge_id = "iqc_2024"
 
 @typechecked
 def grade_lab3_ait_ex1(transpiler_ai_false: TranspilerService) -> None:
-
     grade(
         [
             transpiler_ai_false.ai,
@@ -36,3 +35,35 @@ def grade_lab3_ait_ex2(transpiler_ai_true: TranspilerService) -> None:
         "lab3-ait-ex2",
         _challenge_id,
     )
+
+
+typechecked
+
+
+def grade_lab3_ckt_ex1(
+    gates_connecting_to_cut: set,
+    isa_toffoli_depth: int,
+    isa_qpd_toffoli_depth_mean: float,
+) -> None:
+    answer = {
+        "gates_cut": list(gates_connecting_to_cut),
+        "swap_depth": isa_toffoli_depth,
+        "cut_depth": isa_qpd_toffoli_depth_mean,
+    }
+    grade(answer, "lab3_ckt_ex1", _challenge_id)
+
+
+@typechecked
+def grade_lab3_ckt_ex2(
+    gates_connecting_to_cut_1: set,
+    gates_connecting_to_cut_2: set,
+    n_subexperiment: int,
+    isa_qpd_toffoli_depth_2_mean: float,
+) -> None:
+    answer = {
+        "gates_cut": list(gates_connecting_to_cut_1),
+        "gates_cut": list(gates_connecting_to_cut_2),
+        "n_subex": n_subexperiment,
+        "cut_depth": isa_qpd_toffoli_depth_2_mean,
+    }
+    grade(answer, "lab3_ckt_ex2", _challenge_id)
