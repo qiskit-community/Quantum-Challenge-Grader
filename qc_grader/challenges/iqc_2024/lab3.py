@@ -59,8 +59,8 @@ def grade_lab3_ckt_ex2(
     isa_qpd_toffoli_depth_2_mean: float,
 ) -> None:
     answer = {
-        "gates_cut": list(gates_connecting_to_cut_1),
-        "gates_cut": list(gates_connecting_to_cut_2),
+        "gates_cut_1": list(gates_connecting_to_cut_1),
+        "gates_cut_2": list(gates_connecting_to_cut_2),
         "n_sub_exp": n_sub_experiment,
         "cut_depth": isa_qpd_toffoli_depth_2_mean,
     }
