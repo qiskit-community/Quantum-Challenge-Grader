@@ -4,3 +4,12 @@ jsonpickle==3.0.3
 ipycytoscape
 plotly
 networkx==3.2.1
+
+# IBM Quantum Challenge 2024
+graphviz
+qiskit[visualization]==1.0.2
+qiskit-ibm-runtime
+qiskit-aer
+qiskit-transpiler-service
+qiskit-serverless
+circuit-kniting-toolbox
