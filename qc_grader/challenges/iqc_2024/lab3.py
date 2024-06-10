@@ -78,7 +78,7 @@ def grade_lab3_qs_ex1(
     function: QiskitFunction, input_arguments: dict, job: Job
 ) -> None:
     answer = {
-        "check_entry": check_entry,
+        "check_entry": function.entrypoint,
         "optimizer": input_arguments["method"],
         "op_valid": isinstance(input_arguments["operator"], SparsePauliOp),
         "circuit_valid": isinstance(input_arguments["ansatz"], QuantumCircuit),
@@ -91,7 +91,7 @@ def grade_lab3_qs_ex1(
 def grade_lab3_qs_ex2(
     optimization_levels: list,
     transpiler_services: list,
-    transpile_parallel_circuit: QiskitFunction,
+    transpile_parallel_function: QiskitFunction,
     transpile_parallel_serverless: QiskitFunction,
     job: Job,
 ) -> None:
