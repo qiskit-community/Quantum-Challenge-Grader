@@ -95,26 +95,25 @@ def grade_lab3_qs_ex2(
     transpile_parallel_serverless: QiskitFunction,
     job: Job,
 ) -> None:
-    check_entry = transpile_parallel_circuit.entrypoint
-    job_valid = isinstance(job, Job)
-    transpilerservice_check = [
-        [
-            service["service"].ai,
-            service["service"].backend_name,
-            service["service"].optimization_level,
-        ]
+
+    transpiler_service_settings = [
+        {
+            "ai": service["service"].ai,
+            "backend_name": service["service"].backend_name,
+            "optimization_level": service["service"].optimization_level,
+        }
         for service in transpiler_services
     ]
-    config_check = [
-        transpile_parallel_serverless.raw_data["title"],
-        transpile_parallel_serverless.raw_data["entrypoint"],
-    ]
+    config = {
+        "title": transpile_parallel_serverless.raw_data["title"],
+        "entrypoint": transpile_parallel_serverless.raw_data["entrypoint"],
+    }
 
-    answer = [
-        list(set(optimization_levels)),
-        transpilerservice_check,
-        check_entry,
-        config_check,
-        job_valid,
-    ]
+    answer = {
+        'optimization_levels': optimization_levels,
+        'transpiler_service_settings': transpiler_service_settings,
+        'entrypoint': transpile_parallel_function.entrypoint,
+        'config': config,
+        'job_valid': isinstance(job, Job),
+    }
     grade(answer, "lab3-qs-ex2", _challenge_id)
