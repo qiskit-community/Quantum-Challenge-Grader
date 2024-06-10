@@ -12,4 +12,4 @@ qiskit-ibm-runtime
 qiskit-aer
 qiskit-transpiler-service
 qiskit-serverless
-circuit-kniting-toolbox
+circuit-knitting-toolbox
