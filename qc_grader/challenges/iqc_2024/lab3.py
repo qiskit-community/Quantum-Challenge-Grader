@@ -1,6 +1,7 @@
 from typeguard import typechecked
 
-from typing import Callable
+from typing import Callable, List
+import numpy as np
 
 from qiskit import QuantumCircuit
 from qiskit_serverless.core.job import Job
@@ -44,12 +45,16 @@ def grade_lab3_ait_ex2(transpiler_ai_true: TranspilerService) -> None:
 def grade_lab3_ckt_ex1(
     gates_connecting_to_cut: set,
     isa_toffoli_depth: int,
-    isa_qpd_toffoli_depth_mean: float,
+    depth_list: np.ndarray | List,
 ) -> None:
+
+    if isinstance(depth_list, List):
+        depth_list = np.array(depth_list)
+
     answer = {
         "gates_cut": list(gates_connecting_to_cut),
         "swap_depth": isa_toffoli_depth,
-        "cut_depth": isa_qpd_toffoli_depth_mean,
+        "cut_depth": depth_list.mean(),
     }
     grade(answer, "lab3-ckt-ex1", _challenge_id)
 
@@ -58,12 +63,12 @@ def grade_lab3_ckt_ex1(
 def grade_lab3_ckt_ex2(
     gates_connecting_to_cut_1: set,
     gates_connecting_to_cut_2: set,
-    n_sub_experiment: int,
+    sub_experiments: List[QuantumCircuit],
 ) -> None:
     answer = {
         "gates_cut_1": list(gates_connecting_to_cut_1),
         "gates_cut_2": list(gates_connecting_to_cut_2),
-        "n_sub_exp": n_sub_experiment,
+        "n_sub_exp": len(sub_experiments),
     }
     grade(answer, "lab3-ckt-ex2", _challenge_id)
 
