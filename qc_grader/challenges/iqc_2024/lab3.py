@@ -77,17 +77,13 @@ def grade_lab3_ckt_ex2(
 def grade_lab3_qs_ex1(
     function: QiskitFunction, input_arguments: dict, job: Job
 ) -> None:
-    check_entry = function.entrypoint
-    job_valid = isinstance(job, Job)
-    circuit_valid = isinstance(input_arguments["ansatz"], QuantumCircuit)
-    op_valid = isinstance(input_arguments["operator"], SparsePauliOp)
-    answer = [
-        check_entry,
-        input_arguments["method"],
-        op_valid,
-        circuit_valid,
-        job_valid,
-    ]
+    answer = {
+        "check_entry": check_entry,
+        "optimizer": input_arguments["method"],
+        "op_valid": isinstance(input_arguments["operator"], SparsePauliOp),
+        "circuit_valid": isinstance(input_arguments["ansatz"], QuantumCircuit),
+        "job_valid": isinstance(job, Job)
+    }
     grade(answer, "lab3-qs-ex1", _challenge_id)
 
 
