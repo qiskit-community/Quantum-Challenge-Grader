@@ -77,17 +77,13 @@ def grade_lab3_ckt_ex2(
 def grade_lab3_qs_ex1(
     function: QiskitFunction, input_arguments: dict, job: Job
 ) -> None:
-    check_entry = function.entrypoint
-    job_valid = isinstance(job, Job)
-    circuit_valid = isinstance(input_arguments["ansatz"], QuantumCircuit)
-    op_valid = isinstance(input_arguments["operator"], SparsePauliOp)
-    answer = [
-        check_entry,
-        input_arguments["method"],
-        op_valid,
-        circuit_valid,
-        job_valid,
-    ]
+    answer = {
+        "check_entry": function.entrypoint,
+        "optimizer": input_arguments["method"],
+        "op_valid": isinstance(input_arguments["operator"], SparsePauliOp),
+        "circuit_valid": isinstance(input_arguments["ansatz"], QuantumCircuit),
+        "job_valid": isinstance(job, Job)
+    }
     grade(answer, "lab3-qs-ex1", _challenge_id)
 
 
@@ -95,30 +91,29 @@ def grade_lab3_qs_ex1(
 def grade_lab3_qs_ex2(
     optimization_levels: list,
     transpiler_services: list,
-    transpile_parallel_circuit: QiskitFunction,
+    transpile_parallel_function: QiskitFunction,
     transpile_parallel_serverless: QiskitFunction,
     job: Job,
 ) -> None:
-    check_entry = transpile_parallel_circuit.entrypoint
-    job_valid = isinstance(job, Job)
-    transpilerservice_check = [
-        [
-            service["service"].ai,
-            service["service"].backend_name,
-            service["service"].optimization_level,
-        ]
+
+    transpiler_service_settings = [
+        {
+            "ai": service["service"].ai,
+            "backend_name": service["service"].backend_name,
+            "optimization_level": service["service"].optimization_level,
+        }
         for service in transpiler_services
     ]
-    config_check = [
-        transpile_parallel_serverless.raw_data["title"],
-        transpile_parallel_serverless.raw_data["entrypoint"],
-    ]
+    config = {
+        "title": transpile_parallel_serverless.raw_data["title"],
+        "entrypoint": transpile_parallel_serverless.raw_data["entrypoint"],
+    }
 
-    answer = [
-        list(set(optimization_levels)),
-        transpilerservice_check,
-        check_entry,
-        config_check,
-        job_valid,
-    ]
+    answer = {
+        'optimization_levels': optimization_levels,
+        'transpiler_service_settings': transpiler_service_settings,
+        'entrypoint': transpile_parallel_function.entrypoint,
+        'config': config,
+        'job_valid': isinstance(job, Job),
+    }
     grade(answer, "lab3-qs-ex2", _challenge_id)
