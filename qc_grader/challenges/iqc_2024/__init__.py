@@ -35,4 +35,5 @@ from .lab4 import (
     grade_lab4_ex4,
     grade_lab4_ex5,
     grade_lab4_ex6,
+    grade_lab4_ex7,
 )
