@@ -19,6 +19,10 @@ from qc_grader.grader.grade import grade
 
 _challenge_id = 'iqc_2024'
 
+CORRECT_LIST_COEFFICIENTS = [[0.7071067811865476+0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0.7071067811865476+0j], [0j, 0.7071067811865476+0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0.7071067811865476+0j, 0j], [0j, 0j, 0.7071067811865476+0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0.7071067811865476+0j, 0j, 0j], [0j, 0j, 0j, 0.7071067811865476+0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0.7071067811865476+0j, 0j, 0j, 0j], [0j, 0j, 0j, 0j, 0.7071067811865476+0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0.7071067811865476+0j, 0j, 0j, 0j, 0j], [0j, 0j, 0j, 0j, 0j, 1+0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j], [0j, 0j, 0j, 0j, 0j, 0j, (1+0j), 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j], [0j, 0j, 0j, 0j, 0j, 0j, 0j, (1+0j), 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j], [0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, (1+0j), 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j], [0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, (1+0j), 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j, 0j]]
+
+CORRECT_LIST_LABELS = [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
+
 OBS = SparsePauliOp("ZZZZZ")
 
 ANSATZ = RealAmplitudes(num_qubits=5, reps=1, insert_barriers=True, entanglement='full')
@@ -95,3 +99,9 @@ def grade_lab4_ex4(backend: BackendV2) -> None:
     basis_gates=['rz', 'x', 'sx', 'cx', 'measure']
     gate_error_dict = {gate: next(iter(backend.target[gate].values())).error for gate in basis_gates}
     grade(gate_error_dict, 'lab4-ex4', _challenge_id)
+
+
+@typechecked
+def grade_lab4_ex5(results_list: list[float]) -> None:
+    grade(results_list, 'lab4-ex5', _challenge_id)
+
