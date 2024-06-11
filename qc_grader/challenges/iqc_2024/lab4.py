@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Callable
 from typeguard import typechecked
 
 from scipy.optimize._optimize import OptimizeResult
@@ -8,7 +8,7 @@ from qiskit.transpiler import InstructionProperties
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 from qiskit.providers import BackendV2
 from qiskit.providers.fake_provider import GenericBackendV2
-from qiskit.quantum_info import SparsePauliOp
+from qiskit.quantum_info import SparsePauliOp, Statevector
 from qiskit.circuit.library import RealAmplitudes
 from qiskit.primitives import StatevectorEstimator, BackendEstimator
 
@@ -102,6 +102,11 @@ def grade_lab4_ex4(backend: BackendV2) -> None:
 
 
 @typechecked
-def grade_lab4_ex5(results_list: list[float]) -> None:
-    grade(results_list, 'lab4-ex5', _challenge_id)
+def grade_lab4_ex5(amplitude_embedding: Callable) -> None:
+    answer_list =[Statevector(amplitude_embedding(5,bird_index)) for bird_index in range(10)]
+    grade(answer_list, 'lab4-ex5', _challenge_id)
+
+@typechecked
+def grade_lab4_ex6(results_test: list[float]) -> None:
+    grade(results_test, 'lab4-ex6', _challenge_id)
 
