@@ -13,6 +13,7 @@ from qiskit.circuit.library import RealAmplitudes
 from qiskit.primitives import StatevectorEstimator, BackendEstimator
 
 from qiskit_aer import AerSimulator
+from qiskit_ibm_runtime import EstimatorOptions
 
 from qc_grader.grader.grade import grade
 
@@ -110,3 +111,17 @@ def grade_lab4_ex5(amplitude_embedding: Callable) -> None:
 def grade_lab4_ex6(results_test: list[float]) -> None:
     grade(results_test, 'lab4-ex6', _challenge_id)
 
+
+@typechecked
+def grade_lab4_ex7(options_0: EstimatorOptions, options_1: EstimatorOptions) -> None:
+    answer_list = [
+        [
+            options.resilience_level,
+            options.dynamical_decoupling.enable,
+            options.dynamical_decoupling.sequence_type,
+            options.default_shots,
+            options.optimization_level,
+        ]
+        for options in [options_0, options_1]
+    ]
+    grade(answer_list, "lab4-ex7", _challenge_id)
