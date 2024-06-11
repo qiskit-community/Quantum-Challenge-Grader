@@ -28,28 +28,6 @@ OBS = SparsePauliOp("ZZZZZ")
 
 ANSATZ = RealAmplitudes(num_qubits=5, reps=1, insert_barriers=True, entanglement='full')
 
-def create_test_backend():
-
-    backend = GenericBackendV2(
-    num_qubits=5,
-    basis_gates=["id", "rz", "sx", "x", "cx"],
-    control_flow=True,
-    coupling_map = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]]
-    )
-
-    error_rate = 5e-4
-
-    for i in range(backend.num_qubits):
-        qarg = (i,)
-        backend.target.update_instruction_properties('rz', qarg, InstructionProperties(error=error_rate, duration=1e-8))
-        backend.target.update_instruction_properties('x', qarg, InstructionProperties(error=error_rate, duration=1e-8))
-        backend.target.update_instruction_properties('sx', qarg, InstructionProperties(error=error_rate, duration=1e-8))
-        backend.target.update_instruction_properties('measure', qarg, InstructionProperties(error=error_rate, duration=1e-8))
-
-    for edge in backend.coupling_map:
-        backend.target.update_instruction_properties('cx', tuple(edge), InstructionProperties(error=error_rate, duration=1e-8))
-
-    return backend
 
 @typechecked
 def grade_lab4_ex1(list_coefficients: List[List[complex]], list_labels: List[int]) -> None:
