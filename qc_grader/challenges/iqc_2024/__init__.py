@@ -37,3 +37,5 @@ from .lab4 import (
     grade_lab4_ex6,
     grade_lab4_ex7,
 )
+
+from .lab_bonus import grade_lab_bonus_ex1
