@@ -23,11 +23,10 @@ from .lab3 import (
 from .lab4 import (
     grade_lab4_ex1,
     grade_lab4_ex2,
-    grade_lab4_ex3
-)
-
-from .lab5 import (
-    grade_lab5_ex1,
-    grade_lab5_ex2,
-    grade_lab5_ex3
+    grade_lab4_ex3,
+    grade_lab4_ex4,
+    grade_lab4_ex5,
+    grade_lab4_ex6,
+    grade_lab4_ex7,
+    grade_lab4_ex8
 )
