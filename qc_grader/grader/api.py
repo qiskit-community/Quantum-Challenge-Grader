@@ -20,6 +20,8 @@ from typing import Dict, List, Mapping, Optional, Union
 
 from qc_grader import __version__
 from qc_grader.grader.common import normalize_slash
+from qiskit_ibm_runtime import QiskitRuntimeService
+
 
 
 is_staging: bool = 'auth-dev' in os.getenv('QXAuthURL', 'auth')
@@ -132,14 +134,17 @@ def get_submission_endpoint(
 
 def get_access_token() -> Optional[str]:
     iqx_token = os.getenv('QXToken')
+    saved_runtime_token = QiskitRuntimeService.saved_accounts()['default-ibm-quantum']['token']
     if iqx_token is None:
-        return None
+        if saved_runtime_token is not None:
+            iqx_token = saved_runtime_token
+        else:
+            return None
     baseurl = get_auth_endpoint()
     endpoint = urljoin(baseurl, './users/loginWithToken')
     response = requests.post(endpoint, json={'apiToken': iqx_token})
     response.raise_for_status()
     return response.json()['id']
-
 
 def get_question_set(
     challenge_id: str
