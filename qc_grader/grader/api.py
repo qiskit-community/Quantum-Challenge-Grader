@@ -145,6 +145,7 @@ def get_access_token() -> Optional[str]:
     response.raise_for_status()
     return response.json()['id']
 
+
 def get_question_set(
     challenge_id: str
 ) -> List[Dict[str, str]]:
