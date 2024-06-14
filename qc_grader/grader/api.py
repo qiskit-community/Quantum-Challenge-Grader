@@ -134,12 +134,11 @@ def get_submission_endpoint(
 
 def get_access_token() -> Optional[str]:
     iqx_token = os.getenv('QXToken')
-    saved_runtime_token = QiskitRuntimeService.saved_accounts()['default-ibm-quantum']['token']
     if iqx_token is None:
-        if saved_runtime_token is not None:
-            iqx_token = saved_runtime_token
-        else:
-            return None
+        iqx_token = QiskitRuntimeService.saved_accounts().get('default-ibm-quantum', {}).get('token')
+    if iqx_token is None:
+        return None
+
     baseurl = get_auth_endpoint()
     endpoint = urljoin(baseurl, './users/loginWithToken')
     response = requests.post(endpoint, json={'apiToken': iqx_token})
