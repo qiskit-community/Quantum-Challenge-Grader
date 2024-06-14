@@ -1,6 +1,7 @@
 import json
 
-from typing import Callable
+from typing import Callable, Type
+
 from typeguard import typechecked
 
 
@@ -60,7 +61,6 @@ def grade_lab1_ex3(pm_staged: StagedPassManager) -> None:
     qc_out = pm_staged.run(qc)
 
     grade({
-        'qc': qc,
         'qc_out': qc_out
     }, 'lab1-ex3', _challenge_id)
 
@@ -77,7 +77,6 @@ def grade_lab1_ex4(pm_staged: StagedPassManager) -> None:
     qc_out = pm_staged.run(qc)
 
     grade({
-        'qc': qc,
         'qc_out': qc_out
     }, 'lab1-ex4', _challenge_id)
 
@@ -97,7 +96,6 @@ def grade_lab1_ex5(pm_staged: StagedPassManager) -> None:
     qk_cx_count = qc_qk.num_nonlocal_gates()
 
     grade({
-        'qc': qc,
         'qc_out': qc_out,
         'opt_cx_count': opt_cx_count,
         'qk_cx_count': qk_cx_count
@@ -106,11 +104,7 @@ def grade_lab1_ex5(pm_staged: StagedPassManager) -> None:
 
 # Lab 1, Exercise 3A
 @typechecked
-def grade_lab1_ex6(user_pass_class: AnalysisPass) -> None:
-    if not issubclass(user_pass_class, AnalysisPass) and not isinstance(user_pass_class, AnalysisPass):
-        print("The supplied pass is not an AnalysisPass!")
-        return
-
+def grade_lab1_ex6(user_pass_class: Type[AnalysisPass]) -> None:
     num_qubits = 5
     qc = transpile(QFT(num_qubits, do_swaps=False), backend=GenericBackendV2(num_qubits, coupling_map=CouplingMap.from_line(num_qubits)), seed_transpiler=307)
     user_pass = user_pass_class()
@@ -124,11 +118,7 @@ def grade_lab1_ex6(user_pass_class: AnalysisPass) -> None:
 
 # Lab 1, Exercise 3B
 @typechecked
-def grade_lab1_ex7(user_pass_class: AnalysisPass, pg: Gate) -> None:
-    if not issubclass(user_pass_class, TransformationPass) and not isinstance(user_pass_class, TransformationPass):
-        print("The supplied pass is not a TransformationPass!")
-        return
-
+def grade_lab1_ex7(user_pass_class: Type[TransformationPass], pg: Gate) -> None:
     nq = 5
     qc = get_qc_in(nq, pg)
     user_pass = user_pass_class()
@@ -142,11 +132,7 @@ def grade_lab1_ex7(user_pass_class: AnalysisPass, pg: Gate) -> None:
 
 # Lab 1, Exercise 3C
 @typechecked
-def grade_lab1_ex8(user_pass: AnalysisPass, pg: Gate) -> None:
-    if not issubclass(user_pass, TransformationPass) and not isinstance(user_pass, TransformationPass):
-        print("The supplied pass is not a TransformationPass!")
-        return
-    
+def grade_lab1_ex8(user_pass: Type[TransformationPass], pg: Gate) -> None:
     nq = 5
     qc = get_qc_in(nq)
     qc_user = user_pass(qc)
