@@ -21,10 +21,9 @@ from typing import Any, Union
 from qiskit import QuantumCircuit, qpy
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import TwoLocal
-from qiskit.primitives import SamplerResult, EstimatorResult
+from qiskit.primitives import SamplerResult, EstimatorResult, PrimitiveResult
 from qiskit.qobj import PulseQobj
-from qiskit.quantum_info import Operator, SparsePauliOp, Statevector
-from qiskit.quantum_info.operators import Pauli as PauliOp
+from qiskit.quantum_info import Operator, Pauli, SparsePauliOp, Statevector
 from qiskit.result import ProbDistribution, QuasiDistribution
 from qiskit_aer.noise import NoiseModel
 # from qiskit_algorithms.minimum_eigensolvers.vqe import VQEResult
@@ -48,12 +47,18 @@ def dump_numpy_floating(obj: numpy.floating):
     return {'__class__': 'numpy.floating', 'float': float(obj)}
 
 
+def dump_numpy_bool(obj: numpy.bool_):
+    return {'__class__': 'numpy.bool)', 'float': bool(obj)}
+
+
 def dump_numpy_ndarray(obj: numpy.ndarray):
     with BytesIO() as container:
         numpy.save(container, obj, allow_pickle=False)
         array = container.getvalue()
     return {'__class__': 'numpy.ndarray', 'ndarray': array.decode('ISO-8859-1')}
 
+def dump_numpy_complex(obj: numpy.complex128):
+    return {'__class__': 'numpy.complex128', 're': obj.real, 'im': obj.imag}
 
 def dump_complex(obj: complex):
     return {'__class__': 'complex', 're': obj.real, 'im': obj.imag}
@@ -101,6 +106,12 @@ def dump_estimator_result(obj: EstimatorResult):
         'values': obj.values
     }
 
+def dump_primitive_result(obj: PrimitiveResult):
+    return {
+        '__class__': 'PrimitiveResult',
+        'metadata': obj.metadata,
+        'values': obj[0].data.evs
+    }
 
 def dump_prob_distribution(obj: ProbDistribution):
     return {
@@ -126,11 +137,10 @@ def dump_operator(obj: Operator):
     return {'__class__': 'Operator', 'data': obj.data}
 
 
-def dump_pauli_op(obj: PauliOp):
+def dump_pauli(obj: Pauli):
     return {
-        '__class__': 'PauliOp',
-        'primitive': obj.primitive.to_label(),
-        'coeff': obj.coeff
+        '__class__': 'Pauli',
+        'label': obj.to_label()
     }
 
 
