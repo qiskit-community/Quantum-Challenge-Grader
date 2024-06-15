@@ -1,5 +1,6 @@
-qiskit[visualization]==1.0.2
-qiskit-ibm-runtime~=0.23.0
-qiskit-aer~=0.14.1
-qiskit-experiments~=0.6.1
-qiskit-transpiler-service==0.4.0
+qiskit[visualization]==1.1.0
+qiskit-ibm-runtime
+qiskit-aer
+qiskit-transpiler-service
+qiskit-serverless==0.12.0
+circuit-knitting-toolbox

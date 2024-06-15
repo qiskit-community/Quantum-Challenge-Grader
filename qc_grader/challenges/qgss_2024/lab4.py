@@ -33,9 +33,9 @@ def grade_lab4_ex1(
     re_coeffs = [coeff.real for coeff in list(hamiltonian.coeffs)]
     im_coeffs = [coeff.imag for coeff in list(hamiltonian.coeffs)]
 
-    grade({'paulis':paulis,
-           'real coeffs':re_coeffs, 
-           'imag coeffs':im_coeffs}, 'lab4-ex1', _challenge_id)
+    grade({'paulis': paulis,
+           'real coeffs': re_coeffs, 
+           'imag coeffs': im_coeffs}, 'lab4-ex1', _challenge_id)
 
 
 @typechecked
