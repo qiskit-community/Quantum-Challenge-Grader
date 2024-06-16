@@ -7,9 +7,3 @@ networkx==3.2.1
 
 # IBM Quantum Challenge 2024
 graphviz
-qiskit[visualization]==1.0.2
-qiskit-ibm-runtime
-qiskit-aer
-qiskit-transpiler-service
-qiskit-serverless==0.12.0
-circuit-knitting-toolbox
