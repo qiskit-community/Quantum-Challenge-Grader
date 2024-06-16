@@ -1,7 +1,10 @@
 import json
+from typing import List
+from qiskit import QuantumCircuit
 from typeguard import typechecked
 
 from qiskit_experiments.framework import ExperimentData, ExperimentEncoder
+from qiskit.primitives.containers.bindings_array import BindingsArray
 from qiskit.quantum_info import PTM
 
 from qc_grader.grader.grade import grade
@@ -12,25 +15,47 @@ _challenge_id = 'qgss_2024'
 
 @typechecked
 def grade_lab2_ex1(
-    backend,
-    exp_data: ExperimentData,
-    t1_ptm: PTM
+    answer: List, backend
 ) -> None:
-    # In case it's still running...
-    exp_data.block_for_results()
-
-    if err := exp_data.errors():
-        print(f"It looks like your experiment raised an error: {err}")
-        return
-
-    json_exp_data = json.dumps(exp_data, cls=ExperimentEncoder)
     grade({
-        'backend_name': backend.name,
-        'experiment_data': json_exp_data,
-        'ptm_data': t1_ptm.data,
+        'cmap': list(backend.coupling_map) if backend.coupling_map is not None else [],
+        'answer': answer,
     }, 'lab2-ex1', _challenge_id)
 
 
 @typechecked
-def grade_lab2_ex2(max_feasible_circuit_depth: int) -> None:
-    grade(max_feasible_circuit_depth, 'lab2-ex2', _challenge_id)
+def grade_lab2_ex2(
+    layer1: List, layer2: List, path: List
+) -> None:
+    grade({
+        'layer1': layer1,
+        'layer2': layer2,
+        'path': path
+    }, 'lab2-ex2', _challenge_id)
+
+
+@typechecked
+def grade_lab2_ex3(
+    circuit: QuantumCircuit, layer: List, gate_name: str
+) -> None:
+    grade({
+        'qc': circuit,
+        'layer': layer,
+        'gate_name': gate_name
+    }, 'lab2-ex3', _challenge_id)
+
+
+@typechecked
+def grade_lab2_ex4(
+    array_answer: BindingsArray,
+    circ: QuantumCircuit,
+    num_samples: int,
+) -> None:
+    if not isinstance(array_answer, BindingsArray):
+        print(f"the answer need to be put into the `BindingsArray` type")
+    else:
+        grade({
+            'array_answer': array_answer,
+            'circ': circ,
+            'num_samples': num_samples
+        }, 'lab2-ex4', _challenge_id)
