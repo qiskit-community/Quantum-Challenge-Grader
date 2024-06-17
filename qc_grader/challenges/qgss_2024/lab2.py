@@ -1,7 +1,8 @@
-from typing import List
-from qiskit import QuantumCircuit
 from typeguard import typechecked
+from typing import List
 
+from qiskit import QuantumCircuit
+from qiskit_ibm_runtime import IBMBackend
 from qiskit.primitives.containers.bindings_array import BindingsArray
 
 from qc_grader.grader.grade import grade
@@ -33,12 +34,13 @@ def grade_lab2_ex2(
 
 @typechecked
 def grade_lab2_ex3(
-    circuit: QuantumCircuit, layer: List, gate_name: str
+    circuit: QuantumCircuit, layer: List, gate_name: str, backend: IBMBackend
 ) -> None:
     grade({
         'qc': circuit,
         'layer': layer,
-        'gate_name': gate_name
+        'gate_name': gate_name,
+        'cmap': list(backend.coupling_map) if backend.coupling_map is not None else [],
     }, 'lab2-ex3', _challenge_id)
 
 
