@@ -1,11 +1,8 @@
-import json
 from typing import List
 from qiskit import QuantumCircuit
 from typeguard import typechecked
 
-from qiskit_experiments.framework import ExperimentData, ExperimentEncoder
 from qiskit.primitives.containers.bindings_array import BindingsArray
-from qiskit.quantum_info import PTM
 
 from qc_grader.grader.grade import grade
 
