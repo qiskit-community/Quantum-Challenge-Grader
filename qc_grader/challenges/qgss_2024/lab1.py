@@ -102,6 +102,9 @@ def grade_lab1_ex5(pm_staged: StagedPassManager) -> None:
     }, 'lab1-ex5', _challenge_id)
 
 
+def qs_to_ind(q_dict):
+    return {q._index: v for q, v in q_dict.items()}
+    
 # Lab 1, Exercise 3A
 @typechecked
 def grade_lab1_ex6(user_pass_class: Type[AnalysisPass]) -> None:
@@ -111,7 +114,7 @@ def grade_lab1_ex6(user_pass_class: Type[AnalysisPass]) -> None:
     user_pass(qc)
 
     grade({
-        'userpass': [user_pass.property_set["one_q_op"], user_pass.property_set["two_q_op"]],
+        'userpass': [qs_to_ind(user_pass.property_set["one_q_op"]), qs_to_ind(user_pass.property_set["two_q_op"])],
         'qc': qc
     }, 'lab1-ex6', _challenge_id)
 
