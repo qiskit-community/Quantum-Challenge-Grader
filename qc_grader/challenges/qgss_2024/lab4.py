@@ -1,22 +1,22 @@
 import json
-from typeguard import typechecked
+import random
 import importlib.resources
 
-from qiskit.quantum_info import PTM, SparsePauliOp
-from qiskit.transpiler import StagedPassManager
-from qiskit.circuit.library import PauliEvolutionGate
+from typeguard import typechecked
+
 from qiskit import QuantumCircuit
-
-from qiskit_ibm_runtime import PrimitiveResult, RuntimeDecoder
-
-import random
+from qiskit.circuit.library import PauliEvolutionGate
+from qiskit.primitives import PrimitiveResult
+from qiskit.quantum_info import SparsePauliOp
+from qiskit_ibm_runtime import RuntimeDecoder
 
 from qc_grader.grader.grade import grade
 
-
 _challenge_id = 'qgss_2024'
 
+
 PREBAKED_RESULTS_FILE = 'lab4-pre-baked-results.json'
+
 
 @typechecked
 def grade_lab4_ex1(
@@ -37,6 +37,7 @@ def grade_lab4_ex1(
            'real coeffs':re_coeffs, 
            'imag coeffs':im_coeffs}, 'lab4-ex1', _challenge_id)
 
+
 @typechecked
 def grade_lab4_ex2(optimized_hamiltonian_generator) -> None:
     anisotropy = 1.
@@ -52,6 +53,7 @@ def grade_lab4_ex2(optimized_hamiltonian_generator) -> None:
            'real coeffs':re_coeffs, 
            'imag coeffs':im_coeffs}, 'lab4-ex2', _challenge_id)
 
+
 @typechecked
 def grade_lab4_ex3(backend, isa_circuit, isa_observables) -> None:
     # Grader for exercise 3 
@@ -59,9 +61,11 @@ def grade_lab4_ex3(backend, isa_circuit, isa_observables) -> None:
     isa_circuit_num_qubits = isa_circuit.num_qubits
     observables_num_qubits = [ len(observable.paulis[0].to_label()) for observable in isa_observables ]
 
-    grade({"backend_qubits":backend_num_qubits,
-           "isa_circuit_num_qubits":isa_circuit_num_qubits,
-           "observable_qubits": observables_num_qubits}, 'lab4-ex3', _challenge_id)
+    grade({
+        "backend_qubits": backend_num_qubits,
+        "isa_circuit_num_qubits": isa_circuit_num_qubits,
+        "observable_qubits": observables_num_qubits
+    }, 'lab4-ex3', _challenge_id)
 
 
 @typechecked
@@ -122,11 +126,14 @@ def grade_lab4_ex5(pub_dict: dict) -> None:
     time_param = random_pub[2][0]
     num_circuits = len(pub_dict[random_key])
     
-    grade({"is_circuit":is_circuit,
-           "num_observables":num_observables,
-           "is_pauli_op":is_pauli_op,
-           "time_param":time_param,
-           "num_circuits":num_circuits}, 'lab4-ex5', _challenge_id)
+    grade({
+        "is_circuit":is_circuit,
+        "num_observables":num_observables,
+        "is_pauli_op":is_pauli_op,
+        "time_param":time_param,
+        "num_circuits":num_circuits
+    }, 'lab4-ex5', _challenge_id)
+
 
 @typechecked
 def grade_lab4_ex6(fname: str) -> None:
@@ -134,10 +141,13 @@ def grade_lab4_ex6(fname: str) -> None:
     correct_format = False
     if fname == "skip-question":
         correct_format = True
-    with open(fname,'r') as ofile:
-        try:
-            answer = json.load(ofile)
-            correct_format = True
+    else:
+        with open(fname,'r') as ofile:
+            try:
+                answer = json.load(ofile)
+                correct_format = True
+            except json.JSONDecodeError:
+                pass
         except JSONDecodeError:
 
     grade(correct_format, 'lab4-ex6', _challenge_id)
@@ -164,8 +174,10 @@ def grade_lab4_ex7(result_dict: dict) -> None:
     is_primitive_result = isinstance(random_result, PrimitiveResult)
     num_results = len(result_dict[random_phase])
 
-    grade({'is_primitive_result':is_primitive_result,
-           'num_results':num_results}, 'lab4-ex7', _challenge_id)
+    grade({
+        'is_primitive_result': is_primitive_result,
+        'num_results':num_results
+    }, 'lab4-ex7', _challenge_id)
 
 @typechecked
 def grade_lab4_ex8(plotting_data: dict) -> None:
@@ -174,6 +186,8 @@ def grade_lab4_ex8(plotting_data: dict) -> None:
     min_xxx_phase = min(plotting_data['XXX'])
     min_ferro_phase = min(plotting_data['Anisotropic'])
 
-    grade({'min_xxx_phase':min_xxx_phase,
-           'min_ferro_phase':min_ferro_phase}, 'lab4-ex8', _challenge_id)
+    grade({
+        'min_xxx_phase':min_xxx_phase,
+        'min_ferro_phase':min_ferro_phase
+    }, 'lab4-ex8', _challenge_id)
 
