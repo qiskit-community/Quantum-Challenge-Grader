@@ -187,6 +187,8 @@ def grade_lab4_ex8(plotting_data: dict) -> None:
     min_xxx_phase = min(plotting_data['XXX'])
     min_ferro_phase = min(plotting_data['Anisotropic'])
 
-    grade({'min_xxx_phase':min_xxx_phase,
-           'min_ferro_phase':min_ferro_phase}, 'lab4-ex8', _challenge_id)
+    grade({
+        'min_xxx_phase':min_xxx_phase,
+        'min_ferro_phase':min_ferro_phase
+    }, 'lab4-ex8', _challenge_id)
 
