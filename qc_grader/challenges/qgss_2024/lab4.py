@@ -33,13 +33,13 @@ def grade_lab4_ex1(
     re_coeffs = [coeff.real for coeff in list(hamiltonian.coeffs)]
     im_coeffs = [coeff.imag for coeff in list(hamiltonian.coeffs)]
 
-    grade({'paulis':paulis,
-           'real coeffs':re_coeffs, 
-           'imag coeffs':im_coeffs}, 'lab4-ex1', _challenge_id)
+    grade({'paulis': paulis,
+           'real coeffs': re_coeffs, 
+           'imag coeffs': im_coeffs}, 'lab4-ex1', _challenge_id)
 
 
 @typechecked
-def grade_lab4_ex2(optimized_hamiltonian_generator) -> None:
+def grade_lab4_ex2(generating_function) -> None:
     anisotropy = 1.
     num_spins = 12
     h = 1.
@@ -94,22 +94,24 @@ def grade_lab4_ex4(hamiltonians: dict,
     num_circuits = len(isa_circuits[random_key])
 
     isa_z_observables_keys = list(isa_z_observables.keys())
-    random_key = ranodm.choice(isa_z_observables_keys)
+    random_key = random.choice(isa_z_observables_keys)
     observable_length = len( random.choice(isa_z_observables[random_key])) )
     num_observables = len(isa_z_observables[random_key])
-    
-    key_list = {'hamiltonian_keys':hamiltonians_keys, 
-                'time_evolution_keys':time_evolution_keys, 
-                'isa_circuit_keys':isa_circuit_keys, 
-                'isa_z_observables_keys':isa_z_observables_keys]}
 
-    grade({"system_size":system_size,
-           "key_list":key_list,
-           "is_pauli_evolution_gate":is_pauli_evolution_gate,
-           "num_qubits":num_qubits,
-           "num_circuits":num_circuits,
-           "observable_length":observable_length,
-           "num_observables":num_observables}, 'lab4-ex4', _challenge_id)
+    key_list = {'hamiltonian_keys': hamiltonians_keys, 
+                'time_evolution_keys': time_evolution_keys, 
+                'isa_circuit_keys': isa_circuit_keys, 
+                'isa_z_observables_keys': isa_z_observables_keys}
+
+    grade({
+        "system_size": system_size,
+        "key_list": key_list,
+        "is_pauli_evolution_gate": is_pauli_evolution_gate,
+        "num_qubits": num_qubits,
+        "num_circuits": num_circuits,
+        "observable_length": observable_length,
+        "num_observables": num_observables
+    }, 'lab4-ex4', _challenge_id)
 
 @typechecked
 def grade_lab4_ex5(pub_dict: dict) -> None:
@@ -148,7 +150,6 @@ def grade_lab4_ex6(fname: str) -> None:
                 correct_format = True
             except json.JSONDecodeError:
                 pass
-        except JSONDecodeError:
 
     grade(correct_format, 'lab4-ex6', _challenge_id)
 
@@ -186,8 +187,6 @@ def grade_lab4_ex8(plotting_data: dict) -> None:
     min_xxx_phase = min(plotting_data['XXX'])
     min_ferro_phase = min(plotting_data['Anisotropic'])
 
-    grade({
-        'min_xxx_phase':min_xxx_phase,
-        'min_ferro_phase':min_ferro_phase
-    }, 'lab4-ex8', _challenge_id)
+    grade({'min_xxx_phase':min_xxx_phase,
+           'min_ferro_phase':min_ferro_phase}, 'lab4-ex8', _challenge_id)
 
