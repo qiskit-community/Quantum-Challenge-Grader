@@ -1,22 +1,22 @@
 import json
-import random
-
 from typeguard import typechecked
+import importlib.resources
 
-from qiskit import QuantumCircuit
+from qiskit.quantum_info import PTM, SparsePauliOp
+from qiskit.transpiler import StagedPassManager
 from qiskit.circuit.library import PauliEvolutionGate
-from qiskit.primitives import PrimitiveResult
-from qiskit.quantum_info import SparsePauliOp
-from qiskit_ibm_runtime import RuntimeDecoder
+from qiskit import QuantumCircuit
+
+from qiskit_ibm_runtime import PrimitiveResult, RuntimeDecoder
+
+import random
 
 from qc_grader.grader.grade import grade
 
 
 _challenge_id = 'qgss_2024'
 
-
-PREBAKED_RESULTS_FILE = 'pre-baked-results.json'
-
+PREBAKED_RESULTS_FILE = 'lab4-pre-baked-results.json'
 
 @typechecked
 def grade_lab4_ex1(
@@ -33,13 +33,12 @@ def grade_lab4_ex1(
     re_coeffs = [coeff.real for coeff in list(hamiltonian.coeffs)]
     im_coeffs = [coeff.imag for coeff in list(hamiltonian.coeffs)]
 
-    grade({'paulis': paulis,
-           'real coeffs': re_coeffs, 
-           'imag coeffs': im_coeffs}, 'lab4-ex1', _challenge_id)
-
+    grade({'paulis':paulis,
+           'real coeffs':re_coeffs, 
+           'imag coeffs':im_coeffs}, 'lab4-ex1', _challenge_id)
 
 @typechecked
-def grade_lab4_ex2(generating_function) -> None:
+def grade_lab4_ex2(optimized_hamiltonian_generator) -> None:
     anisotropy = 1.
     num_spins = 12
     h = 1.
@@ -53,7 +52,6 @@ def grade_lab4_ex2(generating_function) -> None:
            'real coeffs':re_coeffs, 
            'imag coeffs':im_coeffs}, 'lab4-ex2', _challenge_id)
 
-
 @typechecked
 def grade_lab4_ex3(backend, isa_circuit, isa_observables) -> None:
     # Grader for exercise 3 
@@ -61,11 +59,9 @@ def grade_lab4_ex3(backend, isa_circuit, isa_observables) -> None:
     isa_circuit_num_qubits = isa_circuit.num_qubits
     observables_num_qubits = [ len(observable.paulis[0].to_label()) for observable in isa_observables ]
 
-    grade({
-        "backend_qubits": backend_num_qubits,
-        "isa_circuit_num_qubits": isa_circuit_num_qubits,
-        "observable_qubits": observables_num_qubits
-    }, 'lab4-ex3', _challenge_id)
+    grade({"backend_qubits":backend_num_qubits,
+           "isa_circuit_num_qubits":isa_circuit_num_qubits,
+           "observable_qubits": observables_num_qubits}, 'lab4-ex3', _challenge_id)
 
 
 @typechecked
@@ -79,7 +75,8 @@ def grade_lab4_ex4(hamiltonians: dict,
     # Get num keys, type, and length for hamiltonians dict
     hamiltonians_keys = list(hamiltonians.keys())
     random_key = random.choice(hamiltonians_keys)
-    system_size = len( list( random.choice(hamiltonians[random_key]).paulis ))
+    random_hamiltonian = list(random.choice(hamiltonians[random_key]).paulis)
+    system_size = len(random.choice(random_hamiltonian))
 
 
     time_evolution_keys = list(time_evolution_operators.keys())
@@ -93,25 +90,22 @@ def grade_lab4_ex4(hamiltonians: dict,
     num_circuits = len(isa_circuits[random_key])
 
     isa_z_observables_keys = list(isa_z_observables.keys())
-    random_key = random.choice(isa_z_observables_keys)
-    observable_length = len(random.choice(isa_z_observables[random_key]))
+    random_key = ranodm.choice(isa_z_observables_keys)
+    observable_length = len( random.choice(isa_z_observables[random_key])) )
     num_observables = len(isa_z_observables[random_key])
     
-    key_list = {'hamiltonian_keys': hamiltonians_keys, 
-                'time_evolution_keys': time_evolution_keys, 
-                'isa_circuit_keys': isa_circuit_keys, 
-                'isa_z_observables_keys': isa_z_observables_keys}
+    key_list = {'hamiltonian_keys':hamiltonians_keys, 
+                'time_evolution_keys':time_evolution_keys, 
+                'isa_circuit_keys':isa_circuit_keys, 
+                'isa_z_observables_keys':isa_z_observables_keys]}
 
-    grade({
-        "system_size": system_size,
-        "key_list": key_list,
-        "is_pauli_evolution_gate": is_pauli_evolution_gate,
-        "num_qubits": num_qubits,
-        "num_circuits": num_circuits,
-        "observable_length": observable_length,
-        "num_observables": num_observables
-    }, 'lab4-ex4', _challenge_id)
-
+    grade({"system_size":system_size,
+           "key_list":key_list,
+           "is_pauli_evolution_gate":is_pauli_evolution_gate,
+           "num_qubits":num_qubits,
+           "num_circuits":num_circuits,
+           "observable_length":observable_length,
+           "num_observables":num_observables}, 'lab4-ex4', _challenge_id)
 
 @typechecked
 def grade_lab4_ex5(pub_dict: dict) -> None:
@@ -126,16 +120,13 @@ def grade_lab4_ex5(pub_dict: dict) -> None:
     num_observables = len(random_pub[1])
     is_pauli_op = isinstance(random.choice(random_pub[1]), SparsePauliOp)
     time_param = random_pub[2][0]
-    num_circuits = len(random_pub[random_key])
+    num_circuits = len(pub_dict[random_key])
     
-    grade({
-        "is_circuit":is_circuit,
-        "num_observables":num_observables,
-        "is_pauli_op":is_pauli_op,
-        "time_param":time_param,
-        "num_circuits":num_circuits
-    }, 'lab4-ex5', _challenge_id)
-
+    grade({"is_circuit":is_circuit,
+           "num_observables":num_observables,
+           "is_pauli_op":is_pauli_op,
+           "time_param":time_param,
+           "num_circuits":num_circuits}, 'lab4-ex5', _challenge_id)
 
 @typechecked
 def grade_lab4_ex6(fname: str) -> None:
@@ -143,22 +134,19 @@ def grade_lab4_ex6(fname: str) -> None:
     correct_format = False
     if fname == "skip-question":
         correct_format = True
-    else:
-        with open(fname,'r') as ofile:
-            try:
-                answer = json.load(ofile)
-                correct_format = True
-            except json.JSONDecodeError:
-                pass
+    with open(fname,'r') as ofile:
+        try:
+            answer = json.load(ofile)
+            correct_format = True
+        except JSONDecodeError:
 
     grade(correct_format, 'lab4-ex6', _challenge_id)
-
 
 @typechecked
 def lab4_ex7_get_data() -> dict:
     # This function will load the pre-baked results for the students to use in ex 7 and 8
-    with open(PREBAKED_RESULTS_FILE, 'r') as results_file:
-        runtime_results = json.load(results_file)
+    with importlib.resources.open_text("qc-grader", PREBAKED_RESULTS_FILE) as runtime_file:
+        runtime_results = json.load(runtime_file)
 
     all_result_data = {}
     for phase in runtime_results.keys():
@@ -168,7 +156,6 @@ def lab4_ex7_get_data() -> dict:
         all_result_data[phase] = result_data
     return all_result_data
 
-
 @typechecked
 def grade_lab4_ex7(result_dict: dict) -> None:
     # This exercise is just checking that you have the correct shape of PrimitiveResult objects 
@@ -177,11 +164,8 @@ def grade_lab4_ex7(result_dict: dict) -> None:
     is_primitive_result = isinstance(random_result, PrimitiveResult)
     num_results = len(result_dict[random_phase])
 
-    grade({
-        'is_primitive_result': is_primitive_result,
-        'num_results':num_results
-    }, 'lab4-ex7', _challenge_id)
-
+    grade({'is_primitive_result':is_primitive_result,
+           'num_results':num_results}, 'lab4-ex7', _challenge_id)
 
 @typechecked
 def grade_lab4_ex8(plotting_data: dict) -> None:
@@ -190,7 +174,6 @@ def grade_lab4_ex8(plotting_data: dict) -> None:
     min_xxx_phase = min(plotting_data['XXX'])
     min_ferro_phase = min(plotting_data['Anisotropic'])
 
-    grade({
-        'min_xxx_phase':min_xxx_phase,
-        'min_ferro_phase':min_ferro_phase
-    }, 'lab4-ex8', _challenge_id)
+    grade({'min_xxx_phase':min_xxx_phase,
+           'min_ferro_phase':min_ferro_phase}, 'lab4-ex8', _challenge_id)
+
