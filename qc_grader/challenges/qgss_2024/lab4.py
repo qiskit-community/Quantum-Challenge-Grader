@@ -10,12 +10,10 @@ from qiskit.primitives import PrimitiveResult
 from qiskit.quantum_info import SparsePauliOp
 from qiskit_ibm_runtime import RuntimeDecoder
 
-from qc_grader.grader.grade import grade
+from qc_grader.grader.grade import get_problem_set, grade
+
 
 _challenge_id = 'qgss_2024'
-
-
-PREBAKED_RESULTS_FILE = 'lab4-pre-baked-results.json'
 
 
 @typechecked
@@ -95,7 +93,7 @@ def grade_lab4_ex4(hamiltonians: dict,
 
     isa_z_observables_keys = list(isa_z_observables.keys())
     random_key = random.choice(isa_z_observables_keys)
-    observable_length = len( random.choice(isa_z_observables[random_key])) )
+    observable_length = len( random.choice(isa_z_observables[random_key]) )
     num_observables = len(isa_z_observables[random_key])
 
     key_list = {'hamiltonian_keys': hamiltonians_keys, 
@@ -155,9 +153,10 @@ def grade_lab4_ex6(fname: str) -> None:
 
 @typechecked
 def lab4_ex7_get_data() -> dict:
-    # This function will load the pre-baked results for the students to use in ex 7 and 8
-    with importlib.resources.open_text("qc-grader", PREBAKED_RESULTS_FILE) as runtime_file:
-        runtime_results = json.load(runtime_file)
+    """
+    This function will load the pre-baked results for the students to use in ex 7 and 8
+    """
+    _, runtime_results = get_problem_set('lab4-ex7', _challenge_id)
 
     all_result_data = {}
     for phase in runtime_results.keys():
