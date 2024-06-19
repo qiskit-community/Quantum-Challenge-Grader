@@ -1,5 +1,6 @@
 import json
 import random
+import importlib.resources
 
 from typeguard import typechecked
 
@@ -9,13 +10,10 @@ from qiskit.primitives import PrimitiveResult
 from qiskit.quantum_info import SparsePauliOp
 from qiskit_ibm_runtime import RuntimeDecoder
 
-from qc_grader.grader.grade import grade
+from qc_grader.grader.grade import get_problem_set, grade
 
 
 _challenge_id = 'qgss_2024'
-
-
-PREBAKED_RESULTS_FILE = 'pre-baked-results.json'
 
 
 @typechecked
@@ -79,7 +77,8 @@ def grade_lab4_ex4(hamiltonians: dict,
     # Get num keys, type, and length for hamiltonians dict
     hamiltonians_keys = list(hamiltonians.keys())
     random_key = random.choice(hamiltonians_keys)
-    system_size = len( list( random.choice(hamiltonians[random_key]).paulis ))
+    random_hamiltonian = list(random.choice(hamiltonians[random_key]).paulis)
+    system_size = len(random.choice(random_hamiltonian))
 
 
     time_evolution_keys = list(time_evolution_operators.keys())
@@ -94,9 +93,9 @@ def grade_lab4_ex4(hamiltonians: dict,
 
     isa_z_observables_keys = list(isa_z_observables.keys())
     random_key = random.choice(isa_z_observables_keys)
-    observable_length = len(random.choice(isa_z_observables[random_key]))
+    observable_length = len( random.choice(isa_z_observables[random_key]) )
     num_observables = len(isa_z_observables[random_key])
-    
+
     key_list = {'hamiltonian_keys': hamiltonians_keys, 
                 'time_evolution_keys': time_evolution_keys, 
                 'isa_circuit_keys': isa_circuit_keys, 
@@ -112,7 +111,6 @@ def grade_lab4_ex4(hamiltonians: dict,
         "num_observables": num_observables
     }, 'lab4-ex4', _challenge_id)
 
-
 @typechecked
 def grade_lab4_ex5(pub_dict: dict) -> None:
     # Grader for exercise 5.
@@ -126,7 +124,7 @@ def grade_lab4_ex5(pub_dict: dict) -> None:
     num_observables = len(random_pub[1])
     is_pauli_op = isinstance(random.choice(random_pub[1]), SparsePauliOp)
     time_param = random_pub[2][0]
-    num_circuits = len(random_pub[random_key])
+    num_circuits = len(pub_dict[random_key])
     
     grade({
         "is_circuit":is_circuit,
@@ -153,12 +151,12 @@ def grade_lab4_ex6(fname: str) -> None:
 
     grade(correct_format, 'lab4-ex6', _challenge_id)
 
-
 @typechecked
 def lab4_ex7_get_data() -> dict:
-    # This function will load the pre-baked results for the students to use in ex 7 and 8
-    with open(PREBAKED_RESULTS_FILE, 'r') as results_file:
-        runtime_results = json.load(results_file)
+    """
+    This function will load the pre-baked results for the students to use in ex 7 and 8
+    """
+    _, runtime_results = get_problem_set('lab4-ex7', _challenge_id)
 
     all_result_data = {}
     for phase in runtime_results.keys():
@@ -167,7 +165,6 @@ def lab4_ex7_get_data() -> dict:
             result_data.append(json.loads(result, cls=RuntimeDecoder))
         all_result_data[phase] = result_data
     return all_result_data
-
 
 @typechecked
 def grade_lab4_ex7(result_dict: dict) -> None:
@@ -182,7 +179,6 @@ def grade_lab4_ex7(result_dict: dict) -> None:
         'num_results':num_results
     }, 'lab4-ex7', _challenge_id)
 
-
 @typechecked
 def grade_lab4_ex8(plotting_data: dict) -> None:
     # This exercise will be graded by examining the min and max value for the two phases
@@ -194,3 +190,4 @@ def grade_lab4_ex8(plotting_data: dict) -> None:
         'min_xxx_phase':min_xxx_phase,
         'min_ferro_phase':min_ferro_phase
     }, 'lab4-ex8', _challenge_id)
+
