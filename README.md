@@ -3,28 +3,6 @@
 Grading client for the IBM Quantum Challenge grading service.
 
 
-## Installation
-
-Follow one of these steps to install the grading client.
-
-- [Run in IBM Quantum Lab](#run-in-ibm-quantum-lab)
-- [Run locally](#run-locally)
-
-
-### Run in IBM Quantum Lab
-
-Pre-requisites:
-
-- [IBM Quantum account](https://quantum.ibm.com/)
-
-The grader comes pre-installed in Quantum Lab and does not need to be installed.
-You can confirm and check version with the following command in a notebook cell:
-
-```
-!pip show qc_grader
-```
-
-
 ### Run locally
 
 Pre-requisites:
@@ -48,10 +26,30 @@ To install the grader locally:
     pip install 'qc-grader[qiskit,jupyter] @ git+https://github.com/qiskit-community/Quantum-Challenge-Grader.git'
     ```
 
-1. Configure the following environment variables
+1. Configure the `QXToken` environment variables
 
-    - `QXAuthURL` - IBM Quantum Authentication API URL
-    - `QXToken` - IBM Quantum API Token (can be found in **Account Details**)
+    From a terminal (before launching your JupyterLab environment), enter
+
+    ```
+    export QXToken=your_quantum_api_token
+    ```
+
+    where `your_quantum_api_token` is your IBM Quantum API Token found in your **[Account Profile](https://quantum.ibm.com/account)**.
+
+    Alternatively, if you prefer you can instead run the following at the top cell of a notebook cell (whenever you start/restart the kernel)
+
+    ```
+    %set_env QXToken=your_quantum_api_token
+    ```
+
+    > 
+    > **Note**: you can check if the environment variable has been set by running the following in a notebook cell:
+    > 
+    > ```python
+    > import os
+    > print(os.getenv('QXToken'))
+    > ```
+    > 
 
 
 ## Usage
@@ -76,4 +74,3 @@ quantum-challenge` folder in the **Lab files** panel
 
     grade_lab1_ex2(qc_2)
     ```
-
