@@ -116,7 +116,7 @@ def get_submission_endpoint(
     if not _api_submit_url:
         for endpoint in submission_endpoints:
             try:
-                response = requests.get(url=endpoint)
+                response = requests.get(url=f'{normalize_slash(endpoint)}server/health')
                 response.raise_for_status()
                 if response.status_code == 200:
                     _api_submit_url = endpoint
