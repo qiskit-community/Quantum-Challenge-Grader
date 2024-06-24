@@ -106,18 +106,6 @@ def grade_lab4_ex4(hamiltonians: dict,
                 'isa_circuit_keys': isa_circuit_keys, 
                 'isa_z_observables_keys': isa_z_observables_keys}
 
-    test_dict = {
-        "system_size": system_size,
-        "key_list": key_list,
-        "is_pauli_evolution_gate": is_pauli_evolution_gate,
-        "num_qubits": num_qubits,
-        "num_circuits": num_circuits,
-        "observable_length": observable_length,
-        "num_observables": num_observables
-    }
-    print('Debugging ex4: Dict sent to grader has the following key value pairs:')
-    for key, val in test_dict.items():
-        print(key, val)
     grade({
         "system_size": system_size,
         "key_list": key_list,
