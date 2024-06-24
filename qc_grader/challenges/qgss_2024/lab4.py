@@ -116,7 +116,7 @@ def grade_lab4_ex4(hamiltonians: dict,
         "num_observables": num_observables
     }
     print('Debugging ex4: Dict sent to grader has the following key value pairs:')
-    for key val in test_dict.items():
+    for key, val in test_dict.items():
         print(key, val)
     grade({
         "system_size": system_size,
