@@ -99,7 +99,7 @@ def grade_lab4_ex4(hamiltonians: dict,
     # Among the set of 50 observables, select a random one
     random_observable = random.choice(random_observable_set)
     observable_length = len(random_observable.paulis[0])
-    num_observables = len(isa_z_observables[random_key])
+    num_observables = len(random.choice(isa_z_observables[random_key]))
 
     key_list = {'hamiltonian_keys': hamiltonians_keys, 
                 'time_evolution_keys': time_evolution_keys, 
