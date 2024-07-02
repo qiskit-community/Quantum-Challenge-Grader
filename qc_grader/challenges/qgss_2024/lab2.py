@@ -54,7 +54,9 @@ def grade_lab2_ex4(
         print(f"the answer need to be put into the `BindingsArray` type")
     else:
         grade({
-            'array_answer': array_answer,
+            'shape': array_answer.shape,
+            'num_parameters': array_answer.num_parameters,
+            'angles': array_answer.as_array(),
             'circ': circ,
             'num_samples': num_samples
         }, 'lab2-ex4', _challenge_id)
