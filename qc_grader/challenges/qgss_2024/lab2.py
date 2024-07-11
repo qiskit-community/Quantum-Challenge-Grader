@@ -23,18 +23,19 @@ def grade_lab2_ex1(
 
 @typechecked
 def grade_lab2_ex2(
-    layer1: List, layer2: List, path: List
+    layer1: List, layer2: List, path: List, backend
 ) -> None:
     grade({
         'layer1': layer1,
         'layer2': layer2,
-        'path': path
+        'path': path,
+        'cmap': list(backend.coupling_map) if backend.coupling_map is not None else []
     }, 'lab2-ex2', _challenge_id)
 
 
 @typechecked
 def grade_lab2_ex3(
-    circuit: QuantumCircuit, layer: List, gate_name: str, backend: IBMBackend
+    circuit: QuantumCircuit, layer: List, gate_name: str, backend
 ) -> None:
     grade({
         'qc': circuit,
