@@ -32,11 +32,12 @@ def grade(
     answer: Any,
     question: Union[str, int],
     challenge: Optional[str] = None,
-    return_response: Optional[str] = False,
+    return_response: Optional[bool] = False,
+    grade_only: Optional[bool] = False,
     **kwargs: Any
 ) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:
     serialized_answer = to_json(answer, **kwargs)
-    do_submit = not do_grade_only()
+    do_submit = not grade_only and not do_grade_only()
 
     if challenge is None and '/' in str(question):
         challenge_id = question.split('/')[0]
