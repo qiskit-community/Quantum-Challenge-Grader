@@ -134,10 +134,7 @@ def handle_grade_response(
 ) -> None:
     if status == 'valid' or status is True:
         if cause is not None:
-            if cause == 'welcome-ff24':
-                printf('\n Welcome to the Qiskit Fall Fest! If you are seeing this, that means you have successfully figured out how to use the grader for these notebooks. Rock on. We at IBM Quantum look forward to your participation in this event, thanks for being here!')
-            else:
-                display_special_message(cause, preamble='\nCongratulations 🎉! Your answer is correct.')
+            display_special_message(cause, preamble='\nCongratulations 🎉! Your answer is correct.')
         else:
             print('\nCongratulations 🎉! Your answer is correct.')
         if score is not None:
