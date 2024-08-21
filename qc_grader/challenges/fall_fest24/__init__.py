@@ -20,6 +20,5 @@ from .lab3 import (
     grade_lab3_ex1,
     grade_lab3_ex2,
     grade_lab3_ex3,
-    grade_lab3_ex4,
-    grade_lab3_ex5,
+    grade_lab3_metaphors,
 )
