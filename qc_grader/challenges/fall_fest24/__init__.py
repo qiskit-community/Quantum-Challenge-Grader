@@ -1,6 +1,9 @@
 from .lab0 import grade_lab0_welcome
 
-from .lab1 import grade_lab1_ex1
+from .lab1 import (
+    grade_lab1_ex1,
+    grade_lab1_welcome,
+)
 
 
 from .lab2 import (
