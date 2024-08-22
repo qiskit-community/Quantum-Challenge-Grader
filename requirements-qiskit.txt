@@ -1,4 +1,4 @@
-qiskit[visualization]==1.1.0
+qiskit[visualization]==1.2.0
 qiskit-ibm-runtime
 qiskit-aer
 qiskit-transpiler-service
