@@ -1,10 +1,17 @@
+from typing import Callable, List
 from typeguard import typechecked
 
-from qiskit import transpile
-from qiskit.circuit.random import random_circuit
-from qiskit.transpiler import PassManager, StagedPassManager
-from qiskit_ibm_runtime.fake_provider import FakeTorino
+import numpy as np
+from scipy.optimize._optimize import OptimizeResult
 
+from qiskit import QuantumCircuit
+from qiskit.quantum_info import SparsePauliOp
+from qiskit.primitives import PrimitiveJob, PrimitiveResult
+from qiskit.providers import JobStatus
+from qiskit.circuit.library import EfficientSU2
+from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
+from qiskit_aer import AerSimulator
+from qiskit_ibm_runtime import EstimatorV2 as Estimator
 
 from qc_grader.grader.grade import grade
 
@@ -14,61 +21,84 @@ _grade_only = True
 
 
 @typechecked
-def grade_lab2_ex1(answer: dict) -> None:
-    grade(answer, 'lab2-ex1', _challenge_id, grade_only=_grade_only)
+def grade_lab2_ex1(circuit: QuantumCircuit) -> None:
+    grade(circuit, 'lab2-ex1', _challenge_id, grade_only=_grade_only)
 
 
 @typechecked
-def grade_lab2_ex2(func: callable) -> None:
-    num_qubits = 5
-    depth = 5
-    qc = random_circuit(num_qubits, depth,measure=True, seed=10000)
-    qc_tr = transpile(qc, backend=FakeTorino(), optimization_level=3, seed_transpiler=1000)
-
-    out1 = func(qc_tr, FakeTorino())
-
-    grade({
-        'input': qc_tr,
-        'output': out1
-    }, 'lab2-ex2', _challenge_id, grade_only=_grade_only)
+def grade_lab2_ex2(job: PrimitiveJob) -> None:
+    status = job.status()
+    if status != JobStatus.DONE:
+        print(f'Please wait for Job to complete succesfully before grading: {status}')
+    else:
+        r = job.result()[0]
+        grade({
+            'metadata': r.metadata,
+            'counts': r.data.meas.get_counts()
+        }, 'lab2-ex2', _challenge_id, grade_only=_grade_only)
 
 
 @typechecked
-def grade_lab2_ex3(answer: list) -> None:
-    grade([
-        (len(answer[0].to_flow_controller().tasks), len(answer[0].init.to_flow_controller().tasks), len(answer[0].layout.to_flow_controller().tasks), len(answer[0].routing.to_flow_controller().tasks)),
-        (len(answer[1].to_flow_controller().tasks), len(answer[1].init.to_flow_controller().tasks), len(answer[1].layout.to_flow_controller().tasks), len(answer[1].routing.to_flow_controller().tasks)),
-        (len(answer[2].to_flow_controller().tasks), len(answer[2].init.to_flow_controller().tasks), len(answer[2].layout.to_flow_controller().tasks), len(answer[2].routing.to_flow_controller().tasks)),
-        (len(answer[3].to_flow_controller().tasks), len(answer[3].init.to_flow_controller().tasks), len(answer[3].layout.to_flow_controller().tasks), len(answer[3].routing.to_flow_controller().tasks))   
-    ], 'lab2-ex3', _challenge_id, grade_only=_grade_only)
+def grade_lab2_ex3(circuit: QuantumCircuit) -> None:
+    grade(circuit, 'lab2-ex3', _challenge_id, grade_only=_grade_only)
 
 
 @typechecked
-def grade_lab2_ex4(pm: StagedPassManager) -> None:
+def grade_lab2_ex4(
+    num_qubits: int,
+    rotation_blocks: List[str],
+    entanglement_blocks: str,
+    entanglement: str
+) -> None:
+    answer = {
+        'num_qubits': num_qubits,
+        'rotation_blocks': rotation_blocks,
+        'entanglement_blocks': entanglement_blocks,
+        'entanglement': entanglement
+    }
+    grade(answer, 'lab2-ex4', _challenge_id, grade_only=_grade_only)
 
-    layout_tasks = []
-    for controller_group in pm.layout.to_flow_controller().tasks:
-        tasks = getattr(controller_group, "tasks", [])
-        for task in tasks:  
-            layout_tasks.append(str(type(task).__name__))
+
+@typechecked
+def grade_lab2_ex5(circuit: QuantumCircuit) -> None:
+    grade(circuit, 'lab2-ex5', _challenge_id, grade_only=_grade_only)
+
+
+@typechecked
+def grade_lab2_ex6(cost_func: Callable) -> None:
+    ansatz = EfficientSU2(3)
+    params = np.ones((1,ansatz.num_parameters))
+    aer_sim = AerSimulator()
+    pm = generate_preset_pass_manager(backend=aer_sim, optimization_level=2)
+    isa_circuits = pm.run(ansatz)
+    choc_op = SparsePauliOp(['ZII', 'IZI', 'IIZ'])
+    hamiltonian_isa = choc_op.apply_layout(layout=isa_circuits.layout)
+    estimator = Estimator(backend=aer_sim)
     
-    routing_tasks = []
-    for controller_group in pm.routing.to_flow_controller().tasks:
-        tasks = getattr(controller_group, "tasks", [])
-        for task in tasks:  
-            routing_tasks.append(str(type(task).__name__))
-    
-    translation_tasks = []
-    for task in pm.translation.to_flow_controller().tasks:
-        translation_tasks.append(type(task).__name__)
-
-    grade({
-        'layout_tasks': layout_tasks,
-        'routing_tasks': routing_tasks,
-        'translation_tasks': translation_tasks
-    }, 'lab2-ex4', _challenge_id, grade_only=_grade_only)
+    callback_dict = {
+        "prev_vector": None,
+        "iters": 0,
+        "cost_history": []
+    }
+    cost, result = cost_func(
+        params,
+        isa_circuits,
+        hamiltonian_isa,
+        estimator,
+        callback_dict
+    )
+    if not isinstance(result, PrimitiveResult):
+        print('You need to implement code to get a result.')
+    else:
+        grade({
+            'cost': cost,
+            'result': {
+                'metadata': result[0].metadata,
+                'evs': result[0].data.evs
+            }
+        }, 'lab2-ex6', _challenge_id, grade_only=_grade_only)
 
 
 @typechecked
-def grade_lab2_ex5(answer: PassManager) -> None:
-    grade(answer, 'lab2-ex5', _challenge_id, grade_only=_grade_only, to_bytes=True)
+def grade_lab2_ex7(optimize_result: OptimizeResult) -> None:
+    grade(dict(optimize_result), 'lab2-ex7', _challenge_id, grade_only=_grade_only)

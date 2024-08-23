@@ -1,122 +1,59 @@
 from typeguard import typechecked
 
-from typing import List
-import numpy as np
-
-from qiskit import QuantumCircuit
-from qiskit_serverless.core.job import Job
-from qiskit.quantum_info import SparsePauliOp
-from qiskit_serverless.core.function import QiskitFunction
+from qiskit import transpile
+from qiskit.circuit.random import random_circuit
+from qiskit.transpiler import PassManager, StagedPassManager
+from qiskit_ibm_runtime.fake_provider import FakeTorino
 
 
 from qc_grader.grader.grade import grade
-from qiskit_transpiler_service.transpiler_service import TranspilerService
+
 
 _challenge_id = 'fall_fest24'
 _grade_only = True
 
 
 @typechecked
-def grade_lab3_ait_ex1(transpiler_ai_false: TranspilerService) -> None:
-    grade(
-        [
-            transpiler_ai_false.ai,
-            transpiler_ai_false.backend_name,
-            transpiler_ai_false.optimization_level,
-        ],
-        "lab3-ait-ex1",
-        _challenge_id,
-        grade_only=_grade_only,
-    )
+def grade_lab3_ex1(answer: dict) -> None:
+    grade(answer, 'lab3-ex1', _challenge_id, grade_only=_grade_only)
 
 
 @typechecked
-def grade_lab3_ait_ex2(transpiler_ai_true: TranspilerService) -> None:
-    grade(
-        [
-            transpiler_ai_true.ai,
-            transpiler_ai_true.backend_name,
-            transpiler_ai_true.optimization_level,
-        ],
-        "lab3-ait-ex2",
-        _challenge_id,
-        grade_only=_grade_only,
-    )
+def grade_lab3_ex2(answer: list) -> None:
+    grade([
+        (len(answer[0].to_flow_controller().tasks), len(answer[0].init.to_flow_controller().tasks), len(answer[0].layout.to_flow_controller().tasks), len(answer[0].routing.to_flow_controller().tasks)),
+        (len(answer[1].to_flow_controller().tasks), len(answer[1].init.to_flow_controller().tasks), len(answer[1].layout.to_flow_controller().tasks), len(answer[1].routing.to_flow_controller().tasks)),
+        (len(answer[2].to_flow_controller().tasks), len(answer[2].init.to_flow_controller().tasks), len(answer[2].layout.to_flow_controller().tasks), len(answer[2].routing.to_flow_controller().tasks)),
+        (len(answer[3].to_flow_controller().tasks), len(answer[3].init.to_flow_controller().tasks), len(answer[3].layout.to_flow_controller().tasks), len(answer[3].routing.to_flow_controller().tasks))   
+    ], 'lab3-ex2', _challenge_id, grade_only=_grade_only)
 
 
 @typechecked
-def grade_lab3_ckt_ex1(
-    gates_connecting_to_cut: set,
-    isa_toffoli_depth: int,
-    depth_list: np.ndarray | List,
-) -> None:
+def grade_lab3_ex3(pm: StagedPassManager) -> None:
 
-    if isinstance(depth_list, List):
-        depth_list = np.array(depth_list)
+    layout_tasks = []
+    for controller_group in pm.layout.to_flow_controller().tasks:
+        tasks = getattr(controller_group, "tasks", [])
+        for task in tasks:  
+            layout_tasks.append(str(type(task).__name__))
+    
+    routing_tasks = []
+    for controller_group in pm.routing.to_flow_controller().tasks:
+        tasks = getattr(controller_group, "tasks", [])
+        for task in tasks:  
+            routing_tasks.append(str(type(task).__name__))
+    
+    translation_tasks = []
+    for task in pm.translation.to_flow_controller().tasks:
+        translation_tasks.append(type(task).__name__)
 
-    answer = {
-        "gates_cut": list(gates_connecting_to_cut),
-        "swap_depth": isa_toffoli_depth,
-        "cut_depth": depth_list.mean(),
-    }
-    grade(answer, "lab3-ckt-ex1", _challenge_id, grade_only=_grade_only)
-
-
-@typechecked
-def grade_lab3_ckt_ex2(
-    gates_connecting_to_cut_1: set,
-    gates_connecting_to_cut_2: set,
-    sub_experiments: List[QuantumCircuit],
-) -> None:
-    answer = {
-        "gates_cut_1": list(gates_connecting_to_cut_1),
-        "gates_cut_2": list(gates_connecting_to_cut_2),
-        "n_sub_exp": len(sub_experiments),
-    }
-    grade(answer, "lab3-ckt-ex2", _challenge_id, grade_only=_grade_only)
+    grade({
+        'layout_tasks': layout_tasks,
+        'routing_tasks': routing_tasks,
+        'translation_tasks': translation_tasks
+    }, 'lab3-ex3', _challenge_id, grade_only=_grade_only)
 
 
 @typechecked
-def grade_lab3_qs_ex1(
-    function: QiskitFunction, input_arguments: dict, job: Job
-) -> None:
-    answer = {
-        "check_entry": function.entrypoint,
-        "optimizer": input_arguments["method"],
-        "op_valid": isinstance(input_arguments["operator"], SparsePauliOp),
-        "circuit_valid": isinstance(input_arguments["ansatz"], QuantumCircuit),
-        "job_valid": isinstance(job, Job)
-    }
-    grade(answer, "lab3-qs-ex1", _challenge_id, grade_only=_grade_only)
-
-
-@typechecked
-def grade_lab3_qs_ex2(
-    optimization_levels: list,
-    transpiler_services: list,
-    transpile_parallel_function: QiskitFunction,
-    transpile_parallel_serverless: QiskitFunction,
-    job: Job,
-) -> None:
-
-    transpiler_service_settings = [
-        {
-            "ai": service["service"].ai,
-            "backend_name": service["service"].backend_name,
-            "optimization_level": service["service"].optimization_level,
-        }
-        for service in transpiler_services
-    ]
-    config = {
-        "title": transpile_parallel_serverless.raw_data["title"],
-        "entrypoint": transpile_parallel_serverless.raw_data["entrypoint"],
-    }
-
-    answer = {
-        'optimization_levels': optimization_levels,
-        'transpiler_service_settings': transpiler_service_settings,
-        'entrypoint': transpile_parallel_function.entrypoint,
-        'config': config,
-        'job_valid': isinstance(job, Job),
-    }
-    grade(answer, "lab3-qs-ex2", _challenge_id, grade_only=_grade_only)
+def grade_lab3_metaphors(answer: str) -> None:
+    grade(answer, 'lab3-metaphors', _challenge_id, grade_only=_grade_only)
