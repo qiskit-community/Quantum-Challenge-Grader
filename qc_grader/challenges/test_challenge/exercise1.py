@@ -22,7 +22,7 @@ challenge_id = Path(__file__).parent.name
 
 @typechecked
 def grade_ex1a(answer: str) -> None:
-    grade(answer, 'test-pass', challenge_id)
+    grade(answer, 'test-pass', challenge_id, grade_only=True)
 
 
 @typechecked
