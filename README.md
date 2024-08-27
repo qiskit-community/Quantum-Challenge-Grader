@@ -51,7 +51,17 @@ To install the grader locally:
     > print(os.getenv('QXToken'))
     > ```
     > 
-    > **Note2**: If you already installed [qiskit-ibm-runtime](https://github.com/Qiskit/qiskit-ibm-runtime) and saved your token by using `QiskitRuntimeService` by following [this instruction](https://docs.quantum.ibm.com/guides/setup-channel) once, you don't need to set-up the env variable
+    > **Note2**: If you already installed [qiskit-ibm-runtime](https://github.com/Qiskit/qiskit-ibm-runtime) and saved your token by using `QiskitRuntimeService` by following [this instruction](https://docs.quantum.ibm.com/guides/setup-channel) once, you don't need to set-up the env variable. You can save your token by using `QiskitRuntimeService` like below:
+    >
+    > ``` python
+    > from qiskit_ibm_runtime import QiskitRuntimeService
+    > QiskitRuntimeService.save_account(
+    >     channel="ibm_quantum",
+    >     token="<YOUR_TOKEN>",
+    >     set_as_default=True,
+    >     overwrite=True,
+    > )
+    > ```
     > 
 
 ## Usage
