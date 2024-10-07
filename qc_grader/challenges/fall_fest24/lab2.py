@@ -73,7 +73,7 @@ def grade_lab2_ex6(cost_func: Callable) -> None:
     isa_circuits = pm.run(ansatz)
     choc_op = SparsePauliOp(['ZII', 'IZI', 'IIZ'])
     hamiltonian_isa = choc_op.apply_layout(layout=isa_circuits.layout)
-    estimator = Estimator(backend=aer_sim)
+    estimator = Estimator(mode=aer_sim)
     
     callback_dict = {
         "prev_vector": None,
