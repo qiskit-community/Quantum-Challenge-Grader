@@ -5,3 +5,5 @@ qiskit-transpiler-service
 qiskit-serverless==0.12.0
 circuit-knitting-toolbox
 qiskit-ibm-catalog
+qiskit-addon-utils
+qiskit-addon-obp
