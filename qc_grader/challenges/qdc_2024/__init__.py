@@ -1,1 +1,1 @@
-from .day1 import grade_day1a_ex1, grade_day1a_ex2
+from .day1 import grade_day1a_ex1, grade_day1a_ex2, grade_day1b_ex1
