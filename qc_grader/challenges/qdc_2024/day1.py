@@ -3,6 +3,8 @@ from typeguard import typechecked
 
 import numpy as np
 from scipy.optimize._optimize import OptimizeResult
+from pyscf import tools, ao2mo
+from pathlib import Path
 
 from qiskit.quantum_info import SparsePauliOp
 from qiskit.synthesis import LieTrotter
@@ -15,6 +17,10 @@ from qiskit_addon_utils.coloring import auto_color_edges
 from qiskit_addon_obp import backpropagate
 from qiskit_addon_obp.utils.truncating import TruncationErrorBudget, setup_budget
 from qiskit_addon_obp.utils.simplify import OperatorBudget
+from qiskit_addon_sqd.counts import counts_to_arrays, generate_counts_uniform
+from qiskit_addon_sqd.subsampling import postselect_and_subsample
+from qiskit_addon_sqd.fermion import solve_fermion, flip_orbital_occupancies
+from qiskit_addon_sqd.configuration_recovery import recover_configurations
 
 from qc_grader.grader.grade import grade
 
@@ -34,7 +40,7 @@ def grade_day1a_ex1(qiskit_cf: QiskitFunction, job: Job) -> None:
     )
 
 
-def run_evaluator(num_bp_slices: int, max_error_per_slice: List[float]) -> List[int]:
+def obp(num_bp_slices: int, max_error_per_slice: List[float]) -> List[int]:
 
     backend = FakeTorino()
     coupling_map = backend.coupling_map
@@ -85,9 +91,100 @@ def run_evaluator(num_bp_slices: int, max_error_per_slice: List[float]) -> List[
 
 @typechecked
 def grade_day1a_ex2(num_bp_slices: int, max_error_per_slice: List[float]) -> None:
-    answer_list = run_evaluator(num_bp_slices, max_error_per_slice)
+    answer_list = obp(num_bp_slices, max_error_per_slice)
     grade(
         answer_list,
         "day1a-ex2",
+        _challenge_id,
+    )
+
+@typechecked
+def sqd_configuration_recovery(n_batches: int, samples_per_batch: int) -> np.ndarray:
+    """Perform SQD on N2 molecule, given some subspace parameters."""
+    iterations = 5
+    num_orbitals = 16
+    num_elec_a = num_elec_b = 5
+    rand_seed = np.random.default_rng(2**24)
+
+    current_directory = Path(__file__).parent
+    N2_device_counts = current_directory / 'N2_device_counts.npy'
+
+    counts = np.load(N2_device_counts, allow_pickle=True).item()
+    # Convert counts into bitstring and probability arrays
+    bitstring_matrix, probabilities = counts_to_arrays(counts)
+
+    # Read in molecule from disk
+    n2_fci = current_directory / 'n2_fci.txt'
+    mf_as = tools.fcidump.to_scf(n2_fci)
+    hcore = mf_as.get_hcore()
+    eri = ao2mo.restore(1, mf_as._eri, num_orbitals)
+    nre = mf_as.mol.energy_nuc()
+
+    # Self-consistent configuration recovery loop
+    energy_hist = np.zeros((iterations, n_batches))  # energy history
+    occupancy_hist = np.zeros((iterations, 2 * num_orbitals))
+    occupancies_bitwise = None  # orbital i corresponds to column i in bitstring matrix
+    for i in range(iterations):
+        print(f"Starting configuration recovery iteration {i}")
+        # On the first iteration, we have no orbital occupancy information from the
+        # solver, so we just post-select from the full bitstring set based on hamming weight.
+        if occupancies_bitwise is None:
+            bs_mat_tmp = bitstring_matrix
+            probs_arr_tmp = probabilities
+
+        # If we have average orbital occupancy information, we use it to refine the full set of noisy configurations
+        else:
+            bs_mat_tmp, probs_arr_tmp = recover_configurations(
+                bitstring_matrix,
+                probabilities,
+                occupancies_bitwise,
+                num_elec_a,
+                num_elec_b,
+                rand_seed=rand_seed,
+            )
+
+        # Throw out configurations with incorrect particle number in either the spin-up or spin-down systems
+        batches = postselect_and_subsample(
+            bs_mat_tmp,
+            probs_arr_tmp,
+            hamming_right=num_elec_a,
+            hamming_left=num_elec_b,
+            samples_per_batch=samples_per_batch,
+            num_batches=n_batches,
+            rand_seed=rand_seed,
+        )
+
+        # Run eigenstate solvers in a loop. This loop should be parallelized for larger problems.
+        energy_tmp = np.zeros(n_batches)
+        occs_tmp = np.zeros((n_batches, 2 * num_orbitals))
+        for j in range(n_batches):
+            energy_sci, _, avg_occs, _ = solve_fermion(
+                batches[j],
+                hcore,
+                eri,
+            )
+            energy_sci += nre
+            energy_tmp[j] = energy_sci
+            occs_tmp[j, :num_orbitals] = avg_occs[0]
+            occs_tmp[j, num_orbitals:] = avg_occs[1]
+
+        # Combine batch results
+        avg_occupancies = np.mean(occs_tmp, axis=0)
+        # The occupancies from the solver should be flipped to match the bits in the bitstring matrix.
+        occupancies_bitwise = flip_orbital_occupancies(avg_occupancies)
+
+        # Track optimization history
+        energy_hist[i, :] = energy_tmp
+        occupancy_hist[i, :] = avg_occupancies
+
+    return energy_hist
+
+@typechecked
+def grade_day1b_ex1(num_batches: int, samples_per_batch: int) -> None:
+    energy_hist = sqd_configuration_recovery(num_batches, samples_per_batch)
+    min_e = np.min(energy_hist)
+    grade(
+        min_e,
+        "day1b-ex1",
         _challenge_id,
     )
