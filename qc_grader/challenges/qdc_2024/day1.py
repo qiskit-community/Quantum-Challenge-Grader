@@ -104,7 +104,7 @@ def sqd_configuration_recovery(n_batches: int, samples_per_batch: int) -> np.nda
     iterations = 5
     num_orbitals = 16
     num_elec_a = num_elec_b = 5
-    rand_seed = np.random.default_rng(2**24)
+    rand_seed = int(np.random.default_rng(2**24).random())
 
     current_directory = Path(__file__).parent
     N2_device_counts = current_directory / 'N2_device_counts.npy'
