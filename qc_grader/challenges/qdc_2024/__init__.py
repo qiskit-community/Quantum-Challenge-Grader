@@ -1,4 +1,15 @@
-from .day1 import grade_day1a_ex1, grade_day1a_ex2, grade_day1b_ex1
+from .day1 import (
+    grade_day1a_ex1,
+    grade_day1a_ex2,
+    grade_day1b_ex1,
+    submit_feedback_1a_1,
+    submit_feedback_1a_2,
+    submit_feedback_1a_3,
+    submit_feedback_1a_4,
+    submit_feedback_1a_5,
+    submit_feedback_1b_1,
+    submit_feedback_1b_2,
+)
 from .day2 import (
     grade_day2a_ex1,
     grade_day2a_ex2,
