@@ -1,3 +1,6 @@
+from .utils import build_max_cut_paulis
+from .utils import submit_name, submit_feedback, test_submit
+
 from .day1 import (
     grade_day1a_ex1,
     grade_day1a_ex2,
@@ -21,5 +24,10 @@ from .day2 import (
     submit_feedback_2a_2,
     submit_feedback_2b_1,
 )
-from .utils import build_max_cut_paulis
-from .utils import submit_name, submit_feedback, test_submit
+
+from .day3 import (
+    submit_feedback_3a_1,
+    submit_feedback_3a_2,
+    submit_feedback_3b_1,
+    submit_feedback_3b_2
+)
