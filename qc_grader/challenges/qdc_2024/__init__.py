@@ -17,6 +17,9 @@ from .day2 import (
     grade_day2a_ex4,
     grade_day2a_ex5,
     grade_day2b_ex1,
+    submit_feedback_2a_1,
+    submit_feedback_2a_2,
+    submit_feedback_2b_1,
 )
 from .utils import build_max_cut_paulis
 from .utils import submit_name, submit_feedback, test_submit
