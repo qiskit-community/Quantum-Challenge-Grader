@@ -28,6 +28,8 @@ from .day2 import (
 from .day3 import (
     submit_feedback_3a_1,
     submit_feedback_3a_2,
+    submit_feedback_3a_3,
     submit_feedback_3b_1,
-    submit_feedback_3b_2
+    submit_feedback_3b_2,
+    submit_feedback_3b_3,
 )
