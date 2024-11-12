@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from typeguard import typechecked
 
 from typing import *
 from colorama import Fore, Style
@@ -281,3 +282,16 @@ def loading_animation(stop_event, progress, total_iterations):
     # Final update when complete
     bar = '█' * bar_length
     sys.stdout.write(f'\rGrading complete! Running iteration {progress[0]}: [{bar}] 100.00% ({total_iterations}/{total_iterations})\n')
+
+
+@typechecked
+def submit_feedback_2a_1(feedback: str) -> None:
+    grade(feedback, 'feedback-2a-1', _challenge_id)
+
+@typechecked
+def submit_feedback_2a_2(feedback: str) -> None:
+    grade(feedback, 'feedback-2a-2', _challenge_id)
+
+@typechecked
+def submit_feedback_2b_1(feedback: str) -> None:
+    grade(feedback, 'feedback-2b-1', _challenge_id)
