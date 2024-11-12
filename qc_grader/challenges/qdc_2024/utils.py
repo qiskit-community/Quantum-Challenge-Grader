@@ -9,6 +9,23 @@ import itertools
 from typing import Optional, Dict, Union, Iterable
 import logging
 
+from typeguard import typechecked
+from qc_grader.grader.grade import grade
+
+
+_challenge_id = 'qdc_2024'
+
+@typechecked
+def submit_name(name: str) -> None:
+    grade(name, 'submit-name', _challenge_id)
+
+@typechecked
+def submit_feedback(feedback: str) -> None:
+    grade(feedback, 'submit-feedback', _challenge_id)
+
+@typechecked
+def test_submit(answer: str) -> None:
+    grade(answer, 'test', _challenge_id)
 
 def build_max_cut_paulis(graph: nx.Graph) -> list[tuple[str, float]]:
     """Convert the graph to Pauli list.
