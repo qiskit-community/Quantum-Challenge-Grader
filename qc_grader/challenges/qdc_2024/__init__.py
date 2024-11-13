@@ -8,8 +8,6 @@ from .day1 import (
     submit_feedback_1a_1,
     submit_feedback_1a_2,
     submit_feedback_1a_3,
-    submit_feedback_1a_4,
-    submit_feedback_1a_5,
     submit_feedback_1b_1,
     submit_feedback_1b_2,
 )
