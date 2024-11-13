@@ -107,14 +107,14 @@ def sqd_configuration_recovery(n_batches: int, samples_per_batch: int) -> np.nda
     rand_seed = int(np.random.default_rng(2**24).random())
 
     current_directory = Path(__file__).parent
-    N2_device_counts = current_directory / 'N2_device_counts.npy'
+    N2_device_counts = current_directory / 'utils/N2_device_counts.npy'
 
     counts = np.load(N2_device_counts, allow_pickle=True).item()
     # Convert counts into bitstring and probability arrays
     bitstring_matrix, probabilities = counts_to_arrays(counts)
 
     # Read in molecule from disk
-    n2_fci = current_directory / 'n2_fci.txt'
+    n2_fci = current_directory / 'utils/n2_fci.txt'
     mf_as = tools.fcidump.to_scf(n2_fci)
     hcore = mf_as.get_hcore()
     eri = ao2mo.restore(1, mf_as._eri, num_orbitals)
