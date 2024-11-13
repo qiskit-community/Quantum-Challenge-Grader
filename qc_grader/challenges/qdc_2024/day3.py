@@ -225,3 +225,31 @@ def grade_day3b_ex1(job: RuntimeJobV2):
         "day3b-ex1",
         _challenge_id,
     )
+
+
+
+@typechecked
+def submit_feedback_3a_1(feedback: str) -> None:
+    grade(feedback, 'feedback-1a-1', _challenge_id)
+
+@typechecked
+def submit_feedback_3a_2(feedback: str) -> None:
+    grade(feedback, 'feedback-1a-2', _challenge_id)
+
+@typechecked
+def submit_feedback_3a_3(feedback: str) -> None:
+    grade(feedback, 'feedback-1a-3', _challenge_id)
+    
+
+@typechecked
+def submit_feedback_3b_1(feedback: str) -> None:
+    grade(feedback, 'feedback-1a-1', _challenge_id)
+
+@typechecked
+def submit_feedback_3b_2(feedback: str) -> None:
+    grade(feedback, 'feedback-1a-2', _challenge_id)
+
+@typechecked
+def submit_feedback_3b_3(feedback: str) -> None:
+    grade(feedback, 'feedback-1a-3', _challenge_id)
+
