@@ -156,7 +156,7 @@ def grade_day3a_ex4(learner_options: NoiseLearnerOptions, chosen_circuit: int):
     )
 
 @typechecked
-def submit_day3a_ex5(ex5_func: Callable, backend: IBMBackend =  (QiskitRuntimeService()).backend('test_eagle_us-east')) -> RuntimeJobV2:
+def submit_day3a_ex5(ex5_func: Callable, backend: IBMBackend =  (QiskitRuntimeService()).backend('test_eagle_us-east')):
 
     np.random.seed(10)
     paramsx = np.random.uniform(0,np.pi/2,(14,2))
