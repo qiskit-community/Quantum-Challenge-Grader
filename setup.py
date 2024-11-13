@@ -55,6 +55,7 @@ setup(
         'qc_grader',
         'qc_grader.*'
     ]),
+    package_data={'': ['N2_device_counts.npy', 'n2_fci.txt']},
     install_requires=REQUIREMENTS,
     include_package_data=True,
     zip_safe=False,

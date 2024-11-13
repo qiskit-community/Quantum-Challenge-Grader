@@ -189,9 +189,11 @@ def grade_day1b_ex1(num_batches: int, samples_per_batch: int) -> None:
         _challenge_id,
     )
 
+
 @typechecked
 def submit_feedback_1a_1(feedback: str) -> None:
     grade(feedback, 'feedback-1a-1', _challenge_id)
+
 
 @typechecked
 def submit_feedback_1a_2(feedback: str) -> None:
@@ -201,17 +203,11 @@ def submit_feedback_1a_2(feedback: str) -> None:
 def submit_feedback_1a_3(feedback: str) -> None:
     grade(feedback, 'feedback-1a-3', _challenge_id)
 
-@typechecked
-def submit_feedback_1a_4(feedback: str) -> None:
-    grade(feedback, 'feedback-1a-4', _challenge_id)
-
-@typechecked
-def submit_feedback_1a_5(feedback: str) -> None:
-    grade(feedback, 'feedback-1a-5', _challenge_id)
 
 @typechecked
 def submit_feedback_1b_1(feedback: str) -> None:
     grade(feedback, 'feedback-1b-1', _challenge_id)
+
 
 @typechecked
 def submit_feedback_1b_2(feedback: str) -> None:
