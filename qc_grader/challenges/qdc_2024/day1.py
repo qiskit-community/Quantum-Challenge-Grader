@@ -2,8 +2,8 @@ from typing import Callable, List
 from typeguard import typechecked
 
 import numpy as np
+import pickle
 from scipy.optimize._optimize import OptimizeResult
-from pyscf import tools, ao2mo
 from pathlib import Path
 
 from qiskit.quantum_info import SparsePauliOp
@@ -108,17 +108,17 @@ def sqd_configuration_recovery(n_batches: int, samples_per_batch: int) -> np.nda
 
     current_directory = Path(__file__).parent
     N2_device_counts = current_directory / 'N2_device_counts.npy'
-
+    
     counts = np.load(N2_device_counts, allow_pickle=True).item()
     # Convert counts into bitstring and probability arrays
     bitstring_matrix, probabilities = counts_to_arrays(counts)
 
     # Read in molecule from disk
-    n2_fci = current_directory / 'n2_fci.txt'
-    mf_as = tools.fcidump.to_scf(n2_fci)
-    hcore = mf_as.get_hcore()
-    eri = ao2mo.restore(1, mf_as._eri, num_orbitals)
-    nre = mf_as.mol.energy_nuc()
+    n2_fci = current_directory / "n2_fci.txt"
+    hcore = np.load(current_directory / "hcore.npy")
+    eri = np.load(current_directory / "eri.npy")
+    with open(current_directory / "nuclear_repulsion_energy.pkl", "rb") as f:
+        nre = pickle.load(f)
 
     # Self-consistent configuration recovery loop
     energy_hist = np.zeros((iterations, n_batches))  # energy history
