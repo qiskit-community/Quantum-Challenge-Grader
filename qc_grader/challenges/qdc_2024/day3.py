@@ -75,7 +75,7 @@ def get_noisy_vals(repetitions):
     qc = circuit_ex1(paramsx,repetitions)
     service = QiskitRuntimeService()
     backend = service.backend('ibm_nazca') # CHOOSE THE RIGHT BACKEND
-    pm = generate_preset_pass_manager(backend=backend, optimization_level=0)
+    pm = generate_preset_pass_manager(backend=backend, optimization_level=0, seed_transpiler=1)
 
     # Transpiling the circuit for the correct backend and adapt the observables
     optimized_circuit = pm.run(qc)
@@ -106,6 +106,7 @@ def get_noisy_vals(repetitions):
 def grade_day3a_ex1(repetitions: int):
 
     answer = [get_noisy_vals(repetitions), get_noisy_vals(repetitions+1)]
+    print(answer)
     grade(
         answer,
         "day3a-ex1",
