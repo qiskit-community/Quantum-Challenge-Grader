@@ -17,7 +17,12 @@ _challenge_id = 'qdc_2024'
 
 @typechecked
 def submit_name(name: str) -> None:
-    grade(name, 'submit-name', _challenge_id)
+    status, score, message = grade(name, 'submit-name', _challenge_id, return_response=True)
+    if status == False:
+        print(message)
+    else:
+        print('Username submitted.')
+    
 
 @typechecked
 def submit_feedback(feedback: str) -> None:
