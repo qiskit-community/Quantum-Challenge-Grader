@@ -1,4 +1,4 @@
-from typing import Callable, Tuple, List, Union
+from typing import Callable, Tuple, List, Union, Optional
 from qiskit import QuantumCircuit
 import numpy as np
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
@@ -164,7 +164,7 @@ def grade_day3a_ex4(learner_options: NoiseLearnerOptions, chosen_circuit: int):
 
 
 @typechecked
-def submit_day3a_ex5(ex5_func: Callable, backend: IBMBackend = None):
+def submit_day3a_ex5(ex5_func: Callable, backend: Optional[IBMBackend] = None):
 
     if backend is None:
          backend = QiskitRuntimeService(channel='ibm_quantum').backend('test_eagle_us-east')
@@ -213,7 +213,7 @@ def grade_day3a_ex5(job: Union[RuntimeJob, RuntimeJobV2]):
 
 
 @typechecked
-def submit_day3b_ex1(options: EstimatorOptions, pub: Tuple[QuantumCircuit, List[List[SparsePauliOp]],np.ndarray],backend: IBMBackend = None):
+def submit_day3b_ex1(options: EstimatorOptions, pub: Tuple[QuantumCircuit, List[List[SparsePauliOp]],np.ndarray],backend: Optional[IBMBackend] = None):
 
     if backend == None:
         backend = QiskitRuntimeService(channel='ibm_quantum').backend('ibm_cusco')
