@@ -15,6 +15,14 @@ from .day2 import (
 )
 
 from .day3 import (
+    grade_day3a_ex1,
+    grade_day3a_ex2,
+    grade_day3a_ex3,
+    grade_day3a_ex4,
+    submit_day3a_ex5,
+    grade_day3a_ex5,
+    submit_day3b_ex1,
+    grade_day3b_ex1,
     submit_feedback_3a_1,
     submit_feedback_3a_2,
     submit_feedback_3a_3,
