@@ -76,7 +76,7 @@ def circuit_ex3(params):
 def get_noisy_vals(repetitions):
     paramsx = np.zeros((14,2))
     qc = circuit_ex1(paramsx,repetitions)
-    service = QiskitRuntimeService()
+    service = QiskitRuntimeService(channel='ibm_quantum')
     backend = service.backend('ibm_nazca') # CHOOSE THE RIGHT BACKEND
     pm = generate_preset_pass_manager(backend=backend, optimization_level=0, seed_transpiler=1)
 
@@ -213,7 +213,10 @@ def grade_day3a_ex5(job: Union[RuntimeJob, RuntimeJobV2]):
 
 
 @typechecked
-def submit_day3b_ex1(options: EstimatorOptions, pub: Tuple[QuantumCircuit, List[List[SparsePauliOp]],np.ndarray],backend: IBMBackend =  (QiskitRuntimeService()).backend('ibm_cusco')):
+def submit_day3b_ex1(options: EstimatorOptions, pub: Tuple[QuantumCircuit, List[List[SparsePauliOp]],np.ndarray],backend: IBMBackend = None):
+
+    if backend == None:
+        backend = QiskitRuntimeService(channel='ibm_quantum').backend('ibm_cusco')
 
     if type(options.twirling.num_randomizations) != qiskit_ibm_runtime.options.utils.UnsetType:
         if options.twirling.num_randomizations > 100:
