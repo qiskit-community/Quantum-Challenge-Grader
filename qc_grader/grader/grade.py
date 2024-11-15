@@ -130,7 +130,7 @@ def display_special_message(message: str, preamble='') -> None:
 
 
 def handle_grade_response(
-    status: Optional[str], score: Optional[int] = None, cause: Optional[str] = None
+    status: Optional[str], score: Optional[Union[int, float]] = None, cause: Optional[str] = None
 ) -> None:
     if status == 'valid' or status is True:
         if cause is not None:
@@ -151,7 +151,7 @@ def handle_grade_response(
 
 
 def handle_submit_response(
-    status: Union[str, bool], cause: Optional[str] = None, score: Optional[int] = None
+    status: Union[str, bool], cause: Optional[str] = None, score: Optional[Union[int, float]] = None
 ) -> None:
     if status == 'valid' or status is True:
         if cause is not None:
