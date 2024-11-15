@@ -67,7 +67,7 @@ def obp(num_bp_slices: int, max_error_per_slice: List[float]) -> List[int]:
     )
 
     L = circuit.num_qubits
-    observable = SparsePauliOp("I" * (L // 2) + "ZZ" + "I" * (L // 2 - 1))
+    observable = SparsePauliOp.from_sparse_list([("Z", [(circuit.num_qubits)//2], 1.0) ],num_qubits=circuit.num_qubits)
 
     slices = slice_by_gate_types(circuit)
     
