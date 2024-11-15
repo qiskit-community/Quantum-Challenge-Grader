@@ -1,4 +1,4 @@
-from typing import Callable, Tuple, List
+from typing import Callable, Tuple, List, Union
 from qiskit import QuantumCircuit
 import numpy as np
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
@@ -8,7 +8,7 @@ from qiskit_ibm_runtime import EstimatorV2 as Estimator
 from qiskit.quantum_info import SparsePauliOp
 from qiskit.quantum_info import Statevector
 from qiskit_ibm_runtime.options import NoiseLearnerOptions
-from qiskit_ibm_runtime.runtime_job_v2 import RuntimeJobV2
+from qiskit_ibm_runtime import RuntimeJob, RuntimeJobV2
 from qiskit_ibm_runtime.noise_learner import NoiseLearner
 from qiskit.primitives import PrimitiveResult
 from qiskit_ibm_runtime import IBMBackend
@@ -164,7 +164,10 @@ def grade_day3a_ex4(learner_options: NoiseLearnerOptions, chosen_circuit: int):
 
 
 @typechecked
-def submit_day3a_ex5(ex5_func: Callable, backend: IBMBackend =  (QiskitRuntimeService()).backend('test_eagle_us-east')):
+def submit_day3a_ex5(ex5_func: Callable, backend: IBMBackend = None):
+
+    if backend is None:
+         backend = QiskitRuntimeService(channel='ibm_quantum').backend('test_eagle_us-east')
 
     np.random.seed(10)
     paramsx = np.random.uniform(0,np.pi/2,(14,2))
@@ -197,7 +200,7 @@ def submit_day3a_ex5(ex5_func: Callable, backend: IBMBackend =  (QiskitRuntimeSe
 
 
 @typechecked
-def grade_day3a_ex5(job: RuntimeJobV2):
+def grade_day3a_ex5(job: Union[RuntimeJob, RuntimeJobV2]):
 
     if job.status() != "DONE":
         return "The job is not done."
@@ -222,7 +225,7 @@ def submit_day3b_ex1(options: EstimatorOptions, pub: Tuple[QuantumCircuit, List[
     return job
 
 @typechecked
-def grade_day3b_ex1(job: RuntimeJobV2):
+def grade_day3b_ex1(job: Union[RuntimeJob, RuntimeJobV2]):
 
     if job.status() != 'DONE':
         return "The job is not done."
@@ -230,12 +233,17 @@ def grade_day3b_ex1(job: RuntimeJobV2):
     result = job.result()
     expvals = result[0].data.evs
     answer = np.mean(np.abs(1-expvals))
-    grade(
+    status, score, message = grade(
         answer,
         "day3b-ex1",
         _challenge_id,
+        return_response=True
     )
 
+    if status:
+        print(f'Your score is {score/(2**30)}')
+    else:
+        print(f'Oops 😕! {"Your answer is incorrect" if message is None else message}')
 
 @typechecked
 def submit_feedback_3a_1(feedback: str) -> None:
