@@ -18,6 +18,21 @@ from .utils import get_qc_in
 _challenge_id = 'qgss_2025'
 
 
+
+@typechecked
+def grade_lab0_ex1(circuit: QuantumCircuit) -> None:
+    grade(circuit, 'lab0-ex1', _challenge_id)
+
+#Submit circuit to server for testing (ex1) Done
+
+@typechecked
+def grade_lab0_ex2(circuit: QuantumCircuit) -> None:
+    grade(circuit, 'lab0-ex2', _challenge_id)
+
+#Submit circuit to server for testing (ex1) Done
+
+
+
 # Lab 0, Exercise 1
 @typechecked
 def grade_lab0_ex1(qc_char_func: Callable) -> None:
@@ -51,7 +66,6 @@ def grade_lab1_ex2(qc_routed: QuantumCircuit) -> None:
 
     grade(qc_routed, 'lab1-ex2', _challenge_id)
 
-#Submit circuit to server for testing (ex1)
 
 
 # Lab 1, Exercise 2A
