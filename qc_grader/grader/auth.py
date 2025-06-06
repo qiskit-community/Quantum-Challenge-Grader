@@ -44,7 +44,15 @@ or configure the `IBMCLOUD_API_KEY` environment variable.
         self.authenticator = IAMAuthenticator(self.api_key, url=self.token_url, disable_ssl_verification=True)
 
     def get_access_token(self):
-        return self.authenticator.token_manager.get_token()
+        try:
+            return self.authenticator.token_manager.get_token()
+        except Exception as e:
+            print("""
+Account token is invalid or cannot be verified.
+Please save a new account instance using `QiskitRuntimeService.save_account`
+or configure a new `IBMCLOUD_API_KEY` environment variable.
+""")
+            raise ValueError("Account token is invalid or cannot be verified")
 
     def get_user_account(self):
         import ssl
