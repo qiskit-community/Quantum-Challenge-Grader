@@ -1,9 +1,3 @@
-qiskit[visualization]==1.2.0
+qiskit[visualization]~=2.0.0
 qiskit-ibm-runtime
 qiskit-aer
-qiskit-transpiler-service
-qiskit-serverless==0.12.0
-circuit-knitting-toolbox
-qiskit-ibm-catalog
-qiskit-addon-utils
-qiskit-addon-obp
