@@ -30,14 +30,16 @@ class IAMAuth:
         self.token_url = get_iam_token_endpoint()
         self.api_key = os.getenv('IBMCLOUD_API_KEY')
         if self.api_key is None:
-            self.api_key = os.getenv('QXToken')
-        if self.api_key is None:
             from qiskit_ibm_runtime import QiskitRuntimeService
             self.api_key = QiskitRuntimeService.saved_accounts().get('default-ibm-cloud', {}).get('token')
 
         if self.api_key is None:
-            print("Missing API Key configuration")
-            return
+            print("""
+Account credentials missing or not properly saved.
+Please save your account using `QiskitRuntimeService.save_account`
+or configure the `IBMCLOUD_API_KEY` environment variable.
+""")
+            raise ValueError("Account credentials missing or not properly saved")
 
         self.authenticator = IAMAuthenticator(self.api_key, url=self.token_url, disable_ssl_verification=True)
 
