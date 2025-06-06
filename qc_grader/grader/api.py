@@ -19,7 +19,7 @@ from urllib.parse import urljoin
 from typing import Dict, List, Mapping, Optional, Union
 
 from qc_grader import __version__
-from qc_grader.grader.common import normalize_slash
+from qc_grader.grader.common import normalize_slash, remove_slash
 from qiskit_ibm_runtime import QiskitRuntimeService
 
 
@@ -41,6 +41,7 @@ submission_endpoints: List[str] = [
 _api_auth_url: Optional[str] = os.getenv('QXAuthURL')
 _api_grade_url: Optional[str] = os.getenv('QC_GRADING_ENDPOINT')
 _api_submit_url: Optional[str] = os.getenv('QC_API_ENDPOINT')
+_api_iam_token_url: Optional[str] = os.getenv('QC_IAM_TOKEN_ENDPOINT')
 _grade_only: Optional[Union[bool, str]] = os.getenv('QC_GRADE_ONLY')
 
 
@@ -50,6 +51,14 @@ class MaxContentError(BaseException):
 
     def __str__(self) -> str:
         return self.message
+
+
+def get_iam_token_endpoint() -> Optional[str]:
+    # https://iam.cloud.ibm.com/identity/token
+    global _api_iam_token_url
+    if not _api_iam_token_url:
+        _api_iam_token_url = "https://iam.cloud.ibm.com/identity/token"
+    return remove_slash(_api_iam_token_url)
 
 
 def get_auth_endpoint() -> Optional[str]:

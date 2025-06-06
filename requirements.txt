@@ -1,5 +1,6 @@
 typeguard
 jsonpickle==3.0.3
+requests==2.32.3
 
 ipycytoscape
 plotly
@@ -7,3 +8,6 @@ networkx==3.2.1
 
 # IBM Quantum Challenge 2024
 graphviz
+
+# IBM Cloud
+ibm-platform-services==0.66.1
