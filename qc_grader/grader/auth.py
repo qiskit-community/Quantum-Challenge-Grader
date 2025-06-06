@@ -36,8 +36,8 @@ class IAMAuth:
         if self.api_key is None:
             print("""
 Account credentials missing or not properly saved.
-Please save your account using `QiskitRuntimeService.save_account`
-or configure the `IBMCLOUD_API_KEY` environment variable.
+Please save your account using `QiskitRuntimeService.save_account`:
+https://docs.quantum.ibm.com/migration-guides/classic-iqp-to-cloud-iqp#set-up-your-credentials
 """)
             raise ValueError("Account credentials missing or not properly saved")
 
@@ -49,8 +49,8 @@ or configure the `IBMCLOUD_API_KEY` environment variable.
         except Exception as e:
             print("""
 Account token is invalid or cannot be verified.
-Please save a new account instance using `QiskitRuntimeService.save_account`
-or configure a new `IBMCLOUD_API_KEY` environment variable.
+Please save a new account instance using `QiskitRuntimeService.save_account`:
+https://docs.quantum.ibm.com/migration-guides/classic-iqp-to-cloud-iqp#set-up-your-credentials
 """)
             raise ValueError("Account token is invalid or cannot be verified")
 
