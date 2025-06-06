@@ -33,7 +33,7 @@ class IAMAuth:
             self.api_key = os.getenv('QXToken')
         if self.api_key is None:
             from qiskit_ibm_runtime import QiskitRuntimeService
-            self.api_key = QiskitRuntimeService.saved_accounts().get('default-ibm-quantum', {}).get('token')
+            self.api_key = QiskitRuntimeService.saved_accounts().get('default-ibm-cloud', {}).get('token')
 
         if self.api_key is None:
             print("Missing API Key configuration")
