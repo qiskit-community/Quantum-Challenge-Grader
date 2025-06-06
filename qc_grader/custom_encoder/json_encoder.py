@@ -23,7 +23,6 @@ from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import TwoLocal
 from qiskit.primitives import SamplerResult, EstimatorResult, PrimitiveResult
-from qiskit.qobj import PulseQobj
 from qiskit.quantum_info import Operator, Pauli, SparsePauliOp, Statevector
 from qiskit.result import ProbDistribution, QuasiDistribution
 from qiskit_aer.noise import NoiseModel
@@ -95,8 +94,6 @@ class GraderJSONEncoder(json.JSONEncoder):
                 return serializer.dump_noise_model(obj)
             case Pauli.__name__:
                 return serializer.dump_pauli(obj)
-            case PulseQobj.__name__:
-                return serializer.dump_pulse_qobj(obj)
             case Graph.__name__:
                 return serializer.dump_graph(obj)
             case _:

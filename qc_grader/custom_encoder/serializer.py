@@ -22,7 +22,6 @@ from qiskit import QuantumCircuit, qpy
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import TwoLocal
 from qiskit.primitives import SamplerResult, EstimatorResult, PrimitiveResult
-from qiskit.qobj import PulseQobj
 from qiskit.quantum_info import Operator, Pauli, SparsePauliOp, Statevector
 from qiskit.result import ProbDistribution, QuasiDistribution
 from qiskit_aer.noise import NoiseModel
@@ -150,10 +149,6 @@ def dump_sparse_pauli_op(obj: SparsePauliOp):
 
 def dump_noise_model(obj: NoiseModel):
     return {'__class__': 'NoiseModel', 'model': obj.to_dict()}
-
-
-def dump_pulse_qobj(obj: PulseQobj):
-    return {'__class__': 'PulseQobj', 'op': obj.to_dict()}
 
 
 def dump_graph(obj: Graph):
