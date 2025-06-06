@@ -17,15 +17,17 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 
 from qc_grader.custom_encoder import to_json
+from qc_grader.grader.auth import IAMAuth
 
 from .api import (
-    get_access_token,
     get_grading_endpoint,
     get_problem_set_endpoint,
     get_submission_endpoint,
     send_request,
     do_grade_only
 )
+
+iam_auth = IAMAuth()
 
 
 def grade(
@@ -82,9 +84,14 @@ def grade_answer(
     return_response: Optional[bool] = False
 ) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:
     try:
-        access_token = get_access_token()
+        access_token = iam_auth.get_access_token()
+        account = iam_auth.get_user_account()
         if access_token:
-            header = {'Authorization': f'Bearer {access_token}'}
+            header = {
+                'Authorization': f'Bearer {access_token}',
+                'X-QC-Account': account.get("account_id"),
+                'X-QC-User': account.get("iam_id"),
+            }
         else:
             header = None
 
@@ -184,9 +191,14 @@ def get_problem_set(
         return None, None
 
     try:
-        access_token = get_access_token()
+        access_token = iam_auth.get_access_token()
+        account = iam_auth.get_user_account()
         if access_token:
-            header = {'Authorization': f'Bearer {access_token}'}
+            header = {
+                'Authorization': f'Bearer {access_token}',
+                'X-QC-Account': account.get("account_id"),
+                'X-QC-User': account.get("iam_id"),
+            }
         else:
             header = None
 
