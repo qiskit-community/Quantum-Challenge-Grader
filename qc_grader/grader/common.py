@@ -31,6 +31,10 @@ def normalize_slash(url: str) -> str:
     return f'{url}/' if url[-1] != '/' else url
 
 
+def remove_slash(url: str) -> str:
+    return url[:-1] if url[-1] == '/' else url
+
+
 def get_provider(
     hub: Optional[str] = None,
     group: Optional[str] = None,
