@@ -1,13 +1,9 @@
 from typeguard import typechecked
 from typing import List
 
+from qiskit import transpile, QuantumCircuit
 from qiskit.quantum_info import SparsePauliOp
-import numpy as np
-from qiskit import transpile
-from qiskit import QuantumCircuit
-from scipy.optimize import curve_fit
-import matplotlib.pyplot as plt
-from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
+from qiskit.transpiler import generate_preset_pass_manager
 import rustworkx
 
 from qc_grader.grader.grade import grade
@@ -51,7 +47,6 @@ def grade_lab2_ex1(
         [min_ecr_pair, min_ecr_error],
     ]
 
-
     grade({
         'solutions': solutions,
         'key_values': key_values,
@@ -68,6 +63,7 @@ def prepare_graph(graph) -> list[tuple[str, float]]:
         pauli_list.append(("".join(paulis)[::-1], weight))
     return pauli_list
 
+
 @typechecked
 def grade_lab2_ex2(
     cost_hamiltonian: SparsePauliOp, graph: rustworkx.PyGraph
@@ -78,6 +74,7 @@ def grade_lab2_ex2(
         'cost_hamiltonian': cost_hamiltonian,
         'prepared_graph': prepared_graph,
     }, 'lab2-ex2', _challenge_id)
+
 
 #TODO obscuse
 def prepare_backend(backend, circuit):
@@ -199,7 +196,6 @@ def grade_lab2_ex4(
     }, 'lab2-ex4', _challenge_id)
 
 
-
 #TODO obscuse
 @typechecked
 def grade_lab2_ex5(
@@ -207,7 +203,6 @@ def grade_lab2_ex5(
 ) -> None:
     
     #TODO obfuscate
-
     def prepare_submission(circuit, backend):
         min_err_acc_seed = 1
         for seed_transpiler in range(0, 1000):
@@ -235,8 +230,6 @@ def grade_lab2_ex5(
         'prepa': prepa,
         'prepb': prepb,
     }, 'lab2-ex5', _challenge_id)
-
-
 
 
 @typechecked
@@ -272,6 +265,7 @@ def grade_lab2_ex6a(
         'scale_factors': scale_factors
     }, 'lab2-ex6', _challenge_id)
 
+
 @typechecked
 def grade_lab2_ex6b(
     fold_circuit: callable, circuit: QuantumCircuit, scale_factors: list, noisy_backends: list
@@ -304,7 +298,6 @@ def grade_lab2_ex6b(
             counts.append(folded.count_ops())
         
         return basic_gates, counts
-
             
     basic_gates=[]
     folded_counts=[]
@@ -341,7 +334,3 @@ def grade_lab2_ex7(
         'circuit': circuit,
         'scales': scales,
     }, 'lab2-ex7', _challenge_id)
-
-
-
-
