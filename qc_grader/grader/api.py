@@ -226,11 +226,6 @@ def send_request(
         if content_length >= max_content_length:
             raise MaxContentError(content_length, max_content_length)
 
-    print("***** request:", 
-        method,
-        endpoint,
-        query,
-        header, body)
     response = requests.request(
         method,
         url=endpoint,
