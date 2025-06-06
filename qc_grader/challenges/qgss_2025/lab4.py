@@ -1,15 +1,8 @@
-from typing import List
 from typeguard import typechecked
-
-
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
-import sys
+from typing import Dict
 import numpy as np
-from numpy.linalg import matrix_rank
-from numpy.linalg import matrix_power as m_power
 
 from qc_grader.grader.grade import grade
-
 
 
 _challenge_id = 'qgss_2025'
@@ -30,15 +23,18 @@ def grade_lab4_ex2(answer: Dict) -> None:
 def grade_lab4_ex3(answer: str) -> None:
     grade(answer, 'lab4-ex3', _challenge_id)
 
+
 @typechecked
 def grade_lab4_ex4(ansHx: np.ndarray, ansHz: np.ndarray) -> None:
     answer = tuple[ansHx , ansHz ]
     grade(answer, 'lab4-ex4', _challenge_id)
 
+
 @typechecked
 def grade_lab4_ex5(ansHx: np.ndarray, ansHz: np.ndarray) -> None:
     answer = tuple[ansHx , ansHz ]
     grade(answer, 'lab4-ex5', _challenge_id)
+
 
 @typechecked
 def grade_lab4_ex6(k_toric: int, k_gross: int) -> None:
