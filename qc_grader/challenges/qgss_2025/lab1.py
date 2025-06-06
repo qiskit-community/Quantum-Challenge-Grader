@@ -54,7 +54,6 @@ def grade_lab1_ex4(answer_func: Callable) -> None:
     grade(circuit, 'lab1-ex4', _challenge_id)
 
 @typechecked
-#def grade_lab1_ex5(answer: tuple[list,float]) -> None:
 def grade_lab1_ex5(counts_list: list, avg_win_prob: float) -> None:
     answer= tuple[counts_list,avg_win_prob]
     grade(answer, 'lab1-ex5', _challenge_id)
