@@ -126,7 +126,7 @@ def grade_lab2_ex3(
     prepared_backends=[]
     for result, backend, circuit in zip(results_list, backend_list, circuit_list):
         prepared_backend = prepare_backend(backend, circuit)
-        prepared_backends.add(prepared_backend)
+        prepared_backends.append(prepared_backend)
 
     grade({
         'results_list': results_list,
