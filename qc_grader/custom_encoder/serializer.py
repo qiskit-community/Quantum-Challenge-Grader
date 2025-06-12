@@ -17,6 +17,7 @@ import numpy
 from fractions import Fraction
 from io import BytesIO
 from typing import Any, Union
+from collections.abc import KeysView
 
 from qiskit import QuantumCircuit, qpy
 from qiskit.circuit import Parameter
@@ -164,3 +165,6 @@ def serialize_object(obj: Any):
     return {
         'obj': pickle.dumps(obj).decode('ISO-8859-1')
     }
+
+def dump_dict_keys(obj: KeysView):
+    return {'__class__': 'dict_keys', 'items': list(obj)}

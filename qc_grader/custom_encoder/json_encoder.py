@@ -96,5 +96,7 @@ class GraderJSONEncoder(json.JSONEncoder):
                 return serializer.dump_pauli(obj)
             case Graph.__name__:
                 return serializer.dump_graph(obj)
+            case "dict_keys":
+                return serializer.dump_dict_keys(obj)
             case _:
                 return json.JSONEncoder.default(self, obj)
