@@ -21,6 +21,7 @@ from qc_grader.grader.auth import IAMAuth
 
 from .api import (
     get_grading_endpoint,
+    get_labs_status_endpoint,
     get_problem_set_endpoint,
     get_submission_endpoint,
     send_request,
@@ -29,6 +30,33 @@ from .api import (
 
 iam_auth = IAMAuth()
 
+
+def check_lab_completion_status(challenge_id: str):
+    try:
+        access_token = iam_auth.get_access_token()
+        account = iam_auth.get_user_account()
+        if access_token:
+            header = {
+                'Authorization': f'Bearer {access_token}',
+                'X-QC-Account': account.get("account_id"),
+                'X-QC-User': account.get("iam_id"),
+            }
+        else:
+            header = None
+
+        endpoint = get_labs_status_endpoint(challenge_id)
+        response = send_request(
+            endpoint,
+            method='GET',
+            header=header,
+        )
+
+        return response
+
+    except Exception as err:
+        print(f'Failed: {err}')
+        return []
+    
 
 def grade(
     answer: Any,
