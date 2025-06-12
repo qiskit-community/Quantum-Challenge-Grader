@@ -182,7 +182,7 @@ def find_paths_with_weight_sum_below_threshold(
 
 @typechecked
 def grade_lab2_ex4(
-    valid_paths: list, valid_weights: list, graph: rustworkx.PyGraph, threshold: float, two_qubit_ops_list: list, logical_pair_list: list) -> None:
+    valid_paths: list, valid_weights: list, graph: rustworkx.PyDiGraph, threshold: float, two_qubit_ops_list: list, logical_pair_list: list) -> None:
     
     prepa, prepb = find_paths_with_weight_sum_below_threshold(
         graph, threshold, two_qubit_ops_list, logical_pair_list
