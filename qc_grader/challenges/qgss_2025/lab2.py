@@ -1,9 +1,12 @@
 from typeguard import typechecked
 from typing import List
 
-from qiskit import transpile, QuantumCircuit
+from qiskit import transpile, QuantumCircuit, generate_preset_pass_manager
 from qiskit.quantum_info import SparsePauliOp
 from qiskit.transpiler import generate_preset_pass_manager
+from qiskit.circuit.library import QuantumVolume
+
+from qiskit_ibm_runtime.fake_provider import FakeBrisbane
 import rustworkx
 
 from qc_grader.grader.grade import grade
@@ -263,57 +266,24 @@ def grade_lab2_ex6a(
         'folded_circuits': folded_circuits,
         'circuit': circuit,
         'scale_factors': scale_factors
-    }, 'lab2-ex6', _challenge_id)
+    }, 'lab2-ex6a', _challenge_id)
 
 
 @typechecked
 def grade_lab2_ex6b(
-    fold_circuit: callable, circuit: QuantumCircuit, scale_factors: list, noisy_backends: list
+    fold_circuit: callable
 ) -> None:
     
-#TODO check if gates and counts are correctly delivered
-    def get_basic_gates(circuit: QuantumCircuit, scale_factor: int):
-
-        basic_gates=[]
-        counts=[]
-
-        for noisy_backend in noisy_backends:
-            basis_gates = noisy_backend.target.operation_names
-            basic_gates.append(basis_gates)
-
-            non_unitary_and_id = [
-                "switch_case",
-                "id",
-                "reset",
-                "for_loop",
-                "if_else",
-                "measure",
-                "delay",
-            ]
-
-            basis_gates = [sublist for sublist in basis_gates if sublist not in non_unitary_and_id]
-            circuit_t = transpile(circuit, basis_gates=basis_gates)
-
-            folded = fold_circuit(circuit_t, scale_factor=scale_factor)
-            counts.append(folded.count_ops())
-        
-        return basic_gates, counts
-            
-    basic_gates=[]
-    folded_counts=[]
-
-    for scale in scale_factors:
-        gates, counts=get_basic_gates(circuit, scale)
-        basic_gates.append(gates)
-        folded_counts.append(counts)
+    circuit = QuantumVolume(5)
+    pm = generate_preset_pass_manager(optimization_level=2, backend=FakeBrisbane())
+    transpiled_circuit = pm.run(circuit)
+    folded_circuit = fold_circuit(transpiled_circuit, scale_factor=5)
 
     grade({
-        'basic_gates': basic_gates,
-        'circuit': circuit,
-        'scale_factors': scale_factors,
-        'folded_counts': folded_counts
+        'transpiled_circuit_ops': transpiled_circuit.count_ops(),
+        'folded_circuit_ops': folded_circuit.count_ops()
 
-    }, 'lab2-ex6', _challenge_id)
+    }, 'lab2-ex6b', _challenge_id)
 
 
 @typechecked
