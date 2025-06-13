@@ -1,9 +1,13 @@
 from typeguard import typechecked
 from typing import List
 
-from qiskit import transpile, QuantumCircuit
+from qiskit import transpile, QuantumCircuit, generate_preset_pass_manager
 from qiskit.quantum_info import SparsePauliOp
 from qiskit.transpiler import generate_preset_pass_manager
+from qiskit.circuit.library import QuantumVolume, QAOAAnsatz
+from qiskit.providers.fake_provider import GenericBackendV2
+
+from qiskit_ibm_runtime.fake_provider import FakeBrisbane
 import rustworkx
 
 from qc_grader.grader.grade import grade
@@ -182,7 +186,7 @@ def find_paths_with_weight_sum_below_threshold(
 
 @typechecked
 def grade_lab2_ex4(
-    valid_paths: list, valid_weights: list, graph: rustworkx.PyGraph, threshold: float, two_qubit_ops_list: list, logical_pair_list: list) -> None:
+    valid_paths: list, valid_weights: list, graph: rustworkx.PyDiGraph, threshold: float, two_qubit_ops_list: list, logical_pair_list: list) -> None:
     
     prepa, prepb = find_paths_with_weight_sum_below_threshold(
         graph, threshold, two_qubit_ops_list, logical_pair_list
@@ -234,103 +238,79 @@ def grade_lab2_ex5(
 
 @typechecked
 def grade_lab2_ex6a(
-    fold_circuit: callable, circuit: QuantumCircuit, scale_factors: list, noisy_backends: list
+    fold_circuit: callable
 ) -> None:
     
-
-    def get_folded_circuits(circuit: QuantumCircuit, scale_factor: int):
-
-        circuits=[]
-
-        for noisy_backend in noisy_backends:
-            basis_gates = noisy_backend.target.operation_names
-
-            circuit_t = transpile(circuit, basis_gates=basis_gates)
-            folded = fold_circuit(circuit, scale_factor=scale_factor)
-
-            circuits.append(folded)
-        
-        return circuits
-
-            
-    folded_circuits=[]
-
-    for scale in scale_factors:
-        circuits=get_folded_circuits(circuit, scale)
-        folded_circuits.append(circuits)
+    circuit = QuantumVolume(5)
+    folded_circuit = fold_circuit(circuit, scale_factor=5)
 
     grade({
-        'folded_circuits': folded_circuits,
-        'circuit': circuit,
-        'scale_factors': scale_factors
-    }, 'lab2-ex6', _challenge_id)
+        'folded_circuit_ops': folded_circuit.count_ops()
+    }, 'lab2-ex6a', _challenge_id)
 
 
 @typechecked
 def grade_lab2_ex6b(
-    fold_circuit: callable, circuit: QuantumCircuit, scale_factors: list, noisy_backends: list
+    fold_circuit: callable
 ) -> None:
     
-#TODO check if gates and counts are correctly delivered
-    def get_basic_gates(circuit: QuantumCircuit, scale_factor: int):
-
-        basic_gates=[]
-        counts=[]
-
-        for noisy_backend in noisy_backends:
-            basis_gates = noisy_backend.target.operation_names
-            basic_gates.append(basis_gates)
-
-            non_unitary_and_id = [
-                "switch_case",
-                "id",
-                "reset",
-                "for_loop",
-                "if_else",
-                "measure",
-                "delay",
-            ]
-
-            basis_gates = [sublist for sublist in basis_gates if sublist not in non_unitary_and_id]
-            circuit_t = transpile(circuit, basis_gates=basis_gates)
-
-            folded = fold_circuit(circuit_t, scale_factor=scale_factor)
-            counts.append(folded.count_ops())
-        
-        return basic_gates, counts
-            
-    basic_gates=[]
-    folded_counts=[]
-
-    for scale in scale_factors:
-        gates, counts=get_basic_gates(circuit, scale)
-        basic_gates.append(gates)
-        folded_counts.append(counts)
+    circuit = QuantumVolume(5)
+    pm = generate_preset_pass_manager(optimization_level=2, backend=FakeBrisbane())
+    transpiled_circuit = pm.run(circuit)
+    folded_circuit = fold_circuit(transpiled_circuit, scale_factor=5)
 
     grade({
-        'basic_gates': basic_gates,
-        'circuit': circuit,
-        'scale_factors': scale_factors,
-        'folded_counts': folded_counts
-
-    }, 'lab2-ex6', _challenge_id)
+        'transpiled_circuit_ops': transpiled_circuit.count_ops(),
+        'folded_circuit_ops': folded_circuit.count_ops()
+    }, 'lab2-ex6b', _challenge_id)
 
 
 @typechecked
 def grade_lab2_ex7(
-    pub: tuple, circuit: QuantumCircuit, noisy_backend, scales: list
+    basic_zne: callable
 ) -> None:
     
-    basis_gates = noisy_backend.target.operation_names
-    folded_circuit = [0]
+    max_cut_paulis = [
+        ('IIIZZ', 1),
+        ('IIIZZ', 1),
+        ('IIZIZ', 1),
+        ('IIZIZ', 1),
+        ('IZIIZ', 1),
+        ('IZIIZ', 1),
+        ('ZIIIZ', 1),
+        ('ZIIIZ', 1),
+        ('IIZZI', 1),
+        ('IIZZI', 1),
+        ('IZIZI', 1),
+        ('IZIZI', 1),
+        ('ZIIZI', 1),
+        ('ZIIZI', 1),
+        ('IZZII', 1),
+        ('IZZII', 1),
+        ('ZIZII', 1),
+        ('ZIZII', 1),
+        ('ZZIII', 1)
+    ]
+    cost_hamiltonian = SparsePauliOp.from_list(max_cut_paulis)
+    circuit = QAOAAnsatz(cost_operator=cost_hamiltonian, reps=2)
+    backend = GenericBackendV2(5, seed=43)
+    pm = generate_preset_pass_manager(optimization_level=2, backend=backend)
+    isa_circuit = pm.run(circuit)
+    xdata, exp_vals, pub = basic_zne(
+        isa_circuit, 
+        [5], 
+        backend, 
+        [0.90328799, 1.1925605 , 0.02658611, 0.94133493], 
+        cost_hamiltonian
+    )
+
+    folded_circuit = pub[0]
     observables = pub[1]
     parameters = pub[2]
 
     grade({
-        'basis_gates': basis_gates,
-        'folded_circuit': folded_circuit,
+        'transpiled_circuit_ops': isa_circuit.count_ops(),
+        'folded_circuit_ops': folded_circuit.count_ops(),
         'observables': observables,
         'parameters': parameters,
-        'circuit': circuit,
-        'scales': scales,
     }, 'lab2-ex7', _challenge_id)
