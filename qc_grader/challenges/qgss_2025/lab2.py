@@ -237,35 +237,14 @@ def grade_lab2_ex5(
 
 @typechecked
 def grade_lab2_ex6a(
-    fold_circuit: callable, circuit: QuantumCircuit, scale_factors: list, noisy_backends: list
+    fold_circuit: callable
 ) -> None:
     
-
-    def get_folded_circuits(circuit: QuantumCircuit, scale_factor: int):
-
-        circuits=[]
-
-        for noisy_backend in noisy_backends:
-            basis_gates = noisy_backend.target.operation_names
-
-            circuit_t = transpile(circuit, basis_gates=basis_gates)
-            folded = fold_circuit(circuit, scale_factor=scale_factor)
-
-            circuits.append(folded)
-        
-        return circuits
-
-            
-    folded_circuits=[]
-
-    for scale in scale_factors:
-        circuits=get_folded_circuits(circuit, scale)
-        folded_circuits.append(circuits)
+    circuit = QuantumVolume(5)
+    folded_circuit = fold_circuit(circuit, scale_factor=5)
 
     grade({
-        'folded_circuits': folded_circuits,
-        'circuit': circuit,
-        'scale_factors': scale_factors
+        'folded_circuit_ops': folded_circuit.count_ops()
     }, 'lab2-ex6a', _challenge_id)
 
 
