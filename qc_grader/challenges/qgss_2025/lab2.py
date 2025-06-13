@@ -4,7 +4,8 @@ from typing import List
 from qiskit import transpile, QuantumCircuit, generate_preset_pass_manager
 from qiskit.quantum_info import SparsePauliOp
 from qiskit.transpiler import generate_preset_pass_manager
-from qiskit.circuit.library import QuantumVolume
+from qiskit.circuit.library import QuantumVolume, QAOAAnsatz
+from qiskit.providers.fake_provider import GenericBackendV2
 
 from qiskit_ibm_runtime.fake_provider import FakeBrisbane
 import rustworkx
@@ -261,25 +262,55 @@ def grade_lab2_ex6b(
     grade({
         'transpiled_circuit_ops': transpiled_circuit.count_ops(),
         'folded_circuit_ops': folded_circuit.count_ops()
-
     }, 'lab2-ex6b', _challenge_id)
 
 
 @typechecked
 def grade_lab2_ex7(
-    pub: tuple, circuit: QuantumCircuit, noisy_backend, scales: list
+    basic_zne: callable
 ) -> None:
     
-    basis_gates = noisy_backend.target.operation_names
-    folded_circuit = [0]
+    max_cut_paulis = [
+        ('IIIZZ', 1),
+        ('IIIZZ', 1),
+        ('IIZIZ', 1),
+        ('IIZIZ', 1),
+        ('IZIIZ', 1),
+        ('IZIIZ', 1),
+        ('ZIIIZ', 1),
+        ('ZIIIZ', 1),
+        ('IIZZI', 1),
+        ('IIZZI', 1),
+        ('IZIZI', 1),
+        ('IZIZI', 1),
+        ('ZIIZI', 1),
+        ('ZIIZI', 1),
+        ('IZZII', 1),
+        ('IZZII', 1),
+        ('ZIZII', 1),
+        ('ZIZII', 1),
+        ('ZZIII', 1)
+    ]
+    cost_hamiltonian = SparsePauliOp.from_list(max_cut_paulis)
+    circuit = QAOAAnsatz(cost_operator=cost_hamiltonian, reps=2)
+    backend = GenericBackendV2(5, seed=43)
+    pm = generate_preset_pass_manager(optimization_level=2, backend=backend)
+    isa_circuit = pm.run(circuit)
+    xdata, exp_vals, pub = basic_zne(
+        isa_circuit, 
+        [5], 
+        backend, 
+        [0.90328799, 1.1925605 , 0.02658611, 0.94133493], 
+        cost_hamiltonian
+    )
+
+    folded_circuit = pub[0]
     observables = pub[1]
     parameters = pub[2]
 
     grade({
-        'basis_gates': basis_gates,
-        'folded_circuit': folded_circuit,
+        'transpiled_circuit_ops': isa_circuit.count_ops(),
+        'folded_circuit_ops': folded_circuit.count_ops(),
         'observables': observables,
         'parameters': parameters,
-        'circuit': circuit,
-        'scales': scales,
     }, 'lab2-ex7', _challenge_id)
