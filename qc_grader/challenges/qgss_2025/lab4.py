@@ -26,17 +26,17 @@ def grade_lab4_ex3(answer: str) -> None:
 
 @typechecked
 def grade_lab4_ex4(ansHx: np.ndarray, ansHz: np.ndarray) -> None:
-    answer = tuple[ansHx , ansHz ]
+    answer = (ansHx, ansHz)
     grade(answer, 'lab4-ex4', _challenge_id)
 
 
 @typechecked
 def grade_lab4_ex5(ansHx: np.ndarray, ansHz: np.ndarray) -> None:
-    answer = tuple[ansHx , ansHz ]
+    answer = (ansHx, ansHz)
     grade(answer, 'lab4-ex5', _challenge_id)
 
 
 @typechecked
 def grade_lab4_ex6(k_toric: int, k_gross: int) -> None:
-    answer = tuple[k_toric,k_gross]
+    answer = (k_toric, k_gross)
     grade(answer, 'lab4-ex6', _challenge_id)
