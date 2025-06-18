@@ -117,7 +117,7 @@ def prepare_backend(backend, circuit):
     for instruction in circuit.data:
         if instruction.operation.num_qubits == 1 and instruction.name !='measure':
             index = instruction.qubits[0]._index
-            acc_single_qubit_error += properties.gate_error(gate="x", qubits=index)
+            acc_single_qubit_error += properties.gate_error(gate=instruction.name, qubits=index)
             single_qubit_gate_count += 1
         elif instruction.operation.num_qubits == 2:
             pair = [instruction.qubits[0]._index, instruction.qubits[1]._index]
@@ -171,6 +171,7 @@ def grade_lab2_ex3(
     ]
     cost_hamiltonian = SparsePauliOp.from_list(max_cut_paulis)
     circuit = QAOAAnsatz(cost_operator=cost_hamiltonian, reps=2)
+    circuit.measure_all()
     backend = GenericBackendV2(5, seed=43)
     pm = generate_preset_pass_manager(optimization_level=2, backend=backend)
     qaoa_circuit = pm.run(circuit)
@@ -186,10 +187,9 @@ def grade_lab2_ex3(
         circuit = pm.run(qaoa_circuit)
         circuit_list.append(circuit)
         results_list.append(accumulated_errors(noisy_fake_backend, circuit))
-    for result, backend, circuit in zip(results_list, noisy_fake_backends, circuit_list):
+    for backend, circuit in zip(noisy_fake_backends, circuit_list):
         prepared_backend = prepare_backend(backend, circuit)
         prepared_backends.append(prepared_backend)
-
     grade({
         'results_list': results_list,
         'prepared_backends': prepared_backends,
@@ -429,7 +429,7 @@ def grade_lab2_ex5(
     prepa, prepb = prepare_submission(circuit_trivial, noisy_fake_backend)
     circuit_seed, best_seed_transpiler, min_err_acc_seed, best_two_qubit_gate_count = (
         finding_best_seed(circuit, noisy_fake_backend)
-        
+
 )
     grade({
         'best_seed_transpiler': best_seed_transpiler,
