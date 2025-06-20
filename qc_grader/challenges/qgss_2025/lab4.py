@@ -1,11 +1,20 @@
 from typeguard import typechecked
 from typing import Dict
 import numpy as np
+import hashlib
 
 from qc_grader.grader.grade import grade
 
 
 _challenge_id = 'qgss_2025'
+
+
+def robust_hash(arr):
+    h = hashlib.sha256()
+    h.update(arr.shape.__repr__().encode())
+    h.update(str(arr.dtype).encode())
+    h.update(arr.tobytes())
+    return h.hexdigest()
 
 
 @typechecked
@@ -26,13 +35,13 @@ def grade_lab4_ex3(answer: str) -> None:
 
 @typechecked
 def grade_lab4_ex4(ansHx: np.ndarray, ansHz: np.ndarray) -> None:
-    answer = (ansHx, ansHz)
+    answer = (robust_hash(ansHx), robust_hash(ansHz))
     grade(answer, 'lab4-ex4', _challenge_id)
 
 
 @typechecked
 def grade_lab4_ex5(ansHx: np.ndarray, ansHz: np.ndarray) -> None:
-    answer = (ansHx, ansHz)
+    answer = (robust_hash(ansHx), robust_hash(ansHz))
     grade(answer, 'lab4-ex5', _challenge_id)
 
 
