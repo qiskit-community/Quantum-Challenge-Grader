@@ -28,8 +28,8 @@ def grade_lab4_ex3(answer: str) -> None:
 def grade_lab4_ex4(ansHx: np.ndarray, ansHz: np.ndarray) -> None:
     random_row_indices = np.random.choice(72, 10, replace=False)
     sel_ansHX = np.where(ansHx[random_row_indices]==1)
-    sel_solHZ = np.where(ansHz[random_row_indices]==1)
-    answer = (random_row_indices, sel_ansHX, sel_solHZ)
+    sel_ansHZ = np.where(ansHz[random_row_indices]==1)
+    answer = (random_row_indices, sel_ansHX, sel_ansHZ)
     grade(answer, 'lab4-ex4', _challenge_id)
 
 
@@ -37,8 +37,8 @@ def grade_lab4_ex4(ansHx: np.ndarray, ansHz: np.ndarray) -> None:
 def grade_lab4_ex5(ansHx: np.ndarray, ansHz: np.ndarray) -> None:
     random_row_indices = np.random.choice(72, 10, replace=False)
     sel_ansHX = np.where(ansHx[random_row_indices]==1)
-    sel_solHZ = np.where(ansHz[random_row_indices]==1)
-    answer = (random_row_indices, sel_ansHX, sel_solHZ)
+    sel_ansHZ = np.where(ansHz[random_row_indices]==1)
+    answer = (random_row_indices, sel_ansHX, sel_ansHZ)
     #answer = (ansHx, ansHz)
     grade(answer, 'lab4-ex5', _challenge_id)
 
