@@ -26,13 +26,20 @@ def grade_lab4_ex3(answer: str) -> None:
 
 @typechecked
 def grade_lab4_ex4(ansHx: np.ndarray, ansHz: np.ndarray) -> None:
-    answer = (ansHx, ansHz)
+    random_row_indices = np.random.choice(72, 10, replace=False)
+    sel_ansHX = np.where(ansHx[random_row_indices]==1)
+    sel_solHZ = np.where(ansHz[random_row_indices]==1)
+    answer = (random_row_indices, sel_ansHX, sel_solHZ)
     grade(answer, 'lab4-ex4', _challenge_id)
 
 
 @typechecked
 def grade_lab4_ex5(ansHx: np.ndarray, ansHz: np.ndarray) -> None:
-    answer = (ansHx, ansHz)
+    random_row_indices = np.random.choice(72, 10, replace=False)
+    sel_ansHX = np.where(ansHx[random_row_indices]==1)
+    sel_solHZ = np.where(ansHz[random_row_indices]==1)
+    answer = (random_row_indices, sel_ansHX, sel_solHZ)
+    #answer = (ansHx, ansHz)
     grade(answer, 'lab4-ex5', _challenge_id)
 
 
