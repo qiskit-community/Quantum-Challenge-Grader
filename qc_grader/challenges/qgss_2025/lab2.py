@@ -6,10 +6,12 @@ from qiskit.quantum_info import SparsePauliOp
 from qiskit.transpiler import generate_preset_pass_manager
 from qiskit.circuit.library import QuantumVolume, QAOAAnsatz
 from qiskit.providers.fake_provider import GenericBackendV2
-
+from qiskit_ibm_runtime import QiskitRuntimeService
 from qiskit_ibm_runtime.fake_provider import FakeBrisbane
 import rustworkx
-
+import rustworkx as rx
+import numpy as np
+from qiskit_aer import AerSimulator
 from qc_grader.grader.grade import grade
 
 
@@ -19,9 +21,10 @@ _challenge_id = 'qgss_2025'
 
 @typechecked
 def grade_lab2_ex1(
-    solutions: List, backend
+    find_best_metrics: callable
 ) -> None:
-    
+    service = QiskitRuntimeService()
+    backend = service.backend("ibm_brisbane")
     properties = backend.properties()
     num_qubits = backend.num_qubits
     coupling_map = backend.coupling_map
@@ -50,14 +53,14 @@ def grade_lab2_ex1(
         [index_min_readout, min_readout],
         [min_ecr_pair, min_ecr_error],
     ]
-
+    solutions=find_best_metrics(backend)
     grade({
         'solutions': solutions,
         'key_values': key_values,
     }, 'lab2-ex1', _challenge_id)
 
 
-def prepare_graph(graph) -> list[tuple[str, float]]:
+def prepare_list_from_graph(graph) -> list[tuple[str, float]]:
     # Convert the graph to Pauli list.
     pauli_list = []
     for edge in list(graph.edge_list()):
@@ -70,13 +73,22 @@ def prepare_graph(graph) -> list[tuple[str, float]]:
 
 @typechecked
 def grade_lab2_ex2(
-    cost_hamiltonian: SparsePauliOp, graph: rustworkx.PyGraph
+    graph_to_Pauli: callable
 ) -> None:
-    prepared_graph = prepare_graph(graph)
-
+    # Define the graph:
+    seed = 43
+    n = 5
+    graph = rx.PyGraph()
+    graph.add_nodes_from(np.arange(0, n, 1))
+    generic_backend = GenericBackendV2(n, seed=seed)
+    weights = 1
+    graph.add_edges_from([(edge[0], edge[1], weights) for edge in generic_backend.coupling_map][:-1])
+    prepared_list = prepare_list_from_graph(graph)
+    max_cut_paulis = graph_to_Pauli(graph)
+    cost_hamiltonian = SparsePauliOp.from_list(max_cut_paulis)
     grade({
         'cost_hamiltonian': cost_hamiltonian,
-        'prepared_graph': prepared_graph,
+        'prepared_list': prepared_list,
     }, 'lab2-ex2', _challenge_id)
 
 
@@ -103,9 +115,9 @@ def prepare_backend(backend, circuit):
     two_qubit_gate_count = 0
     # Looping over the instructions to account for the errors
     for instruction in circuit.data:
-        if instruction.operation.num_qubits == 1:
+        if instruction.operation.num_qubits == 1 and instruction.name !='measure':
             index = instruction.qubits[0]._index
-            acc_single_qubit_error += properties.gate_error(gate="x", qubits=index)
+            acc_single_qubit_error += properties.gate_error(gate=instruction.name, qubits=index)
             single_qubit_gate_count += 1
         elif instruction.operation.num_qubits == 2:
             pair = [instruction.qubits[0]._index, instruction.qubits[1]._index]
@@ -125,13 +137,59 @@ def prepare_backend(backend, circuit):
 
 @typechecked
 def grade_lab2_ex3(
-    results_list: list, backend_list: list, circuit_list: list
+    accumulated_errors: callable
 ) -> None:
+    service=QiskitRuntimeService()
+    real_backends = [
+    service.backend("ibm_brisbane"),
+    service.backend("ibm_sherbrooke"),
+    service.backend("ibm_torino")]
+    seed=43
+    noisy_fake_backends = []
+    for backend in real_backends:
+        noisy_fake_backends.append(AerSimulator.from_backend(backend, seed_simulator=seed))
+    max_cut_paulis = [
+        ('IIIZZ', 1),
+        ('IIIZZ', 1),
+        ('IIZIZ', 1),
+        ('IIZIZ', 1),
+        ('IZIIZ', 1),
+        ('IZIIZ', 1),
+        ('ZIIIZ', 1),
+        ('ZIIIZ', 1),
+        ('IIZZI', 1),
+        ('IIZZI', 1),
+        ('IZIZI', 1),
+        ('IZIZI', 1),
+        ('ZIIZI', 1),
+        ('ZIIZI', 1),
+        ('IZZII', 1),
+        ('IZZII', 1),
+        ('ZIZII', 1),
+        ('ZIZII', 1),
+        ('ZZIII', 1)
+    ]
+    cost_hamiltonian = SparsePauliOp.from_list(max_cut_paulis)
+    circuit = QAOAAnsatz(cost_operator=cost_hamiltonian, reps=2)
+    circuit.measure_all()
+    backend = GenericBackendV2(5, seed=43)
+    pm = generate_preset_pass_manager(optimization_level=2, backend=backend)
+    qaoa_circuit = pm.run(circuit)
     prepared_backends=[]
-    for result, backend, circuit in zip(results_list, backend_list, circuit_list):
+    circuit_list=[]
+    results_list=[]
+    for noisy_fake_backend in noisy_fake_backends:
+        pm = generate_preset_pass_manager(
+            backend=noisy_fake_backend,
+            optimization_level=3,
+            seed_transpiler=seed,
+        )
+        circuit = pm.run(qaoa_circuit)
+        circuit_list.append(circuit)
+        results_list.append(accumulated_errors(noisy_fake_backend, circuit))
+    for backend, circuit in zip(noisy_fake_backends, circuit_list):
         prepared_backend = prepare_backend(backend, circuit)
         prepared_backends.append(prepared_backend)
-
     grade({
         'results_list': results_list,
         'prepared_backends': prepared_backends,
@@ -139,7 +197,7 @@ def grade_lab2_ex3(
 
 
 #TODO obscuse
-def find_paths_with_weight_sum_below_threshold(
+def my_find_paths_with_weight_sum_below_threshold(
     graph, threshold, two_qubit_ops_list, logical_pair_list
 ):
     valid_paths = []
@@ -183,12 +241,119 @@ def find_paths_with_weight_sum_below_threshold(
                 valid_weights.append(weight)
     return valid_paths, valid_weights
 
+# We define the threshold and two_qubit_ops_list
+def two_qubit_gate_errors_per_circuit_layout(
+    circuit: QuantumCircuit, backend: QiskitRuntimeService.backend
+) -> tuple:
+    """Calculate accumulated two-qubit gate errors and related metrics for a given circuit layout."""
+    pair_list = []
+    error_pair_list = []
+    error_acc_pair_list = []
+    two_qubit_gate_count = 0
+    properties = backend.properties()
+    if "ecr" in (backend.configuration().basis_gates):
+        two_qubit_gate = "ecr"
+    elif "cz" in (backend.configuration().basis_gates):
+        two_qubit_gate = "cz"
+    for instruction in circuit.data:
+        if instruction.operation.num_qubits == 2:
+            two_qubit_gate_count += 1
+            pair = [instruction.qubits[0]._index, instruction.qubits[1]._index]
+            error_pair = properties.gate_error(gate=two_qubit_gate, qubits=pair)
+            if pair not in (pair_list):
+                pair_list.append(pair)
+                error_pair_list.append(error_pair)
+                error_acc_pair_list.append(error_pair)
+            else:
+                pos = pair_list.index(pair)
+                error_acc_pair_list[pos] += error_pair
+
+    acc_two_qubit_error = sum(error_acc_pair_list)
+    return (
+        acc_two_qubit_error,
+        two_qubit_gate_count,
+        pair_list,
+        error_pair_list,
+        error_acc_pair_list,
+    )
 
 @typechecked
 def grade_lab2_ex4(
-    valid_paths: list, valid_weights: list, graph: rustworkx.PyDiGraph, threshold: float, two_qubit_ops_list: list, logical_pair_list: list) -> None:
-    
-    prepa, prepb = find_paths_with_weight_sum_below_threshold(
+    find_paths_with_weight_sum_below_threshold: callable) -> None:
+    # We define the graph
+    service=QiskitRuntimeService()
+    seed=43
+    noisy_fake_backend=AerSimulator.from_backend(service.backend("ibm_brisbane"), seed_simulator=seed)
+    graph = rx.PyDiGraph()
+    graph.add_nodes_from(np.arange(0, noisy_fake_backend.num_qubits, 1))
+    two_qubit_gate_graph = "ecr"
+    graph.add_edges_from(
+        [
+            (
+                edge[0],
+                edge[1],
+                noisy_fake_backend.properties().gate_error(
+                    gate=two_qubit_gate_graph, qubits=(edge[0], edge[1])
+                ),
+            )
+            for edge in noisy_fake_backend.coupling_map
+        ]
+    )
+
+
+    max_cut_paulis = [
+        ('IIIZZ', 1),
+        ('IIIZZ', 1),
+        ('IIZIZ', 1),
+        ('IIZIZ', 1),
+        ('IZIIZ', 1),
+        ('IZIIZ', 1),
+        ('ZIIIZ', 1),
+        ('ZIIIZ', 1),
+        ('IIZZI', 1),
+        ('IIZZI', 1),
+        ('IZIZI', 1),
+        ('IZIZI', 1),
+        ('ZIIZI', 1),
+        ('ZIIZI', 1),
+        ('IZZII', 1),
+        ('IZZII', 1),
+        ('ZIZII', 1),
+        ('ZIZII', 1),
+        ('ZZIII', 1)
+    ]
+    cost_hamiltonian = SparsePauliOp.from_list(max_cut_paulis)
+    circuit = QAOAAnsatz(cost_operator=cost_hamiltonian, reps=2)
+
+    pm = generate_preset_pass_manager(
+        backend=noisy_fake_backend,
+        optimization_level=3,
+        seed_transpiler=seed,
+        layout_method="sabre",
+    )
+    circuit_transpiled = pm.run(circuit)
+    (
+        acc_two_qubit_error,
+        two_qubit_gate_count,
+        pair_list,
+        error_pair_list,
+        error_acc_pair_list,
+    ) = two_qubit_gate_errors_per_circuit_layout(circuit_transpiled, noisy_fake_backend)
+    two_qubit_ops_list = [int(a / b) for a, b in zip(error_acc_pair_list, error_pair_list)]
+    threshold=acc_two_qubit_error
+    # We define logical_pair_list
+    def remap_nodes(original_labels: list, edge_list: list[list]) -> list[list[int]]:
+        """Remap node labels to a new sequence starting from 0 based on their order in original_labels."""
+        label_mapping = {label: idx for idx, label in enumerate(original_labels)}
+        remapped = [[label_mapping[src], label_mapping[dst]] for src, dst in edge_list]
+        return remapped
+    layout_list = list(circuit_transpiled.layout.initial_layout.get_physical_bits().keys())[:5]
+    logical_pair_list = remap_nodes(layout_list, pair_list)
+    # We execute the functions
+    valid_paths, valid_weights = find_paths_with_weight_sum_below_threshold(
+        graph, threshold, two_qubit_ops_list, logical_pair_list
+    )
+    prepa, prepb = my_find_paths_with_weight_sum_below_threshold(
         graph, threshold, two_qubit_ops_list, logical_pair_list
     )
 
@@ -203,13 +368,13 @@ def grade_lab2_ex4(
 #TODO obscuse
 @typechecked
 def grade_lab2_ex5(
-    best_seed_transpiler: int, min_err_acc_seed: float, circuit_trivial: QuantumCircuit, noisy_backend, two_qubit_gate_errors_per_circuit_layout: callable
+    finding_best_seed: callable
 ) -> None:
     
     #TODO obfuscate
     def prepare_submission(circuit, backend):
-        min_err_acc_seed = 1
-        for seed_transpiler in range(0, 1000):
+        min_err_acc_seed = 100
+        for seed_transpiler in range(0, 500):
             pm = generate_preset_pass_manager(
                 backend=backend,
                 optimization_level=3,
@@ -225,9 +390,47 @@ def grade_lab2_ex5(
                 min_err_acc_seed = acc_total_error_seed
                 best_seed_transpiler = seed_transpiler
         return best_seed_transpiler, min_err_acc_seed
+    # Define noisy_fake_backend
+    service=QiskitRuntimeService()
+    seed=43
+    noisy_fake_backend=AerSimulator.from_backend(service.backend("ibm_brisbane"), seed_simulator=seed)
+    # Define circuit trivial
+    max_cut_paulis = [
+        ('IIIZZ', 1),
+        ('IIIZZ', 1),
+        ('IIZIZ', 1),
+        ('IIZIZ', 1),
+        ('IZIIZ', 1),
+        ('IZIIZ', 1),
+        ('ZIIIZ', 1),
+        ('ZIIIZ', 1),
+        ('IIZZI', 1),
+        ('IIZZI', 1),
+        ('IZIZI', 1),
+        ('IZIZI', 1),
+        ('ZIIZI', 1),
+        ('ZIIZI', 1),
+        ('IZZII', 1),
+        ('IZZII', 1),
+        ('ZIZII', 1),
+        ('ZIZII', 1),
+        ('ZZIII', 1)
+    ]
+    cost_hamiltonian = SparsePauliOp.from_list(max_cut_paulis)
+    circuit = QAOAAnsatz(cost_operator=cost_hamiltonian, reps=2)
 
-    prepa, prepb = prepare_submission(circuit_trivial, noisy_backend)
+    pm = generate_preset_pass_manager(
+        backend=noisy_fake_backend,
+        optimization_level=3,
+        seed_transpiler=seed,
+        layout_method="sabre",
+    )
+    circuit_trivial = pm.run(circuit)    
+    prepa, prepb = prepare_submission(circuit_trivial, noisy_fake_backend)
+    circuit_seed, best_seed_transpiler, min_err_acc_seed, best_two_qubit_gate_count = (
+        finding_best_seed(circuit, noisy_fake_backend)
 
+)
     grade({
         'best_seed_transpiler': best_seed_transpiler,
         'min_err_acc_seed': min_err_acc_seed,
@@ -236,12 +439,15 @@ def grade_lab2_ex5(
     }, 'lab2-ex5', _challenge_id)
 
 
+
 @typechecked
 def grade_lab2_ex6a(
     fold_circuit: callable
 ) -> None:
     
     circuit = QuantumVolume(5)
+    circuit.measure_all()
+    
     folded_circuit = fold_circuit(circuit, scale_factor=5)
 
     grade({
@@ -255,6 +461,8 @@ def grade_lab2_ex6b(
 ) -> None:
     
     circuit = QuantumVolume(5)
+    circuit.measure_all()
+
     pm = generate_preset_pass_manager(optimization_level=2, backend=FakeBrisbane())
     transpiled_circuit = pm.run(circuit)
     folded_circuit = fold_circuit(transpiled_circuit, scale_factor=5)
@@ -296,7 +504,7 @@ def grade_lab2_ex7(
     backend = GenericBackendV2(5, seed=43)
     pm = generate_preset_pass_manager(optimization_level=2, backend=backend)
     isa_circuit = pm.run(circuit)
-    xdata, exp_vals, pub = basic_zne(
+    xdata, exp_vals, pub, folded_circuit = basic_zne(
         isa_circuit, 
         [5], 
         backend, 
@@ -304,7 +512,6 @@ def grade_lab2_ex7(
         cost_hamiltonian
     )
 
-    folded_circuit = pub[0]
     observables = pub[1]
     parameters = pub[2]
 
