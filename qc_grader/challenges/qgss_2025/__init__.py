@@ -1,9 +1,9 @@
-from .lab0 import (
+from .qgss25_lab0 import (
     grade_lab0_ex1,
     grade_lab0_ex2,
 )
 
-from .lab1 import (
+from .qgss25_lab1 import (
     grade_lab1_ex1_1,
     grade_lab1_ex1_2,
     grade_lab1_ex1_3,
@@ -15,7 +15,7 @@ from .lab1 import (
     grade_lab1_ex6
 )
 
-from .lab2 import (
+from .qgss25_lab2 import (
     grade_lab2_ex1,
     grade_lab2_ex2,
     grade_lab2_ex3,
@@ -26,7 +26,7 @@ from .lab2 import (
     grade_lab2_ex7
 )
 
-from .lab3 import (
+from .qgss25_lab3 import (
     grade_lab3_ex1,
     grade_lab3_ex2,
     grade_lab3_ex3,
@@ -34,7 +34,7 @@ from .lab3 import (
     grade_lab3_ex5
 )
 
-from .lab4 import (
+from .qgss25_lab4 import (
     grade_lab4_ex1,
     grade_lab4_ex2,
     grade_lab4_ex3,
