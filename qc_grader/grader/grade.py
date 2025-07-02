@@ -22,6 +22,7 @@ from qc_grader.grader.auth import IAMAuth
 from .api import (
     get_grading_endpoint,
     get_labs_status_endpoint,
+    get_labs_progress_endpoint,
     get_problem_set_endpoint,
     get_submission_endpoint,
     send_request,
@@ -31,7 +32,7 @@ from .api import (
 iam_auth = IAMAuth()
 
 
-def check_lab_completion_status(challenge_id: str):
+def check_user_completion_status(challenge_id: str):
     try:
         access_token = iam_auth.get_access_token()
         account = iam_auth.get_user_account()
@@ -52,6 +53,38 @@ def check_lab_completion_status(challenge_id: str):
         )
 
         return response
+
+    except Exception as err:
+        print(f'Failed: {err}')
+        return []
+
+
+def check_lab_completion_status(challenge_id: str):
+    try:
+        access_token = iam_auth.get_access_token()
+        account = iam_auth.get_user_account()
+        if access_token:
+            header = {
+                'Authorization': f'Bearer {access_token}',
+                'X-QC-Account': account.get("account_id"),
+                'X-QC-User': account.get("iam_id"),
+            }
+        else:
+            header = None
+
+        endpoint = get_labs_progress_endpoint(challenge_id)
+        response = send_request(
+            endpoint,
+            method='GET',
+            header=header,
+        )
+
+        for res in response:
+            c = response[res]['completed']
+            t = response[res]['total']
+            p = "{:.0%}".format(c/t)
+            print(f"{res}: {c}/{t} exercises completed ({p})")
+            print(f"    ✅ {response[res]['participants']} participants have completed this lab")
 
     except Exception as err:
         print(f'Failed: {err}')

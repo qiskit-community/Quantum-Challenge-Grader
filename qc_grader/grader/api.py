@@ -115,6 +115,28 @@ def get_labs_status_endpoint(challenge_id: str) -> Optional[str]:
     return f'{normalize_slash(_api_submit_url)}stats/{challenge_id}/status'
 
 
+def get_labs_progress_endpoint(challenge_id: str) -> Optional[str]:
+    # https://challenges-api-dev.quantum.ibm.com
+    global _api_submit_url
+    if not _api_submit_url:
+        for endpoint in submission_endpoints:
+            try:
+                response = requests.get(url=f'{normalize_slash(endpoint)}server/health')
+                response.raise_for_status()
+                if response.status_code == 200:
+                    _api_submit_url = endpoint
+                    break
+            except Exception as err:
+                pass
+
+    if not _api_submit_url:
+        print('Could not find a valid API server or '
+              'the API servers are down right now.')
+        return None
+
+    return f'{normalize_slash(_api_submit_url)}stats/{challenge_id}/progress'
+
+
 def get_grading_endpoint(
     question_id: Union[str, int], challenge_id: str
 ) -> Optional[str]:
