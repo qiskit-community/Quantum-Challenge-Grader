@@ -220,9 +220,9 @@ def grade_lab2_ex6a(
 def grade_lab2_ex6b(
     fold_circuit: callable
 ) -> None:    
-    circuit = QuantumVolume(5)
+    circuit = QuantumVolume(5,seed=43)
     circuit.measure_all()
-    pm = generate_preset_pass_manager(optimization_level=2, backend=FakeBrisbane())
+    pm = generate_preset_pass_manager(optimization_level=2, backend=FakeBrisbane(),seed_transpiler=43)
     transpiled_circuit = pm.run(circuit)
     folded_circuit = fold_circuit(transpiled_circuit, scale_factor=5)
     grade(folded_circuit, 'lab2-ex6b', _challenge_id)
