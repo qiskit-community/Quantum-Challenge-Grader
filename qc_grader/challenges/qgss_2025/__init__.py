@@ -22,8 +22,7 @@ from .qgss25_lab2 import (
     grade_lab2_ex4,
     grade_lab2_ex5,
     grade_lab2_ex6a,
-    grade_lab2_ex6b,
-    grade_lab2_ex7
+    grade_lab2_ex6b
 )
 
 from .qgss25_lab3 import (
