@@ -39,7 +39,7 @@ Account credentials missing or not properly saved.
 Please save your account using `QiskitRuntimeService.save_account` following the instructions 
 of QGSS 2025 Lab 0: https://github.com/qiskit-community/qgss-2025
 """)
-            raise ValueError("Account credentials missing or not properly saved")
+            raise ValueError("Account credentials missing or not properly saved. Please save your account using `QiskitRuntimeService.save_account` following the instructions of QGSS 2025 Lab 0: https://github.com/qiskit-community/qgss-2025")
 
         self.authenticator = IAMAuthenticator(self.api_key, url=self.token_url, disable_ssl_verification=True)
 
