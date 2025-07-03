@@ -31,15 +31,15 @@ class IAMAuth:
         self.api_key = os.getenv('IBMCLOUD_API_KEY')
         if self.api_key is None:
             from qiskit_ibm_runtime import QiskitRuntimeService
-            self.api_key = QiskitRuntimeService.saved_accounts().get('default-ibm-cloud', {}).get('token')
+            self.api_key = QiskitRuntimeService.saved_accounts().get('qgss-2025', {}).get('token')
 
         if self.api_key is None:
             print("""
 Account credentials missing or not properly saved.
-Please save your account using `QiskitRuntimeService.save_account`:
-https://docs.quantum.ibm.com/migration-guides/classic-iqp-to-cloud-iqp#set-up-your-credentials
+Please save your account using `QiskitRuntimeService.save_account` following the instructions 
+of QGSS 2025 Lab 0: https://github.com/qiskit-community/qgss-2025
 """)
-            raise ValueError("Account credentials missing or not properly saved")
+            raise ValueError("Account credentials missing or not properly saved. Please save your account using `QiskitRuntimeService.save_account` following the instructions of QGSS 2025 Lab 0: https://github.com/qiskit-community/qgss-2025")
 
         self.authenticator = IAMAuthenticator(self.api_key, url=self.token_url, disable_ssl_verification=True)
 
@@ -49,10 +49,14 @@ https://docs.quantum.ibm.com/migration-guides/classic-iqp-to-cloud-iqp#set-up-yo
         except Exception as e:
             print("""
 Account token is invalid or cannot be verified.
-Please save a new account instance using `QiskitRuntimeService.save_account`:
-https://docs.quantum.ibm.com/migration-guides/classic-iqp-to-cloud-iqp#set-up-your-credentials
+Please save a new account instance using `QiskitRuntimeService.save_account` following the
+instructions of QGSS 2025 Lab 0: https://github.com/qiskit-community/qgss-2025
 """)
-            raise ValueError("Account token is invalid or cannot be verified")
+            raise ValueError("""
+Account token is invalid or cannot be verified.
+Please save a new account instance using `QiskitRuntimeService.save_account` following the
+instructions of QGSS 2025 Lab 0: https://github.com/qiskit-community/qgss-2025
+""")
 
     def get_user_account(self):
         import ssl
