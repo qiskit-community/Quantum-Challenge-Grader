@@ -52,7 +52,11 @@ Account token is invalid or cannot be verified.
 Please save a new account instance using `QiskitRuntimeService.save_account` following the
 instructions of QGSS 2025 Lab 0: https://github.com/qiskit-community/qgss-2025
 """)
-            raise ValueError("Account token is invalid or cannot be verified")
+            raise ValueError("""
+Account token is invalid or cannot be verified.
+Please save a new account instance using `QiskitRuntimeService.save_account` following the
+instructions of QGSS 2025 Lab 0: https://github.com/qiskit-community/qgss-2025
+""")
 
     def get_user_account(self):
         import ssl
