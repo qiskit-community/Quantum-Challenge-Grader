@@ -31,7 +31,7 @@ class IAMAuth:
         self.api_key = os.getenv('IBMCLOUD_API_KEY')
         if self.api_key is None:
             from qiskit_ibm_runtime import QiskitRuntimeService
-            self.api_key = QiskitRuntimeService.saved_accounts().get('default-ibm-cloud', {}).get('token')
+            self.api_key = QiskitRuntimeService.saved_accounts().get('qgss-2025', {}).get('token')
 
         if self.api_key is None:
             print("""
