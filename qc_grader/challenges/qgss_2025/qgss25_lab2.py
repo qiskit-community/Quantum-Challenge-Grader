@@ -132,7 +132,6 @@ def two_qubit_gate_errors_per_circuit_layout(
 def grade_lab2_ex4(
     find_paths_with_weight_sum_below_threshold: callable) -> None:
     # We define the graph
-    service=QiskitRuntimeService()
     seed=43
     noisy_fake_backend=FakeBrisbane()
     graph = rx.PyDiGraph()
