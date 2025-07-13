@@ -41,3 +41,14 @@ from .qgss25_lab4 import (
     grade_lab4_ex5,
     grade_lab4_ex6,
 )
+
+from .qgss25_functions_labs import (
+    grade_algorithmiq_function,
+    grade_colibritd_function,
+    grade_gdq_function,
+    grade_kipu_function,
+    grade_multiverse_function,
+    grade_qctrl_function,
+    grade_qedma_function,
+    grade_qunova_function,
+)
