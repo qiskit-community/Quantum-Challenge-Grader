@@ -12,6 +12,7 @@
 # that they have been altered from the originals.
 
 from .exercise1 import (
+    submit_name,
     grade_ex1a,
     grade_ex1b,
     grade_ex1c,
@@ -19,3 +20,5 @@ from .exercise1 import (
 )
 
 from .exercise2 import grade_ex2a, grade_ex2b
+
+
