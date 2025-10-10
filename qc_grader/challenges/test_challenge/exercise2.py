@@ -21,6 +21,7 @@ from qc_grader.grader.grade import grade
 
 challenge_id = Path(__file__).parent.name
 
+
 @typechecked
 def grade_ex2a(qc: QuantumCircuit) -> None:
     grade(qc, 'test-circuit', challenge_id)
