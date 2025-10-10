@@ -22,14 +22,6 @@ from qc_grader.grader.grade import grade
 challenge_id = Path(__file__).parent.name
 
 @typechecked
-def submit_name(name: str) -> None:
-    status, score, message = grade(name, 'submit-name', challenge_id, return_response=True)
-    if status == False:
-        print(message)
-    else:
-        print('Team name submitted.')
-
-@typechecked
 def grade_ex2a(qc: QuantumCircuit) -> None:
     grade(qc, 'test-circuit', challenge_id)
 
