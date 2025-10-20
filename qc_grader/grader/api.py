@@ -26,10 +26,10 @@ from qiskit_ibm_runtime import QiskitRuntimeService
 
 is_staging: bool = 'auth-dev' in os.getenv('QXAuthURL', 'auth')
 
-# possible challenge grading endpoints: https://qac-grading-dev.quantum.ibm.com
+# possible challenge grading endpoints: https://qac-grading-dev.quantum-computing.ibm.com
 grading_endpoints: List[str] = [
     'http://127.0.0.1:5000',
-    f'https://qac-grading{"-dev" if is_staging else ""}.quantum.ibm.com'
+    f'https://qac-grading{"-dev" if is_staging else ""}.quantum-computing.ibm.com'
 ]
 
 # possible challenge api endpoints: https://challenges-api-dev.quantum.ibm.com
