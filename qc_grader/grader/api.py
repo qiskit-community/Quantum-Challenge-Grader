@@ -24,7 +24,7 @@ from qiskit_ibm_runtime import QiskitRuntimeService
 
 
 
-is_staging: bool = 'auth-dev' in os.getenv('QXAuthURL', 'auth')
+is_staging: bool = os.getenv('TARGET_ENV', 'production').lower() == 'staging'
 
 # possible challenge grading endpoints: https://qac-grading-dev.quantum.ibm.com
 grading_endpoints: List[str] = [
@@ -38,11 +38,10 @@ submission_endpoints: List[str] = [
     f'https://challenges-api{"-dev" if is_staging else ""}.quantum.ibm.com'
 ]
 
-_api_auth_url: Optional[str] = os.getenv('QXAuthURL')
 _api_grade_url: Optional[str] = os.getenv('QC_GRADING_ENDPOINT')
 _api_submit_url: Optional[str] = os.getenv('QC_API_ENDPOINT')
 _api_iam_token_url: Optional[str] = os.getenv('QC_IAM_TOKEN_ENDPOINT')
-_grade_only: Optional[Union[bool, str]] = os.getenv('QC_GRADE_ONLY')
+_grade_only: Optional[Union[bool, str]] = os.getenv('QC_GRADE_ONLY', True)
 
 
 class MaxContentError(BaseException):
@@ -59,14 +58,6 @@ def get_iam_token_endpoint() -> Optional[str]:
     if not _api_iam_token_url:
         _api_iam_token_url = "https://iam.cloud.ibm.com/identity/token"
     return remove_slash(_api_iam_token_url)
-
-
-def get_auth_endpoint() -> Optional[str]:
-    # https://auth-dev.quantum.ibm.com/api
-    global _api_auth_url
-    if not _api_auth_url:
-        _api_auth_url = f'https://auth{"-dev" if is_staging else ""}.quantum.ibm.com/api'
-    return normalize_slash(_api_auth_url)
 
 
 def get_problem_set_endpoint(
@@ -183,21 +174,6 @@ def get_submission_endpoint(
         return None
 
     return f'{normalize_slash(_api_submit_url)}items/answers'
-
-
-def get_access_token() -> Optional[str]:
-    iqx_token = os.getenv('QXToken')
-    if iqx_token is None:
-        iqx_token = QiskitRuntimeService.saved_accounts().get('default-ibm-quantum', {}).get('token')
-    if iqx_token is None:
-        return None
-
-    baseurl = get_auth_endpoint()
-    endpoint = urljoin(baseurl, './users/loginWithToken')
-    response = requests.post(endpoint, json={'apiToken': iqx_token})
-    response.raise_for_status()
-    return response.json()['id']
-
 
 def get_question_set(
     challenge_id: str
