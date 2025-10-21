@@ -65,6 +65,9 @@ instructions of QGSS 2025 Lab 0: https://github.com/qiskit-community/qgss-2025
         context.verify_mode = ssl.CERT_OPTIONAL
 
         iam_service = IamIdentityV1(authenticator=self.authenticator)
+
+        iam_service.service_url = os.getenv("IAM_URL", "https://iam.cloud.ibm.com")
+        
         details = iam_service.get_api_keys_details(iam_api_key=self.api_key).get_result()
         return {
             "account_id": details.get("account_id"),
