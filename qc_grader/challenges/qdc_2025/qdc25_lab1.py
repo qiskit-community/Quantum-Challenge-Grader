@@ -48,7 +48,6 @@ def grade_lab1_ex4(isa_circuits: list, lattice: HeavyHexLattice, dt: float, back
         "plaq_width": plaq_width,
         "plaq_height": plaq_height,
         "dt": dt
-        "backend": backend
     }
     grade(answer_dict, 'lab1-ex4', _challenge_id)
 
