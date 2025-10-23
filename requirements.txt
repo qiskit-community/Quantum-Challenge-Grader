@@ -1,7 +1,6 @@
 typeguard
 jsonpickle==3.0.3
 requests==2.32.3
-lattice
 
 ipycytoscape
 plotly
