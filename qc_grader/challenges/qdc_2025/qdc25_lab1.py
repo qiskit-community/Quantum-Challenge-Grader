@@ -54,9 +54,9 @@ def grade_lab1_ex4(isa_circuits: list, lattice: HeavyHexLattice, dt: float, back
 @typechecked
 def grade_lab1_ex5(best_expectation_vals: numpy.ndarray, qubit: int, dt: float, classical_exp_vals: numpy.ndarray ) -> None:
     answer_dict = {
-        "best_expectation_vals": best_expectation_vals
+        "best_expectation_vals": best_expectation_vals,
         "qubit": qubit,
-        "dt": dt
+        "dt": dt,
         "classical_exp_vals": classical_exp_vals
     }
     grade(answer_dict, 'lab1-ex5', _challenge_id)
