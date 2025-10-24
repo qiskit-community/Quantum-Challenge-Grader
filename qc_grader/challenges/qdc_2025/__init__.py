@@ -8,6 +8,7 @@ from .qdc25_lab1 import (
 )
 
 from .qdc25_lab2 import (
+    submit_name,
     grade_lab2_ex1,
     grade_lab2_ex2,
     grade_lab2_ex3,
