@@ -1,7 +1,7 @@
 from typeguard import typechecked
 
 from qiskit import QuantumCircuit
-from lattice import HeavyHexLattice
+from .lattice import HeavyHexLattice
 from qc_grader.grader.grade import grade
 from qiskit_ibm_runtime.ibm_backend import IBMBackend
 from qiskit_ibm_runtime import EstimatorV2
