@@ -1,7 +1,7 @@
 from typeguard import typechecked
 
 from qiskit import QuantumCircuit
-from lattice import HeavyHexLattice
+from .lattice import HeavyHexLattice
 from qc_grader.grader.grade import grade
 from qiskit_ibm_runtime.ibm_backend import IBMBackend
 from qiskit_ibm_runtime import EstimatorV2
@@ -36,6 +36,15 @@ from qiskit import qpy
 
 _challenge_id = "qdc_2025"
 
+@typechecked
+def submit_name(name: str) -> None:
+    status, score, message = grade(
+        name, "submit-name", _challenge_id, return_response=True
+    )
+    if status == False:
+        print(message)
+    else:
+        print("Team name submitted.")
 
 @typechecked
 def grade_lab2_ex1(observables: List) -> None:
