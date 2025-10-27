@@ -40,3 +40,12 @@ from .qdc25_lab3 import (
     grade_lab3_ex13,
     grade_lab3_ex14
 )
+
+from .qdc25_lab4 import (
+    submit_name,
+    grade_lab4_ex1,
+    grade_lab4_ex2,
+    grade_lab4_ex3,
+    grade_lab4_ex4,
+    grade_lab4_ex5,
+    grade_lab4_ex6,
