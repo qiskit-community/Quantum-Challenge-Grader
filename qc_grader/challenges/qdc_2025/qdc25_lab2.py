@@ -1,37 +1,17 @@
 from typeguard import typechecked
 
 from qiskit import QuantumCircuit
-from .lattice import HeavyHexLattice
 from qc_grader.grader.grade import grade
 from qiskit_ibm_runtime.ibm_backend import IBMBackend
 from qiskit_ibm_runtime import EstimatorV2
-import numpy
-from typing import List
-import json
-
-from math import pi
-
-from collections import OrderedDict
 from typing import List
 
 import numpy as np
 
-from qiskit import QuantumCircuit
 import qiskit_ibm_runtime
-from qiskit_ibm_runtime.ibm_backend import IBMBackend
 from qiskit_ibm_runtime.runtime_job_v2 import RuntimeJobV2
-from qiskit_aer.primitives.estimator_v2 import EstimatorV2
 from qiskit.primitives.containers.primitive_result import PrimitiveResult
-from qiskit.quantum_info import Statevector, SparsePauliOp
-from qiskit.quantum_info import Operator
-from qiskit.circuit.library import TwoLocal
-from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
-from qiskit.converters import circuit_to_dag, dag_to_circuit
-from qiskit.primitives import StatevectorEstimator
-
-from qiskit_aer import AerSimulator
-from qiskit_ibm_runtime.fake_provider import FakeKyoto
-from qiskit import qpy
+from qiskit.quantum_info import SparsePauliOp
 
 
 _challenge_id = "qdc_2025"
