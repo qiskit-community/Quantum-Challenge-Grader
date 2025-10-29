@@ -1,11 +1,25 @@
 from typeguard import typechecked
 
 from qiskit import QuantumCircuit
-from .lattice import HeavyHexLattice
 from qc_grader.grader.grade import grade
 from qiskit_ibm_runtime.ibm_backend import IBMBackend
 import numpy
+from typing import Protocol, runtime_checkable, List, Tuple, Dict, Any
+from typeguard import check_type
 
+@runtime_checkable
+class HeavyHexLike(Protocol):
+    plaquettes_width: int
+    plaquettes_height: int
+    coords: List[Tuple[float, float]]
+    edges: Dict[Tuple[float, float], Any]
+    vertices: Dict[Tuple[int, int], Any]
+
+    def coords_to_logical_qb(self, coords: Any) -> Any: ...
+    def edges_connected_to_node(self, node_coords: Tuple[int, int]) -> List[Tuple[float, float]]: ...
+    def nodes_connected_to_edge(self, edge_coords: Tuple[float, float]) -> Tuple[Tuple[int, int], Tuple[int, int]]: ...
+    def find_qubits_downward(self) -> List[int]: ...
+    def find_qubits_upward(self) -> List[int]: ...
 
 _challenge_id = "qdc_2025"
 
@@ -26,26 +40,32 @@ def grade_lab1_ex1(qc: QuantumCircuit) -> None:
     grade(qc, "lab1-ex1", _challenge_id)
 
 
-@typechecked
-def grade_lab1_ex2(qc: QuantumCircuit, lattice: HeavyHexLattice) -> None:
+def grade_lab1_ex2(qc: QuantumCircuit, lattice: HeavyHexLike) -> None:
+    check_type(qc, QuantumCircuit)
+    check_type(lattice, HeavyHexLike)
     plaq_width = lattice.plaquettes_width
     plaq_height = lattice.plaquettes_height
     answer_dict = {"plaq_width": plaq_width, "plaq_height": plaq_height, "qc": qc}
     grade(answer_dict, "lab1-ex2", _challenge_id)
 
 
-@typechecked
-def grade_lab1_ex3(qc: QuantumCircuit, lattice: HeavyHexLattice) -> None:
+def grade_lab1_ex3(qc: QuantumCircuit, lattice: HeavyHexLike) -> None:
+    check_type(qc, QuantumCircuit)
+    check_type(lattice, HeavyHexLike)
     plaq_width = lattice.plaquettes_width
     plaq_height = lattice.plaquettes_height
     answer_dict = {"plaq_width": plaq_width, "plaq_height": plaq_height, "qc": qc}
     grade(answer_dict, "lab1-ex3", _challenge_id)
 
 
-@typechecked
 def grade_lab1_ex4(
-    isa_circuits: list, lattice: HeavyHexLattice, dt: float, backend: IBMBackend
+    isa_circuits: list, lattice: HeavyHexLike, dt: float, backend: IBMBackend
 ) -> None:
+    check_type(isa_circuits, List)
+    check_type(lattice, HeavyHexLike)
+    check_type(dt, float)
+    check_type(backend, IBMBackend)
+
     plaq_width = lattice.plaquettes_width
     plaq_height = lattice.plaquettes_height
 
@@ -72,3 +92,4 @@ def grade_lab1_ex5(
         "classical_exp_vals": classical_exp_vals,
     }
     grade(answer_dict, "lab1-ex5", _challenge_id)
+
