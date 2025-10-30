@@ -36,10 +36,10 @@ class IAMAuth:
         if self.api_key is None:
             print("""
 Account credentials missing or not properly saved.
-Please save your account using `QiskitRuntimeService.save_account` following the instructions 
-of QGSS 2025 Lab 0: https://github.com/qiskit-community/qgss-2025
+Please save your account using `QiskitRuntimeService.save_account` 
+https://quantum.cloud.ibm.com/docs/en/guides/save-credentials
 """)
-            raise ValueError("Account credentials missing or not properly saved. Please save your account using `QiskitRuntimeService.save_account` following the instructions of QGSS 2025 Lab 0: https://github.com/qiskit-community/qgss-2025")
+            raise ValueError("Account credentials missing or not properly saved. Please save your account using `QiskitRuntimeService.save_account` https://quantum.cloud.ibm.com/docs/en/guides/save-credentials")
 
         self.authenticator = IAMAuthenticator(self.api_key, url=self.token_url, disable_ssl_verification=True)
 
@@ -49,13 +49,13 @@ of QGSS 2025 Lab 0: https://github.com/qiskit-community/qgss-2025
         except Exception as e:
             print("""
 Account token is invalid or cannot be verified.
-Please save a new account instance using `QiskitRuntimeService.save_account` following the
-instructions of QGSS 2025 Lab 0: https://github.com/qiskit-community/qgss-2025
+Please save a new account instance using `QiskitRuntimeService.save_account` 
+https://quantum.cloud.ibm.com/docs/en/guides/save-credentials
 """)
             raise ValueError("""
 Account token is invalid or cannot be verified.
-Please save a new account instance using `QiskitRuntimeService.save_account` following the
-instructions of QGSS 2025 Lab 0: https://github.com/qiskit-community/qgss-2025
+Please save a new account instance using `QiskitRuntimeService.save_account` 
+https://quantum.cloud.ibm.com/docs/en/guides/save-credentials
 """)
 
     def get_user_account(self):
