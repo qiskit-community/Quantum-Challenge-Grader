@@ -112,7 +112,14 @@ def grade_lab2_ex8(
 
 @typechecked
 def grade_lab2_ex9(job: RuntimeJobV2) -> None:
-    grade(job, "lab2-ex9", _challenge_id)
+
+    answer_dict = {
+        "job_primitive_id" : job.primitive_id,
+        "job_status" : job.status(),
+        "job_inputs" : len(job.inputs["pubs"])
+        }
+
+    grade(answer_dict, "lab2-ex9", _challenge_id)
 
 
 @typechecked
