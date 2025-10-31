@@ -17,7 +17,7 @@ def load_problem(dirfn, printtxt=True):
         for i in range(num_graphs):
             f = dirfn + f"problem_graph_{i}.json"
             
-            graphs.append(nx.node_link_graph(json.load(open(f, 'r')), edges="links"))
+            graphs.append(nx.node_link_graph(json.load(open(f, 'r'))))
         if len(graphs) != num_graphs:
             raise Exception
 
