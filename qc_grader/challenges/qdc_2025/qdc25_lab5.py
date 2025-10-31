@@ -99,6 +99,6 @@ def grade_lab_5_ex4(user_hv: float, samples: np.array, isa_qc: QuantumCircuit, p
         return None
     
     answer_dict = {
-        "hv": user_hv,
+        "user_hv": user_hv,
     }
     grade(answer_dict, "lab5-ex4", _challenge_id)
