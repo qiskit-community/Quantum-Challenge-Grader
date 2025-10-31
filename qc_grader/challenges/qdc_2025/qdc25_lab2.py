@@ -79,7 +79,7 @@ def grade_lab2_ex6(
         backend_answer = "false"
 
     answer_dict = {
-        "circuits_all_isa": circuits_all_isa,
+        "circuits_all_isa": circuits_all_isa[0:1] + circuits_all_isa[0:3],
         "observables_isa": observables_isa,
         "backend_answer": backend_answer,
     }
