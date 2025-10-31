@@ -59,7 +59,7 @@ def grade_lab1_ex3(qc: QuantumCircuit, lattice: HeavyHexLike) -> None:
 
 
 def grade_lab1_ex4(
-    isa_circuits: list, lattice: HeavyHexLike, dt: float, backend: IBMBackend
+    isa_circuits: QuantumCircuit, lattice: HeavyHexLike, dt: float, backend: IBMBackend
 ) -> None:
     check_type(isa_circuits, QuantumCircuit)
     check_type(lattice, HeavyHexLike)
