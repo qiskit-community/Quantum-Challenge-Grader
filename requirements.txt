@@ -8,6 +8,7 @@ networkx==3.2.1
 
 # IBM Quantum Challenge 2024
 graphviz
+moocore
 
 # IBM Cloud
 ibm-platform-services==0.66.1
