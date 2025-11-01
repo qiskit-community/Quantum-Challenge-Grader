@@ -79,7 +79,7 @@ def grade_lab2_ex6(
         backend_answer = "false"
 
     answer_dict = {
-        "circuits_all_isa": circuits_all_isa[0:1] + circuits_all_isa[0:3],
+        "circuits_all_isa": circuits_all_isa[0:1] + circuits_all_isa[3:4],
         "observables_isa": observables_isa,
         "backend_answer": backend_answer,
     }
@@ -103,8 +103,8 @@ def grade_lab2_ex8(
 ) -> None:
 
     answer_dict = {
-        "pubs": pubs,
-        "circuits_all_isa": circuits_all_isa,
+        "pubs": pubs[:1],
+        "circuits_all_isa": circuits_all_isa[:1],
         "observables_isa": observables_isa,
     }
     grade(answer_dict, "lab2-ex8", _challenge_id)
