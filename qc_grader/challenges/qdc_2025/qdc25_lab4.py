@@ -78,7 +78,12 @@ def grade_lab4_ex4(siam_hamiltonian_momentum: Callable) -> None:
         NUM_ORBS, HYBRIDIZATION, HOPPING, ONSITE, CHEMICAL_POTENTIAL
     )
 
-    grade(H_test, "lab4-ex4", _challenge_id)
+    answer_dict = {
+        "H_test_0": H_test[0],
+        "H_test_1": H_test[1]
+    }
+
+    grade(answer_dict, "lab4-ex4", _challenge_id)
 
 
 @typechecked
@@ -88,6 +93,7 @@ def grade_lab4_ex5(construct_krylov_siam: Callable, siam_hamiltonian_momentum: C
         NUM_ORBS, HYBRIDIZATION, HOPPING, ONSITE, CHEMICAL_POTENTIAL
     )
     circs_test = construct_krylov_siam(NUM_ORBS, IMPURITY_INDEX, H_ref, DT, KRYLOV_D)
+
 
 
     grade(circs_test, "lab4-ex5", _challenge_id)
