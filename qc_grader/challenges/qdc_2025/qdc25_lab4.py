@@ -78,6 +78,8 @@ def grade_lab4_ex4(siam_hamiltonian_momentum: Callable) -> None:
         NUM_ORBS, HYBRIDIZATION, HOPPING, ONSITE, CHEMICAL_POTENTIAL
     )
 
+    answer_dict = {
+        "H_test_0": H_test[0],
         "H_test_1": H_test[1]
     }
 
