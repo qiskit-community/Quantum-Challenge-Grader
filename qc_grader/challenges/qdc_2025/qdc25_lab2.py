@@ -131,7 +131,7 @@ def grade_lab2_ex10(
     results: PrimitiveResult,
 ) -> None:
 
-    results_list = np.array(results[0].data.evs, results[1].data.evs, results[2].data.evs, results[3].data.evs)
+    results_list = np.array([results[0].data.evs, results[1].data.evs, results[2].data.evs, results[3].data.evs])
 
     answer_dict = {
         "chi_wave": chi_wave,
