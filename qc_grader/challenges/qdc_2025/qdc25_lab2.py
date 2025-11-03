@@ -131,12 +131,14 @@ def grade_lab2_ex10(
     results: PrimitiveResult,
 ) -> None:
 
+    results_list = [results[0].data.evs, results[1].data.evs, results[2].data.evs, results[3].data.evs]
+
     answer_dict = {
         "chi_wave": chi_wave,
         "chi_wave_mitig": chi_wave_mitig,
         "chi_vacuum": chi_vacuum,
         "chi_vacuum_mitig": chi_vacuum_mitig,
-        "results": results,
+        "results": results_list,
     }
 
     grade(answer_dict, "lab2-ex10", _challenge_id)

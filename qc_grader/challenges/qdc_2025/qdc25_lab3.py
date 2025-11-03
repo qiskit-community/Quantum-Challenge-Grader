@@ -169,12 +169,11 @@ def grade_lab3_ex13(t: float, wp_meas_evs: numpy.ndarray, vac_meas_evs: numpy.nd
     grade(answer_dict, "lab3-ex13", _challenge_id)
 
 @typechecked
-def grade_lab3_ex14(t: float, best_wp_circ: QuantumCircuit, best_vac_circ: QuantumCircuit, best_energies: numpy.ndarray) -> None:
-
+def grade_lab3_ex14(t: float, best_wp_circ: QuantumCircuit, best_energies: numpy.ndarray) -> None:
+    
     answer_dict = {
             "t": t,
             "best_wp_circ": best_wp_circ,
-            "best_vac_circ": best_vac_circ,
             "best_energies": best_energies
         }
     
