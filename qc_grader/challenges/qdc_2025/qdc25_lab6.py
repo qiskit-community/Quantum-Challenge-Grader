@@ -28,27 +28,25 @@ def grade_lab6_ex1(molecule_name: str, hartree_fock_E: float) -> None:
 
 
 @typechecked
-def grade_lab6_ex2(molecule_name: str, hartree_fock_E: float, casci_E: float) -> None:
+def grade_lab6_ex2(molecule_name: str, casci_E: float) -> None:
 
     answer_dict = {
         "molecule_name": molecule_name,
-        "hartree_fock_E": hartree_fock_E,
         "casci_E": casci_E
     }
 
     grade(answer_dict, "lab6-ex2", _challenge_id)
 
 @typechecked
-def grade_lab6_ex3(molecule_name: str, hartree_fock: float, casci_E: float, sqd_E: list) -> None:
+def grade_lab6_ex3(molecule_name: str, sqd_E: list) -> None:
 
-    check_type(sqd_E[0], int)
-    check_type(sqd_E[1], float)
-    check_type(sqd_E[2], )
+    for E in sqd_E:
+        check_type(E[0], int)
+        check_type(E[1], float)
+        check_type(E[2], str )
 
     answer_dict = {
         "molecule_name": molecule_name,
-        "hartree_fock": hartree_fock,
-        "casci_E": casci_E,
         "sqd_E": sqd_E
     }
 
