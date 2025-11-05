@@ -84,6 +84,7 @@ def grade_lab7_ex1(parse_func: Callable) -> None:
         return f"❌ Error testing your function: {str(e)}\nMake sure your function can handle the .dat format correctly."
 
 
+@typechecked
 def grade_lab7_ex2(A: Optional[np.ndarray], b: Optional[np.ndarray]) -> None:
     """
     Grade Exercise 2: Load and analyze problem instance.
@@ -96,7 +97,8 @@ def grade_lab7_ex2(A: Optional[np.ndarray], b: Optional[np.ndarray]) -> None:
     grade(answer_dict, "lab7-ex2", _challenge_id)
 
 
-def grade_ex3(qubo: OptimizationProblem, A: np.ndarray, b: np.ndarray) -> None:
+@typechecked
+def grade_lab7_ex3(qubo: OptimizationProblem, A: np.ndarray, b: np.ndarray) -> None:
     """
     Grade Exercise 3: Convert to QUBO matrix.
 
