@@ -137,3 +137,15 @@ def grade_lab7_ex4(problem: Dict[str, str], qubo: OptimizationProblem) -> None:
     }
 
     grade(answer_dict, "lab7-ex4", _challenge_id)
+
+
+typechecked
+def grade_lab7_ex5(iskay_input: Dict) -> None:
+    """
+    Grade Exercise 5: Configure Iskay optimizer.
+
+    Expected:
+    - iskay_input: Dictionary with required fields for Iskay
+    """
+
+    grade(iskay_input, "lab7-ex5", _challenge_id)
