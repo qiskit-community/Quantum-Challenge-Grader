@@ -1,5 +1,5 @@
 from typeguard import typechecked, check_type
-from typing import Callable, Optional
+from typing import Callable, Optional, Dict
 import tempfile
 import os
 
@@ -116,3 +116,24 @@ def grade_lab7_ex3(qubo: OptimizationProblem, A: np.ndarray, b: np.ndarray) -> N
     }
 
     grade(answer_dict, "lab7-ex3", _challenge_id)
+
+@typechecked
+def grade_lab7_ex4(problem: Dict[str, str], qubo: OptimizationProblem) -> None:
+    """
+    Grade Exercise 4: Convert QUBO to Iskay dictionary format.
+
+    Expected:
+    - problem: Dictionary with Iskay-formatted QUBO coefficients
+    - qubo: OptimizationProblem instance for validation
+    """
+
+    answer_dict = {
+        "problem": problem,
+        "qubo num vars": qubo.get_num_vars(),
+        "qubo constant objective": qubo.objective.constant,
+        "qubo linear objective": {idx: val for idx, val in enumerate(qubo.objective.linear)},
+        "qubo quadratic objective": {key: val for key, val in qubo.objective.quadratic.to_dict().items()},
+        # TODO check the quad dict is identical to qubo.objective.quadratic.to_dict() or not
+    }
+
+    grade(answer_dict, "lab7-ex4", _challenge_id)
