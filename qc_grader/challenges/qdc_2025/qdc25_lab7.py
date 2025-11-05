@@ -1,4 +1,9 @@
 from typeguard import typechecked, check_type
+from typing import Callable
+import tempfile
+import os
+
+import numpy as np
 
 from qiskit_serverless.core import QiskitFunction
 from qc_grader.grader.grade import grade
@@ -34,3 +39,45 @@ def make_validator(function_provider: str):
 
 # Generate and assign the validators
 grade_kipu_function = make_validator("kipu-quantum")
+
+
+@typechecked
+def grade_lab7_ex1(parse_func: Callable) -> None:
+    """
+    Grade the parse_marketsplit_dat function implementation.
+
+    Tests the function with a simple example to verify correct parsing logic.
+    """
+
+    # Create a simple test case
+    test_content = """2 3
+10 20 30 60
+40 50 60 150
+"""
+
+    try:
+        # Write test content to temporary file
+        with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.dat') as f:
+            f.write(test_content)
+            temp_path = f.name
+
+        try:
+            # Test the parsing function
+            A, b = parse_func(temp_path)
+
+            answer_dict = {
+                "A": A,
+                "b": b,
+            }
+
+            grade(answer_dict, "lab7-ex1", _challenge_id)
+
+        finally:
+            # Clean up temp file
+            try:
+                os.unlink(temp_path)
+            except:
+                pass
+
+    except Exception as e:
+        return f"❌ Error testing your function: {str(e)}\nMake sure your function can handle the .dat format correctly."
