@@ -1,5 +1,5 @@
 from typeguard import typechecked, check_type
-from typing import Callable, Optional, Dict
+from typing import Callable, Optional, Dict, List
 import tempfile
 import os
 
@@ -149,3 +149,16 @@ def grade_lab7_ex5(iskay_input: Dict) -> None:
     """
 
     grade(iskay_input, "lab7-ex5", _challenge_id)
+
+
+@typechecked
+def grade_lab7_ex6(quantum_solution: List[int]) -> str:
+    """
+    Grade Exercise 6: Validate solution.
+
+    Expected:
+    - quantum_solution: List of 0s and 1s with length matching A.shape[1]
+    - Should be a valid binary solution
+    """
+
+    grade(quantum_solution, "lab7-ex6", _challenge_id)
