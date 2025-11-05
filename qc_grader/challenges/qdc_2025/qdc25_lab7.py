@@ -6,6 +6,7 @@ import os
 import numpy as np
 
 from qiskit_serverless.core import QiskitFunction
+from qiskit_addon_opt_mapper import OptimizationProblem
 from qc_grader.grader.grade import grade
 
 _challenge_id = "qdc_2025"
@@ -83,7 +84,7 @@ def grade_lab7_ex1(parse_func: Callable) -> None:
         return f"❌ Error testing your function: {str(e)}\nMake sure your function can handle the .dat format correctly."
 
 
-def grade_lab7_ex2(A: Optional[np.ndarray], b: Optional[np.ndarray]) -> str:
+def grade_lab7_ex2(A: Optional[np.ndarray], b: Optional[np.ndarray]) -> None:
     """
     Grade Exercise 2: Load and analyze problem instance.
     """
@@ -93,3 +94,20 @@ def grade_lab7_ex2(A: Optional[np.ndarray], b: Optional[np.ndarray]) -> str:
     }
 
     grade(answer_dict, "lab7-ex2", _challenge_id)
+
+
+def grade_ex3(qubo: OptimizationProblem, A: np.ndarray, b: np.ndarray) -> None:
+    """
+    Grade Exercise 3: Convert to QUBO matrix.
+
+    Expected:
+    - qubo: OptimizationProblem instance with proper objective function
+    """
+
+    answer_dict = {
+        "qubo": qubo,
+        "A": A,
+        "b": b,
+    }
+
+    grade(answer_dict, "lab7-ex3", _challenge_id)
