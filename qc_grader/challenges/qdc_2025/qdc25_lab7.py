@@ -105,7 +105,10 @@ def grade_ex3(qubo: OptimizationProblem, A: np.ndarray, b: np.ndarray) -> None:
     """
 
     answer_dict = {
-        "qubo": qubo,
+        "qubo num vars": qubo.get_num_vars(),
+        "qubo constant objective": qubo.objective.constant,
+        "qubo linear objective": {idx: val for idx, val in enumerate(qubo.objective.linear)},
+        "qubo quadratic objective": qubo.objective.quadratic.to_dict(),
         "A": A,
         "b": b,
     }
