@@ -1,5 +1,5 @@
 from typeguard import typechecked, check_type
-from typing import Callable
+from typing import Callable, Optional
 import tempfile
 import os
 
@@ -81,3 +81,15 @@ def grade_lab7_ex1(parse_func: Callable) -> None:
 
     except Exception as e:
         return f"❌ Error testing your function: {str(e)}\nMake sure your function can handle the .dat format correctly."
+
+
+def grade_lab7_ex2(A: Optional[np.ndarray], b: Optional[np.ndarray]) -> str:
+    """
+    Grade Exercise 2: Load and analyze problem instance.
+    """
+    answer_dict = {
+        "A": A,
+        "b": b,
+    }
+
+    grade(answer_dict, "lab7-ex2", _challenge_id)
