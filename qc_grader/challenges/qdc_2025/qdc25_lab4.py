@@ -89,8 +89,8 @@ def grade_lab4_ex5(construct_krylov_siam: Callable, siam_hamiltonian_momentum: C
     )
 
     H_ref = (
-        np.round(np.array(H_ref[0], dtype=np.float64), decimal=12),
-        np.round(np.array(H_ref[1], dtype=np.float64), decimal=12),
+        np.round(np.array(H_ref[0], dtype=np.float64), decimals=12),
+        np.round(np.array(H_ref[1], dtype=np.float64), decimals=12),
     )
 
     circs_test = construct_krylov_siam(NUM_ORBS, IMPURITY_INDEX, H_ref, DT, KRYLOV_D)
