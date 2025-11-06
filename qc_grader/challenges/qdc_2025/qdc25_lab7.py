@@ -106,11 +106,15 @@ def grade_lab7_ex3(qubo: OptimizationProblem, A: np.ndarray, b: np.ndarray) -> N
     - qubo: OptimizationProblem instance with proper objective function
     """
 
+    linear_dict = {idx: val for idx, val in enumerate(qubo.objective.linear)}
+    # convert tuple key to string for serialization, e.g. (0, 0) => '(0, 0)'
+    quadratic_dict = {str(k): v for k, v in qubo.objective.quadratic.to_dict().items()}
+
     answer_dict = {
         "qubo num vars": qubo.get_num_vars(),
         "qubo constant objective": qubo.objective.constant,
-        "qubo linear objective": {idx: val for idx, val in enumerate(qubo.objective.linear)},
-        "qubo quadratic objective": qubo.objective.quadratic.to_dict(),
+        "qubo linear objective": linear_dict,
+        "qubo quadratic objective": quadratic_dict,
         "A": A,
         "b": b,
     }
@@ -118,7 +122,7 @@ def grade_lab7_ex3(qubo: OptimizationProblem, A: np.ndarray, b: np.ndarray) -> N
     grade(answer_dict, "lab7-ex3", _challenge_id)
 
 @typechecked
-def grade_lab7_ex4(problem: Dict[str, str], qubo: OptimizationProblem) -> None:
+def grade_lab7_ex4(problem: Dict, qubo: OptimizationProblem) -> None:
     """
     Grade Exercise 4: Convert QUBO to Iskay dictionary format.
 
@@ -127,13 +131,16 @@ def grade_lab7_ex4(problem: Dict[str, str], qubo: OptimizationProblem) -> None:
     - qubo: OptimizationProblem instance for validation
     """
 
+    linear_dict = {idx: val for idx, val in enumerate(qubo.objective.linear)}
+    # convert tuple key to string for serialization, e.g. (0, 0) => '(0, 0)'
+    quadratic_dict = {str(k): v for k, v in qubo.objective.quadratic.to_dict().items()}
+
     answer_dict = {
         "problem": problem,
         "qubo num vars": qubo.get_num_vars(),
         "qubo constant objective": qubo.objective.constant,
-        "qubo linear objective": {idx: val for idx, val in enumerate(qubo.objective.linear)},
-        "qubo quadratic objective": {key: val for key, val in qubo.objective.quadratic.to_dict().items()},
-        # TODO check the quad dict is identical to qubo.objective.quadratic.to_dict() or not
+        "qubo linear objective": linear_dict,
+        "qubo quadratic objective": quadratic_dict,
     }
 
     grade(answer_dict, "lab7-ex4", _challenge_id)
