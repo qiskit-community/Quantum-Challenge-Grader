@@ -1,4 +1,4 @@
-from typeguard import typechecked, check_type
+from typeguard import typechecked
 from typing import Callable, Optional, Dict, List
 import tempfile
 import os
@@ -43,7 +43,7 @@ grade_kipu_function = make_validator("kipu-quantum")
 
 
 @typechecked
-def grade_lab7_ex1(parse_func: Callable) -> None:
+def grade_lab7_ex1(parse_func: Callable) -> Optional[str]:
     """
     Grade the parse_marketsplit_dat function implementation.
 
@@ -152,7 +152,7 @@ def grade_lab7_ex5(iskay_input: Dict) -> None:
 
 
 @typechecked
-def grade_lab7_ex6(quantum_solution: List[int]) -> str:
+def grade_lab7_ex6(quantum_solution: List[int]) -> None:
     """
     Grade Exercise 6: Validate solution.
 
