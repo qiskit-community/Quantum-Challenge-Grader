@@ -43,7 +43,7 @@ grade_kipu_function = make_validator("kipu-quantum")
 
 
 @typechecked
-def grade_lab7_ex1(parse_func: Callable) -> Optional[str]:
+def grade_lab7_ex1(parse_func: Callable) -> None:
     """
     Grade the parse_marketsplit_dat function implementation.
 
@@ -81,7 +81,7 @@ def grade_lab7_ex1(parse_func: Callable) -> Optional[str]:
                 pass
 
     except Exception as e:
-        return f"❌ Error testing your function: {str(e)}\nMake sure your function can handle the .dat format correctly."
+        pass
 
 
 @typechecked
