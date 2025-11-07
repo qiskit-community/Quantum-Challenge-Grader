@@ -2,3 +2,4 @@ qiskit[visualization]~=2.1.0
 qiskit-ibm-runtime
 qiskit-aer
 qiskit_serverless
+qiskit_addon_opt_mapper==0.1.0

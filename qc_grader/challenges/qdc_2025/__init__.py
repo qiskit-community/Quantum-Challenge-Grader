@@ -51,21 +51,31 @@ from .qdc25_lab4 import (
     grade_lab4_ex6
 )
 
-from .qdc25_lab6 import (
-    submit_name,
-    grade_lab6_ex1,
-    grade_lab6_ex2,
-    grade_lab6_ex3,
-)
 from .qdc25_lab5 import (
     submit_name,
     grade_lab5_ex1,
     grade_lab5_ex2,
     grade_lab5_ex3,
     grade_lab_5_ex4
-
 )
 
+from .qdc25_lab6 import (
+    submit_name,
+    grade_lab6_ex1,
+    grade_lab6_ex2,
+    grade_lab6_ex3,
+)
+
+from .qdc25_lab7 import (
+    submit_name,
+    grade_kipu_function,
+    grade_lab7_ex1,
+    grade_lab7_ex2,
+    grade_lab7_ex3,
+    grade_lab7_ex4,
+    grade_lab7_ex5,
+    grade_lab7_ex6,
+)
 
 from .qdc25_lab8 import (
     submit_name,
