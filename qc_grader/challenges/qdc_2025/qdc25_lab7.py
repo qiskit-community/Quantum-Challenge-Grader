@@ -159,7 +159,7 @@ def grade_lab7_ex5(iskay_input: Dict) -> None:
 
 
 @typechecked
-def grade_lab7_ex6(quantum_solution: List[int]) -> None:
+def grade_lab7_ex6(solution_bitstring: str) -> None:
     """
     Grade Exercise 6: Validate solution.
 
@@ -167,5 +167,7 @@ def grade_lab7_ex6(quantum_solution: List[int]) -> None:
     - quantum_solution: List of 0s and 1s with length matching A.shape[1]
     - Should be a valid binary solution
     """
+
+    quantum_solution = [int(bit) for bit in solution_bitstring]
 
     grade(quantum_solution, "lab7-ex6", _challenge_id)
