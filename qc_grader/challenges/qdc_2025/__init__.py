@@ -65,3 +65,12 @@ from .qdc25_lab5 import (
     grade_lab_5_ex4
 
 )
+
+
+from .qdc25_lab8 import (
+    submit_name,
+    grade_qctrl_function,
+    grade_lab8_ex1,
+    grade_lab8_ex2,
+    grade_lab8_ex3,
+)
