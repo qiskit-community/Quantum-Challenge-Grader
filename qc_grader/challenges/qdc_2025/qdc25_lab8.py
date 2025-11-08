@@ -45,7 +45,10 @@ grade_qctrl_function = make_validator("q-ctrl")
 
 @typechecked
 def grade_lab8_ex1(parse_func: Callable) -> None:
-    graph = parse_func("es60fst02.gph")
+
+    base_dir = os.path.dirname(__file__)
+    full_path = os.path.join(base_dir, "es60fst02.gph")
+    graph = parse_func(full_path)
     answer_dict = {
         "vertices": len(graph.nodes),
         "edges": len(graph.edges),
