@@ -29,7 +29,7 @@ def submit_name(name: str) -> None:
 
 @typechecked
 def grade_ex1a(answer: str) -> None:
-    grade(answer, 'test-pass', challenge_id, grade_only=True)
+    grade(answer, 'test-pass', challenge_id)
 
 
 @typechecked
