@@ -17,12 +17,11 @@ from qc_grader.grader.grade import grade
 
 
 _challenge_id = 'fall_fest24'
-_grade_only = True
 
 
 @typechecked
 def grade_lab2_ex1(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'lab2-ex1', _challenge_id, grade_only=_grade_only)
+    grade(circuit, 'lab2-ex1', _challenge_id)
 
 
 @typechecked
@@ -35,12 +34,12 @@ def grade_lab2_ex2(job: PrimitiveJob) -> None:
         grade({
             'metadata': r.metadata,
             'counts': r.data.meas.get_counts()
-        }, 'lab2-ex2', _challenge_id, grade_only=_grade_only)
+        }, 'lab2-ex2', _challenge_id)
 
 
 @typechecked
 def grade_lab2_ex3(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'lab2-ex3', _challenge_id, grade_only=_grade_only)
+    grade(circuit, 'lab2-ex3', _challenge_id)
 
 
 @typechecked
@@ -56,12 +55,12 @@ def grade_lab2_ex4(
         'entanglement_blocks': entanglement_blocks,
         'entanglement': entanglement
     }
-    grade(answer, 'lab2-ex4', _challenge_id, grade_only=_grade_only)
+    grade(answer, 'lab2-ex4', _challenge_id)
 
 
 @typechecked
 def grade_lab2_ex5(circuit: QuantumCircuit) -> None:
-    grade(circuit, 'lab2-ex5', _challenge_id, grade_only=_grade_only)
+    grade(circuit, 'lab2-ex5', _challenge_id)
 
 
 @typechecked
@@ -96,9 +95,9 @@ def grade_lab2_ex6(cost_func: Callable) -> None:
                 'metadata': result[0].metadata,
                 'evs': result[0].data.evs
             }
-        }, 'lab2-ex6', _challenge_id, grade_only=_grade_only)
+        }, 'lab2-ex6', _challenge_id)
 
 
 @typechecked
 def grade_lab2_ex7(optimize_result: OptimizeResult) -> None:
-    grade(dict(optimize_result), 'lab2-ex7', _challenge_id, grade_only=_grade_only)
+    grade(dict(optimize_result), 'lab2-ex7', _challenge_id)
