@@ -10,12 +10,11 @@ from qc_grader.grader.grade import grade
 
 
 _challenge_id = 'fall_fest24'
-_grade_only = True
 
 
 @typechecked
 def grade_lab3_ex1(answer: dict) -> None:
-    grade(answer, 'lab3-ex1', _challenge_id, grade_only=_grade_only)
+    grade(answer, 'lab3-ex1', _challenge_id)
 
 
 @typechecked
@@ -25,7 +24,7 @@ def grade_lab3_ex2(answer: list) -> None:
         (len(answer[1].to_flow_controller().tasks), len(answer[1].init.to_flow_controller().tasks), len(answer[1].layout.to_flow_controller().tasks), len(answer[1].routing.to_flow_controller().tasks)),
         (len(answer[2].to_flow_controller().tasks), len(answer[2].init.to_flow_controller().tasks), len(answer[2].layout.to_flow_controller().tasks), len(answer[2].routing.to_flow_controller().tasks)),
         (len(answer[3].to_flow_controller().tasks), len(answer[3].init.to_flow_controller().tasks), len(answer[3].layout.to_flow_controller().tasks), len(answer[3].routing.to_flow_controller().tasks))   
-    ], 'lab3-ex2', _challenge_id, grade_only=_grade_only)
+    ], 'lab3-ex2', _challenge_id)
 
 
 @typechecked
@@ -51,9 +50,9 @@ def grade_lab3_ex3(pm: StagedPassManager) -> None:
         'layout_tasks': layout_tasks,
         'routing_tasks': routing_tasks,
         'translation_tasks': translation_tasks
-    }, 'lab3-ex3', _challenge_id, grade_only=_grade_only)
+    }, 'lab3-ex3', _challenge_id)
 
 
 @typechecked
 def grade_lab3_metaphors(answer: str) -> None:
-    grade(answer, 'lab3-metaphors', _challenge_id, grade_only=_grade_only)
+    grade(answer, 'lab3-metaphors', _challenge_id)

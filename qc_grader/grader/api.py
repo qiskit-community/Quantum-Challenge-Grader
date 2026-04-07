@@ -20,7 +20,6 @@ from typing import Dict, List, Mapping, Optional, Union
 
 from qc_grader import __version__
 from qc_grader.grader.common import normalize_slash, remove_slash
-from qiskit_ibm_runtime import QiskitRuntimeService
 
 
 
@@ -32,16 +31,9 @@ grading_endpoints: List[str] = [
     f'https://qac-grading{"-dev" if is_staging else ""}.quantum.ibm.com'
 ]
 
-# possible challenge api endpoints: https://challenges-api-dev.quantum.ibm.com
-submission_endpoints: List[str] = [
-    'http://127.0.0.1:8055',
-    f'https://challenges-api{"-dev" if is_staging else ""}.quantum.ibm.com'
-]
 
 _api_grade_url: Optional[str] = os.getenv('QC_GRADING_ENDPOINT')
-_api_submit_url: Optional[str] = os.getenv('QC_API_ENDPOINT')
 _api_iam_token_url: Optional[str] = os.getenv('QC_IAM_TOKEN_ENDPOINT')
-_grade_only: Optional[Union[bool, str]] = os.getenv('QC_GRADE_ONLY', True)
 
 
 class MaxContentError(BaseException):
@@ -84,49 +76,6 @@ def get_problem_set_endpoint(
     return f'{normalize_slash(_api_grade_url)}challenges/{challenge_id}/problem-set/{question_id}'
 
 
-def get_labs_status_endpoint(challenge_id: str) -> Optional[str]:
-    # https://challenges-api-dev.quantum.ibm.com
-    global _api_submit_url
-    if not _api_submit_url:
-        for endpoint in submission_endpoints:
-            try:
-                response = requests.get(url=f'{normalize_slash(endpoint)}server/health')
-                response.raise_for_status()
-                if response.status_code == 200:
-                    _api_submit_url = endpoint
-                    break
-            except Exception as err:
-                pass
-
-    if not _api_submit_url:
-        print('Could not find a valid API server or '
-              'the API servers are down right now.')
-        return None
-
-    return f'{normalize_slash(_api_submit_url)}stats/{challenge_id}/status'
-
-
-def get_labs_progress_endpoint(challenge_id: str) -> Optional[str]:
-    # https://challenges-api-dev.quantum.ibm.com
-    global _api_submit_url
-    if not _api_submit_url:
-        for endpoint in submission_endpoints:
-            try:
-                response = requests.get(url=f'{normalize_slash(endpoint)}server/health')
-                response.raise_for_status()
-                if response.status_code == 200:
-                    _api_submit_url = endpoint
-                    break
-            except Exception as err:
-                pass
-
-    if not _api_submit_url:
-        print('Could not find a valid API server or '
-              'the API servers are down right now.')
-        return None
-
-    return f'{normalize_slash(_api_submit_url)}stats/{challenge_id}/progress'
-
 
 def get_grading_endpoint(
     question_id: Union[str, int], challenge_id: str
@@ -151,29 +100,6 @@ def get_grading_endpoint(
 
     return f'{normalize_slash(_api_grade_url)}challenges/{challenge_id}/validate/{question_id}'
 
-
-def get_submission_endpoint(
-    question_id: Union[str, int], challenge_id: str
-) -> Optional[str]:
-    # https://challenges-api-dev.quantum.ibm.com
-    global _api_submit_url
-    if not _api_submit_url:
-        for endpoint in submission_endpoints:
-            try:
-                response = requests.get(url=f'{normalize_slash(endpoint)}server/health')
-                response.raise_for_status()
-                if response.status_code == 200:
-                    _api_submit_url = endpoint
-                    break
-            except Exception as err:
-                pass
-
-    if not _api_submit_url:
-        print('Could not find a valid API server or '
-              'the API servers are down right now.')
-        return None
-
-    return f'{normalize_slash(_api_submit_url)}items/answers'
 
 def get_question_set(
     challenge_id: str
@@ -283,13 +209,3 @@ def notify_provider(access_token: str, challenge_id: str) -> None:
                 'X-Access-Token': access_token
             }
         )
-
-
-def do_grade_only() -> bool:
-    global _grade_only
-    if _grade_only is None:
-        endpoint = get_grading_endpoint('', '')
-        _grade_only = endpoint is not None and not endpoint.startswith('https://qac-grading')
-    else:
-        _grade_only = str(_grade_only).lower() in ['true', '1', 'yes', 'y', 't']
-    return bool(_grade_only)
