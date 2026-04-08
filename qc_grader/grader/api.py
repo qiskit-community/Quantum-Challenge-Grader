@@ -101,31 +101,6 @@ def get_grading_endpoint(
     return f'{normalize_slash(_api_grade_url)}challenges/{challenge_id}/validate/{question_id}'
 
 
-def get_question_set(
-    challenge_id: str
-) -> List[Dict[str, str]]:
-    global _api_grade_url
-    if not _api_grade_url:
-        get_grading_endpoint('', challenge_id)
-
-    exercises = []
-    if _api_grade_url:
-        try:
-            response = requests.get(url=_api_grade_url)
-            response.raise_for_status()
-
-            challenges_metadata = response.json().get('challenges')
-            if challenges_metadata:
-                for challenge in challenges_metadata:
-                    if challenge['id'] == challenge_id:
-                        exercises = challenge['validations']
-                        break
-        except Exception as err:
-            pass
-
-    return exercises
-
-
 def compute_content_length(
     endpoint: str,
     query: Optional[Dict[str, str]] = None,
