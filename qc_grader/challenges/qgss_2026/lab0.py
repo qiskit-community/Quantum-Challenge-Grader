@@ -15,6 +15,8 @@
 QGSS 2026 Lab 0 - Grading Functions
 """
 
+from typing import List
+
 from typeguard import typechecked
 from qiskit.quantum_info import Statevector
 from qc_grader.grader.grade import grade
@@ -24,54 +26,43 @@ _challenge_id = "qgss_2026"
 
 
 @typechecked
-def grade_lab0_ex1(service) -> None:
+def grade_lab0_ex1(backends: list) -> None:
     """
-    Grade Exercise 1
-    
+    Grade Exercise 1: Verify IBM Quantum account.
+
     Args:
-        service: QiskitRuntimeService object
+        backends: List of backend objects from service.backends()
     """
-    # QiskitRuntimeService cannot be serialized, so we extract validity
-    # and send as a simple string
-    try:
-        if service is not None and hasattr(service, "backends"):
-            # Try to actually call backends() to verify it's functional
-            _ = service.backends()
-            answer = "valid"
-        else:
-            answer = "invalid"
-    except Exception:
-        answer = "invalid"
-    
-    grade(answer, "lab0-ex1", _challenge_id)
+    grade(len(backends), "lab0-ex1", _challenge_id)
 
 
 @typechecked
 def grade_lab0_ex2(counts: dict) -> None:
     """
-    Grade Exercise 2:
-    
+    Grade Exercise 2: Verify sampler result.
+
     Args:
         counts: Dictionary of measurement counts
     """
-    # counts is already a dict, which is JSON-native
-    # Server will verify the ratio is close to 50/50
     grade(counts, "lab0-ex2", _challenge_id)
 
 
 @typechecked
-def grade_lab0_ex3(c_out, cpp_out, qiskit_c_out, qiskit_cpp_out) -> None:
+def grade_lab0_ex3(
+    c_out: List[str],
+    cpp_out: List[str],
+    qiskit_c_out: List[str],
+    qiskit_cpp_out: List[str],
+) -> None:
     """
-    Grade Exercise 3
-    
+    Grade Exercise 3: Verify C/C++ toolchain outputs.
+
     Args:
-        c_out: Shell output from C hello world
-        cpp_out: Shell output from C++ hello world
-        qiskit_c_out: Shell output from Qiskit C hello world
-        qiskit_cpp_out: Shell output from Qiskit C++ hello world
+        c_out: Shell output from hello.c
+        cpp_out: Shell output from hello.cpp
+        qiskit_c_out: Shell output from hello_qiskit.c
+        qiskit_cpp_out: Shell output from hello_qiskit.cpp
     """
-    # Shell output objects (SList) cannot be serialized
-    # Convert to strings and bundle in a dict
     answer_dict = {
         "c_out": " ".join(str(x) for x in c_out),
         "cpp_out": " ".join(str(x) for x in cpp_out),
@@ -82,15 +73,14 @@ def grade_lab0_ex3(c_out, cpp_out, qiskit_c_out, qiskit_cpp_out) -> None:
 
 
 @typechecked
-def grade_lab0_ex4(c_out, cpp_out) -> None:
+def grade_lab0_ex4(c_out: List[str], cpp_out: List[str]) -> None:
     """
-    Grade Exercise 4
-    
+    Grade Exercise 4: Verify C/C++ circuit outputs.
+
     Args:
-        c_out: Shell output from C  circuit
-        cpp_out: Shell output from C++  circuit
+        c_out: Shell output from C circuit program
+        cpp_out: Shell output from C++ circuit program
     """
-    # Convert shell outputs to strings and bundle in a dict
     answer_dict = {
         "c_out": " ".join(str(x) for x in c_out),
         "cpp_out": " ".join(str(x) for x in cpp_out),
@@ -101,13 +91,9 @@ def grade_lab0_ex4(c_out, cpp_out) -> None:
 @typechecked
 def grade_lab0_ex5(sv: Statevector) -> None:
     """
-    Grade Exercise 5
-    
+    Grade Exercise 5: Verify statevector.
+
     Args:
         sv: Statevector object to verify
     """
-    # Statevector is supported by the serializer (dump_state_vector)
-    # Server will reconstruct and compare using state_fidelity
     grade(sv, "lab0-ex5", _challenge_id)
-
-# Made with Bob
