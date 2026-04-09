@@ -52,31 +52,6 @@ def get_iam_token_endpoint() -> Optional[str]:
     return remove_slash(_api_iam_token_url)
 
 
-def get_problem_set_endpoint(
-    question_id: Union[str, int], challenge_id: str
-) -> Optional[str]:
-    # https://qac-grading-dev.quantum.ibm.com
-    global _api_grade_url
-    if not _api_grade_url:
-        for endpoint in grading_endpoints:
-            try:
-                response = requests.get(url=endpoint)
-                response.raise_for_status()
-                if response.ok:
-                    _api_grade_url = endpoint
-                    break
-            except Exception as err:
-                pass
-
-    if not _api_grade_url:
-        print('Could not find a valid problem set server or '
-              'the servers are down right now.')
-        return None
-
-    return f'{normalize_slash(_api_grade_url)}challenges/{challenge_id}/problem-set/{question_id}'
-
-
-
 def get_grading_endpoint(
     question_id: Union[str, int], challenge_id: str
 ) -> Optional[str]:
