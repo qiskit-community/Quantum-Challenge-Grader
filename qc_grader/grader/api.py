@@ -14,8 +14,6 @@
 import os
 import requests
 
-from urllib.parse import urljoin
-
 from typing import Dict, List, Mapping, Optional, Union
 
 from qc_grader import __version__
@@ -145,17 +143,3 @@ def send_request(
         raise Exception(result)
 
     return response.json()
-
-
-def notify_provider(access_token: str, challenge_id: str) -> None:
-    global _api_grade_url
-    if not _api_grade_url:
-        get_grading_endpoint('', challenge_id)
-
-    if _api_grade_url:
-        response = send_request(
-            urljoin(_api_grade_url, './provider'),
-            header={
-                'X-Access-Token': access_token
-            }
-        )
