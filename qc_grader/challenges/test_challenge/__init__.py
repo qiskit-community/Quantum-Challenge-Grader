@@ -19,6 +19,6 @@ from .exercise1 import (
     grade_ex1d
 )
 
-from .exercise2 import grade_ex2a, grade_ex2b
+from .exercise2 import grade_ex2a
 
 

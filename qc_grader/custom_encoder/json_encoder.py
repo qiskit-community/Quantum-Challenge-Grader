@@ -26,7 +26,6 @@ from qiskit.primitives import SamplerResult, EstimatorResult, PrimitiveResult
 from qiskit.quantum_info import Operator, Pauli, SparsePauliOp, Statevector
 from qiskit.result import ProbDistribution, QuasiDistribution
 from qiskit_aer.noise import NoiseModel
-# from qiskit_algorithms.minimum_eigensolvers.vqe import VQEResult
 
 from . import serializer
 
@@ -36,21 +35,7 @@ def to_json(obj: Any, **kwargs) -> str:
 
 
 class GraderJSONEncoder(json.JSONEncoder):
-
-    def __init__(
-        self,
-        to_bytes=False,
-        **kwargs
-    ):
-        super(GraderJSONEncoder, self).__init__(**kwargs)
-        self.to_bytes = to_bytes
-
     def default(self, obj: Any) -> Any:
-        if self.to_bytes:
-            _json = serializer.serialize_object(obj)
-            _json['__class__'] = type(obj).__name__
-            return _json
-
         match type(obj).__name__:
             case numpy.integer.__name__:
                 return serializer.dump_numpy_integer(obj)
