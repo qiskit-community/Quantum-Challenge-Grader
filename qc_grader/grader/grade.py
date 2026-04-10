@@ -11,9 +11,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-import json
-
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 
 from qc_grader.custom_encoder import to_json
@@ -21,7 +19,6 @@ from qc_grader.grader.auth import IAMAuth
 
 from .api import (
     get_grading_endpoint,
-    get_problem_set_endpoint,
     send_request,
 )
 
@@ -133,46 +130,3 @@ def handle_grade_response(
     else:
         print(f'Failed: {cause}')
         print('Unable to grade your answer.')
-
-
-def get_problem_set(
-    question_id: Union[str, int],
-    challenge_id: str,
-) -> Union[List[Dict[str, Any]], Tuple[int, Any]]:
-    problem_set_response = None
-
-    endpoint = get_problem_set_endpoint(question_id, challenge_id)
-
-    if not endpoint:
-        return None, None
-
-    try:
-        access_token = iam_auth.get_access_token()
-        account = iam_auth.get_user_account()
-        if access_token:
-            header = {
-                'Authorization': f'Bearer {access_token}',
-                'X-QC-Account': account.get("account_id"),
-                'X-QC-User': account.get("iam_id"),
-            }
-        else:
-            header = None
-
-        problem_set_response = send_request(endpoint, method='GET', header=header)
-    except Exception as err:
-        print('Unable to obtain the problem set')
-
-    if problem_set_response:
-        status = problem_set_response.get('status')
-        if status == 'valid':
-            try:
-                index = problem_set_response.get('index')
-                value = json.loads(problem_set_response.get('value'))
-                return index, value
-            except Exception as err:
-                print(f'Problem set could not be processed: {err}')
-        else:
-            cause = problem_set_response.get('cause')
-            print(f'Problem set failed: {cause}')
-
-    return None, None
