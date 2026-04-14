@@ -1,14 +1,29 @@
 # Contributing
 
-## Setup
+## Prerequisites
 
-Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then run:
+* [uv](https://docs.astral.sh/uv/getting-started/installation/)
+* [Just](https://just.systems/man/en/)
+
+## Installation
 
 ```sh
 uv sync --all-extras
 ```
 
 (uv automatically creates and manages a virtual environment.)
+
+## Format code
+
+```
+just fmt
+```
+
+## Lint
+
+```
+just lint
+```
 
 ## Update dependencies
 
@@ -30,10 +45,4 @@ Add a dev dependency:
 
 ```
 uv add <dependency> --dev
-```
-
-## Format code
-
-```
-uv run ruff format
 ```
