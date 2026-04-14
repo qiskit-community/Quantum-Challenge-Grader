@@ -30,7 +30,7 @@ from qiskit_aer.noise import NoiseModel
 from networkx.classes import Graph
 
 
-def circuit_to_bytes(qc: Union[TwoLocal, QuantumCircuit]) -> dict:
+def circuit_to_bytes(qc: Union[TwoLocal, QuantumCircuit]) -> bytes:
     with BytesIO() as container:
         qpy.dump(qc, container)
         circuit = container.getvalue()

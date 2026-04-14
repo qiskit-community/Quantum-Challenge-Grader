@@ -49,7 +49,7 @@ def grade_lab8_ex1(parse_func: Callable) -> None:
 
 @typechecked
 def grade_lab8_ex2(qubo: OptimizationProblem) -> None:
-    linear_dict = {idx: val for idx, val in enumerate(qubo.objective.linear)}
+    linear_dict = {idx: val for idx, val in enumerate(qubo.objective.linear)}  # ty: ignore[invalid-argument-type]
     # convert tuple key to string for serialization, e.g. (0, 0) => '(0, 0)'
     quadratic_dict = {str(k): v for k, v in qubo.objective.quadratic.to_dict().items()}
 

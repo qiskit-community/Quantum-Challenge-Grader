@@ -80,6 +80,6 @@ https://quantum.cloud.ibm.com/docs/en/guides/save-credentials
             iam_api_key=self.api_key
         ).get_result()
         return {
-            "account_id": details.get("account_id"),
-            "iam_id": details.get("iam_id"),
+            "account_id": details.get("account_id"),  # ty: ignore[unresolved-attribute]
+            "iam_id": details.get("iam_id"),  # ty: ignore[unresolved-attribute]
         }

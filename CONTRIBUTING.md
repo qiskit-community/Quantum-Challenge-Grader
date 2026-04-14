@@ -25,6 +25,11 @@ just fmt
 just lint
 ```
 
+To run the individual linters:
+
+* Ruff: `uv run ruff check`
+* Ty (type check): `uv run ty check`
+
 ## Tests
 
 ```

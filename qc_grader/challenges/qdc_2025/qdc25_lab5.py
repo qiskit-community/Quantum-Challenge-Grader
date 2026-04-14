@@ -60,7 +60,7 @@ def grade_lab5_ex3(qc: QuantumCircuit) -> None:
 @typechecked
 def grade_lab_5_ex4(
     user_hv: float,
-    samples: np.array,
+    samples: np.array,  # ty: ignore[invalid-type-form]
     isa_qc: QuantumCircuit,
     params: dict,
     job_ids: list,
