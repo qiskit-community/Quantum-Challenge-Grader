@@ -127,7 +127,7 @@ def handle_grade_response(
         print("Please review your answer and try again.")
     elif status == "notFinished":
         print(f"Job has not finished: {cause}")
-        print(f"Please wait for the job to complete then try again.")
+        print("Please wait for the job to complete then try again.")
     else:
         print(f"Failed: {cause}")
         print("Unable to grade your answer.")

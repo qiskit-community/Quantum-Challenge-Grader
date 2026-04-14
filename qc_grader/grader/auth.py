@@ -53,7 +53,7 @@ https://quantum.cloud.ibm.com/docs/en/guides/save-credentials
     def get_access_token(self):
         try:
             return self.authenticator.token_manager.get_token()
-        except Exception as e:
+        except Exception:
             print("""
 Account token is invalid or cannot be verified.
 Please save a new account instance using `QiskitRuntimeService.save_account` 

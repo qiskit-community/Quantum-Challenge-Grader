@@ -1,9 +1,7 @@
 from typeguard import typechecked
-from typing import Callable, Optional, Dict, List
-import tempfile
+from typing import Callable
 import os
 
-import numpy as np
 import networkx as nx
 
 from qiskit_serverless.core import QiskitFunction
@@ -11,17 +9,6 @@ from qiskit_addon_opt_mapper import OptimizationProblem
 from qc_grader.grader.grade import grade
 
 _challenge_id = "qdc_2025"
-
-
-@typechecked
-def submit_name(name: str) -> None:
-    status, score, message = grade(
-        name, "submit-name", _challenge_id, return_response=True
-    )
-    if status == False:
-        print(message)
-    else:
-        print("Team name submitted.")
 
 
 def validate_function(

@@ -25,7 +25,7 @@ def submit_name(name: str) -> None:
     status, score, message = grade(
         name, "submit-name", challenge_id, return_response=True
     )
-    if status == False:
+    if status is False:
         print(message)
     else:
         print("Team name submitted.")

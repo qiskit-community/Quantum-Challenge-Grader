@@ -1,21 +1,8 @@
 from typeguard import typechecked, check_type
 
-from qiskit import QuantumCircuit
 from qc_grader.grader.grade import grade
-import numpy
 
 _challenge_id = "qdc_2025"
-
-
-@typechecked
-def submit_name(name: str) -> None:
-    status, score, message = grade(
-        name, "submit-name", _challenge_id, return_response=True
-    )
-    if status == False:
-        print(message)
-    else:
-        print("Team name submitted.")
 
 
 @typechecked
