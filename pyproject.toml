@@ -1,0 +1,46 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "qc_grader"
+dynamic = ["version"]
+description = "Grading client for the IBM Quantum Challenge"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "IBM Quantum Community Team" },
+]
+keywords = ["qiskit", "quantum", "challenge", "grader"]
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "typeguard",
+    "requests==2.32.3",
+    "networkx==3.2.1",
+    "ibm-platform-services==0.66.1",
+    "moocore",
+]
+
+[project.urls]
+Homepage = "https://quantum.cloud.ibm.com/"
+
+[project.optional-dependencies]
+qiskit = [
+    "qiskit[visualization]~=2.1.0",
+    "qiskit-ibm-runtime",
+    "qiskit-aer",
+    "qiskit_serverless",
+    "qiskit_addon_opt_mapper==0.1.0",
+]
+jupyter = [
+    "jupyterlab",
+    "ipykernel",
+]
+
+[tool.hatch.version]
+path = "qc_grader/__init__.py"

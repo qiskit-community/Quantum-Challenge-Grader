@@ -1,8 +1,0 @@
-# Core app
-typeguard
-requests==2.32.3
-networkx==3.2.1
-ibm-platform-services==0.66.1
-
-# Challenges
-moocore
