@@ -98,7 +98,7 @@ def grade_lab7_ex3(qubo: OptimizationProblem, A: np.ndarray, b: np.ndarray) -> N
     - qubo: OptimizationProblem instance with proper objective function
     """
 
-    linear_dict = {idx: val for idx, val in enumerate(qubo.objective.linear)}
+    linear_dict = {idx: val for idx, val in enumerate(qubo.objective.linear)}  # ty: ignore[invalid-argument-type]
     # convert tuple key to string for serialization, e.g. (0, 0) => '(0, 0)'
     quadratic_dict = {str(k): v for k, v in qubo.objective.quadratic.to_dict().items()}
 
@@ -124,7 +124,7 @@ def grade_lab7_ex4(problem: Dict, qubo: OptimizationProblem) -> None:
     - qubo: OptimizationProblem instance for validation
     """
 
-    linear_dict = {idx: val for idx, val in enumerate(qubo.objective.linear)}
+    linear_dict = {idx: val for idx, val in enumerate(qubo.objective.linear)}  # ty: ignore[invalid-argument-type]
     # convert tuple key to string for serialization, e.g. (0, 0) => '(0, 0)'
     quadratic_dict = {str(k): v for k, v in qubo.objective.quadratic.to_dict().items()}
 

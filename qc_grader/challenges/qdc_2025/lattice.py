@@ -19,6 +19,7 @@ from typing import List, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.transforms
 
 
 # ---------------------------------------------------------------------------
@@ -49,7 +50,7 @@ def backends_objs_to_names(backends_arr):
         if isinstance(backend, str):
             backends_name_arr.append(backend)
         else:
-            backends_name_arr.append(backend.name)
+            backends_name_arr.append(backend.name)  # ty: ignore[unresolved-attribute]
 
     return backends_name_arr if len(backends_name_arr) > 1 else backends_name_arr[0]
 
@@ -428,7 +429,7 @@ class HeavyHexLattice:
             edges_boxes_x,
             edges_boxes_y,
             400 * scale,
-            marker=(4, 0, 45),
+            marker=(4, 0, 45),  # ty: ignore[invalid-argument-type]
             c="white",
             edgecolors="black",
             zorder=2,
@@ -590,8 +591,10 @@ class HeavyHexLattice:
                 try:
                     coords = np.array(coords)
                     return ~np.equal(coords.sum(axis=1) % 1, 0)
-                except np.AxisError:
-                    raise np.AxisError("Coords is not a valid tuple or N x 2 array")
+                except np.exceptions.AxisError:
+                    raise np.exceptions.AxisError(
+                        "Coords is not a valid tuple or N x 2 array"
+                    )
 
         plt.rc("font", family="serif")
 
@@ -694,7 +697,7 @@ class HeavyHexLattice:
             edges_boxes_x[highlighted_edges_inds],
             edges_boxes_y[highlighted_edges_inds],
             400 * scale,
-            marker=(4, 0, 45),
+            marker=(4, 0, 45),  # ty: ignore[invalid-argument-type]
             c=colors[highlighted_edges_color_inds],
             edgecolors="black",
             zorder=2,
@@ -703,7 +706,7 @@ class HeavyHexLattice:
             edges_boxes_x[non_highlighted_edges_inds],
             edges_boxes_y[non_highlighted_edges_inds],
             400 * scale,
-            marker=(4, 0, 45),
+            marker=(4, 0, 45),  # ty: ignore[invalid-argument-type]
             c="white",
             edgecolors="black",
             zorder=2,

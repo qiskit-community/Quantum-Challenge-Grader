@@ -46,6 +46,7 @@ jupyter = [
 dev = [
     "pytest>=9.0.3",
     "ruff>=0.15.10",
+    "ty>=0.0.30",
 ]
 
 [tool.hatch.version]
