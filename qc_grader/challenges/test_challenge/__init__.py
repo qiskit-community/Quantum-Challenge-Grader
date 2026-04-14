@@ -11,14 +11,6 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-from .exercise1 import (
-    submit_name,
-    grade_ex1a,
-    grade_ex1b,
-    grade_ex1c,
-    grade_ex1d
-)
+from .exercise1 import submit_name, grade_ex1a, grade_ex1b, grade_ex1c, grade_ex1d
 
 from .exercise2 import grade_ex2a
-
-

@@ -42,5 +42,10 @@ jupyter = [
     "ipykernel",
 ]
 
+[dependency-groups]
+dev = [
+    "ruff>=0.15.10",
+]
+
 [tool.hatch.version]
 path = "qc_grader/__init__.py"

@@ -31,3 +31,9 @@ Add a dev dependency:
 ```
 uv add <dependency> --dev
 ```
+
+## Format code
+
+```
+uv run ruff format
+```
