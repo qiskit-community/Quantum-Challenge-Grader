@@ -8,7 +8,6 @@ from .qdc25_lab1 import (
 )
 
 from .qdc25_lab2 import (
-    submit_name,
     grade_lab2_ex1,
     grade_lab2_ex2,
     grade_lab2_ex3,
@@ -24,7 +23,6 @@ from .qdc25_lab2 import (
 )
 
 from .qdc25_lab3 import (
-    submit_name,
     grade_lab3_ex1,
     grade_lab3_ex2,
     grade_lab3_ex3,
@@ -42,7 +40,6 @@ from .qdc25_lab3 import (
 )
 
 from .qdc25_lab4 import (
-    submit_name,
     grade_lab4_ex1,
     grade_lab4_ex2,
     grade_lab4_ex3,
@@ -52,7 +49,6 @@ from .qdc25_lab4 import (
 )
 
 from .qdc25_lab5 import (
-    submit_name,
     grade_lab5_ex1,
     grade_lab5_ex2,
     grade_lab5_ex3,
@@ -60,14 +56,12 @@ from .qdc25_lab5 import (
 )
 
 from .qdc25_lab6 import (
-    submit_name,
     grade_lab6_ex1,
     grade_lab6_ex2,
     grade_lab6_ex3,
 )
 
 from .qdc25_lab7 import (
-    submit_name,
     grade_kipu_function,
     grade_lab7_ex1,
     grade_lab7_ex2,
@@ -78,7 +72,6 @@ from .qdc25_lab7 import (
 )
 
 from .qdc25_lab8 import (
-    submit_name,
     grade_qctrl_function,
     grade_lab8_ex1,
     grade_lab8_ex2,
