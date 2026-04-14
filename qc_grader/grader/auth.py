@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 # (C) Copyright IBM 2025
 #
 # This code is licensed under the Apache License, Version 2.0. You may
