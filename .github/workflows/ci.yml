@@ -14,5 +14,5 @@ jobs:
       - uses: extractions/setup-just@v3
       - name: install
         run: uv sync --all-extras
-      - name: lint
-        run: just lint
+      - run: just lint
+      - run: just test
