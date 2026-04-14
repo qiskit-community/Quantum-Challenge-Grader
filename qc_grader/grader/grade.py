@@ -31,17 +31,17 @@ def grade(
     challenge: Optional[str] = None,
     return_response: Optional[bool] = False,
     **kwargs: Any,
-) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:
+) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:  # ty: ignore[invalid-return-type]
     serialized_answer = to_json(answer, **kwargs)
 
     if challenge is None and "/" in str(question):
-        challenge_id = question.split("/")[0]
-        question_id = question.split("/")[1]
+        challenge_id = question.split("/")[0]  # ty: ignore[unresolved-attribute]
+        question_id = question.split("/")[1]  # ty: ignore[unresolved-attribute]
     else:
         question_id = question
         challenge_id = challenge
 
-    endpoint = get_grading_endpoint(question_id, challenge_id)
+    endpoint = get_grading_endpoint(question_id, challenge_id)  # ty: ignore[invalid-argument-type]
     payload = {"answer": serialized_answer}
 
     if serialized_answer is not None and endpoint:
@@ -65,7 +65,7 @@ def grade_answer(
     endpoint: str,
     max_content_length: Optional[int] = None,
     return_response: Optional[bool] = False,
-) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:
+) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:  # ty: ignore[invalid-return-type]
     try:
         access_token = iam_auth.get_access_token()
         account = iam_auth.get_user_account()
@@ -90,7 +90,7 @@ def grade_answer(
             s = status == "valid" or status is True
             return s, score, cause
 
-        handle_grade_response(status, score=score, cause=cause)
+        handle_grade_response(status, score=score, cause=cause)  # ty: ignore[invalid-argument-type]
 
     except Exception as err:
         print(f"Failed: {err}")
