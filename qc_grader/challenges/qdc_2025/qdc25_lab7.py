@@ -1,5 +1,5 @@
 from typeguard import typechecked
-from typing import Callable, Optional, Dict, List
+from typing import Callable, Optional, Dict
 import tempfile
 import os
 
@@ -10,17 +10,6 @@ from qiskit_addon_opt_mapper import OptimizationProblem
 from qc_grader.grader.grade import grade
 
 _challenge_id = "qdc_2025"
-
-
-@typechecked
-def submit_name(name: str) -> None:
-    status, score, message = grade(
-        name, "submit-name", _challenge_id, return_response=True
-    )
-    if status == False:
-        print(message)
-    else:
-        print("Team name submitted.")
 
 
 def validate_function(
@@ -80,10 +69,10 @@ def grade_lab7_ex1(parse_func: Callable) -> None:
             # Clean up temp file
             try:
                 os.unlink(temp_path)
-            except:
+            except Exception:
                 pass
 
-    except Exception as e:
+    except Exception:
         pass
 
 

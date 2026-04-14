@@ -15,7 +15,7 @@ Authors: César Benito, Jesús Cobos
 """
 
 from functools import cached_property
-from typing import List, Union, Tuple, Dict, Optional
+from typing import List, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -510,7 +510,7 @@ class HeavyHexLattice:
 
         # If no starting qubit index is provided, assign defaults depending on backend
         ibm_qubit_coords = []
-        if first_qubit == None:
+        if first_qubit is None:
             if backend == "ibm_fez" or backend == "ibm_marrakesh":
                 first_qubit = 3
             else:
@@ -584,7 +584,7 @@ class HeavyHexLattice:
 
         def is_edge_coords(coords):
             """Return True if coords correspond to an edge (half-integer coordinates)."""
-            if type(coords) == tuple:
+            if isinstance(coords, tuple):
                 return (coords[0] % 1 != 0) or (coords[1] % 1 != 0)
             else:
                 try:

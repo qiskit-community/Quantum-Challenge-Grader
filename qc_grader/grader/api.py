@@ -64,7 +64,7 @@ def get_grading_endpoint(
                 if response.ok:
                     _api_grade_url = endpoint
                     break
-            except Exception as err:
+            except Exception:
                 pass
 
     if not _api_grade_url:

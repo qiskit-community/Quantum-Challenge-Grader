@@ -18,17 +18,6 @@ _challenge_id = "qdc_2025"
 
 
 @typechecked
-def submit_name(name: str) -> None:
-    status, score, message = grade(
-        name, "submit-name", _challenge_id, return_response=True
-    )
-    if status == False:
-        print(message)
-    else:
-        print("Team name submitted.")
-
-
-@typechecked
 def grade_lab2_ex1(observables: List) -> None:
     grade(observables, "lab2-ex1", _challenge_id)
 
@@ -62,7 +51,7 @@ def grade_lab2_ex4(
 
 @typechecked
 def grade_lab2_ex5(backend: IBMBackend) -> None:
-    if type(backend) == IBMBackend:
+    if isinstance(backend, IBMBackend):
         answer = "true"
     else:
         answer = "false"
@@ -74,8 +63,7 @@ def grade_lab2_ex5(backend: IBMBackend) -> None:
 def grade_lab2_ex6(
     circuits_all_isa: List, observables_isa: List, backend: IBMBackend
 ) -> None:
-
-    if type(backend) == IBMBackend:
+    if isinstance(backend, IBMBackend):
         backend_answer = "true"
     else:
         backend_answer = "false"
@@ -90,7 +78,7 @@ def grade_lab2_ex6(
 
 @typechecked
 def grade_lab2_ex7(estimator: EstimatorV2) -> None:
-    if type(estimator) != qiskit_ibm_runtime.estimator.EstimatorV2:
+    if not isinstance(estimator, qiskit_ibm_runtime.estimator.EstimatorV2):
         answer = "false"
     else:
         answer = "true"
