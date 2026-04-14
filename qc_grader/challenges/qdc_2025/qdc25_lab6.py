@@ -1,8 +1,6 @@
 from typeguard import typechecked, check_type
 
-from qiskit import QuantumCircuit
 from qc_grader.grader.grade import grade
-import numpy
 
 _challenge_id = "qdc_2025"
 

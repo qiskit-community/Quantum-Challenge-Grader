@@ -1,9 +1,7 @@
 from typeguard import typechecked
-from typing import Callable, Optional, Dict, List
-import tempfile
+from typing import Callable
 import os
 
-import numpy as np
 import networkx as nx
 
 from qiskit_serverless.core import QiskitFunction

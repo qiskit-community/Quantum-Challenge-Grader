@@ -15,7 +15,7 @@ Authors: César Benito, Jesús Cobos
 """
 
 from functools import cached_property
-from typing import List, Union, Tuple, Dict, Optional
+from typing import List, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl

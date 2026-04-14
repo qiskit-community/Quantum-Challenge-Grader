@@ -1,5 +1,5 @@
 from typeguard import typechecked
-from typing import Callable, Optional, Dict, List
+from typing import Callable, Optional, Dict
 import tempfile
 import os
 
@@ -83,7 +83,7 @@ def grade_lab7_ex1(parse_func: Callable) -> None:
             except:
                 pass
 
-    except Exception as e:
+    except Exception:
         pass
 
 
