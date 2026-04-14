@@ -16,7 +16,7 @@ import numpy
 
 from fractions import Fraction
 from io import BytesIO
-from typing import Any, Union
+from typing import Union
 from collections.abc import KeysView
 
 from qiskit import QuantumCircuit, qpy
@@ -26,7 +26,6 @@ from qiskit.primitives import SamplerResult, EstimatorResult, PrimitiveResult
 from qiskit.quantum_info import Operator, Pauli, SparsePauliOp, Statevector
 from qiskit.result import ProbDistribution, QuasiDistribution
 from qiskit_aer.noise import NoiseModel
-# from qiskit_algorithms.minimum_eigensolvers.vqe import VQEResult
 
 from networkx.classes import Graph
 
@@ -157,12 +156,6 @@ def dump_graph(obj: Graph):
         "nodes": list(obj.nodes(data=True)),
         "edges": list(obj.edges(data=True)),
     }
-
-
-def serialize_object(obj: Any):
-    import pickle
-
-    return {"obj": pickle.dumps(obj).decode("ISO-8859-1")}
 
 
 def dump_dict_keys(obj: KeysView):

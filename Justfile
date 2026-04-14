@@ -4,3 +4,6 @@ fmt:
 lint:
     uv run ruff format --check
     uv run ruff check
+
+test:
+    uv run pytest
