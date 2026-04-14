@@ -34,14 +34,21 @@ def grade_lab5_ex1(gen_cvecs: Callable) -> None:
             v = gen_cvecs(n_samples=n)
             check_type(v, np.array)
             if v.shape != (n, 3):
-                print("Wrong shape generated for", n, "samples, shape=", v.shape, "expected=", (n, 3))
+                print(
+                    "Wrong shape generated for",
+                    n,
+                    "samples, shape=",
+                    v.shape,
+                    "expected=",
+                    (n, 3),
+                )
                 continue
 
             if not np.issubdtype(v.dtype, np.number):
                 print("Numpy array includes non-numbers!")
                 continue
 
-            samples.append(v)  
+            samples.append(v)
 
     answer_dict = {"samples": samples}
     grade(answer_dict, "lab5-ex1", _challenge_id)
@@ -49,7 +56,7 @@ def grade_lab5_ex1(gen_cvecs: Callable) -> None:
 
 @typechecked
 def grade_lab5_ex2(user_hv: float) -> None:
-    check_type(user_hv, float)    
+    check_type(user_hv, float)
     answer_dict = {"user_hv": user_hv}
     grade(answer_dict, "lab5-ex2", _challenge_id)
 
@@ -62,7 +69,13 @@ def grade_lab5_ex3(qc: QuantumCircuit) -> None:
 
 
 @typechecked
-def grade_lab_5_ex4(user_hv: float, samples: np.array, isa_qc: QuantumCircuit, params: dict, job_ids: list) -> None:
+def grade_lab_5_ex4(
+    user_hv: float,
+    samples: np.array,
+    isa_qc: QuantumCircuit,
+    params: dict,
+    job_ids: list,
+) -> None:
     check_type(isa_qc, QuantumCircuit)
     check_type(user_hv, float)
     check_type(params, dict)
@@ -72,7 +85,7 @@ def grade_lab_5_ex4(user_hv: float, samples: np.array, isa_qc: QuantumCircuit, p
     if isa_qc is None:
         print("Invalid quantum circuit submitted")
         return None
-        
+
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     fn_samples = f"results/3_regular_static_80q/samples_{timestamp}.npz"
     fn_hvs = f"results/3_regular_static_80q/hvs_{timestamp}.npz"
@@ -80,24 +93,33 @@ def grade_lab_5_ex4(user_hv: float, samples: np.array, isa_qc: QuantumCircuit, p
     fn_job = f"results/3_regular_static_80q/job_{timestamp}.npz"
     np.savez_compressed(fn_samples, array=samples)
     np.savez_compressed(fn_hvs, array=np.array(user_hv))
-    pickle.dump(params, open(fn_params, 'wb'))
-    pickle.dump(job_ids, open(fn_job, 'wb'))
+    pickle.dump(params, open(fn_params, "wb"))
+    pickle.dump(job_ids, open(fn_job, "wb"))
 
-    moo_graphs, _, upper, lower = load_problem("./instances/3_regular_static_80q/", False)
+    moo_graphs, _, upper, lower = load_problem(
+        "./instances/3_regular_static_80q/", False
+    )
     n_obj = len(moo_graphs)
 
     adj_m = [nx.adjacency_matrix(moo_graphs[i]).toarray() for i in range(n_obj)]
     post_samples = samples
 
     fis = np.stack(
-        [np.sum((post_samples @ adj_m[i]) * (1 - post_samples), axis=1) for i in range(n_obj)], axis=1)
+        [
+            np.sum((post_samples @ adj_m[i]) * (1 - post_samples), axis=1)
+            for i in range(n_obj)
+        ],
+        axis=1,
+    )
 
     hv = hypervolume(fis, ref=lower, maximise=True)
 
     if abs(hv - user_hv) > 1000:
-        print("The hypervolume submitted by the user does not match the implied hypervolume")
+        print(
+            "The hypervolume submitted by the user does not match the implied hypervolume"
+        )
         return None
-    
+
     answer_dict = {
         "user_hv": user_hv,
     }

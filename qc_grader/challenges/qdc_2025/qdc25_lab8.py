@@ -12,6 +12,7 @@ from qc_grader.grader.grade import grade
 
 _challenge_id = "qdc_2025"
 
+
 @typechecked
 def submit_name(name: str) -> None:
     status, score, message = grade(
@@ -21,6 +22,7 @@ def submit_name(name: str) -> None:
         print(message)
     else:
         print("Team name submitted.")
+
 
 def validate_function(
     function_provider: str,
@@ -36,6 +38,7 @@ def make_validator(function_provider: str):
             function_provider=function_provider,
             function_title=function.title,
         )
+
     return validator
 
 
@@ -52,7 +55,7 @@ def grade_lab8_ex1(parse_func: Callable) -> None:
     answer_dict = {
         "vertices": len(graph.nodes),
         "edges": len(graph.edges),
-        "density": nx.density(graph)
+        "density": nx.density(graph),
     }
     grade(answer_dict, "lab8-ex1", _challenge_id)
 

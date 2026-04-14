@@ -19,29 +19,33 @@ from qc_grader.grader.grade import grade
 
 challenge_id = Path(__file__).parent.name
 
+
 @typechecked
 def submit_name(name: str) -> None:
-    status, score, message = grade(name, 'submit-name', challenge_id, return_response=True)
+    status, score, message = grade(
+        name, "submit-name", challenge_id, return_response=True
+    )
     if status == False:
         print(message)
     else:
-        print('Team name submitted.')
+        print("Team name submitted.")
+
 
 @typechecked
 def grade_ex1a(answer: str) -> None:
-    grade(answer, 'test-pass', challenge_id)
+    grade(answer, "test-pass", challenge_id)
 
 
 @typechecked
 def grade_ex1b(answer: str) -> None:
-    grade(answer, 'test-fail', challenge_id)
+    grade(answer, "test-fail", challenge_id)
 
 
 @typechecked
 def grade_ex1c(answer: int) -> None:
-    grade(answer, 'test-prime', challenge_id)
+    grade(answer, "test-prime", challenge_id)
 
 
 @typechecked
 def grade_ex1d(answer: str) -> None:
-    grade(answer, 'test-vowels', challenge_id)
+    grade(answer, "test-vowels", challenge_id)
