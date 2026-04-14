@@ -25,6 +25,12 @@ just fmt
 just lint
 ```
 
+## Tests
+
+```
+just test
+```
+
 ## Update dependencies
 
 ([Original documentation](https://docs.astral.sh/uv/concepts/projects/dependencies/))
