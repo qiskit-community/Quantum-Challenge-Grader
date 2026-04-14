@@ -51,7 +51,7 @@ def grade_lab2_ex4(
 
 @typechecked
 def grade_lab2_ex5(backend: IBMBackend) -> None:
-    if type(backend) == IBMBackend:
+    if isinstance(backend, IBMBackend):
         answer = "true"
     else:
         answer = "false"
@@ -63,8 +63,7 @@ def grade_lab2_ex5(backend: IBMBackend) -> None:
 def grade_lab2_ex6(
     circuits_all_isa: List, observables_isa: List, backend: IBMBackend
 ) -> None:
-
-    if type(backend) == IBMBackend:
+    if isinstance(backend, IBMBackend):
         backend_answer = "true"
     else:
         backend_answer = "false"
@@ -79,7 +78,7 @@ def grade_lab2_ex6(
 
 @typechecked
 def grade_lab2_ex7(estimator: EstimatorV2) -> None:
-    if type(estimator) != qiskit_ibm_runtime.estimator.EstimatorV2:
+    if not isinstance(estimator, qiskit_ibm_runtime.estimator.EstimatorV2):
         answer = "false"
     else:
         answer = "true"
