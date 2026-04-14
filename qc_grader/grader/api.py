@@ -20,23 +20,24 @@ from qc_grader import __version__
 from qc_grader.grader.common import normalize_slash, remove_slash
 
 
-
-is_staging: bool = os.getenv('TARGET_ENV', 'production').lower() == 'staging'
+is_staging: bool = os.getenv("TARGET_ENV", "production").lower() == "staging"
 
 # possible challenge grading endpoints: https://qac-grading-dev.quantum.ibm.com
 grading_endpoints: List[str] = [
-    'http://127.0.0.1:5000',
-    f'https://qac-grading{"-dev" if is_staging else ""}.quantum.ibm.com'
+    "http://127.0.0.1:5000",
+    f"https://qac-grading{'-dev' if is_staging else ''}.quantum.ibm.com",
 ]
 
 
-_api_grade_url: Optional[str] = os.getenv('QC_GRADING_ENDPOINT')
-_api_iam_token_url: Optional[str] = os.getenv('QC_IAM_TOKEN_ENDPOINT')
+_api_grade_url: Optional[str] = os.getenv("QC_GRADING_ENDPOINT")
+_api_iam_token_url: Optional[str] = os.getenv("QC_IAM_TOKEN_ENDPOINT")
 
 
 class MaxContentError(BaseException):
     def __init__(self, content_length: int, max_content_length: int) -> None:
-        self.message = f'Max content length ({max_content_length}) exceeded: {content_length}'
+        self.message = (
+            f"Max content length ({max_content_length}) exceeded: {content_length}"
+        )
 
     def __str__(self) -> str:
         return self.message
@@ -67,50 +68,51 @@ def get_grading_endpoint(
                 pass
 
     if not _api_grade_url:
-        print('Could not find a valid grading server or '
-              'the grading servers are down right now.')
+        print(
+            "Could not find a valid grading server or "
+            "the grading servers are down right now."
+        )
         return None
 
-    return f'{normalize_slash(_api_grade_url)}challenges/{challenge_id}/validate/{question_id}'
+    return f"{normalize_slash(_api_grade_url)}challenges/{challenge_id}/validate/{question_id}"
 
 
 def compute_content_length(
     endpoint: str,
     query: Optional[Dict[str, str]] = None,
     body: Optional[Dict[str, str]] = None,
-    method: str = 'POST',
-    header: Optional[Mapping[str, str]] = None
+    method: str = "POST",
+    header: Optional[Mapping[str, str]] = None,
 ) -> int:
     from requests import Request
-    header = header if header else {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Client-Version': __version__
-    }
 
-    req = Request(
-        method,
-        url=endpoint,
-        params=query,
-        json=body,
-        headers=header
+    header = (
+        header
+        if header
+        else {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "X-Client-Version": __version__,
+        }
     )
+
+    req = Request(method, url=endpoint, params=query, json=body, headers=header)
     prepped = req.prepare()
-    return int(prepped.headers['Content-Length'])
+    return int(prepped.headers["Content-Length"])
 
 
 def send_request(
     endpoint: str,
     query: Optional[Dict[str, str]] = None,
     body: Optional[Dict[str, str]] = None,
-    method: str = 'POST',
+    method: str = "POST",
     header: Optional[Mapping[str, str]] = None,
-    max_content_length: Optional[int] = None
+    max_content_length: Optional[int] = None,
 ) -> Dict[str, str]:
     default_header = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Client-Version': __version__
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-Client-Version": __version__,
     }
     additional_header = header or {}
     header = {**default_header, **additional_header}
@@ -121,25 +123,21 @@ def send_request(
             raise MaxContentError(content_length, max_content_length)
 
     response = requests.request(
-        method,
-        url=endpoint,
-        params=query,
-        json=body,
-        headers=header
+        method, url=endpoint, params=query, json=body, headers=header
     )
 
     if response.status_code != 200:
         if response.status_code == 403:
-            result = f'Unable to access service ({response.reason})'
+            result = f"Unable to access service ({response.reason})"
         else:
             try:
                 result = response.json()
-                if 'error' in result:
-                    result = result['error']
-                if 'message' in result:
-                    result = result['message']
+                if "error" in result:
+                    result = result["error"]
+                if "message" in result:
+                    result = result["message"]
             except Exception:
-                result = f' Not successful - {response.reason}'
+                result = f" Not successful - {response.reason}"
         raise Exception(result)
 
     return response.json()

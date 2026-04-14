@@ -11,6 +11,7 @@ from qc_grader.grader.grade import grade
 
 _challenge_id = "qdc_2025"
 
+
 @typechecked
 def submit_name(name: str) -> None:
     status, score, message = grade(
@@ -20,6 +21,7 @@ def submit_name(name: str) -> None:
         print(message)
     else:
         print("Team name submitted.")
+
 
 def validate_function(
     function_provider: str,
@@ -35,6 +37,7 @@ def make_validator(function_provider: str):
             function_provider=function_provider,
             function_title=function.title,
         )
+
     return validator
 
 
@@ -58,7 +61,7 @@ def grade_lab7_ex1(parse_func: Callable) -> None:
 
     try:
         # Write test content to temporary file
-        with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.dat') as f:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".dat") as f:
             f.write(test_content)
             temp_path = f.name
 
@@ -120,6 +123,7 @@ def grade_lab7_ex3(qubo: OptimizationProblem, A: np.ndarray, b: np.ndarray) -> N
     }
 
     grade(answer_dict, "lab7-ex3", _challenge_id)
+
 
 @typechecked
 def grade_lab7_ex4(problem: Dict, qubo: OptimizationProblem) -> None:

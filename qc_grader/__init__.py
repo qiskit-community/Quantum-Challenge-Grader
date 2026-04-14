@@ -9,6 +9,7 @@
 # that they have been altered from the originals.
 
 import warnings
-warnings.filterwarnings('ignore')
 
-__version__ = '0.23.0'
+warnings.filterwarnings("ignore")
+
+__version__ = "0.23.0"

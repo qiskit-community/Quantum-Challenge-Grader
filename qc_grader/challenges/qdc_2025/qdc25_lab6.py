@@ -6,6 +6,7 @@ import numpy
 
 _challenge_id = "qdc_2025"
 
+
 @typechecked
 def submit_name(name: str) -> None:
     status, score, message = grade(
@@ -15,6 +16,7 @@ def submit_name(name: str) -> None:
         print(message)
     else:
         print("Team name submitted.")
+
 
 @typechecked
 def grade_lab6_ex1(molecule_name: str, hartree_fock_E: float) -> None:
@@ -30,12 +32,10 @@ def grade_lab6_ex1(molecule_name: str, hartree_fock_E: float) -> None:
 @typechecked
 def grade_lab6_ex2(molecule_name: str, casci_E: float) -> None:
 
-    answer_dict = {
-        "molecule_name": molecule_name,
-        "casci_E": casci_E
-    }
+    answer_dict = {"molecule_name": molecule_name, "casci_E": casci_E}
 
     grade(answer_dict, "lab6-ex2", _challenge_id)
+
 
 @typechecked
 def grade_lab6_ex3(molecule_name: str, sqd_E: list) -> None:
@@ -43,11 +43,8 @@ def grade_lab6_ex3(molecule_name: str, sqd_E: list) -> None:
     for E in sqd_E:
         check_type(E[0], int)
         check_type(E[1], float)
-        check_type(E[2], str )
+        check_type(E[2], str)
 
-    answer_dict = {
-        "molecule_name": molecule_name,
-        "sqd_E": sqd_E
-    }
+    answer_dict = {"molecule_name": molecule_name, "sqd_E": sqd_E}
 
     grade(answer_dict, "lab6-ex3", _challenge_id)

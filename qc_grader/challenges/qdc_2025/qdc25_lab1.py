@@ -7,6 +7,7 @@ import numpy
 from typing import Protocol, runtime_checkable, List, Tuple, Dict, Any
 from typeguard import check_type
 
+
 @runtime_checkable
 class HeavyHexLike(Protocol):
     plaquettes_width: int
@@ -16,10 +17,15 @@ class HeavyHexLike(Protocol):
     vertices: Dict[Tuple[int, int], Any]
 
     def coords_to_logical_qb(self, coords: Any) -> Any: ...
-    def edges_connected_to_node(self, node_coords: Tuple[int, int]) -> List[Tuple[float, float]]: ...
-    def nodes_connected_to_edge(self, edge_coords: Tuple[float, float]) -> Tuple[Tuple[int, int], Tuple[int, int]]: ...
+    def edges_connected_to_node(
+        self, node_coords: Tuple[int, int]
+    ) -> List[Tuple[float, float]]: ...
+    def nodes_connected_to_edge(
+        self, edge_coords: Tuple[float, float]
+    ) -> Tuple[Tuple[int, int], Tuple[int, int]]: ...
     def find_qubits_downward(self) -> List[int]: ...
     def find_qubits_upward(self) -> List[int]: ...
+
 
 _challenge_id = "qdc_2025"
 
@@ -92,4 +98,3 @@ def grade_lab1_ex5(
         "classical_exp_vals": classical_exp_vals,
     }
     grade(answer_dict, "lab1-ex5", _challenge_id)
-
