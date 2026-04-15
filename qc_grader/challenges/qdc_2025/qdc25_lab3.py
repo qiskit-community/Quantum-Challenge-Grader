@@ -18,6 +18,17 @@ _challenge_id = "qdc_2025"
 
 
 @typechecked
+def submit_name(name: str) -> None:
+    status, score, message = grade(
+        name, "submit-name", _challenge_id, return_response=True
+    )
+    if status is False:
+        print(message)
+    else:
+        print("Team name submitted.")
+
+
+@typechecked
 def grade_lab3_ex1(
     mps_energies_t0: numpy.ndarray, mps_wp_circ_t0: QuantumCircuit
 ) -> None:
