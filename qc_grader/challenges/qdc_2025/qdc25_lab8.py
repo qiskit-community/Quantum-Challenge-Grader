@@ -44,6 +44,17 @@ grade_qctrl_function = make_validator("q-ctrl")
 
 
 @typechecked
+def submit_name(name: str) -> None:
+    status, score, message = grade(
+        name, "submit-name", _challenge_id, return_response=True
+    )
+    if status is False:
+        print(message)
+    else:
+        print("Team name submitted.")
+
+
+@typechecked
 def grade_lab8_ex1(parse_func: Callable) -> None:
 
     base_dir = os.path.dirname(__file__)

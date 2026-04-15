@@ -26,6 +26,17 @@ _challenge_id = "qdc_2025"
 
 
 @typechecked
+def submit_name(name: str) -> None:
+    status, score, message = grade(
+        name, "submit-name", _challenge_id, return_response=True
+    )
+    if status is False:
+        print(message)
+    else:
+        print("Team name submitted.")
+
+
+@typechecked
 def grade_lab5_ex1(gen_cvecs: Callable) -> None:
     samples = []
     for _ in range(3):
