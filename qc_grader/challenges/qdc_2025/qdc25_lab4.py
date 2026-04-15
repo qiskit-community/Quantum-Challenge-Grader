@@ -39,6 +39,17 @@ IMPURITY_INDEX = (NBATH) // 2
 
 
 @typechecked
+def submit_name(name: str) -> None:
+    status, score, message = grade(
+        name, "submit-name", _challenge_id, return_response=True
+    )
+    if status is False:
+        print(message)
+    else:
+        print("Team name submitted.")
+
+
+@typechecked
 def grade_lab4_ex1(perturbed_tfim_hamiltonian: Callable) -> None:
     H_test = perturbed_tfim_hamiltonian(NUM_QUBITS, J, H_X, H_Z)
 
