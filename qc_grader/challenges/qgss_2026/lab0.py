@@ -48,28 +48,14 @@ def grade_lab0_ex2(counts: dict) -> None:
 
 
 @typechecked
-def grade_lab0_ex3(
-    c_out: List[str],
-    cpp_out: List[str],
-    qiskit_c_out: List[str],
-    qiskit_cpp_out: List[str],
-) -> None:
+def grade_lab0_ex3(exp_val: float) -> None:
     """
-    Grade Exercise 3: Verify C/C++ toolchain outputs.
+    Grade Exercise 3: Verify Estimator result.
 
     Args:
-        c_out: Shell output from hello.c
-        cpp_out: Shell output from hello.cpp
-        qiskit_c_out: Shell output from hello_qiskit.c
-        qiskit_cpp_out: Shell output from hello_qiskit.cpp
+        exp_val: Expectation value from Estimator
     """
-    answer_dict = {
-        "c_out": " ".join(str(x) for x in c_out),
-        "cpp_out": " ".join(str(x) for x in cpp_out),
-        "qiskit_c_out": " ".join(str(x) for x in qiskit_c_out),
-        "qiskit_cpp_out": " ".join(str(x) for x in qiskit_cpp_out),
-    }
-    grade(answer_dict, "lab0-ex3", _challenge_id)
+    grade(exp_val, "lab0-ex3", _challenge_id)
 
 
 @typechecked
