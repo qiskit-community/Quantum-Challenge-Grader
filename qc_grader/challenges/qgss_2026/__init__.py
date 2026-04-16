@@ -24,11 +24,9 @@ from .lab0 import (
 )
 
 __all__ = [
-    'grade_lab0_ex1',
-    'grade_lab0_ex2',
-    'grade_lab0_ex3',
-    'grade_lab0_ex4',
-    'grade_lab0_ex5',
+    "grade_lab0_ex1",
+    "grade_lab0_ex2",
+    "grade_lab0_ex3",
+    "grade_lab0_ex4",
+    "grade_lab0_ex5",
 ]
-
-# Made with Bob
