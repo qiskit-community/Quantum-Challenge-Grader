@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 # (C) Copyright IBM 2024
 #
 # This code is licensed under the Apache License, Version 2.0. You may
@@ -26,7 +23,6 @@ from qiskit.primitives import SamplerResult, EstimatorResult, PrimitiveResult
 from qiskit.quantum_info import Operator, Pauli, SparsePauliOp, Statevector
 from qiskit.result import ProbDistribution, QuasiDistribution
 from qiskit_aer.noise import NoiseModel
-# from qiskit_algorithms.minimum_eigensolvers.vqe import VQEResult
 
 from . import serializer
 
@@ -36,67 +32,51 @@ def to_json(obj: Any, **kwargs) -> str:
 
 
 class GraderJSONEncoder(json.JSONEncoder):
-
-    def __init__(
-        self,
-        to_bytes=False,
-        **kwargs
-    ):
-        super(GraderJSONEncoder, self).__init__(**kwargs)
-        self.to_bytes = to_bytes
-
-    def default(self, obj: Any) -> Any:
-        if self.to_bytes:
-            _json = serializer.serialize_object(obj)
-            _json['__class__'] = type(obj).__name__
-            return _json
-
-        match type(obj).__name__:
+    def default(self, o: Any) -> Any:
+        match type(o).__name__:
             case numpy.integer.__name__:
-                return serializer.dump_numpy_integer(obj)
+                return serializer.dump_numpy_integer(o)
             case numpy.floating.__name__:
-                return serializer.dump_numpy_floating(obj)
+                return serializer.dump_numpy_floating(o)
             case numpy.bool_.__name__:
-                return serializer.dump_numpy_bool(obj)
+                return serializer.dump_numpy_bool(o)
             case numpy.ndarray.__name__:
-                return serializer.dump_numpy_ndarray(obj)
+                return serializer.dump_numpy_ndarray(o)
             case numpy.complex128.__name__:
-                return serializer.dump_numpy_complex(obj)
+                return serializer.dump_numpy_complex(o)
             case complex.__name__:
-                return serializer.dump_complex(obj)
+                return serializer.dump_complex(o)
             case Fraction.__name__:
-                return serializer.dump_fraction(obj)
+                return serializer.dump_fraction(o)
             case Parameter.__name__:
-                return serializer.dump_parameter(obj)
+                return serializer.dump_parameter(o)
             case TwoLocal.__name__:
-                return serializer.dump_two_local(obj)
+                return serializer.dump_two_local(o)
             case QuantumCircuit.__name__:
-                return serializer.dump_quantum_circuit(obj)
+                return serializer.dump_quantum_circuit(o)
             case SamplerResult.__name__:
-                return serializer.dump_sampler_result(obj)
+                return serializer.dump_sampler_result(o)
             case EstimatorResult.__name__:
-                return serializer.dump_estimator_result(obj)
+                return serializer.dump_estimator_result(o)
             case PrimitiveResult.__name__:
-                return serializer.dump_primitive_result(obj)
+                return serializer.dump_primitive_result(o)
             case QuasiDistribution.__name__:
-                return serializer.dump_quasi_distribution(obj)
+                return serializer.dump_quasi_distribution(o)
             case ProbDistribution.__name__:
-                return serializer.dump_prob_distribution(obj)
-            # case VQEResult.__name__:
-            #     return serializer.dump_vqe_result(obj)
+                return serializer.dump_prob_distribution(o)
             case Statevector.__name__:
-                return serializer.dump_state_vector(obj)
+                return serializer.dump_state_vector(o)
             case Operator.__name__:
-                return serializer.dump_operator(obj)
+                return serializer.dump_operator(o)
             case SparsePauliOp.__name__:
-                return serializer.dump_sparse_pauli_op(obj)
+                return serializer.dump_sparse_pauli_op(o)
             case NoiseModel.__name__:
-                return serializer.dump_noise_model(obj)
+                return serializer.dump_noise_model(o)
             case Pauli.__name__:
-                return serializer.dump_pauli(obj)
+                return serializer.dump_pauli(o)
             case Graph.__name__:
-                return serializer.dump_graph(obj)
+                return serializer.dump_graph(o)
             case "dict_keys":
-                return serializer.dump_dict_keys(obj)
+                return serializer.dump_dict_keys(o)
             case _:
-                return json.JSONEncoder.default(self, obj)
+                return json.JSONEncoder.default(self, o)

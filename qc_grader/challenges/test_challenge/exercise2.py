@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 # (C) Copyright IBM 2024
 #
 # This code is licensed under the Apache License, Version 2.0. You may
@@ -24,9 +21,4 @@ challenge_id = Path(__file__).parent.name
 
 @typechecked
 def grade_ex2a(qc: QuantumCircuit) -> None:
-    grade(qc, 'test-circuit', challenge_id)
-
-
-@typechecked
-def grade_ex2b(qc: QuantumCircuit) -> None:
-    grade(qc, 'test-circuit-2', challenge_id, to_bytes=True)
+    grade(qc, "test-circuit", challenge_id)

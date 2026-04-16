@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 # (C) Copyright IBM 2024
 #
 # This code is licensed under the Apache License, Version 2.0. You may
@@ -11,14 +8,14 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-from .exercise1 import (
-    submit_name,
-    grade_ex1a,
-    grade_ex1b,
-    grade_ex1c,
-    grade_ex1d
-)
+from .exercise1 import submit_name, grade_ex1a, grade_ex1b, grade_ex1c, grade_ex1d
+from .exercise2 import grade_ex2a
 
-from .exercise2 import grade_ex2a, grade_ex2b
-
-
+__all__ = [
+    "submit_name",
+    "grade_ex1a",
+    "grade_ex1b",
+    "grade_ex1c",
+    "grade_ex1d",
+    "grade_ex2a",
+]

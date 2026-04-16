@@ -1,3 +1,13 @@
+# (C) Copyright IBM 2025
+#
+# This code is licensed under the Apache License, Version 2.0. You may
+# obtain a copy of this license in the LICENSE.txt file in the root directory
+# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
+#
+# Any modifications or derivative works of this code must retain this
+# copyright notice, and modified files need to carry a notice indicating
+# that they have been altered from the originals.
+
 from typeguard import typechecked
 
 from qc_grader.grader.grade import grade
@@ -6,8 +16,7 @@ from typing import Callable
 import numpy as np
 
 from qiskit import QuantumCircuit
-from qiskit.quantum_info import  SparsePauliOp
-
+from qiskit.quantum_info import SparsePauliOp
 
 
 _challenge_id = "qdc_2025"
@@ -28,15 +37,17 @@ CHEMICAL_POTENTIAL = -0.5 * ONSITE
 NBATH = NUM_ORBS - 1
 IMPURITY_INDEX = (NBATH) // 2
 
+
 @typechecked
 def submit_name(name: str) -> None:
     status, score, message = grade(
         name, "submit-name", _challenge_id, return_response=True
     )
-    if status == False:
+    if status is False:
         print(message)
     else:
         print("Team name submitted.")
+
 
 @typechecked
 def grade_lab4_ex1(perturbed_tfim_hamiltonian: Callable) -> None:
@@ -46,12 +57,11 @@ def grade_lab4_ex1(perturbed_tfim_hamiltonian: Callable) -> None:
 
 
 @typechecked
-def grade_lab4_ex2(construct_krylov_circuits: Callable, perturbed_tfim_hamiltonian: Callable) -> None:
+def grade_lab4_ex2(
+    construct_krylov_circuits: Callable, perturbed_tfim_hamiltonian: Callable
+) -> None:
 
-
-    H_ref = perturbed_tfim_hamiltonian(
-        NUM_QUBITS, J, H_X, H_Z
-    )
+    H_ref = perturbed_tfim_hamiltonian(NUM_QUBITS, J, H_X, H_Z)
     circs_test = construct_krylov_circuits(H_ref, PSI, KRYLOV_D, NUM_TROTTER_STEPS, DT)
 
     answer_dict = {
@@ -60,6 +70,7 @@ def grade_lab4_ex2(construct_krylov_circuits: Callable, perturbed_tfim_hamiltoni
     }
 
     grade(answer_dict, "lab4-ex2", _challenge_id)
+
 
 @typechecked
 def grade_lab4_ex3(bitstrings_test: np.ndarray, H_test: SparsePauliOp) -> None:
@@ -70,6 +81,7 @@ def grade_lab4_ex3(bitstrings_test: np.ndarray, H_test: SparsePauliOp) -> None:
     }
 
     grade(answer_dict, "lab4-ex3", _challenge_id)
+
 
 @typechecked
 def grade_lab4_ex4(siam_hamiltonian_momentum: Callable) -> None:
@@ -82,7 +94,9 @@ def grade_lab4_ex4(siam_hamiltonian_momentum: Callable) -> None:
 
 
 @typechecked
-def grade_lab4_ex5(construct_krylov_siam: Callable, siam_hamiltonian_momentum: Callable) -> None:
+def grade_lab4_ex5(
+    construct_krylov_siam: Callable, siam_hamiltonian_momentum: Callable
+) -> None:
 
     H_ref = siam_hamiltonian_momentum(
         NUM_ORBS, HYBRIDIZATION, HOPPING, ONSITE, CHEMICAL_POTENTIAL
@@ -95,11 +109,18 @@ def grade_lab4_ex5(construct_krylov_siam: Callable, siam_hamiltonian_momentum: C
 
     circs_test = construct_krylov_siam(NUM_ORBS, IMPURITY_INDEX, H_ref, DT, KRYLOV_D)
 
-
     grade(circs_test, "lab4-ex5", _challenge_id)
 
+
 @typechecked
-def grade_lab4_ex6(result, num_orbs: int, hopping: float, onsite: float, hybridization: float, chemical_potential: float) -> None:
+def grade_lab4_ex6(
+    result,
+    num_orbs: int,
+    hopping: float,
+    onsite: float,
+    hybridization: float,
+    chemical_potential: float,
+) -> None:
 
     E_skqd = min(result)
 

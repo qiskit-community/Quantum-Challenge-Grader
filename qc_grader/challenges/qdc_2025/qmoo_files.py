@@ -1,13 +1,24 @@
+# (C) Copyright IBM 2025
+#
+# This code is licensed under the Apache License, Version 2.0. You may
+# obtain a copy of this license in the LICENSE.txt file in the root directory
+# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
+#
+# Any modifications or derivative works of this code must retain this
+# copyright notice, and modified files need to carry a notice indicating
+# that they have been altered from the originals.
+
 import glob
 import json
 import networkx as nx
+
 
 def load_problem(dirfn, printtxt=True):
     graphsfn = dirfn + "problem_graph_*.json"
     anglefn = dirfn + "angles.json"
     upperfn = dirfn + "upper_bounds.json"
     lowerfn = dirfn + "lower_bounds.json"
-    
+
     if printtxt:
         print("loading", graphsfn)
 
@@ -16,8 +27,8 @@ def load_problem(dirfn, printtxt=True):
         num_graphs = len(glob.glob(graphsfn))
         for i in range(num_graphs):
             f = dirfn + f"problem_graph_{i}.json"
-            
-            graphs.append(nx.node_link_graph(json.load(open(f, 'r'))))
+
+            graphs.append(nx.node_link_graph(json.load(open(f, "r"))))
         if len(graphs) != num_graphs:
             raise Exception
 
@@ -25,14 +36,14 @@ def load_problem(dirfn, printtxt=True):
         print("Wasn't able to load graphs from " + graphsfn + ", error:" + str(e))
         return None, None, None, None
     try:
-        angles = json.load(open(anglefn, 'r'))
+        angles = json.load(open(anglefn, "r"))
         if len(angles) == 0:
             raise Exception
     except Exception as e:
         print("Wasn't able to load QAOA angles from " + anglefn + ", error:" + str(e))
         return None, None, None, None
     try:
-        upper = json.load(open(upperfn, 'r'))
+        upper = json.load(open(upperfn, "r"))
         if len(upper) == 0:
             raise Exception
     except Exception as e:
@@ -40,7 +51,7 @@ def load_problem(dirfn, printtxt=True):
         return None, None, None, None
 
     try:
-        lower = json.load(open(lowerfn, 'r'))
+        lower = json.load(open(lowerfn, "r"))
         if len(lower) == 0:
             raise Exception
     except Exception as e:

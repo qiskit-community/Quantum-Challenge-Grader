@@ -1,9 +1,17 @@
+# (C) Copyright IBM 2025
+#
+# This code is licensed under the Apache License, Version 2.0. You may
+# obtain a copy of this license in the LICENSE.txt file in the root directory
+# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
+#
+# Any modifications or derivative works of this code must retain this
+# copyright notice, and modified files need to carry a notice indicating
+# that they have been altered from the originals.
+
 from typeguard import typechecked
-from typing import Callable, Optional, Dict, List
-import tempfile
+from typing import Callable
 import os
 
-import numpy as np
 import networkx as nx
 
 from qiskit_serverless.core import QiskitFunction
@@ -12,15 +20,6 @@ from qc_grader.grader.grade import grade
 
 _challenge_id = "qdc_2025"
 
-@typechecked
-def submit_name(name: str) -> None:
-    status, score, message = grade(
-        name, "submit-name", _challenge_id, return_response=True
-    )
-    if status == False:
-        print(message)
-    else:
-        print("Team name submitted.")
 
 def validate_function(
     function_provider: str,
@@ -36,11 +35,23 @@ def make_validator(function_provider: str):
             function_provider=function_provider,
             function_title=function.title,
         )
+
     return validator
 
 
 # Generate and assign the validators
 grade_qctrl_function = make_validator("q-ctrl")
+
+
+@typechecked
+def submit_name(name: str) -> None:
+    status, score, message = grade(
+        name, "submit-name", _challenge_id, return_response=True
+    )
+    if status is False:
+        print(message)
+    else:
+        print("Team name submitted.")
 
 
 @typechecked
@@ -52,14 +63,14 @@ def grade_lab8_ex1(parse_func: Callable) -> None:
     answer_dict = {
         "vertices": len(graph.nodes),
         "edges": len(graph.edges),
-        "density": nx.density(graph)
+        "density": nx.density(graph),
     }
     grade(answer_dict, "lab8-ex1", _challenge_id)
 
 
 @typechecked
 def grade_lab8_ex2(qubo: OptimizationProblem) -> None:
-    linear_dict = {idx: val for idx, val in enumerate(qubo.objective.linear)}
+    linear_dict = {idx: val for idx, val in enumerate(qubo.objective.linear)}  # ty: ignore[invalid-argument-type]
     # convert tuple key to string for serialization, e.g. (0, 0) => '(0, 0)'
     quadratic_dict = {str(k): v for k, v in qubo.objective.quadratic.to_dict().items()}
 

@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 # (C) Copyright IBM 2024
 #
 # This code is licensed under the Apache License, Version 2.0. You may
@@ -13,3 +10,5 @@
 
 
 from .json_encoder import to_json
+
+__all__ = ["to_json"]

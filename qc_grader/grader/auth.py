@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 # (C) Copyright IBM 2025
 #
 # This code is licensed under the Apache License, Version 2.0. You may
@@ -28,10 +25,13 @@ class IAMAuth:
 
     def __init__(self):
         self.token_url = get_iam_token_endpoint()
-        self.api_key = os.getenv('IBMCLOUD_API_KEY')
+        self.api_key = os.getenv("IBMCLOUD_API_KEY")
         if self.api_key is None:
             from qiskit_ibm_runtime import QiskitRuntimeService
-            self.api_key = QiskitRuntimeService.saved_accounts().get('qdc-2025', {}).get('token')
+
+            self.api_key = (
+                QiskitRuntimeService.saved_accounts().get("qdc-2025", {}).get("token")
+            )
 
         if self.api_key is None:
             print("""
@@ -39,14 +39,18 @@ Account credentials missing or not properly saved.
 Please save your account using `QiskitRuntimeService.save_account` 
 https://quantum.cloud.ibm.com/docs/en/guides/save-credentials
 """)
-            raise ValueError("Account credentials missing or not properly saved. Please save your account using `QiskitRuntimeService.save_account` https://quantum.cloud.ibm.com/docs/en/guides/save-credentials")
+            raise ValueError(
+                "Account credentials missing or not properly saved. Please save your account using `QiskitRuntimeService.save_account` https://quantum.cloud.ibm.com/docs/en/guides/save-credentials"
+            )
 
-        self.authenticator = IAMAuthenticator(self.api_key, url=self.token_url, disable_ssl_verification=True)
+        self.authenticator = IAMAuthenticator(
+            self.api_key, url=self.token_url, disable_ssl_verification=True
+        )
 
     def get_access_token(self):
         try:
             return self.authenticator.token_manager.get_token()
-        except Exception as e:
+        except Exception:
             print("""
 Account token is invalid or cannot be verified.
 Please save a new account instance using `QiskitRuntimeService.save_account` 
@@ -60,6 +64,7 @@ https://quantum.cloud.ibm.com/docs/en/guides/save-credentials
 
     def get_user_account(self):
         import ssl
+
         context = ssl.create_default_context()
         context.check_hostname = True
         context.verify_mode = ssl.CERT_OPTIONAL
@@ -67,9 +72,11 @@ https://quantum.cloud.ibm.com/docs/en/guides/save-credentials
         iam_service = IamIdentityV1(authenticator=self.authenticator)
 
         iam_service.service_url = os.getenv("IAM_URL", "https://iam.cloud.ibm.com")
-        
-        details = iam_service.get_api_keys_details(iam_api_key=self.api_key).get_result()
+
+        details = iam_service.get_api_keys_details(
+            iam_api_key=self.api_key
+        ).get_result()
         return {
-            "account_id": details.get("account_id"),
-            "iam_id": details.get("iam_id")
+            "account_id": details.get("account_id"),  # ty: ignore[unresolved-attribute]
+            "iam_id": details.get("iam_id"),  # ty: ignore[unresolved-attribute]
         }

@@ -1,5 +1,15 @@
+# (C) Copyright IBM 2025
+#
+# This code is licensed under the Apache License, Version 2.0. You may
+# obtain a copy of this license in the LICENSE.txt file in the root directory
+# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
+#
+# Any modifications or derivative works of this code must retain this
+# copyright notice, and modified files need to carry a notice indicating
+# that they have been altered from the originals.
+
 from typeguard import typechecked
-from typing import Callable, Optional, Dict, List
+from typing import Callable, Optional, Dict
 import tempfile
 import os
 
@@ -11,15 +21,17 @@ from qc_grader.grader.grade import grade
 
 _challenge_id = "qdc_2025"
 
+
 @typechecked
 def submit_name(name: str) -> None:
     status, score, message = grade(
         name, "submit-name", _challenge_id, return_response=True
     )
-    if status == False:
+    if status is False:
         print(message)
     else:
         print("Team name submitted.")
+
 
 def validate_function(
     function_provider: str,
@@ -35,6 +47,7 @@ def make_validator(function_provider: str):
             function_provider=function_provider,
             function_title=function.title,
         )
+
     return validator
 
 
@@ -58,7 +71,7 @@ def grade_lab7_ex1(parse_func: Callable) -> None:
 
     try:
         # Write test content to temporary file
-        with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.dat') as f:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".dat") as f:
             f.write(test_content)
             temp_path = f.name
 
@@ -77,10 +90,10 @@ def grade_lab7_ex1(parse_func: Callable) -> None:
             # Clean up temp file
             try:
                 os.unlink(temp_path)
-            except:
+            except Exception:
                 pass
 
-    except Exception as e:
+    except Exception:
         pass
 
 
@@ -106,7 +119,7 @@ def grade_lab7_ex3(qubo: OptimizationProblem, A: np.ndarray, b: np.ndarray) -> N
     - qubo: OptimizationProblem instance with proper objective function
     """
 
-    linear_dict = {idx: val for idx, val in enumerate(qubo.objective.linear)}
+    linear_dict = {idx: val for idx, val in enumerate(qubo.objective.linear)}  # ty: ignore[invalid-argument-type]
     # convert tuple key to string for serialization, e.g. (0, 0) => '(0, 0)'
     quadratic_dict = {str(k): v for k, v in qubo.objective.quadratic.to_dict().items()}
 
@@ -121,6 +134,7 @@ def grade_lab7_ex3(qubo: OptimizationProblem, A: np.ndarray, b: np.ndarray) -> N
 
     grade(answer_dict, "lab7-ex3", _challenge_id)
 
+
 @typechecked
 def grade_lab7_ex4(problem: Dict, qubo: OptimizationProblem) -> None:
     """
@@ -131,7 +145,7 @@ def grade_lab7_ex4(problem: Dict, qubo: OptimizationProblem) -> None:
     - qubo: OptimizationProblem instance for validation
     """
 
-    linear_dict = {idx: val for idx, val in enumerate(qubo.objective.linear)}
+    linear_dict = {idx: val for idx, val in enumerate(qubo.objective.linear)}  # ty: ignore[invalid-argument-type]
     # convert tuple key to string for serialization, e.g. (0, 0) => '(0, 0)'
     quadratic_dict = {str(k): v for k, v in qubo.objective.quadratic.to_dict().items()}
 

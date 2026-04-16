@@ -1,3 +1,13 @@
+# (C) Copyright IBM 2025
+#
+# This code is licensed under the Apache License, Version 2.0. You may
+# obtain a copy of this license in the LICENSE.txt file in the root directory
+# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
+#
+# Any modifications or derivative works of this code must retain this
+# copyright notice, and modified files need to carry a notice indicating
+# that they have been altered from the originals.
+
 from typeguard import typechecked
 
 from qiskit import QuantumCircuit
@@ -16,15 +26,17 @@ from qiskit.quantum_info import SparsePauliOp
 
 _challenge_id = "qdc_2025"
 
+
 @typechecked
 def submit_name(name: str) -> None:
     status, score, message = grade(
         name, "submit-name", _challenge_id, return_response=True
     )
-    if status == False:
+    if status is False:
         print(message)
     else:
         print("Team name submitted.")
+
 
 @typechecked
 def grade_lab2_ex1(observables: List) -> None:
@@ -60,7 +72,7 @@ def grade_lab2_ex4(
 
 @typechecked
 def grade_lab2_ex5(backend: IBMBackend) -> None:
-    if type(backend) == IBMBackend:
+    if isinstance(backend, IBMBackend):
         answer = "true"
     else:
         answer = "false"
@@ -72,8 +84,7 @@ def grade_lab2_ex5(backend: IBMBackend) -> None:
 def grade_lab2_ex6(
     circuits_all_isa: List, observables_isa: List, backend: IBMBackend
 ) -> None:
-
-    if type(backend) == IBMBackend:
+    if isinstance(backend, IBMBackend):
         backend_answer = "true"
     else:
         backend_answer = "false"
@@ -88,7 +99,7 @@ def grade_lab2_ex6(
 
 @typechecked
 def grade_lab2_ex7(estimator: EstimatorV2) -> None:
-    if type(estimator) != qiskit_ibm_runtime.estimator.EstimatorV2:
+    if not isinstance(estimator, qiskit_ibm_runtime.estimator.EstimatorV2):
         answer = "false"
     else:
         answer = "true"
@@ -114,10 +125,10 @@ def grade_lab2_ex8(
 def grade_lab2_ex9(job: RuntimeJobV2) -> None:
 
     answer_dict = {
-        "job_primitive_id" : job.primitive_id,
-        "job_status" : job.status(),
-        "job_inputs" : len(job.inputs["pubs"])
-        }
+        "job_primitive_id": job.primitive_id,
+        "job_status": job.status(),
+        "job_inputs": len(job.inputs["pubs"]),
+    }
 
     grade(answer_dict, "lab2-ex9", _challenge_id)
 
@@ -131,7 +142,14 @@ def grade_lab2_ex10(
     results: PrimitiveResult,
 ) -> None:
 
-    results_list = np.array([results[0].data.evs, results[1].data.evs, results[2].data.evs, results[3].data.evs])
+    results_list = np.array(
+        [
+            results[0].data.evs,
+            results[1].data.evs,
+            results[2].data.evs,
+            results[3].data.evs,
+        ]
+    )
 
     answer_dict = {
         "chi_wave": chi_wave,

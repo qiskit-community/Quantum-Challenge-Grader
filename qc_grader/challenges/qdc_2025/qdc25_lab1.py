@@ -1,3 +1,13 @@
+# (C) Copyright IBM 2025
+#
+# This code is licensed under the Apache License, Version 2.0. You may
+# obtain a copy of this license in the LICENSE.txt file in the root directory
+# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
+#
+# Any modifications or derivative works of this code must retain this
+# copyright notice, and modified files need to carry a notice indicating
+# that they have been altered from the originals.
+
 from typeguard import typechecked
 
 from qiskit import QuantumCircuit
@@ -6,6 +16,7 @@ from qiskit_ibm_runtime.ibm_backend import IBMBackend
 import numpy
 from typing import Protocol, runtime_checkable, List, Tuple, Dict, Any
 from typeguard import check_type
+
 
 @runtime_checkable
 class HeavyHexLike(Protocol):
@@ -16,10 +27,15 @@ class HeavyHexLike(Protocol):
     vertices: Dict[Tuple[int, int], Any]
 
     def coords_to_logical_qb(self, coords: Any) -> Any: ...
-    def edges_connected_to_node(self, node_coords: Tuple[int, int]) -> List[Tuple[float, float]]: ...
-    def nodes_connected_to_edge(self, edge_coords: Tuple[float, float]) -> Tuple[Tuple[int, int], Tuple[int, int]]: ...
+    def edges_connected_to_node(
+        self, node_coords: Tuple[int, int]
+    ) -> List[Tuple[float, float]]: ...
+    def nodes_connected_to_edge(
+        self, edge_coords: Tuple[float, float]
+    ) -> Tuple[Tuple[int, int], Tuple[int, int]]: ...
     def find_qubits_downward(self) -> List[int]: ...
     def find_qubits_upward(self) -> List[int]: ...
+
 
 _challenge_id = "qdc_2025"
 
@@ -29,7 +45,7 @@ def submit_name(name: str) -> None:
     status, score, message = grade(
         name, "submit-name", _challenge_id, return_response=True
     )
-    if status == False:
+    if status is False:
         print(message)
     else:
         print("Team name submitted.")
@@ -92,4 +108,3 @@ def grade_lab1_ex5(
         "classical_exp_vals": classical_exp_vals,
     }
     grade(answer_dict, "lab1-ex5", _challenge_id)
-

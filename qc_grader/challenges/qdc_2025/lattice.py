@@ -1,3 +1,13 @@
+# (C) Copyright IBM 2025
+#
+# This code is licensed under the Apache License, Version 2.0. You may
+# obtain a copy of this license in the LICENSE.txt file in the root directory
+# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
+#
+# Any modifications or derivative works of this code must retain this
+# copyright notice, and modified files need to carry a notice indicating
+# that they have been altered from the originals.
+
 """
 Library for constructing and visualizing LGTs in an
 IBM's Heavy-Hex lattice.
@@ -15,10 +25,11 @@ Authors: César Benito, Jesús Cobos
 """
 
 from functools import cached_property
-from typing import List, Union, Tuple, Dict, Optional
+from typing import List, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.transforms
 
 
 # ---------------------------------------------------------------------------
@@ -49,7 +60,7 @@ def backends_objs_to_names(backends_arr):
         if isinstance(backend, str):
             backends_name_arr.append(backend)
         else:
-            backends_name_arr.append(backend.name)
+            backends_name_arr.append(backend.name)  # ty: ignore[unresolved-attribute]
 
     return backends_name_arr if len(backends_name_arr) > 1 else backends_name_arr[0]
 
@@ -428,7 +439,7 @@ class HeavyHexLattice:
             edges_boxes_x,
             edges_boxes_y,
             400 * scale,
-            marker=(4, 0, 45),
+            marker=(4, 0, 45),  # ty: ignore[invalid-argument-type]
             c="white",
             edgecolors="black",
             zorder=2,
@@ -510,7 +521,7 @@ class HeavyHexLattice:
 
         # If no starting qubit index is provided, assign defaults depending on backend
         ibm_qubit_coords = []
-        if first_qubit == None:
+        if first_qubit is None:
             if backend == "ibm_fez" or backend == "ibm_marrakesh":
                 first_qubit = 3
             else:
@@ -584,14 +595,16 @@ class HeavyHexLattice:
 
         def is_edge_coords(coords):
             """Return True if coords correspond to an edge (half-integer coordinates)."""
-            if type(coords) == tuple:
+            if isinstance(coords, tuple):
                 return (coords[0] % 1 != 0) or (coords[1] % 1 != 0)
             else:
                 try:
                     coords = np.array(coords)
                     return ~np.equal(coords.sum(axis=1) % 1, 0)
-                except np.AxisError:
-                    raise np.AxisError("Coords is not a valid tuple or N x 2 array")
+                except np.exceptions.AxisError:
+                    raise np.exceptions.AxisError(
+                        "Coords is not a valid tuple or N x 2 array"
+                    )
 
         plt.rc("font", family="serif")
 
@@ -694,7 +707,7 @@ class HeavyHexLattice:
             edges_boxes_x[highlighted_edges_inds],
             edges_boxes_y[highlighted_edges_inds],
             400 * scale,
-            marker=(4, 0, 45),
+            marker=(4, 0, 45),  # ty: ignore[invalid-argument-type]
             c=colors[highlighted_edges_color_inds],
             edgecolors="black",
             zorder=2,
@@ -703,7 +716,7 @@ class HeavyHexLattice:
             edges_boxes_x[non_highlighted_edges_inds],
             edges_boxes_y[non_highlighted_edges_inds],
             400 * scale,
-            marker=(4, 0, 45),
+            marker=(4, 0, 45),  # ty: ignore[invalid-argument-type]
             c="white",
             edgecolors="black",
             zorder=2,
