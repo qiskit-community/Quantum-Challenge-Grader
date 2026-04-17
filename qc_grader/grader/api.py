@@ -20,47 +20,12 @@ GRADER_URL = os.environ.get("QC_GRADER_URL", "https://qac-grading.quantum.ibm.co
 IAM_URL = os.environ.get("QC_IAM_URL", default="https://iam.cloud.ibm.com")
 
 
-class MaxContentError(BaseException):
-    def __init__(self, content_length: int, max_content_length: int) -> None:
-        self.message = (
-            f"Max content length ({max_content_length}) exceeded: {content_length}"
-        )
-
-    def __str__(self) -> str:
-        return self.message
-
-
-def compute_content_length(
-    endpoint: str,
-    query: Optional[Dict[str, str]] = None,
-    body: Optional[Dict[str, str]] = None,
-    method: str = "POST",
-    header: Optional[Mapping[str, str]] = None,
-) -> int:
-    from requests import Request
-
-    header = (
-        header
-        if header
-        else {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "X-Client-Version": __version__,
-        }
-    )
-
-    req = Request(method, url=endpoint, params=query, json=body, headers=header)
-    prepped = req.prepare()
-    return int(prepped.headers["Content-Length"])
-
-
 def send_request(
     endpoint: str,
     query: Optional[Dict[str, str]] = None,
     body: Optional[Dict[str, str]] = None,
     method: str = "POST",
     header: Optional[Mapping[str, str]] = None,
-    max_content_length: Optional[int] = None,
 ) -> Dict[str, str]:
     default_header = {
         "Accept": "application/json",
@@ -69,11 +34,6 @@ def send_request(
     }
     additional_header = header or {}
     header = {**default_header, **additional_header}
-
-    if max_content_length:
-        content_length = compute_content_length(endpoint, body=body)
-        if content_length >= max_content_length:
-            raise MaxContentError(content_length, max_content_length)
 
     response = requests.request(
         method, url=endpoint, params=query, json=body, headers=header

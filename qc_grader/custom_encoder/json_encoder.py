@@ -27,8 +27,8 @@ from qiskit_aer.noise import NoiseModel
 from . import serializer
 
 
-def to_json(obj: Any, **kwargs) -> str:
-    return json.dumps(obj, skipkeys=True, cls=GraderJSONEncoder, **kwargs)
+def to_json(obj: Any) -> str:
+    return json.dumps(obj, skipkeys=True, cls=GraderJSONEncoder)
 
 
 class GraderJSONEncoder(json.JSONEncoder):
