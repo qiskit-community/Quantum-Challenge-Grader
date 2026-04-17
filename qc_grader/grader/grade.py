@@ -21,43 +21,27 @@ iam_auth = IAMAuth()
 
 def grade(
     answer: Any,
-    question: Union[str, int],
-    challenge: Optional[str] = None,
+    question: str,
+    challenge: str,
     return_response: Optional[bool] = False,
-    **kwargs: Any,
 ) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:  # ty: ignore[invalid-return-type]
-    serialized_answer = to_json(answer, **kwargs)
+    endpoint = f"{GRADER_URL}/challenges/{challenge}/validate/{question}"
+    payload = {"answer": to_json(answer)}
 
-    if challenge is None and "/" in str(question):
-        challenge_id = question.split("/")[0]  # ty: ignore[unresolved-attribute]
-        question_id = question.split("/")[1]  # ty: ignore[unresolved-attribute]
-    else:
-        question_id = question
-        challenge_id = challenge
+    print("Grading your answer. Please wait...")
+    result = grade_answer(
+        payload,
+        endpoint,
+        return_response=return_response,
+    )
 
-    endpoint = f"{GRADER_URL}/challenges/{challenge_id}/validate/{question_id}"
-    payload = {"answer": serialized_answer}
-
-    if serialized_answer is not None and endpoint:
-        print("Grading your answer. Please wait...")
-
-        result = grade_answer(
-            payload,
-            endpoint,
-            max_content_length=kwargs.get("max_content_length", None),
-            return_response=return_response,
-        )
-
-        if return_response:
-            return result
-    else:
-        handle_grade_response("failed")
+    if return_response:
+        return result
 
 
 def grade_answer(
     payload: Dict[str, str],
     endpoint: str,
-    max_content_length: Optional[int] = None,
     return_response: Optional[bool] = False,
 ) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:  # ty: ignore[invalid-return-type]
     try:
@@ -72,9 +56,7 @@ def grade_answer(
         else:
             header = None
 
-        answer_response = send_request(
-            endpoint, body=payload, header=header, max_content_length=max_content_length
-        )
+        answer_response = send_request(endpoint, body=payload, header=header)
 
         status = answer_response.get("status", None)
         cause = answer_response.get("cause", None)
