@@ -11,23 +11,13 @@
 import os
 import requests
 
-from typing import Dict, List, Mapping, Optional, Union
+from typing import Dict, Mapping, Optional
 
 from qc_grader import __version__
-from qc_grader.grader.common import normalize_slash, remove_slash
 
 
-is_staging: bool = os.getenv("TARGET_ENV", "production").lower() == "staging"
-
-# possible challenge grading endpoints: https://qac-grading-dev.quantum.ibm.com
-grading_endpoints: List[str] = [
-    "http://127.0.0.1:5000",
-    f"https://qac-grading{'-dev' if is_staging else ''}.quantum.ibm.com",
-]
-
-
-_api_grade_url: Optional[str] = os.getenv("QC_GRADING_ENDPOINT")
-_api_iam_token_url: Optional[str] = os.getenv("QC_IAM_TOKEN_ENDPOINT")
+GRADER_URL = os.environ.get("QC_GRADER_URL", "https://qac-grading.quantum.ibm.com")
+IAM_URL = os.environ.get("QC_IAM_URL", default="https://iam.cloud.ibm.com")
 
 
 class MaxContentError(BaseException):
@@ -38,40 +28,6 @@ class MaxContentError(BaseException):
 
     def __str__(self) -> str:
         return self.message
-
-
-def get_iam_token_endpoint() -> Optional[str]:
-    # https://iam.cloud.ibm.com/identity/token
-    global _api_iam_token_url
-    if not _api_iam_token_url:
-        _api_iam_token_url = "https://iam.cloud.ibm.com/identity/token"
-    return remove_slash(_api_iam_token_url)
-
-
-def get_grading_endpoint(
-    question_id: Union[str, int], challenge_id: str
-) -> Optional[str]:
-    # https://qac-grading-dev.quantum.ibm.com
-    global _api_grade_url
-    if not _api_grade_url:
-        for endpoint in grading_endpoints:
-            try:
-                response = requests.get(url=endpoint)
-                response.raise_for_status()
-                if response.ok:
-                    _api_grade_url = endpoint
-                    break
-            except Exception:
-                pass
-
-    if not _api_grade_url:
-        print(
-            "Could not find a valid grading server or "
-            "the grading servers are down right now."
-        )
-        return None
-
-    return f"{normalize_slash(_api_grade_url)}challenges/{challenge_id}/validate/{question_id}"
 
 
 def compute_content_length(

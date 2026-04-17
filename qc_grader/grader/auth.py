@@ -15,7 +15,7 @@ import os
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_platform_services import IamIdentityV1
 
-from qc_grader.grader.api import get_iam_token_endpoint
+from qc_grader.grader.api import IAM_URL
 
 
 class IAMAuth:
@@ -24,7 +24,7 @@ class IAMAuth:
     """
 
     def __init__(self):
-        self.token_url = get_iam_token_endpoint()
+        self.token_url = f"{IAM_URL}/identity/token"
         self.api_key = os.getenv("IBMCLOUD_API_KEY")
         if self.api_key is None:
             from qiskit_ibm_runtime import QiskitRuntimeService
@@ -70,8 +70,7 @@ https://quantum.cloud.ibm.com/docs/en/guides/save-credentials
         context.verify_mode = ssl.CERT_OPTIONAL
 
         iam_service = IamIdentityV1(authenticator=self.authenticator)
-
-        iam_service.service_url = os.getenv("IAM_URL", "https://iam.cloud.ibm.com")
+        iam_service.service_url = IAM_URL
 
         details = iam_service.get_api_keys_details(
             iam_api_key=self.api_key

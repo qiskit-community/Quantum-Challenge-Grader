@@ -14,10 +14,7 @@ from typing import Any, Dict, Optional, Tuple, Union
 from qc_grader.custom_encoder import to_json
 from qc_grader.grader.auth import IAMAuth
 
-from .api import (
-    get_grading_endpoint,
-    send_request,
-)
+from .api import GRADER_URL, send_request
 
 iam_auth = IAMAuth()
 
@@ -38,7 +35,7 @@ def grade(
         question_id = question
         challenge_id = challenge
 
-    endpoint = get_grading_endpoint(question_id, challenge_id)  # ty: ignore[invalid-argument-type]
+    endpoint = f"{GRADER_URL}/challenges/{challenge_id}/validate/{question_id}"
     payload = {"answer": serialized_answer}
 
     if serialized_answer is not None and endpoint:
