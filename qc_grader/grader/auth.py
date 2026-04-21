@@ -14,53 +14,68 @@ import os
 
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_platform_services import IamIdentityV1
+from qiskit_ibm_runtime import QiskitRuntimeService
 
 from qc_grader.grader.api import IAM_URL
 
+_AUTH_ENV_VAR_NAME = "QC_API_KEY"
+
+
+class AuthenticationError(Exception):
+    pass
+
+
+def read_api_key() -> str | None:
+    """Attempt to read the user's API key.
+
+    The order of operations matters.
+
+    1. Read the legacy `IBMCLOUD_API_KEY` env var, with fallback to `saved_accounts().get("qdc-2025")`.
+       We start with this to avoid breaking Road To Practioner users still using qdc-2025.
+    2. Read the `QC_API_KEY` env var.
+    3. Read the default account with `saved_accounts()`.
+
+    Once qdc-2025 is no longer used, we can remove the legacy approach.
+    """
+    if key := os.environ.get("IBMCLOUD_API_KEY"):
+        return key
+    if key := QiskitRuntimeService.saved_accounts().get("qdc-2025", {}).get("token"):
+        return key
+    if key := os.environ.get(_AUTH_ENV_VAR_NAME):
+        return key
+    if key := (QiskitRuntimeService().active_account() or {}).get("token"):
+        return key
+    return None
+
 
 class IAMAuth:
-    """
-    Class for  Token Management via IAM
-    """
-
-    def __init__(self):
-        self.token_url = f"{IAM_URL}/identity/token"
-        self.api_key = os.getenv("IBMCLOUD_API_KEY")
+    def __init__(self) -> None:
+        self.api_key = read_api_key()
         if self.api_key is None:
-            from qiskit_ibm_runtime import QiskitRuntimeService
-
-            self.api_key = (
-                QiskitRuntimeService.saved_accounts().get("qdc-2025", {}).get("token")
-            )
-
-        if self.api_key is None:
-            print("""
-Account credentials missing or not properly saved.
-Please save your account using `QiskitRuntimeService.save_account` 
-https://quantum.cloud.ibm.com/docs/en/guides/save-credentials
-""")
-            raise ValueError(
-                "Account credentials missing or not properly saved. Please save your account using `QiskitRuntimeService.save_account` https://quantum.cloud.ibm.com/docs/en/guides/save-credentials"
-            )
+            raise AuthenticationError(
+                "Your IBM Quantum Platform API key is missing or not properly saved.\n\n"
+                + "Save your account by following the instructions at "
+                + "https://quantum.cloud.ibm.com/docs/en/guides/hello-world#install-and-authenticate "
+                + "to use `QiskitRuntimeService.save_account()`.\n\nAlternatively, set the environment variable "
+                + f"{_AUTH_ENV_VAR_NAME} with your IBM Quantum Platform API key."
+            ).with_traceback(None)
 
         self.authenticator = IAMAuthenticator(
-            self.api_key, url=self.token_url, disable_ssl_verification=True
+            self.api_key, url=f"{IAM_URL}/identity/token", disable_ssl_verification=True
         )
 
-    def get_access_token(self):
+    def get_access_token(self) -> str:
         try:
             return self.authenticator.token_manager.get_token()
         except Exception:
-            print("""
-Account token is invalid or cannot be verified.
-Please save a new account instance using `QiskitRuntimeService.save_account` 
-https://quantum.cloud.ibm.com/docs/en/guides/save-credentials
-""")
-            raise ValueError("""
-Account token is invalid or cannot be verified.
-Please save a new account instance using `QiskitRuntimeService.save_account` 
-https://quantum.cloud.ibm.com/docs/en/guides/save-credentials
-""")
+            raise AuthenticationError(
+                "An authentication token could not be generated from your IBM Quantum Platform API key. Usually, "
+                + "this means that your API key is invalid or expired.\n\nYou can try to set up a new API key "
+                + "by following the instructions at "
+                + "https://quantum.cloud.ibm.com/docs/en/guides/hello-world#install-and-authenticate "
+                + "to use `QiskitRuntimeService.save_account()`.\n\nAlternatively, set the environment variable "
+                + f"{_AUTH_ENV_VAR_NAME} with your IBM Quantum Platform API key."
+            )
 
     def get_user_account(self):
         import ssl
