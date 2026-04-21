@@ -15,9 +15,18 @@ from typing import Dict, Mapping, Optional
 
 from qc_grader import __version__
 
+IS_STAGING = os.environ.get("STAGING") == "1"
+IS_DEV = os.environ.get("DEV") == "1"
 
-GRADER_URL = os.environ.get("QC_GRADER_URL", "https://qac-grading.quantum.ibm.com")
-IAM_URL = os.environ.get("QC_IAM_URL", default="https://iam.cloud.ibm.com")
+if IS_STAGING:
+    GRADER_URL = "https://qac-grading-dev.quantum.ibm.com"
+    IAM_URL = "https://iam.test.cloud.ibm.com"
+elif IS_DEV:
+    GRADER_URL = "http://127.0.0.1:5000"
+    IAM_URL = "https://iam.test.cloud.ibm.com"
+else:
+    GRADER_URL = "https://qac-grading.quantum.ibm.com"
+    IAM_URL = "https://iam.cloud.ibm.com"
 
 
 def send_request(
