@@ -83,4 +83,3 @@ def grade_lab0_ex5(sv: Statevector) -> None:
         sv: Statevector object to verify
     """
     grade(sv, "lab0-ex5", _CHALLENGE_ID)
-
