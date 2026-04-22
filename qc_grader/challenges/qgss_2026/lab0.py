@@ -16,7 +16,6 @@ from typeguard import typechecked
 
 from qiskit.quantum_info import Statevector
 from qc_grader.grader.grade import grade
-from qiskit_ibm_runtime.ibm_backend import IBMBackend
 
 _CHALLENGE_ID = "qgss_2026"
 
