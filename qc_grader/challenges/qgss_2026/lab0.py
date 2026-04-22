@@ -15,8 +15,8 @@ QGSS 2026 Lab 0 - Grading Functions
 from typeguard import typechecked
 
 from qiskit.quantum_info import Statevector
-from qiskit_ibm_runtime.ibm_backend import IBMBackend
 from qc_grader.grader.grade import grade
+from qiskit_ibm_runtime.ibm_backend import IBMBackend
 
 _CHALLENGE_ID = "qgss_2026"
 
