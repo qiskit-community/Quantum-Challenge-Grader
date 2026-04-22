@@ -16,8 +16,6 @@ from qc_grader.grader.auth import IAMAuth
 
 from .api import GRADER_URL, send_request
 
-iam_auth = IAMAuth()
-
 
 def grade(
     answer: Any,
@@ -45,6 +43,7 @@ def grade_answer(
     return_response: Optional[bool] = False,
 ) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:  # ty: ignore[invalid-return-type]
     try:
+        iam_auth = IAMAuth()
         access_token = iam_auth.get_access_token()
         account = iam_auth.get_user_account()
         if access_token:
