@@ -22,15 +22,19 @@ from qc_grader.grader.grade import grade
 _CHALLENGE_ID = "qgss_2026"
 
 
-@typechecked
-def grade_lab0_ex1(backends: list[IBMBackend]) -> None:
+def grade_lab0_ex1() -> None:
     """
-    Grade Exercise 1: Verify IBM Quantum account.
-
-    Args:
-        backends: List of backend objects from service.backends()
+    Grade Exercise 1: Test your IBM Quantum account connection.
+    
+    This is a simple "Hello World" exercise to verify that:
+    - Your IBM Quantum account is properly configured
+    - You can successfully submit answers to the grading server
+    - The grading system is working correctly
+    
+    Simply call this function with no arguments:
+        grade_lab0_ex1()
     """
-    grade(len(backends), "lab0-ex1", _CHALLENGE_ID)
+    grade("hello", "lab0-ex1", _CHALLENGE_ID)
 
 
 @typechecked
