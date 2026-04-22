@@ -60,18 +60,53 @@ uv add <dependency> --dev
 
 ## Run the client
 
-1. Create a virtual environment and install the project with `pip install 'qc-grader[qiskit,jupyter] @ git+https://github.com/qiskit-community/Quantum-Challenge-Grader.git'` (or use `uv`)
-  - You can install from a specific branch by adding `@your-branch-name` to the end.
-2. Create an API token in https://quantum.cloud.ibm.com. The staging site will not work. The account must have at least one instance.
-  - You will need this token in the future. Consider saving it with `QiskitRuntimeService.save_account()` with these [instructions](https://quantum.cloud.ibm.com/docs/en/guides/hello-world)
-3. Launch a Python REPL inside the virtual environment with the environment variable `IBMCLOUD_API_KEY` set to your token.
-  - If you previously used `QiskitRuntimeService.save_account()`, you can find your token in `~/.qiskit/qiskit-ibm.json`
-4. In the REPL:
+Use this workflow to test the Python client against the Grader server.
+
+### Initial setup
+
+You must create a Quantum API token for an account with at least one instance.
+
+Prod server:
+
+1. Use https://quantum.cloud.ibm.com to create the API key
+2. Save the key by running `uv run python`, then this code:
+
+```python
+from qiskit_ibm_runtime import QiskitRuntimeService
+
+QiskitRuntimeService.save_account(
+    token="<your-api-key>",
+    instance="<CRN>",
+)
+```
+3. Close the REPL.
+
+Staging or local development server:
+
+1. Use https://quantum.test.cloud.ibm.com to create the API key.
+2. Save the key by running `uv run python`, then this code:
+
+```python
+from qiskit_ibm_runtime import QiskitRuntimeService
+
+QiskitRuntimeService.save_account(
+    token="<your-api-key>",
+    instance="<CRN>",
+    name="grader-staging",
+)
+```
+3. Close the REPL.
+
+### How to run
+
+1. Launch a Python REPL:
+  - Prod server: `uv run python`
+  - Staging server: `STAGING=1 uv run python`
+  - Local development server: `DEV=1 uv run python`
+2. In the REPL, import and run your exercises. For example:
 
 ```python
 >>> from qc_grader.challenges.test_challenge import submit_name, grade_ex1a
 >>> submit_name("team_name")  # use this value
 >>> grade_ex1a("")
 ```
-
-To use a different grading server, set `QC_GRADER_URL` to `https://qac-grading-dev.quantum.ibm.com` or `http://127.0.0.1:5000`. 
