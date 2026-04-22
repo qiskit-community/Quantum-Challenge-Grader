@@ -12,12 +12,11 @@
 QGSS 2026 Lab 0 - Grading Functions
 """
 
-from qiskit_ibm_runtime.ibm_backend import IBMBackend
-
-from typeguard import typechecked
 from qiskit.quantum_info import Statevector
-from qc_grader.grader.grade import grade
+from qiskit_ibm_runtime.ibm_backend import IBMBackend
+from typeguard import typechecked
 
+from qc_grader.grader.grade import grade
 
 _CHALLENGE_ID = "qgss_2026"
 
@@ -25,12 +24,12 @@ _CHALLENGE_ID = "qgss_2026"
 def grade_lab0_ex1() -> None:
     """
     Grade Exercise 1: Test your IBM Quantum account connection.
-    
+
     This is a simple "Hello World" exercise to verify that:
     - Your IBM Quantum account is properly configured
     - You can successfully submit answers to the grading server
     - The grading system is working correctly
-    
+
     Simply call this function with no arguments:
         grade_lab0_ex1()
     """
@@ -84,3 +83,5 @@ def grade_lab0_ex5(sv: Statevector) -> None:
         sv: Statevector object to verify
     """
     grade(sv, "lab0-ex5", _CHALLENGE_ID)
+
+# Made with Bob
