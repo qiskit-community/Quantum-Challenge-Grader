@@ -12,6 +12,7 @@
 QGSS 2026 Lab 0 - Grading Functions
 """
 
+import numpy as np
 from typeguard import typechecked
 
 from qiskit.quantum_info import Statevector
@@ -47,13 +48,15 @@ def grade_lab0_ex2(counts: dict[str, int]) -> None:
 
 
 @typechecked
-def grade_lab0_ex3(exp_val: float) -> None:
+def grade_lab0_ex3(exp_val: np.ndarray) -> None:
     """
     Grade Exercise 3: Verify Estimator result.
 
     Args:
-        exp_val: Expectation value from Estimator
+        exp_val: Expectation value from Estimator (numpy array)
     """
+    exp_val = float(exp_val)
+    
     grade(exp_val, "lab0-ex3", _CHALLENGE_ID)
 
 
