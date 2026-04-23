@@ -48,15 +48,15 @@ def grade_lab0_ex2(counts: dict[str, int]) -> None:
 
 
 @typechecked
-def grade_lab0_ex3(exp_val: np.ndarray) -> None:
+def grade_lab0_ex3(exp_val: np.ndarray | float) -> None:
     """
     Grade Exercise 3: Verify Estimator result.
 
     Args:
-        exp_val: Expectation value from Estimator (numpy array)
+        exp_val: Expectation value from Estimator (numpy array or float)
     """
     exp_val = float(exp_val)
-    
+
     grade(exp_val, "lab0-ex3", _CHALLENGE_ID)
 
 
