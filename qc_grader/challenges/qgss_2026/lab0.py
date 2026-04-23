@@ -49,14 +49,22 @@ def grade_lab0_ex2(counts: dict[str, int]) -> None:
 
 @typechecked
 def grade_lab0_ex3(exp_val: np.ndarray | float) -> None:
-    """
-    Grade Exercise 3: Verify Estimator result.
+    """Grade Exercise 3: Verify Estimator result.
 
     Args:
-        exp_val: Expectation value from Estimator (numpy array or float)
+        exp_val: Expectation value from Estimator result[0].data.evs
+                 Must be a scalar (0-d array or single float)
+    
+    Raises:
+        ValueError: If exp_val is not a scalar value
     """
-    exp_val = float(exp_val)
-
+    arr = np.asarray(exp_val)
+    if arr.ndim != 0 and arr.size != 1:
+        raise ValueError(
+            f"exp_val must be a scalar, got shape {arr.shape}. "
+            f"Use result[0].data.evs (not result.data.evs) for a single expectation value."
+        )
+    exp_val = float(arr.flat[0])
     grade(exp_val, "lab0-ex3", _CHALLENGE_ID)
 
 
