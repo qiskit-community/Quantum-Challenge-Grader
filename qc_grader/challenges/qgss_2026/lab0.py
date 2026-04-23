@@ -54,7 +54,7 @@ def grade_lab0_ex3(exp_val: np.ndarray | float) -> None:
     Args:
         exp_val: Expectation value from Estimator result[0].data.evs
                  Must be a scalar (0-d array or single float)
-    
+
     Raises:
         ValueError: If exp_val is not a scalar value
     """
