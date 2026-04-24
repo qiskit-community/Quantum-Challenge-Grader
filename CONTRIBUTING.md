@@ -118,6 +118,9 @@ QiskitRuntimeService.save_account(
 You must add the decorator `@typechecked` from `typeguard` to all lab exercises, along with precise type hints that describe the user's input. This decorator validates that the user gave the correct data type. For example:
 
 ```python
+from typeguard import typechecked
+
+@typechecked
 def grade_lab0_ex1(arg1: str, arg2: list[int], arg3: QuantumCircuit) -> None:
     ...
 ```
@@ -127,8 +130,11 @@ If the user needs to provide a dictionary with certain keys, use `typing.TypedDi
 ```python
 from typing import TypedDict
 
+from typeguard import typechecked
+
 Ex1Input = TypedDict("Ex1Input", {"0": int, "1": int})
 
+@typechecked
 def grade_lab0_ex1(counts: Ex1Input) -> None:
     ...
 ```
@@ -136,6 +142,8 @@ def grade_lab0_ex1(counts: Ex1Input) -> None:
 It is often helpful to allow the user to provide a more flexible data type, and then to write some Python code to transform their input into a simpler format that the server will understand. When writing this type of transformation, think about how the user might make a mistake and consider adding validation, such as throwing a `ValueError` if they violate your assumptions. For example, this code is nice that it allows a user to either pass a `float` or an `ndarray`, which the code then transforms to `float` before sending to the server. This flexibility is useful because the challenge author knows that users will be working with NumPy for this exercise. Crucially, this example validates that their `ndarray` is a scalar:
 
 ```python
+from typeguard import typechecked
+
 @typechecked
 def grade_lab0_ex1(exp_val: np.ndarray | float) -> None:
     arr = np.asarray(exp_val)
