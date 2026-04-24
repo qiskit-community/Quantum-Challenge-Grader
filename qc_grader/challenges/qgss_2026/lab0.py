@@ -13,6 +13,7 @@ QGSS 2026 Lab 0 - Grading Functions
 """
 
 import numpy as np
+from typing import TypedDict
 from typeguard import typechecked
 
 from qiskit.quantum_info import Statevector
@@ -36,8 +37,11 @@ def grade_lab0_ex1() -> None:
     grade("hello", "lab0-ex1", _CHALLENGE_ID)
 
 
+Ex2Input = TypedDict("Ex2Input", {"0": int, "1": int})
+
+
 @typechecked
-def grade_lab0_ex2(counts: dict[str, int]) -> None:
+def grade_lab0_ex2(counts: Ex2Input) -> None:
     """
     Grade Exercise 2: Verify sampler result.
 
