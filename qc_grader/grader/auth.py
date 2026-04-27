@@ -13,7 +13,6 @@
 import os
 
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-from ibm_platform_services import IamIdentityV1
 from qiskit_ibm_runtime import QiskitRuntimeService
 
 from qc_grader.grader.api import IAM_URL, IS_STAGING, IS_DEV
@@ -57,49 +56,29 @@ def read_api_key() -> str | None:
     return None
 
 
-class IAMAuth:
-    def __init__(self) -> None:
-        self.api_key = read_api_key()
-        if self.api_key is None:
-            raise AuthenticationError(
-                "Your IBM Quantum Platform API key is missing or not properly saved.\n\n"
-                + "Save your account by following the instructions at "
-                + "https://quantum.cloud.ibm.com/docs/en/guides/hello-world#install-and-authenticate "
-                + "to use `QiskitRuntimeService.save_account()`.\n\nAlternatively, set the environment variable "
-                + f"{_AUTH_ENV_VAR_NAME} with your IBM Quantum Platform API key."
-            ).with_traceback(None)
+def get_access_token() -> str:
+    api_key = read_api_key()
+    if api_key is None:
+        raise AuthenticationError(
+            "Your IBM Quantum Platform API key is missing or not properly saved.\n\n"
+            + "Save your account by following the instructions at "
+            + "https://quantum.cloud.ibm.com/docs/en/guides/hello-world#install-and-authenticate "
+            + "to use `QiskitRuntimeService.save_account()`.\n\nAlternatively, set the environment variable "
+            + f"{_AUTH_ENV_VAR_NAME} with your IBM Quantum Platform API key."
+        ).with_traceback(None)
 
-        self.authenticator = IAMAuthenticator(
-            self.api_key, url=f"{IAM_URL}/identity/token", disable_ssl_verification=True
+    authenticator = IAMAuthenticator(
+        api_key, url=f"{IAM_URL}/identity/token", disable_ssl_verification=True
+    )
+
+    try:
+        return authenticator.token_manager.get_token()
+    except Exception:
+        raise AuthenticationError(
+            "An authentication token could not be generated from your IBM Quantum Platform API key. Usually, "
+            + "this means that your API key is invalid or expired.\n\nYou can try to set up a new API key "
+            + "by following the instructions at "
+            + "https://quantum.cloud.ibm.com/docs/en/guides/hello-world#install-and-authenticate "
+            + "to use `QiskitRuntimeService.save_account()`.\n\nAlternatively, set the environment variable "
+            + f"{_AUTH_ENV_VAR_NAME} with your IBM Quantum Platform API key."
         )
-
-    def get_access_token(self) -> str:
-        try:
-            return self.authenticator.token_manager.get_token()
-        except Exception:
-            raise AuthenticationError(
-                "An authentication token could not be generated from your IBM Quantum Platform API key. Usually, "
-                + "this means that your API key is invalid or expired.\n\nYou can try to set up a new API key "
-                + "by following the instructions at "
-                + "https://quantum.cloud.ibm.com/docs/en/guides/hello-world#install-and-authenticate "
-                + "to use `QiskitRuntimeService.save_account()`.\n\nAlternatively, set the environment variable "
-                + f"{_AUTH_ENV_VAR_NAME} with your IBM Quantum Platform API key."
-            )
-
-    def get_user_account(self):
-        import ssl
-
-        context = ssl.create_default_context()
-        context.check_hostname = True
-        context.verify_mode = ssl.CERT_OPTIONAL
-
-        iam_service = IamIdentityV1(authenticator=self.authenticator)
-        iam_service.service_url = IAM_URL
-
-        details = iam_service.get_api_keys_details(
-            iam_api_key=self.api_key
-        ).get_result()
-        return {
-            "account_id": details.get("account_id"),  # ty: ignore[unresolved-attribute]
-            "iam_id": details.get("iam_id"),  # ty: ignore[unresolved-attribute]
-        }
