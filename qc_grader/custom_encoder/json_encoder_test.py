@@ -16,6 +16,7 @@ import json
 import numpy as np
 import pytest
 from qiskit import QuantumCircuit
+from qiskit.circuit.library import GR
 from qiskit.quantum_info import SparsePauliOp, Statevector
 
 from qc_grader.custom_encoder import to_json
@@ -82,6 +83,13 @@ def test_quantum_circuit() -> None:
     qc = QuantumCircuit(2)
     qc.h(0)
     qc.cx(0, 1)
+    result = json.loads(to_json(qc))
+    assert result["__class__"] == "QuantumCircuit"
+    assert "qc" in result
+
+
+def test_quantum_circuit_subclass() -> None:
+    qc = GR(2, 1, 1)
     result = json.loads(to_json(qc))
     assert result["__class__"] == "QuantumCircuit"
     assert "qc" in result

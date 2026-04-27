@@ -27,20 +27,20 @@ def to_json(obj: Any) -> str:
 
 class GraderJSONEncoder(json.JSONEncoder):
     def default(self, o: Any) -> Any:
-        match type(o).__name__:
-            case numpy.ndarray.__name__:
-                return serializer.dump_numpy_ndarray(o)
-            case numpy.complex128.__name__:
-                return serializer.dump_numpy_complex(o)
-            case complex.__name__:
-                return serializer.dump_complex(o)
-            case Fraction.__name__:
-                return serializer.dump_fraction(o)
-            case QuantumCircuit.__name__:
-                return serializer.dump_quantum_circuit(o)
-            case Statevector.__name__:
-                return serializer.dump_state_vector(o)
-            case SparsePauliOp.__name__:
-                return serializer.dump_sparse_pauli_op(o)
-            case _:
-                return json.JSONEncoder.default(self, o)
+        # The order sometimes matters: subclasses should appear before their parent class,
+        # such as numpy.complex128 before complex.
+        if isinstance(o, numpy.ndarray):
+            return serializer.dump_numpy_ndarray(o)
+        if isinstance(o, numpy.complex128):
+            return serializer.dump_numpy_complex(o)
+        if isinstance(o, complex):
+            return serializer.dump_complex(o)
+        if isinstance(o, Fraction):
+            return serializer.dump_fraction(o)
+        if isinstance(o, QuantumCircuit):
+            return serializer.dump_quantum_circuit(o)
+        if isinstance(o, Statevector):
+            return serializer.dump_state_vector(o)
+        if isinstance(o, SparsePauliOp):
+            return serializer.dump_sparse_pauli_op(o)
+        return json.JSONEncoder.default(self, o)
