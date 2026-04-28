@@ -33,10 +33,12 @@ Homepage = "https://quantum.cloud.ibm.com/"
 qiskit = [
     "qiskit[visualization]~=2.1.0",
     "qiskit-ibm-runtime",
+    "qiskit-aer",
 ]
 jupyter = [
     "jupyterlab",
     "ipykernel",
+    "ipywidgets",
 ]
 
 [dependency-groups]
