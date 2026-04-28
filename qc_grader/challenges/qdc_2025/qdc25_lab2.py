@@ -81,23 +81,6 @@ def grade_lab2_ex5(backend: IBMBackend) -> None:
 
 
 @typechecked
-def grade_lab2_ex6(
-    circuits_all_isa: List, observables_isa: List, backend: IBMBackend
-) -> None:
-    if isinstance(backend, IBMBackend):
-        backend_answer = "true"
-    else:
-        backend_answer = "false"
-
-    answer_dict = {
-        "circuits_all_isa": circuits_all_isa[0:1] + circuits_all_isa[3:4],
-        "observables_isa": observables_isa,
-        "backend_answer": backend_answer,
-    }
-    grade(answer_dict, "lab2-ex6", _challenge_id)
-
-
-@typechecked
 def grade_lab2_ex7(estimator: EstimatorV2) -> None:
     if not isinstance(estimator, qiskit_ibm_runtime.estimator.EstimatorV2):
         answer = "false"
