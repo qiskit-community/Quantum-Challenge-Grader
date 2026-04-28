@@ -67,9 +67,7 @@ def get_access_token() -> str:
             + f"{_AUTH_ENV_VAR_NAME} with your IBM Quantum Platform API key."
         ).with_traceback(None)
 
-    authenticator = IAMAuthenticator(
-        api_key, url=f"{IAM_URL}/identity/token", disable_ssl_verification=True
-    )
+    authenticator = IAMAuthenticator(api_key, url=f"{IAM_URL}/identity/token")
 
     try:
         return authenticator.token_manager.get_token()
