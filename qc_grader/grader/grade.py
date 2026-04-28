@@ -12,7 +12,7 @@ from typing import Any, Dict, Optional, Tuple, Union
 
 
 from qc_grader.custom_encoder import to_json
-from qc_grader.grader.auth import IAMAuth
+from qc_grader.grader.auth import get_access_token
 
 from .api import GRADER_URL, send_request
 
@@ -43,18 +43,7 @@ def grade_answer(
     return_response: Optional[bool] = False,
 ) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:  # ty: ignore[invalid-return-type]
     try:
-        iam_auth = IAMAuth()
-        access_token = iam_auth.get_access_token()
-        account = iam_auth.get_user_account()
-        if access_token:
-            header = {
-                "Authorization": f"Bearer {access_token}",
-                "X-QC-Account": account.get("account_id"),
-                "X-QC-User": account.get("iam_id"),
-            }
-        else:
-            header = None
-
+        header = {"Authorization": f"Bearer {get_access_token()}"}
         answer_response = send_request(endpoint, body=payload, header=header)
 
         status = answer_response.get("status", None)
