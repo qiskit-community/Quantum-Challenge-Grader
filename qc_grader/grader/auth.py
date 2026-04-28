@@ -67,10 +67,10 @@ def get_access_token() -> str:
             + f"{_AUTH_ENV_VAR_NAME} with your IBM Quantum Platform API key."
         ).with_traceback(None)
 
-    authenticator = IAMAuthenticator(api_key, url=f"{IAM_URL}/identity/token")
-
     try:
-        return authenticator.token_manager.get_token()
+        return IAMAuthenticator(
+            api_key, url=f"{IAM_URL}/identity/token"
+        ).token_manager.get_token()
     except Exception:
         raise AuthenticationError(
             "An authentication token could not be generated from your IBM Quantum Platform API key. Usually, "
