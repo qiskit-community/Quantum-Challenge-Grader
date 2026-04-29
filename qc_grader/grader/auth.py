@@ -15,7 +15,7 @@ import os
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from qiskit_ibm_runtime import QiskitRuntimeService
 
-from qc_grader.grader.api import IAM_URL, IS_STAGING, IS_DEV
+from qc_grader.grader.env import IAM_BASE_URL, IS_STAGING, IS_DEV
 
 _AUTH_ENV_VAR_NAME = "QC_API_KEY"
 
@@ -69,7 +69,7 @@ def get_access_token() -> str:
 
     try:
         return IAMAuthenticator(
-            api_key, url=f"{IAM_URL}/identity/token"
+            api_key, url=f"{IAM_BASE_URL}/identity/token"
         ).token_manager.get_token()
     except Exception:
         raise AuthenticationError(

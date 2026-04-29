@@ -8,26 +8,13 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-import os
 import requests
 
 from typing import Dict, Mapping, Optional
 
 from qc_grader import __version__
 from qc_grader.grader.auth import get_access_token
-
-IS_STAGING = os.environ.get("STAGING") == "1"
-IS_DEV = os.environ.get("DEV") == "1"
-
-if IS_STAGING:
-    GRADER_URL = "https://qac-grading-dev.quantum.ibm.com"
-    IAM_URL = "https://iam.test.cloud.ibm.com"
-elif IS_DEV:
-    GRADER_URL = "http://127.0.0.1:5000"
-    IAM_URL = "https://iam.test.cloud.ibm.com"
-else:
-    GRADER_URL = "https://qac-grading.quantum.ibm.com"
-    IAM_URL = "https://iam.cloud.ibm.com"
+from qc_grader.grader.env import GRADER_BASE_URL
 
 
 def send_request(
@@ -47,7 +34,11 @@ def send_request(
     header = {**default_header, **additional_header}
 
     response = requests.request(
-        method, url=endpoint, params=query, json=body, headers=header
+        method,
+        url=f"{GRADER_BASE_URL}{endpoint}",
+        params=query,
+        json=body,
+        headers=header,
     )
 
     if response.status_code != 200:

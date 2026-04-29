@@ -13,7 +13,7 @@ from typing import Any, Optional, Union
 
 from qc_grader.custom_encoder import to_json
 
-from .api import GRADER_URL, send_request
+from .api import send_request
 
 
 def submit_team_name(answer: str, challenge_id: str) -> None:
@@ -22,7 +22,7 @@ def submit_team_name(answer: str, challenge_id: str) -> None:
     print("Submitting your team name. Please wait...")
     try:
         answer_response = send_request(
-            f"{GRADER_URL}/challenges/{challenge_id}/validate/submit-name",
+            f"/challenges/{challenge_id}/validate/submit-name",
             body={"answer": to_json(answer)},
         )
     except Exception as e:
@@ -43,7 +43,7 @@ def grade(answer: Any, question: str, challenge: str) -> None:
     print("Grading your answer. Please wait...")
     try:
         answer_response = send_request(
-            f"{GRADER_URL}/challenges/{challenge}/validate/{question}",
+            f"/challenges/{challenge}/validate/{question}",
             body={"answer": to_json(answer)},
         )
     except Exception as e:
