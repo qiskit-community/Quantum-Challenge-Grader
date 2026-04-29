@@ -10,7 +10,7 @@
 
 import requests
 
-from typing import Dict, Mapping, Optional
+from typing import Mapping
 
 from qc_grader import __version__
 from qc_grader.grader.auth import get_access_token
@@ -19,40 +19,39 @@ from qc_grader.grader.env import GRADER_BASE_URL
 
 def send_request(
     endpoint: str,
-    query: Optional[Dict[str, str]] = None,
-    body: Optional[Dict[str, str]] = None,
+    query: dict[str, str] | None = None,
+    body: dict[str, str] | None = None,
     method: str = "POST",
-    header: Optional[Mapping[str, str]] = None,
-) -> Dict[str, str]:
-    default_header = {
+    header: Mapping[str, str] | None = None,
+) -> dict[str, str]:
+    headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
         "X-Client-Version": __version__,
         "Authorization": f"Bearer {get_access_token()}",
+        **(header or {}),
     }
-    additional_header = header or {}
-    header = {**default_header, **additional_header}
 
     response = requests.request(
         method,
         url=f"{GRADER_BASE_URL}{endpoint}",
         params=query,
         json=body,
-        headers=header,
+        headers=headers,
     )
 
-    if response.status_code != 200:
-        if response.status_code == 403:
-            result = f"Unable to access service ({response.reason})"
-        else:
-            try:
-                result = response.json()
-                if "error" in result:
-                    result = result["error"]
-                if "message" in result:
-                    result = result["message"]
-            except Exception:
-                result = f" Not successful - {response.reason}"
-        raise Exception(result)
+    if response.status_code == 200:
+        return response.json()
 
-    return response.json()
+    if response.status_code == 403:
+        raise Exception(f"Unable to access service ({response.reason})")
+
+    try:
+        result = response.json()
+        if "error" in result:
+            result = result["error"]
+        if "message" in result:
+            result = result["message"]
+    except Exception:
+        result = f" Not successful - {response.reason}"
+    raise Exception(result)
