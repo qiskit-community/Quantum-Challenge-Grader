@@ -61,27 +61,14 @@ def grade_answer(
         return False, None, str(err)
 
 
-def display_special_message(message: str, preamble="") -> None:
-    if message.startswith("data:image/"):
-        from IPython.display import display
-        from ipywidgets import HTML
-
-        print(preamble)
-        display(HTML(f'<img src="{message}" />'))
-    else:
-        print(message)
-
-
 def handle_grade_response(
     status: Optional[str],
-    score: Optional[Union[int, float]] = None,
-    cause: Optional[str] = None,
+    score: Optional[Union[int, float]],
+    cause: Optional[str],
 ) -> None:
-    if status == "valid" or status is True:
+    if status == "valid":
         if cause is not None:
-            display_special_message(
-                cause, preamble="\nCongratulations 🎉! Your answer is correct."
-            )
+            print(cause)
         else:
             print("\nCongratulations 🎉! Your answer is correct.")
         if score is not None:
@@ -89,9 +76,6 @@ def handle_grade_response(
     elif status == "invalid":
         print(f"\nOops 😕! {'Your answer is incorrect' if cause is None else cause}")
         print("Please review your answer and try again.")
-    elif status == "notFinished":
-        print(f"Job has not finished: {cause}")
-        print("Please wait for the job to complete then try again.")
     else:
         print(f"Failed: {cause}")
         print("Unable to grade your answer.")

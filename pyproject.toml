@@ -38,7 +38,6 @@ qiskit = [
 jupyter = [
     "jupyterlab",
     "ipykernel",
-    "ipywidgets",
 ]
 
 [dependency-groups]
