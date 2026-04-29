@@ -11,7 +11,7 @@
 from typeguard import typechecked
 
 from qiskit import QuantumCircuit
-from qc_grader.grader.grade import grade
+from qc_grader.grader.grade import grade, submit_team_name
 from typeguard import check_type
 import numpy as np
 from datetime import datetime
@@ -22,18 +22,12 @@ from .qmoo_files import load_problem
 from typing import Callable
 
 
-_challenge_id = "qdc_2025"
+_CHALLENGE_ID = "qdc_2025"
 
 
 @typechecked
 def submit_name(name: str) -> None:
-    status, score, message = grade(
-        name, "submit-name", _challenge_id, return_response=True
-    )
-    if status is False:
-        print(message)
-    else:
-        print("Team name submitted.")
+    submit_team_name(name, _CHALLENGE_ID)
 
 
 @typechecked
@@ -61,21 +55,21 @@ def grade_lab5_ex1(gen_cvecs: Callable) -> None:
             samples.append(v)
 
     answer_dict = {"samples": samples}
-    grade(answer_dict, "lab5-ex1", _challenge_id)
+    grade(answer_dict, "lab5-ex1", _CHALLENGE_ID)
 
 
 @typechecked
 def grade_lab5_ex2(user_hv: float) -> None:
     check_type(user_hv, float)
     answer_dict = {"user_hv": user_hv}
-    grade(answer_dict, "lab5-ex2", _challenge_id)
+    grade(answer_dict, "lab5-ex2", _CHALLENGE_ID)
 
 
 @typechecked
 def grade_lab5_ex3(qc: QuantumCircuit) -> None:
     check_type(qc, QuantumCircuit)
     answer_dict = {"qc": qc}
-    grade(answer_dict, "lab5-ex3", _challenge_id)
+    grade(answer_dict, "lab5-ex3", _CHALLENGE_ID)
 
 
 @typechecked
@@ -133,4 +127,4 @@ def grade_lab_5_ex4(
     answer_dict = {
         "user_hv": user_hv,
     }
-    grade(answer_dict, "lab5-ex4", _challenge_id)
+    grade(answer_dict, "lab5-ex4", _CHALLENGE_ID)
