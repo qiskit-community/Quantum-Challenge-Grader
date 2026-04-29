@@ -8,7 +8,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-from typing import Any, Optional, Union
+from typing import Any
 
 
 from qc_grader.custom_encoder import to_json
@@ -34,7 +34,7 @@ def submit_team_name(answer: str, challenge_id: str) -> None:
         return
 
     cause = answer_response.get("cause")
-    print(f"Failed to submit team name. {'' if cause is None else cause}")
+    print(f"Failed to submit team name. {cause or ''}")
 
 
 def grade(answer: Any, question: str, challenge: str) -> None:
@@ -50,28 +50,38 @@ def grade(answer: Any, question: str, challenge: str) -> None:
         print(f"Failed: {e}")
         return
 
-    handle_grade_response(
-        answer_response.get("status"),
-        score=answer_response.get("score"),  # ty: ignore[invalid-argument-type]
-        cause=answer_response.get("cause"),
+    print(
+        determine_grade_response(
+            answer_response.get("status"),
+            score=answer_response.get("score"),
+            cause=answer_response.get("cause"),
+        )
     )
 
 
-def handle_grade_response(
-    status: Optional[str],
-    score: Optional[Union[int, float]],
-    cause: Optional[str],
-) -> None:
+def determine_grade_response(
+    status: str | None,
+    score: str | None,
+    cause: str | None,
+) -> str:
+    """Format a human-readable message from a grade response.
+
+    Args:
+        status: 'valid', 'invalid', or 'failed'.
+        score: Numeric score, serialized as a string.
+        cause: Server-provided message explaining the result.
+    """
     if status == "valid":
-        if cause is not None:
-            print(cause)
-        else:
-            print("\nCongratulations 🎉! Your answer is correct.")
+        msg = (
+            cause
+            if cause is not None
+            else "\nCongratulations 🎉! Your answer is correct."
+        )
         if score is not None:
-            print(f"Your score is {score}.")
-    elif status == "invalid":
-        print(f"\nOops 😕! {'Your answer is incorrect' if cause is None else cause}")
-        print("Please review your answer and try again.")
-    else:
-        print(f"Failed: {cause}")
-        print("Unable to grade your answer.")
+            msg += f"\nYour score is {score}."
+        return msg
+
+    if status == "invalid":
+        return f"\nOops 😕! {cause or 'Your answer is incorrect'}\nPlease review your answer and try again."
+
+    return f"Failed: {cause or 'Unexpected error'}\nUnable to grade your answer."
