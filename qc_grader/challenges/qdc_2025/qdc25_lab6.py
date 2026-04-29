@@ -10,20 +10,14 @@
 
 from typeguard import typechecked, check_type
 
-from qc_grader.grader.grade import grade
+from qc_grader.grader.grade import grade, submit_team_name
 
-_challenge_id = "qdc_2025"
+_CHALLENGE_ID = "qdc_2025"
 
 
 @typechecked
 def submit_name(name: str) -> None:
-    status, score, message = grade(
-        name, "submit-name", _challenge_id, return_response=True
-    )
-    if status is False:
-        print(message)
-    else:
-        print("Team name submitted.")
+    submit_team_name(name, _CHALLENGE_ID)
 
 
 @typechecked
@@ -34,7 +28,7 @@ def grade_lab6_ex1(molecule_name: str, hartree_fock_E: float) -> None:
         "hartree_fock_E": hartree_fock_E,
     }
 
-    grade(answer_dict, "lab6-ex1", _challenge_id)
+    grade(answer_dict, "lab6-ex1", _CHALLENGE_ID)
 
 
 @typechecked
@@ -42,7 +36,7 @@ def grade_lab6_ex2(molecule_name: str, casci_E: float) -> None:
 
     answer_dict = {"molecule_name": molecule_name, "casci_E": casci_E}
 
-    grade(answer_dict, "lab6-ex2", _challenge_id)
+    grade(answer_dict, "lab6-ex2", _CHALLENGE_ID)
 
 
 @typechecked
@@ -55,4 +49,4 @@ def grade_lab6_ex3(molecule_name: str, sqd_E: list) -> None:
 
     answer_dict = {"molecule_name": molecule_name, "sqd_E": sqd_E}
 
-    grade(answer_dict, "lab6-ex3", _challenge_id)
+    grade(answer_dict, "lab6-ex3", _CHALLENGE_ID)

@@ -14,6 +14,7 @@ import requests
 from typing import Dict, Mapping, Optional
 
 from qc_grader import __version__
+from qc_grader.grader.auth import get_access_token
 
 IS_STAGING = os.environ.get("STAGING") == "1"
 IS_DEV = os.environ.get("DEV") == "1"
@@ -40,6 +41,7 @@ def send_request(
         "Accept": "application/json",
         "Content-Type": "application/json",
         "X-Client-Version": __version__,
+        "Authorization": f"Bearer {get_access_token()}",
     }
     additional_header = header or {}
     header = {**default_header, **additional_header}

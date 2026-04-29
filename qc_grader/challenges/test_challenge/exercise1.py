@@ -11,38 +11,32 @@
 from pathlib import Path
 from typeguard import typechecked
 
-from qc_grader.grader.grade import grade
+from qc_grader.grader.grade import grade, submit_team_name
 
 
-challenge_id = Path(__file__).parent.name
+_CHALLENGE_ID = Path(__file__).parent.name
 
 
 @typechecked
 def submit_name(name: str) -> None:
-    status, score, message = grade(
-        name, "submit-name", challenge_id, return_response=True
-    )
-    if status is False:
-        print(message)
-    else:
-        print("Team name submitted.")
+    submit_team_name(name, _CHALLENGE_ID)
 
 
 @typechecked
 def grade_ex1a(answer: str) -> None:
-    grade(answer, "test-pass", challenge_id)
+    grade(answer, "test-pass", _CHALLENGE_ID)
 
 
 @typechecked
 def grade_ex1b(answer: str) -> None:
-    grade(answer, "test-fail", challenge_id)
+    grade(answer, "test-fail", _CHALLENGE_ID)
 
 
 @typechecked
 def grade_ex1c(answer: int) -> None:
-    grade(answer, "test-prime", challenge_id)
+    grade(answer, "test-prime", _CHALLENGE_ID)
 
 
 @typechecked
 def grade_ex1d(answer: str) -> None:
-    grade(answer, "test-vowels", challenge_id)
+    grade(answer, "test-vowels", _CHALLENGE_ID)

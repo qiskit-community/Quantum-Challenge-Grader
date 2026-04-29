@@ -8,57 +8,53 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Optional, Union
 
 
 from qc_grader.custom_encoder import to_json
-from qc_grader.grader.auth import get_access_token
 
 from .api import GRADER_URL, send_request
 
 
-def grade(
-    answer: Any,
-    question: str,
-    challenge: str,
-    return_response: Optional[bool] = False,
-) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:  # ty: ignore[invalid-return-type]
-    endpoint = f"{GRADER_URL}/challenges/{challenge}/validate/{question}"
-    payload = {"answer": to_json(answer)}
+def submit_team_name(answer: str, challenge_id: str) -> None:
+    """Send the team name to the validate endpoint's submit-name question and print the result."""
+
+    print("Submitting your team name. Please wait...")
+    try:
+        answer_response = send_request(
+            f"{GRADER_URL}/challenges/{challenge_id}/validate/submit-name",
+            body={"answer": to_json(answer)},
+        )
+    except Exception as e:
+        print(f"Failed: {e}")
+        return
+
+    if answer_response.get("status") == "valid":
+        print("🎉 Team name submitted.")
+        return
+
+    cause = answer_response.get("cause")
+    print(f"Failed to submit team name. {'' if cause is None else cause}")
+
+
+def grade(answer: Any, question: str, challenge: str) -> None:
+    """Send the answer to the validate endpoint and print the result."""
 
     print("Grading your answer. Please wait...")
-    result = grade_answer(
-        payload,
-        endpoint,
-        return_response=return_response,
-    )
-
-    if return_response:
-        return result
-
-
-def grade_answer(
-    payload: Dict[str, str],
-    endpoint: str,
-    return_response: Optional[bool] = False,
-) -> Tuple[bool, Optional[Union[str, int, float]], Optional[Union[str, int, float]]]:  # ty: ignore[invalid-return-type]
     try:
-        header = {"Authorization": f"Bearer {get_access_token()}"}
-        answer_response = send_request(endpoint, body=payload, header=header)
+        answer_response = send_request(
+            f"{GRADER_URL}/challenges/{challenge}/validate/{question}",
+            body={"answer": to_json(answer)},
+        )
+    except Exception as e:
+        print(f"Failed: {e}")
+        return
 
-        status = answer_response.get("status", None)
-        cause = answer_response.get("cause", None)
-        score = answer_response.get("score", None)
-
-        if return_response:
-            s = status == "valid" or status is True
-            return s, score, cause
-
-        handle_grade_response(status, score=score, cause=cause)  # ty: ignore[invalid-argument-type]
-
-    except Exception as err:
-        print(f"Failed: {err}")
-        return False, None, str(err)
+    handle_grade_response(
+        answer_response.get("status"),
+        score=answer_response.get("score"),  # ty: ignore[invalid-argument-type]
+        cause=answer_response.get("cause"),
+    )
 
 
 def handle_grade_response(
