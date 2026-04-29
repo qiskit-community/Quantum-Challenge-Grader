@@ -11,7 +11,7 @@
 from typeguard import typechecked
 
 from qiskit import QuantumCircuit
-from qc_grader.grader.grade import grade
+from qc_grader.grader.grade import grade, submit_team_name
 from qiskit_ibm_runtime.ibm_backend import IBMBackend
 from qiskit_ibm_runtime import EstimatorV2
 from typing import List
@@ -24,33 +24,27 @@ from qiskit.primitives.containers.primitive_result import PrimitiveResult
 from qiskit.quantum_info import SparsePauliOp
 
 
-_challenge_id = "qdc_2025"
+_CHALLENGE_ID = "qdc_2025"
 
 
 @typechecked
 def submit_name(name: str) -> None:
-    status, score, message = grade(
-        name, "submit-name", _challenge_id, return_response=True
-    )
-    if status is False:
-        print(message)
-    else:
-        print("Team name submitted.")
+    submit_team_name(name, _CHALLENGE_ID)
 
 
 @typechecked
 def grade_lab2_ex1(observables: List) -> None:
-    grade(observables, "lab2-ex1", _challenge_id)
+    grade(observables, "lab2-ex1", _CHALLENGE_ID)
 
 
 @typechecked
 def grade_lab2_ex2(qc: QuantumCircuit) -> None:
-    grade(qc, "lab2-ex2", _challenge_id)
+    grade(qc, "lab2-ex2", _CHALLENGE_ID)
 
 
 @typechecked
 def grade_lab2_ex3(qc: QuantumCircuit) -> None:
-    grade(qc, "lab2-ex3", _challenge_id)
+    grade(qc, "lab2-ex3", _CHALLENGE_ID)
 
 
 @typechecked
@@ -67,7 +61,7 @@ def grade_lab2_ex4(
         "qc_vacuum_test": qc_vacuum_test,
         "qc_vacuum_mitig_test": qc_vacuum_mitig_test,
     }
-    grade(answer_dict, "lab2-ex4", _challenge_id)
+    grade(answer_dict, "lab2-ex4", _CHALLENGE_ID)
 
 
 @typechecked
@@ -77,7 +71,7 @@ def grade_lab2_ex5(backend: IBMBackend) -> None:
     else:
         answer = "false"
 
-    grade(answer, "lab2-ex5", _challenge_id)
+    grade(answer, "lab2-ex5", _CHALLENGE_ID)
 
 
 @typechecked
@@ -86,7 +80,7 @@ def grade_lab2_ex7(estimator: EstimatorV2) -> None:
         answer = "false"
     else:
         answer = "true"
-    grade(answer, "lab2-ex7", _challenge_id)
+    grade(answer, "lab2-ex7", _CHALLENGE_ID)
 
 
 @typechecked
@@ -101,7 +95,7 @@ def grade_lab2_ex8(
         "circuits_all_isa": circuits_all_isa[:1],
         "observables_isa": observables_isa,
     }
-    grade(answer_dict, "lab2-ex8", _challenge_id)
+    grade(answer_dict, "lab2-ex8", _CHALLENGE_ID)
 
 
 @typechecked
@@ -113,7 +107,7 @@ def grade_lab2_ex9(job: RuntimeJobV2) -> None:
         "job_inputs": len(job.inputs["pubs"]),
     }
 
-    grade(answer_dict, "lab2-ex9", _challenge_id)
+    grade(answer_dict, "lab2-ex9", _CHALLENGE_ID)
 
 
 @typechecked
@@ -142,7 +136,7 @@ def grade_lab2_ex10(
         "results": results_list,
     }
 
-    grade(answer_dict, "lab2-ex10", _challenge_id)
+    grade(answer_dict, "lab2-ex10", _CHALLENGE_ID)
 
 
 @typechecked
@@ -160,9 +154,9 @@ def grade_lab2_ex11(
         "chi_vacuum": chi_vacuum,
     }
 
-    grade(answer_dict, "lab2-ex11", _challenge_id)
+    grade(answer_dict, "lab2-ex11", _CHALLENGE_ID)
 
 
 @typechecked
 def grade_lab2_ex12(chi_final: np.ndarray) -> None:
-    grade(chi_final, "lab2-ex12", _challenge_id)
+    grade(chi_final, "lab2-ex12", _CHALLENGE_ID)
