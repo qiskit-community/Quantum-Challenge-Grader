@@ -20,9 +20,9 @@ classifiers = [
 requires-python = ">=3.10"
 dependencies = [
     "typeguard",
-    "requests==2.32.3",
-    "networkx==3.2.1",
-    "ibm-platform-services==0.66.1",
+    "requests",
+    "networkx",
+    "ibm-platform-services",
     "moocore",
 ]
 
@@ -31,7 +31,7 @@ Homepage = "https://quantum.cloud.ibm.com/"
 
 [project.optional-dependencies]
 qiskit = [
-    "qiskit[visualization]~=2.1.0",
+    "qiskit[visualization]>=2.1.0,<3.0",
     "qiskit-ibm-runtime",
     "qiskit-aer",
 ]
