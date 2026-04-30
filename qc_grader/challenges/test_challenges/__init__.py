@@ -1,4 +1,4 @@
-# (C) Copyright IBM 2024
+# (C) Copyright IBM 2026
 #
 # This code is licensed under the Apache License, Version 2.0. You may
 # obtain a copy of this license in the LICENSE.txt file in the root directory
@@ -7,15 +7,3 @@
 # Any modifications or derivative works of this code must retain this
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
-
-from .exercise1 import submit_name, grade_ex1a, grade_ex1b, grade_ex1c, grade_ex1d
-from .exercise2 import grade_ex2a
-
-__all__ = [
-    "submit_name",
-    "grade_ex1a",
-    "grade_ex1b",
-    "grade_ex1c",
-    "grade_ex1d",
-    "grade_ex2a",
-]
