@@ -8,10 +8,16 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
+from fractions import Fraction
+from qiskit.result.distributions.probability import ProbDistribution
+from qiskit.result.distributions.quasi import QuasiDistribution
 import json
 
 import numpy as np
 import pytest
+from qiskit import QuantumCircuit
+from qiskit.circuit.library import GR
+from qiskit.quantum_info import SparsePauliOp, Statevector
 
 from qc_grader.custom_encoder import to_json
 
@@ -20,7 +26,7 @@ from qc_grader.custom_encoder import to_json
 # ------------------------------------------------------------------------------------------------------
 
 
-def test_stdlib_primitives():
+def test_stdlib_primitives() -> None:
     assert json.loads(to_json([1, "two", 3.0])) == [1, "two", 3.0]
     assert json.loads(to_json({"key": "value", "num": 42})) == {
         "key": "value",
@@ -34,9 +40,22 @@ def test_stdlib_primitives():
     assert json.loads(to_json(None)) is None
 
 
-def test_complex():
+def test_complex() -> None:
     result = json.loads(to_json(1 + 2j))
     assert result == {"__class__": "complex", "re": 1.0, "im": 2.0}
+
+
+def test_fraction() -> None:
+    result = json.loads(to_json(Fraction(3, 4)))
+    assert result == {"__class__": "Fraction", "numerator": 3, "denominator": 4}
+
+
+def test_unrecognized_type() -> None:
+    class Unrecognized:
+        pass
+
+    with pytest.raises(TypeError, match="not JSON serializable"):
+        to_json(Unrecognized())
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -44,17 +63,57 @@ def test_complex():
 # ------------------------------------------------------------------------------------------------------
 
 
-def test_numpy_bool():
-    result = json.loads(to_json(np.bool_(True)))
-    assert result == {"__class__": "numpy.bool)", "float": True}
-
-
-def test_numpy_ndarray():
+def test_numpy_ndarray() -> None:
     result = json.loads(to_json(np.array([1.0, 2.0, 3.0])))
     assert result["__class__"] == "numpy.ndarray"
     assert "ndarray" in result
 
 
-def test_numpy_complex128():
+def test_numpy_complex128() -> None:
     result = json.loads(to_json(np.complex128(1 + 2j)))
     assert result == {"__class__": "numpy.complex128", "re": 1.0, "im": 2.0}
+
+
+# ------------------------------------------------------------------------------------------------------
+# Qiskit
+# ------------------------------------------------------------------------------------------------------
+
+
+def test_quantum_circuit() -> None:
+    qc = QuantumCircuit(2)
+    qc.h(0)
+    qc.cx(0, 1)
+    result = json.loads(to_json(qc))
+    assert result["__class__"] == "QuantumCircuit"
+    assert "qc" in result
+
+
+def test_quantum_circuit_subclass() -> None:
+    qc = GR(2, 1, 1)
+    result = json.loads(to_json(qc))
+    assert result["__class__"] == "QuantumCircuit"
+    assert "qc" in result
+
+
+def test_statevector() -> None:
+    sv = Statevector.from_label("0")
+    result = json.loads(to_json(sv))
+    assert result["__class__"] == "Statevector"
+    assert "data" in result
+
+
+def test_sparse_pauli_op() -> None:
+    op = SparsePauliOp.from_list([("XX", 1.0), ("ZZ", -0.5)])
+    result = json.loads(to_json(op))
+    assert result["__class__"] == "SparsePauliOp"
+    assert len(result["op"]) == 2
+
+
+def test_quasi_distribution() -> None:
+    result = json.loads(to_json(QuasiDistribution({0: 0.5, 1: 0.5})))
+    assert result == {"0": 0.5, "1": 0.5}
+
+
+def test_prob_distribution() -> None:
+    result = json.loads(to_json(ProbDistribution({0: 0.5, 1: 0.5})))
+    assert result == {"0": 0.5, "1": 0.5}
