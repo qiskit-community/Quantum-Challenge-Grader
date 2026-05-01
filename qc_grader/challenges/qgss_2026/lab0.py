@@ -12,14 +12,20 @@
 QGSS 2026 Lab 0 - Grading Functions
 """
 
+from typing import Any, TypedDict
+
 import numpy as np
-from typing import TypedDict
+from qiskit.quantum_info import Statevector
 from typeguard import typechecked
 
-from qiskit.quantum_info import Statevector
-from qc_grader.grader.grade import grade
+from qc_grader.grader.grade import grade_answer
 
 _CHALLENGE_ID = "qgss_2026"
+_LAB_ID = "lab0"
+
+
+def _grade(answer: Any, exercise: str) -> None:
+    grade_answer(answer, lab=_LAB_ID, exercise=exercise, challenge=_CHALLENGE_ID)
 
 
 def grade_lab0_ex1() -> None:
@@ -34,7 +40,7 @@ def grade_lab0_ex1() -> None:
     Simply call this function with no arguments:
         grade_lab0_ex1()
     """
-    grade("hello", "lab0-ex1", _CHALLENGE_ID)
+    _grade("hello", "ex1")
 
 
 Ex2Input = TypedDict("Ex2Input", {"0": int, "1": int})
@@ -48,7 +54,7 @@ def grade_lab0_ex2(counts: Ex2Input) -> None:
     Args:
         counts: Dictionary of measurement counts
     """
-    grade(counts, "lab0-ex2", _CHALLENGE_ID)
+    _grade(counts, "ex2")
 
 
 @typechecked
@@ -69,7 +75,7 @@ def grade_lab0_ex3(exp_val: np.ndarray | float) -> None:
             f"Use result[0].data.evs (not result.data.evs) for a single expectation value."
         )
     exp_val = float(arr.flat[0])
-    grade(exp_val, "lab0-ex3", _CHALLENGE_ID)
+    _grade(exp_val, "ex3")
 
 
 @typechecked
@@ -85,7 +91,7 @@ def grade_lab0_ex4(c_out: list[str], cpp_out: list[str]) -> None:
         "c_out": " ".join(str(x) for x in c_out),
         "cpp_out": " ".join(str(x) for x in cpp_out),
     }
-    grade(answer_dict, "lab0-ex4", _CHALLENGE_ID)
+    _grade(answer_dict, "ex4")
 
 
 @typechecked
@@ -96,4 +102,4 @@ def grade_lab0_ex5(sv: Statevector) -> None:
     Args:
         sv: Statevector object to verify
     """
-    grade(sv, "lab0-ex5", _CHALLENGE_ID)
+    _grade(sv, "ex5")

@@ -8,23 +8,26 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-from typeguard import typechecked
-
-from qiskit import QuantumCircuit
-from qc_grader.grader.grade import grade, submit_team_name
-from qiskit_ibm_runtime.ibm_backend import IBMBackend
-from qiskit_ibm_runtime import EstimatorV2
-from typing import List
+from typing import Any, List
 
 import numpy as np
-
 import qiskit_ibm_runtime
-from qiskit_ibm_runtime.runtime_job_v2 import RuntimeJobV2
+from qiskit import QuantumCircuit
 from qiskit.primitives.containers.primitive_result import PrimitiveResult
 from qiskit.quantum_info import SparsePauliOp
+from qiskit_ibm_runtime import EstimatorV2
+from qiskit_ibm_runtime.ibm_backend import IBMBackend
+from qiskit_ibm_runtime.runtime_job_v2 import RuntimeJobV2
+from typeguard import typechecked
 
+from qc_grader.grader.grade import grade_answer, submit_team_name
 
 _CHALLENGE_ID = "qdc_2025"
+_LAB_ID = "lab2"
+
+
+def _grade(answer: Any, exercise: str) -> None:
+    grade_answer(answer, lab=_LAB_ID, exercise=exercise, challenge=_CHALLENGE_ID)
 
 
 @typechecked
@@ -34,17 +37,17 @@ def submit_name(name: str) -> None:
 
 @typechecked
 def grade_lab2_ex1(observables: List) -> None:
-    grade(observables, "lab2-ex1", _CHALLENGE_ID)
+    _grade(observables, "ex1")
 
 
 @typechecked
 def grade_lab2_ex2(qc: QuantumCircuit) -> None:
-    grade(qc, "lab2-ex2", _CHALLENGE_ID)
+    _grade(qc, "ex2")
 
 
 @typechecked
 def grade_lab2_ex3(qc: QuantumCircuit) -> None:
-    grade(qc, "lab2-ex3", _CHALLENGE_ID)
+    _grade(qc, "ex3")
 
 
 @typechecked
@@ -61,7 +64,7 @@ def grade_lab2_ex4(
         "qc_vacuum_test": qc_vacuum_test,
         "qc_vacuum_mitig_test": qc_vacuum_mitig_test,
     }
-    grade(answer_dict, "lab2-ex4", _CHALLENGE_ID)
+    _grade(answer_dict, "ex4")
 
 
 @typechecked
@@ -71,7 +74,7 @@ def grade_lab2_ex5(backend: IBMBackend) -> None:
     else:
         answer = "false"
 
-    grade(answer, "lab2-ex5", _CHALLENGE_ID)
+    _grade(answer, "ex5")
 
 
 @typechecked
@@ -80,7 +83,7 @@ def grade_lab2_ex7(estimator: EstimatorV2) -> None:
         answer = "false"
     else:
         answer = "true"
-    grade(answer, "lab2-ex7", _CHALLENGE_ID)
+    _grade(answer, "ex7")
 
 
 @typechecked
@@ -95,7 +98,7 @@ def grade_lab2_ex8(
         "circuits_all_isa": circuits_all_isa[:1],
         "observables_isa": observables_isa,
     }
-    grade(answer_dict, "lab2-ex8", _CHALLENGE_ID)
+    _grade(answer_dict, "ex8")
 
 
 @typechecked
@@ -107,7 +110,7 @@ def grade_lab2_ex9(job: RuntimeJobV2) -> None:
         "job_inputs": len(job.inputs["pubs"]),
     }
 
-    grade(answer_dict, "lab2-ex9", _CHALLENGE_ID)
+    _grade(answer_dict, "ex9")
 
 
 @typechecked
@@ -136,7 +139,7 @@ def grade_lab2_ex10(
         "results": results_list,
     }
 
-    grade(answer_dict, "lab2-ex10", _CHALLENGE_ID)
+    _grade(answer_dict, "ex10")
 
 
 @typechecked
@@ -154,9 +157,9 @@ def grade_lab2_ex11(
         "chi_vacuum": chi_vacuum,
     }
 
-    grade(answer_dict, "lab2-ex11", _CHALLENGE_ID)
+    _grade(answer_dict, "ex11")
 
 
 @typechecked
 def grade_lab2_ex12(chi_final: np.ndarray) -> None:
-    grade(chi_final, "lab2-ex12", _CHALLENGE_ID)
+    _grade(chi_final, "ex12")

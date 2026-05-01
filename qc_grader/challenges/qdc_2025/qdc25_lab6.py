@@ -8,11 +8,18 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-from typeguard import typechecked, check_type
+from typing import Any
 
-from qc_grader.grader.grade import grade, submit_team_name
+from typeguard import check_type, typechecked
+
+from qc_grader.grader.grade import grade_answer, submit_team_name
 
 _CHALLENGE_ID = "qdc_2025"
+_LAB_ID = "lab6"
+
+
+def _grade(answer: Any, exercise: str) -> None:
+    grade_answer(answer, lab=_LAB_ID, exercise=exercise, challenge=_CHALLENGE_ID)
 
 
 @typechecked
@@ -28,7 +35,7 @@ def grade_lab6_ex1(molecule_name: str, hartree_fock_E: float) -> None:
         "hartree_fock_E": hartree_fock_E,
     }
 
-    grade(answer_dict, "lab6-ex1", _CHALLENGE_ID)
+    _grade(answer_dict, "ex1")
 
 
 @typechecked
@@ -36,7 +43,7 @@ def grade_lab6_ex2(molecule_name: str, casci_E: float) -> None:
 
     answer_dict = {"molecule_name": molecule_name, "casci_E": casci_E}
 
-    grade(answer_dict, "lab6-ex2", _CHALLENGE_ID)
+    _grade(answer_dict, "ex2")
 
 
 @typechecked
@@ -49,4 +56,4 @@ def grade_lab6_ex3(molecule_name: str, sqd_E: list) -> None:
 
     answer_dict = {"molecule_name": molecule_name, "sqd_E": sqd_E}
 
-    grade(answer_dict, "lab6-ex3", _CHALLENGE_ID)
+    _grade(answer_dict, "ex3")

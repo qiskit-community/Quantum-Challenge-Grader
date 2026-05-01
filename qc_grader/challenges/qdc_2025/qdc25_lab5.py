@@ -8,21 +8,26 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-from typeguard import typechecked
-
-from qiskit import QuantumCircuit
-from qc_grader.grader.grade import grade, submit_team_name
-from typeguard import check_type
-import numpy as np
-from datetime import datetime
 import pickle
-from moocore import hypervolume
-import networkx as nx
-from .qmoo_files import load_problem
-from typing import Callable
+from datetime import datetime
+from typing import Any, Callable
 
+import networkx as nx
+import numpy as np
+from moocore import hypervolume
+from qiskit import QuantumCircuit
+from typeguard import check_type, typechecked
+
+from qc_grader.grader.grade import grade_answer, submit_team_name
+
+from .qmoo_files import load_problem
 
 _CHALLENGE_ID = "qdc_2025"
+_LAB_ID = "lab5"
+
+
+def _grade(answer: Any, exercise: str) -> None:
+    grade_answer(answer, lab=_LAB_ID, exercise=exercise, challenge=_CHALLENGE_ID)
 
 
 @typechecked
@@ -55,21 +60,21 @@ def grade_lab5_ex1(gen_cvecs: Callable) -> None:
             samples.append(v)
 
     answer_dict = {"samples": samples}
-    grade(answer_dict, "lab5-ex1", _CHALLENGE_ID)
+    _grade(answer_dict, "ex1")
 
 
 @typechecked
 def grade_lab5_ex2(user_hv: float) -> None:
     check_type(user_hv, float)
     answer_dict = {"user_hv": user_hv}
-    grade(answer_dict, "lab5-ex2", _CHALLENGE_ID)
+    _grade(answer_dict, "ex2")
 
 
 @typechecked
 def grade_lab5_ex3(qc: QuantumCircuit) -> None:
     check_type(qc, QuantumCircuit)
     answer_dict = {"qc": qc}
-    grade(answer_dict, "lab5-ex3", _CHALLENGE_ID)
+    _grade(answer_dict, "ex3")
 
 
 @typechecked
@@ -127,4 +132,4 @@ def grade_lab_5_ex4(
     answer_dict = {
         "user_hv": user_hv,
     }
-    grade(answer_dict, "lab5-ex4", _CHALLENGE_ID)
+    _grade(answer_dict, "ex4")
