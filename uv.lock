@@ -2555,15 +2555,15 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "ibm-platform-services", specifier = "==0.66.1" },
+    { name = "ibm-platform-services" },
     { name = "ipykernel", marker = "extra == 'jupyter'" },
     { name = "jupyterlab", marker = "extra == 'jupyter'" },
     { name = "moocore" },
-    { name = "networkx", specifier = "==3.2.1" },
-    { name = "qiskit", extras = ["visualization"], marker = "extra == 'qiskit'", specifier = "~=2.1.0" },
+    { name = "networkx" },
+    { name = "qiskit", extras = ["visualization"], marker = "extra == 'qiskit'", specifier = ">=2.1.0,<3.0" },
     { name = "qiskit-aer", marker = "extra == 'qiskit'" },
     { name = "qiskit-ibm-runtime", marker = "extra == 'qiskit'" },
-    { name = "requests", specifier = "==2.32.3" },
+    { name = "requests" },
     { name = "typeguard" },
 ]
 provides-extras = ["jupyter", "qiskit"]
