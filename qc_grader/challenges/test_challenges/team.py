@@ -1,4 +1,4 @@
-# (C) Copyright IBM 2024
+# (C) Copyright IBM 2026
 #
 # This code is licensed under the Apache License, Version 2.0. You may
 # obtain a copy of this license in the LICENSE.txt file in the root directory
@@ -8,13 +8,13 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-from pathlib import Path
+from qiskit import QuantumCircuit
 from typeguard import typechecked
 
 from qc_grader.grader.grade import grade, submit_team_name
 
 
-_CHALLENGE_ID = Path(__file__).parent.name
+_CHALLENGE_ID = "test_team"
 
 
 @typechecked
@@ -23,20 +23,25 @@ def submit_name(name: str) -> None:
 
 
 @typechecked
-def grade_ex1a(answer: str) -> None:
+def grade_success(answer: str) -> None:
     grade(answer, "test-pass", _CHALLENGE_ID)
 
 
 @typechecked
-def grade_ex1b(answer: str) -> None:
+def grade_fail(answer: str) -> None:
     grade(answer, "test-fail", _CHALLENGE_ID)
 
 
 @typechecked
-def grade_ex1c(answer: int) -> None:
+def grade_prime(answer: int) -> None:
     grade(answer, "test-prime", _CHALLENGE_ID)
 
 
 @typechecked
-def grade_ex1d(answer: str) -> None:
+def grade_vowels(answer: str) -> None:
     grade(answer, "test-vowels", _CHALLENGE_ID)
+
+
+@typechecked
+def grade_circuit(qc: QuantumCircuit) -> None:
+    grade(qc, "test-circuit", _CHALLENGE_ID)

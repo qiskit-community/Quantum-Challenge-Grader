@@ -106,10 +106,11 @@ QiskitRuntimeService.save_account(
 2. In the REPL, import and run your exercises. For example:
 
 ```python
->>> from qc_grader.challenges.test_challenge import submit_name, grade_ex1a
->>> submit_name("team_name")  # use this value
->>> grade_ex1a("")
+>>> from qc_grader.challenges.qgss_2026 import grade_lab0_ex1
+>>> grade_lab0_ex1()
 ```
+
+For developers testing how the server behaves, you can use the files from `qc_grader.challenges.test_challenges`, such as `grade_success` from `qc_grader.challenges.test_challenges.individual`.
 
 ## Adding new labs
 
