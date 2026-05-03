@@ -8,17 +8,35 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-from pathlib import Path
 from typeguard import typechecked
-
 from qiskit import QuantumCircuit
 
 from qc_grader.grader.grade import grade
 
 
-_CHALLENGE_ID = Path(__file__).parent.name
+_CHALLENGE_ID = "test_individual"
 
 
 @typechecked
-def grade_ex2a(qc: QuantumCircuit) -> None:
+def grade_success(answer: str) -> None:
+    grade(answer, "test-pass", _CHALLENGE_ID)
+
+
+@typechecked
+def grade_fail(answer: str) -> None:
+    grade(answer, "test-fail", _CHALLENGE_ID)
+
+
+@typechecked
+def grade_prime(answer: int) -> None:
+    grade(answer, "test-prime", _CHALLENGE_ID)
+
+
+@typechecked
+def grade_vowels(answer: str) -> None:
+    grade(answer, "test-vowels", _CHALLENGE_ID)
+
+
+@typechecked
+def grade_circuit(qc: QuantumCircuit) -> None:
     grade(qc, "test-circuit", _CHALLENGE_ID)
