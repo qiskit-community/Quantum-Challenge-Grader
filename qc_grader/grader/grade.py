@@ -17,7 +17,7 @@ from .api import send_request
 
 
 def submit_team_name(answer: str, challenge_id: str) -> None:
-    """Send the team name to the validate endpoint's submit-name question and print the result."""
+    """Register the user to the provided team, then print the result."""
 
     print("Submitting your team name. Please wait...")
     try:
@@ -37,13 +37,13 @@ def submit_team_name(answer: str, challenge_id: str) -> None:
     print(f"Failed to submit team name. {cause or ''}")
 
 
-def grade(answer: Any, question: str, challenge: str) -> None:
+def grade_answer(answer: Any, lab: str, exercise: str, challenge: str) -> None:
     """Send the answer to the validate endpoint and print the result."""
 
     print("Grading your answer. Please wait...")
     try:
         answer_response = send_request(
-            f"/challenges/{challenge}/validate/{question}",
+            f"/challenges/{challenge}/validate/{lab}-{exercise}",
             body={"answer": to_json(answer)},
         )
     except Exception as e:
