@@ -29,28 +29,26 @@ def read_api_key() -> str | None:
 
     The order of operations matters.
 
-    1. Read the legacy `IBMCLOUD_API_KEY` env var, with fallback to `saved_accounts().get("qdc-2025")`.
+    1. Read the `QC_API_KEY` env var.
+    2. If it's staging or local development, read `saved_accounts().get("grader-staging")`.
+    3. Read the legacy `IBMCLOUD_API_KEY` env var, with fallback to `saved_accounts().get("qdc-2025")`.
        We start with this to avoid breaking Road To Practioner users still using qdc-2025.
-    2. Read the `QC_API_KEY` env var.
-    3. If it's staging or local development, read `saved_accounts().get("grader-staging")`.
     4. Read the default account with QiskitRuntimeService.
 
     Once qdc-2025 is no longer used, we can remove the legacy approach.
     """
-    if key := os.environ.get("IBMCLOUD_API_KEY"):
-        return key
-    if key := QiskitRuntimeService.saved_accounts().get("qdc-2025", {}).get("token"):
-        return key
     if key := os.environ.get(_AUTH_ENV_VAR_NAME):
         return key
-
     if (IS_STAGING or IS_DEV) and (
         key := QiskitRuntimeService.saved_accounts()
         .get("grader-staging", {})
         .get("token")
     ):
         return key
-
+    if key := os.environ.get("IBMCLOUD_API_KEY"):
+        return key
+    if key := QiskitRuntimeService.saved_accounts().get("qdc-2025", {}).get("token"):
+        return key
     if key := (QiskitRuntimeService().active_account() or {}).get("token"):
         return key
     return None
