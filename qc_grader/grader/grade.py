@@ -8,8 +8,10 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-from typing import Any
+import typeguard
+from typing import Any, TypedDict
 
+from typeguard import check_type
 
 from qc_grader.custom_encoder import to_json
 
@@ -19,69 +21,50 @@ from .api import send_request
 def submit_team_name(answer: str, challenge_id: str) -> None:
     """Register the user to the provided team, then print the result."""
 
-    print("Submitting your team name. Please wait...")
-    try:
-        answer_response = send_request(
-            f"/challenges/{challenge_id}/validate/submit-name",
-            body={"answer": to_json(answer)},
-        )
-    except Exception as e:
-        print(f"Failed: {e}")
-        return
+    print("Submitting your team name. Please wait...\n")
 
-    if answer_response.get("status") == "valid":
-        print("🎉 Team name submitted.")
-        return
 
-    cause = answer_response.get("cause")
-    print(f"Failed to submit team name. {cause or ''}")
+class GradeResponse(TypedDict):
+    passed: bool
+    score: int | float
+    msg: str
 
 
 def grade_answer(answer: Any, lab: str, exercise: str, challenge: str) -> None:
     """Send the answer to the validate endpoint and print the result."""
 
-    print("Grading your answer. Please wait...")
+    print("Grading your answer. Please wait...\n")
     try:
-        answer_response = send_request(
-            f"/challenges/{challenge}/validate/{lab}-{exercise}",
+        response = send_request(
+            f"/submissions/{challenge}/{lab}/{exercise}",
             body={"answer": to_json(answer)},
         )
+        check_type(response, GradeResponse)
+    except typeguard.TypeCheckError as e:
+        print(
+            "Server returned an unexpected response format. Try upgrading the "
+            + "Quantum-Challenge-Grader dependency by following the instructions "
+            + "at https://github.com/Qiskit-community/quantum-challenge-grader. "
+            + f"Error: {e}"
+        )
+        return
     except Exception as e:
         print(f"Failed: {e}")
         return
 
     print(
         determine_grade_response(
-            answer_response.get("status"),
-            score=answer_response.get("score"),
-            cause=answer_response.get("cause"),
+            passed=response["passed"], score=response["score"], msg=response["msg"]
         )
     )
 
 
 def determine_grade_response(
-    status: str | None,
-    score: str | None,
-    cause: str | None,
+    passed: bool,
+    score: int | float,
+    msg: str,
 ) -> str:
-    """Format a human-readable message from a grade response.
-
-    Args:
-        status: 'valid', 'invalid', or 'failed'.
-        score: Numeric score, serialized as a string.
-        cause: Server-provided message explaining the result.
-    """
-    if status == "valid":
-        msg = (
-            cause
-            if cause is not None
-            else "\nCongratulations 🎉! Your answer is correct."
-        )
-        if score is not None:
-            msg += f"\nYour score is {score}."
-        return msg
-
-    if status == "invalid":
-        return f"\nOops 😕! {cause or 'Your answer is incorrect'}\nPlease review your answer and try again."
-
-    return f"Failed: {cause or 'Unexpected error'}\nUnable to grade your answer."
+    """Format a human-readable message from a grade response."""
+    if passed:
+        return msg + f"\nYour score is {score}."
+    return f"\nOops 😕! {msg}\nPlease review your answer and try again."
