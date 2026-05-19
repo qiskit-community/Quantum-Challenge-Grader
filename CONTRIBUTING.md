@@ -165,17 +165,21 @@ from qc_grader.challenges.qgss_2027 import grade_lab1_ex1
 
 ### Type validation
 
-You must add the decorator `@typechecked` from `typeguard` to all lab exercises, along with precise type hints that describe the user's input. This decorator validates that the user gave the correct data type. For example:
+All grading functions must use the `@typechecked` decorator from `typeguard` and precise type hints on the answer parameter. This lets the client reject submissions with the wrong data type before they reach the server.
+
+Use the most specific type that describes what the user should submit — `QuantumCircuit`, `Statevector`, `int`, `float`, etc. Avoid `Any` or bare `dict` and bare `list`.
 
 ```python
 from typeguard import typechecked
 
 @typechecked
-def grade_lab0_ex1(arg1: str, arg2: list[int], arg3: QuantumCircuit) -> None:
+def grade_lab1_ex1(answer: QuantumCircuit) -> None:
     ...
 ```
 
-If the user needs to provide a dictionary with certain keys, use `typing.TypedDict`, rather than a more generic type hint like `dict` or `dict[str, int]`. `TypedDict` allows typeguard to validate that the user gave the correct dictionary format. For example:
+#### Dictionaries with required keys
+
+If the user submits a dictionary with specific keys, use `typing.TypedDict` rather than a generic `dict`. `TypedDict` allows `typechecked` to validate each key's name and type:
 
 ```python
 from typing import TypedDict
@@ -189,7 +193,19 @@ def grade_lab0_ex1(counts: Ex1Input) -> None:
     ...
 ```
 
-It is often helpful to allow the user to provide a more flexible data type, and then to write some Python code to transform their input into a simpler format that the server will understand. When writing this type of transformation, think about how the user might make a mistake and consider adding validation, such as throwing a `ValueError` if they violate your assumptions. For example, this code is nice that it allows a user to either pass a `float` or an `ndarray`, which the code then transforms to `float` before sending to the server. This flexibility is useful because the challenge author knows that users will be working with NumPy for this exercise. Crucially, this example validates that their `ndarray` is a scalar, i.e. it anticipates likely user mistakes:
+#### Multiple accepted types
+
+Use a union (`|`) to accept more than one type:
+
+```python
+@typechecked
+def grade_lab0_ex1(answer: int | float) -> None:
+    ...
+```
+
+#### Flexible types with transformation
+
+It is often helpful to accept a more flexible data type and transform it before sending to the server. When doing so, anticipate likely user mistakes and raise a `ValueError` if they violate your assumptions. For example, this accepts either a `float` or an `ndarray` (useful when users are working with NumPy) and validates that the array is a scalar:
 
 ```python
 from typeguard import typechecked
