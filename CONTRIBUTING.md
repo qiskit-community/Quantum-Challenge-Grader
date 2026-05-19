@@ -114,6 +114,28 @@ For developers testing how the server behaves, you can use the files from `qc_gr
 
 ## Adding new labs
 
+TODO: should this be adding new exercises, labs, or challenges?
+TODO: Probably mention the file convention
+TODO: somehow mention the challenge name, lab name, and exercise name must be stable and aligned with what you set in the server.
+
+```python
+from typeguard import typechecked
+
+from qc_grader.grader.grade import grade_answer
+
+_CHALLENGE_ID = "qgss_2027"
+_LAB_ID = "lab1"
+
+
+def _grade(answer: Any, exercise: str) -> None:
+    grade_answer(answer, lab=_LAB_ID, exercise=exercise, challenge=_CHALLENGE_ID)
+
+
+@typechecked
+def grade_lab1_ex1(answer: str) -> None:
+    _grade(answer, "ex1")
+```
+
 ### Type validation
 
 You must add the decorator `@typechecked` from `typeguard` to all lab exercises, along with precise type hints that describe the user's input. This decorator validates that the user gave the correct data type. For example:
