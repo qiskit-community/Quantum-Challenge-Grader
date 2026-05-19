@@ -189,7 +189,7 @@ def grade_lab0_ex1(counts: Ex1Input) -> None:
     ...
 ```
 
-It is often helpful to allow the user to provide a more flexible data type, and then to write some Python code to transform their input into a simpler format that the server will understand. When writing this type of transformation, think about how the user might make a mistake and consider adding validation, such as throwing a `ValueError` if they violate your assumptions. For example, this code is nice that it allows a user to either pass a `float` or an `ndarray`, which the code then transforms to `float` before sending to the server. This flexibility is useful because the challenge author knows that users will be working with NumPy for this exercise. Crucially, this example validates that their `ndarray` is a scalar:
+It is often helpful to allow the user to provide a more flexible data type, and then to write some Python code to transform their input into a simpler format that the server will understand. When writing this type of transformation, think about how the user might make a mistake and consider adding validation, such as throwing a `ValueError` if they violate your assumptions. For example, this code is nice that it allows a user to either pass a `float` or an `ndarray`, which the code then transforms to `float` before sending to the server. This flexibility is useful because the challenge author knows that users will be working with NumPy for this exercise. Crucially, this example validates that their `ndarray` is a scalar, i.e. it anticipates likely user mistakes:
 
 ```python
 from typeguard import typechecked
@@ -203,5 +203,5 @@ def grade_lab0_ex1(exp_val: np.ndarray | float) -> None:
             f"Use result[0].data.evs (not result.data.evs) for a single expectation value."
         )
     exp_val = float(arr.flat[0])
-    grade(exp_val, "lab0-ex1", _CHALLENGE)
+    _grade(exp_val, "ex1")
 ```
