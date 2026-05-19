@@ -173,7 +173,7 @@ Use the most specific type that describes what the user should submit — `Quant
 from typeguard import typechecked
 
 @typechecked
-def grade_lab1_ex1(answer: QuantumCircuit) -> None:
+def grade_lab1_ex1(arg1: str, arg2: list[int], arg3: QuantumCircuit) -> None:
     ...
 ```
 
