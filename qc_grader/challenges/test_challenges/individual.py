@@ -15,12 +15,12 @@ from typeguard import typechecked
 
 from qc_grader.grader.grade import grade_answer
 
-_CHALLENGE_ID = "test_individual"
-_LAB_ID = "test"
+_CHALLENGE = "test_individual"
+_LAB = "test"
 
 
 def _grade(answer: Any, exercise: str) -> None:
-    grade_answer(answer, lab=_LAB_ID, exercise=exercise, challenge=_CHALLENGE_ID)
+    grade_answer(answer, lab=_LAB, exercise=exercise, challenge=_CHALLENGE)
 
 
 @typechecked

@@ -14,17 +14,17 @@ from typeguard import check_type, typechecked
 
 from qc_grader.grader.grade import grade_answer, submit_team_name
 
-_CHALLENGE_ID = "qdc_2025"
-_LAB_ID = "lab6"
+_CHALLENGE = "qdc_2025"
+_LAB = "lab6"
 
 
 def _grade(answer: Any, exercise: str) -> None:
-    grade_answer(answer, lab=_LAB_ID, exercise=exercise, challenge=_CHALLENGE_ID)
+    grade_answer(answer, lab=_LAB, exercise=exercise, challenge=_CHALLENGE)
 
 
 @typechecked
 def submit_name(name: str) -> None:
-    submit_team_name(name, _CHALLENGE_ID)
+    submit_team_name(name, _CHALLENGE)
 
 
 @typechecked

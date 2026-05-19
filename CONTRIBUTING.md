@@ -123,12 +123,12 @@ from typeguard import typechecked
 
 from qc_grader.grader.grade import grade_answer
 
-_CHALLENGE_ID = "qgss_2027"
-_LAB_ID = "lab1"
+_CHALLENGE = "qgss_2027"
+_LAB = "lab1"
 
 
 def _grade(answer: Any, exercise: str) -> None:
-    grade_answer(answer, lab=_LAB_ID, exercise=exercise, challenge=_CHALLENGE_ID)
+    grade_answer(answer, lab=_LAB, exercise=exercise, challenge=_CHALLENGE)
 
 
 @typechecked
@@ -176,5 +176,5 @@ def grade_lab0_ex1(exp_val: np.ndarray | float) -> None:
             f"Use result[0].data.evs (not result.data.evs) for a single expectation value."
         )
     exp_val = float(arr.flat[0])
-    grade(exp_val, "lab0-ex1", _CHALLENGE_ID)
+    grade(exp_val, "lab0-ex1", _CHALLENGE)
 ```
