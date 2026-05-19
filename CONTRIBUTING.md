@@ -114,11 +114,18 @@ For developers testing how the server behaves, you can use the files from `qc_gr
 
 ## Adding new labs
 
-TODO: should this be adding new exercises, labs, or challenges?
-TODO: Probably mention the file convention
-TODO: somehow mention the challenge name, lab name, and exercise name must be stable and aligned with what you set in the server.
+A *lab* is a single Python file corresponding to a Jupyter notebook that users receive. Each *challenge* has one or more labs. When you add new exercises to the server, add a matching Python file here so that users can call grading functions from their Jupyter notebooks.
+
+Create `qc_grader/challenges/{challenge}/{lab}.py`, e.g. `qc_grader/challenges/qgss_2027/lab1.py`.
+
+The `_CHALLENGE` and `_LAB` constants, and each exercise string (e.g., `"ex1"`), must exactly match the identifiers configured on the server. These are permanent: once a challenge is live, changing them breaks existing notebook submissions.
+
+A minimal lab file:
 
 ```python
+# qc_grader/challenges/qgss_2027/lab1.py
+from typing import Any
+
 from typeguard import typechecked
 
 from qc_grader.grader.grade import grade_answer
@@ -134,6 +141,26 @@ def _grade(answer: Any, exercise: str) -> None:
 @typechecked
 def grade_lab1_ex1(answer: str) -> None:
     _grade(answer, "ex1")
+
+
+@typechecked
+def grade_lab1_ex2(answer: int) -> None:
+    _grade(answer, "ex2")
+```
+
+Then, export every grading function from the challenge package's `__init__.py`:
+
+```python
+# qc_grader/challenges/qgss_2027/__init__.py
+from .lab1 import grade_lab1_ex1, grade_lab1_ex2
+
+__all__ = ["grade_lab1_ex1", "grade_lab1_ex2"]
+```
+
+Users can then import your functions like this:
+
+```python
+from qc_grader.challenges.qgss_2027 import grade_lab1_ex1
 ```
 
 ### Type validation
