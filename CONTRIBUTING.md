@@ -114,6 +114,55 @@ For developers testing how the server behaves, you can use the files from `qc_gr
 
 ## Adding new labs
 
+A *lab* is a single Python file corresponding to a Jupyter notebook that users receive. Each *challenge* has one or more labs. When you add new exercises to the server, add a matching Python file here so that users can call grading functions from their Jupyter notebooks.
+
+Create `qc_grader/challenges/{challenge}/{lab}.py`, e.g. `qc_grader/challenges/qgss_2027/lab1.py`.
+
+The `_CHALLENGE` and `_LAB` constants, and each exercise string (e.g., `"ex1"`), must exactly match the identifiers configured on the server. These are permanent: once a challenge is live, changing them breaks existing notebook submissions.
+
+A minimal lab file:
+
+```python
+# qc_grader/challenges/qgss_2027/lab1.py
+from typing import Any
+
+from typeguard import typechecked
+
+from qc_grader.grader.grade import grade_answer
+
+_CHALLENGE = "qgss_2027"
+_LAB = "lab1"
+
+
+def _grade(answer: Any, exercise: str) -> None:
+    grade_answer(answer, lab=_LAB, exercise=exercise, challenge=_CHALLENGE)
+
+
+@typechecked
+def grade_lab1_ex1(answer: str) -> None:
+    _grade(answer, "ex1")
+
+
+@typechecked
+def grade_lab1_ex2(answer: int) -> None:
+    _grade(answer, "ex2")
+```
+
+Then, export every grading function from the challenge package's `__init__.py`:
+
+```python
+# qc_grader/challenges/qgss_2027/__init__.py
+from .lab1 import grade_lab1_ex1, grade_lab1_ex2
+
+__all__ = ["grade_lab1_ex1", "grade_lab1_ex2"]
+```
+
+Users can then import your functions like this:
+
+```python
+from qc_grader.challenges.qgss_2027 import grade_lab1_ex1
+```
+
 ### Type validation
 
 You must add the decorator `@typechecked` from `typeguard` to all lab exercises, along with precise type hints that describe the user's input. This decorator validates that the user gave the correct data type. For example:
@@ -154,5 +203,5 @@ def grade_lab0_ex1(exp_val: np.ndarray | float) -> None:
             f"Use result[0].data.evs (not result.data.evs) for a single expectation value."
         )
     exp_val = float(arr.flat[0])
-    grade(exp_val, "lab0-ex1", _CHALLENGE_ID)
+    grade(exp_val, "lab0-ex1", _CHALLENGE)
 ```
