@@ -39,4 +39,8 @@ def send_request(
     if response.status_code == 204:
         return {}
 
-    raise Exception(response.text)
+    error_text = response.text.strip()
+    if not error_text or error_text.startswith("<"):  # HTML error page, e.g. nginx 413
+        raise Exception(f"{response.status_code} {response.reason}")
+
+    raise Exception(error_text)
