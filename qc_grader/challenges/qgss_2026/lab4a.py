@@ -26,7 +26,7 @@ def _grade(answer: Any, exercise: str) -> None:
     grade_answer(answer, lab=_LAB, exercise=exercise, challenge=_CHALLENGE)
 
 @typechecked
-def grade_lab4a_ex1(criteria_1: str, criteria_2) -> None:
+def grade_lab4a_ex1(criteria_1: str, criteria_2: str) -> None:
     """
     Grade Exercise 1: Two essential criteria for Quantum Advantage 
     """
