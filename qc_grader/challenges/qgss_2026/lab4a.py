@@ -31,7 +31,8 @@ def grade_lab4a_ex1(criteria_1: str, criteria_2: str) -> None:
     """
     Grade Exercise 1: Two essential criteria for Quantum Advantage
     """
-    _grade([criteria_1, criteria_2], "ex1")
+    answer_dict = {"criteria_1": criteria_1, "criteria_2": criteria_2}
+    _grade(answer_dict, "ex1")
 
 
 @typechecked
@@ -39,4 +40,5 @@ def grade_lab4a_ex2(energy: float, expectation_value: float) -> None:
     """
     Grade Exercise 2: Exploring the Quantum Advantage Tracker
     """
-    _grade([energy, expectation_value], "ex2")
+    answer_dict = {"energy": energy, "expectation_value": expectation_value}
+    _grade(answer_dict, "ex2")
