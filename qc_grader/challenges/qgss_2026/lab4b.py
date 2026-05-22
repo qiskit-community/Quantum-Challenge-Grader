@@ -1,0 +1,105 @@
+# (C) Copyright IBM 2026
+#
+# This code is licensed under the Apache License, Version 2.0. You may
+# obtain a copy of this license in the LICENSE.txt file in the root directory
+# of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
+#
+# Any modifications or derivative works of this code must retain this
+# copyright notice, and modified files need to carry a notice indicating
+# that they have been altered from the originals.
+
+"""
+QGSS 2026 Lab 4b - Grading Functions
+"""
+
+from typing import Any, TypedDict
+
+import numpy as np
+from qiskit.quantum_info import Statevector
+from typeguard import typechecked
+
+from qc_grader.grader.grade import grade_answer
+
+_CHALLENGE = "qgss_2026"
+_LAB = "lab4b"
+
+
+def _grade(answer: Any, exercise: str) -> None:
+    grade_answer(answer, lab=_LAB, exercise=exercise, challenge=_CHALLENGE)
+
+
+def grade_lab4b_ex1() -> None:
+    """
+    Grade Exercise 1: Test your IBM Quantum account connection.
+
+    This is a simple "Hello World" exercise to verify that:
+    - Your IBM Quantum account is properly configured
+    - You can successfully submit answers to the grading server
+    - The grading system is working correctly
+
+    Simply call this function with no arguments:
+        grade_lab4b_ex1()
+    """
+    _grade("hello", "ex1")
+
+
+Ex2Input = TypedDict("Ex2Input", {"0": int, "1": int})
+
+
+@typechecked
+def grade_lab4b_ex2(counts: Ex2Input) -> None:
+    """
+    Grade Exercise 2: Verify sampler result.
+
+    Args:
+        counts: Dictionary of measurement counts
+    """
+    _grade(counts, "ex2")
+
+
+@typechecked
+def grade_lab4b_ex3(exp_val: np.ndarray | float) -> None:
+    """Grade Exercise 3: Verify Estimator result.
+
+    Args:
+        exp_val: Expectation value from Estimator result[0].data.evs
+                 Must be a scalar (0-d array or single float)
+
+    Raises:
+        ValueError: If exp_val is not a scalar value
+    """
+    arr = np.asarray(exp_val)
+    if arr.ndim != 0 and arr.size != 1:
+        raise ValueError(
+            f"exp_val must be a scalar, got shape {arr.shape}. "
+            f"Use result[0].data.evs (not result.data.evs) for a single expectation value."
+        )
+    exp_val = float(arr.flat[0])
+    _grade(exp_val, "ex3")
+
+
+@typechecked
+def grade_lab4b_ex4(c_out: list[str], cpp_out: list[str]) -> None:
+    """
+    Grade Exercise 4: Verify C/C++ circuit outputs.
+
+    Args:
+        c_out: Shell output from C circuit program
+        cpp_out: Shell output from C++ circuit program
+    """
+    answer_dict = {
+        "c_out": " ".join(str(x) for x in c_out),
+        "cpp_out": " ".join(str(x) for x in cpp_out),
+    }
+    _grade(answer_dict, "ex4")
+
+
+@typechecked
+def grade_lab4b_ex5(sv: Statevector) -> None:
+    """
+    Grade Exercise 5: Verify statevector.
+
+    Args:
+        sv: Statevector object to verify
+    """
+    _grade(sv, "ex5")
