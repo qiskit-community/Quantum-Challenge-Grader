@@ -25,12 +25,14 @@ _LAB = "lab4a"
 def _grade(answer: Any, exercise: str) -> None:
     grade_answer(answer, lab=_LAB, exercise=exercise, challenge=_CHALLENGE)
 
+
 @typechecked
 def grade_lab4a_ex1(criteria_1: str, criteria_2: str) -> None:
     """
-    Grade Exercise 1: Two essential criteria for Quantum Advantage 
+    Grade Exercise 1: Two essential criteria for Quantum Advantage
     """
     _grade([criteria_1, criteria_2], "ex1")
+
 
 @typechecked
 def grade_lab4a_ex2(energy: float, expectation_value: float) -> None:
