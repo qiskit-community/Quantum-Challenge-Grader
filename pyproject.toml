@@ -23,12 +23,12 @@ dependencies = [
     "typeguard",
     "requests",
     "ibm-platform-services",
+    "networkx",
     "qiskit>=2.3.0,<3.0",
     "qiskit-ibm-runtime",
 
     # Dependencies our challenges use. You can remove these
     # when removing old challenges if they're no longer used.
-    "networkx",
     "moocore",
 ]
 
