@@ -22,9 +22,6 @@ from qiskit.circuit.library import TwoLocal
 from qiskit.primitives import SamplerResult, EstimatorResult, PrimitiveResult
 from qiskit.quantum_info import Operator, Pauli, SparsePauliOp, Statevector
 from qiskit.result import ProbDistribution, QuasiDistribution
-from qiskit_aer.noise import NoiseModel
-
-from networkx.classes import Graph
 
 
 def circuit_to_bytes(qc: Union[TwoLocal, QuantumCircuit]) -> bytes:
@@ -141,18 +138,6 @@ def dump_pauli(obj: Pauli):
 
 def dump_sparse_pauli_op(obj: SparsePauliOp):
     return {"__class__": "SparsePauliOp", "op": obj.to_list()}
-
-
-def dump_noise_model(obj: NoiseModel):
-    return {"__class__": "NoiseModel", "model": obj.to_dict()}
-
-
-def dump_graph(obj: Graph):
-    return {
-        "__class__": "Graph",
-        "nodes": list(obj.nodes(data=True)),
-        "edges": list(obj.edges(data=True)),
-    }
 
 
 def dump_dict_keys(obj: KeysView):
