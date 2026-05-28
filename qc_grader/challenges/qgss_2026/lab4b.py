@@ -112,7 +112,7 @@ def grade_lab4b_ex2(
     }
     # Transform options_list elements into a dictionary
     options_list = [_to_dict(options) for options in options_list]
-    
+
     answer_dict = {
         "options_list": options_list,
         "counts_list": counts_list,
