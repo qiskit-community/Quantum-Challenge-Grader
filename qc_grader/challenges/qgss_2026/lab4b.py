@@ -235,6 +235,9 @@ def grade_lab4b_ex2(
                 f"job_v{index} is not a RuntimeJobV2 instance. You appear to be using a simulator, but this exercise is supposed to use a real hardware backend.",
                 UserWarning,
             )
+    # Go through these values m3_quasis_v3 and m3_quasis_v4 and convert np.floating into float
+    m3_quasis_v3 = {k: float(v) if isinstance(v, np.floating) else v for k, v in m3_quasis_v3.items()}
+    m3_quasis_v4 = {k: float(v) if isinstance(v, np.floating) else v for k, v in m3_quasis_v4.items()}
 
     answer_dict = {
         "options_list": options_list,
