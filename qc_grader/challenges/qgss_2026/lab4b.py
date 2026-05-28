@@ -12,7 +12,7 @@
 QGSS 2026 Lab 4b - Grading Functions
 """
 
-from typing import Any
+from typing import Any, Callable
 import warnings
 
 from typeguard import typechecked
@@ -242,3 +242,27 @@ def grade_lab4b_ex2(
         "m3_quasis_v4": m3_quasis_v4,
     }
     _grade(answer_dict, "ex2")
+
+
+# Type alias for reduce_qubits_with_pce callable
+ReduceQubitsWithPCE = Callable[[int], int]
+
+
+@typechecked
+def grade_lab4b_ex3a(
+    reduce_qubits_with_pce: ReduceQubitsWithPCE,
+    node_x: list[int],
+    node_y: list[int],
+    node_z: list[int],
+) -> None:
+    """
+    Grade Exercise 3a: Implement Pauli Correlation Encoding: Qubit reduction
+    """
+    answer_dict = {
+        "reduce_qubits_with_pce": reduce_qubits_with_pce,
+        "node_x": node_x,
+        "node_y": node_y,
+        "node_z": node_z,
+    }
+
+    _grade(answer_dict, "ex3a")
