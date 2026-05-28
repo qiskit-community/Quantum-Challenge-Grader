@@ -17,6 +17,7 @@ import warnings
 
 from typeguard import typechecked
 
+import numpy as np
 import networkx as nx
 from qiskit.quantum_info import SparsePauliOp
 from qiskit import QuantumCircuit
@@ -57,8 +58,8 @@ def grade_lab4b_ex1b(
 def grade_lab4b_ex2(
     options_list: list[SamplerOptions],
     counts_list: list[dict[str, int]],
-    m3_quasis_v3: Any,
-    m3_quasis_v4: Any,
+    m3_quasis_v3: dict[str, float | np.float32 | np.float64],
+    m3_quasis_v4: dict[str, float | np.float32 | np.float64],
     job_list: list[RuntimeJobV2 | LocalRuntimeJob],
 ):
     """
