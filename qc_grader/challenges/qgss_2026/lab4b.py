@@ -69,7 +69,7 @@ def grade_lab4b_ex2(
 
     def _to_dict(options):
         """Convert SamplerOptions to dict."""
-        return asdict(options) if not isinstance(options, dict) else options
+        return asdict(options)
 
     def _dict_contains(full_dict, subset_dict):
         """Check if full_dict contains all key-value pairs from subset_dict (recursively)."""
