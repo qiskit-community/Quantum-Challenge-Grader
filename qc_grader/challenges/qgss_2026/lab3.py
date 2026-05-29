@@ -27,7 +27,7 @@ def _grade(answer: Any, exercise: str) -> None:
 
 
 @typechecked
-def grade_lab3_ex5(circuit_ising: QuantumCircuit, mirrored_circuit: QuantumCircuit, boxed: QuantumCircuit, obs_list: list, forward_list: list, backward_list: list) -> None:
+def grade_lab3_ex5(circuit_ising: QuantumCircuit, mirrored_circuit: QuantumCircuit, boxed: QuantumCircuit, obs_list: list[SparsePauliOp], forward_list: list[dict], backward_list: list[dict]) -> None:
     """
     Grade Exercise 5: Investigate the locality of 3 observables for 15 qubits
     """
