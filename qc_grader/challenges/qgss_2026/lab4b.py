@@ -159,3 +159,20 @@ def grade_lab4b_ex3b(
     }
 
     _grade(answer_dict, "ex3b")
+
+
+@typechecked
+def grade_lab4b_ex3c(
+    hamiltonian_pce: SparsePauliOp,
+    circuit_pce: QuantumCircuit,
+) -> None:
+    """
+    Grade Exercise 3c: Implement Pauli Correlation Encoding: Cost Hamiltonian and QAOA ansatz
+    """
+
+    answer_dict = {
+        "hamiltonian_pce": hamiltonian_pce,
+        "circuit_pce": circuit_pce,
+    }
+
+    _grade(answer_dict, "ex3c")
