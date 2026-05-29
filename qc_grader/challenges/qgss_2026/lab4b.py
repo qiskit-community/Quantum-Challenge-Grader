@@ -22,7 +22,7 @@ import numpy as np
 import networkx as nx
 from qiskit.quantum_info import SparsePauliOp
 from qiskit import QuantumCircuit
-from qiskit_ibm_runtime.options import SamplerOptions
+from qiskit_ibm_runtime.options import SamplerOptions, EstimatorOptions
 from qiskit_ibm_runtime import RuntimeJobV2
 from qiskit_ibm_runtime.fake_provider.local_runtime_job import LocalRuntimeJob
 
@@ -83,7 +83,9 @@ def grade_lab4b_ex2(
     # Compare job options with expected options
     for i, (job, expected) in enumerate(zip(job_list, options_list), start=1):
         if isinstance(job, RuntimeJobV2):
-            job_opts = asdict(job.inputs.get("options", {}))
+            job_opts = job.inputs.get("options", {})
+            if not isinstance(job_opts, dict):
+                job_opts = asdict(job_opts)
             exp_opts = asdict(expected)
 
             if not _dict_contains(exp_opts, job_opts):
@@ -176,3 +178,91 @@ def grade_lab4b_ex3c(
     }
 
     _grade(answer_dict, "ex3c")
+
+
+def _reconstruct_exp_map(job: RuntimeJobV2 | LocalRuntimeJob) -> dict[int, np.floating]:
+    result = job.result()
+    node_exp_map = {}
+    idx = 0
+    for pub_result in result:
+        evs = getattr(getattr(pub_result, "data", None), "evs", [])
+        for ev in evs:
+            node_exp_map[idx] = float(ev)
+            idx += 1
+    return node_exp_map
+
+
+@typechecked
+def grade_lab4b_ex4(
+    estimator_options_list: list[EstimatorOptions],
+    results_dict: dict,
+    job_list: list[RuntimeJobV2 | LocalRuntimeJob],
+):
+    """
+    Grade Exercise 4: Error suppression mitigation techniques on the Estimator
+    """
+    required_keys = ["No EM", "TREX", "ZNE", "PEC"]
+    for key in required_keys:
+        if key not in results_dict:
+            raise ValueError(f"results_dict should contain key '{key}'")
+
+        result = results_dict[key]
+        required_fields = ["loss", "best_cut", "set0", "set1", "difference"]
+        for field in required_fields:
+            if field not in result:
+                raise ValueError(
+                    f"results_dict['{key}'] should contain field '{field}'"
+                )
+
+        if "exp_map" not in result:
+            raise ValueError(f"results_dict['{key}'] should contain field 'exp_map'")
+    # Compare job options with expected options
+    required_keys = ["No EM", "TREX", "ZNE", "PEC"]
+
+    for i, (job, expected, key) in enumerate(
+        zip(job_list, estimator_options_list, required_keys), start=1
+    ):
+        reconstructed_exp_map = _reconstruct_exp_map(job)
+        stored_exp_map = results_dict.get(key, {}).get("exp_map")
+        if stored_exp_map is not None:
+            if stored_exp_map != reconstructed_exp_map:
+                raise ValueError(
+                    f"results_dict['{key}']['exp_map'] does not match the expectation map reconstructed from its estimator job"
+                )
+
+        if isinstance(job, RuntimeJobV2):
+            job_opts = job.inputs.get("options", {})
+            if not isinstance(job_opts, dict):
+                job_opts = asdict(job_opts)
+            expected = asdict(expected)
+
+            if not _dict_contains(expected, job_opts):
+                raise ValueError(f"job_{key} options do not match expected options")
+        else:
+            warnings.warn(
+                f"job_{key} is not a RuntimeJobV2 instance. You appear to be using a simulator, but this exercise is supposed to use a real hardware backend.",
+                UserWarning,
+            )
+    # Transform options_list elements into a dictionary
+    estimator_options_dicts = [asdict(options) for options in estimator_options_list]
+
+    # Check 4: results has a best value which has a difference smaller than 5% of the total sum
+    best_difference = float("inf")
+    best_method = None
+    total_sum = None
+
+    for method, result in results_dict.items():
+        if total_sum is None:
+            total_sum = sum(result["set0"]) + sum(result["set1"])
+
+        if result["difference"] < best_difference:
+            best_difference = result["difference"]
+            best_method = method
+
+    answer_dict = {
+        "estimator_options_list": estimator_options_dicts,
+        "best_difference": best_difference,
+        "total_sum": total_sum,
+        "best_method": best_method,
+    }
+    _grade(answer_dict, "ex4")
