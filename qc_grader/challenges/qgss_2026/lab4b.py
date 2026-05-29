@@ -16,7 +16,7 @@ from typing import Any, Callable
 import warnings
 from dataclasses import asdict
 
-from typeguard import typechecked
+from typeguard import typechecked, check_type
 
 import numpy as np
 import networkx as nx
@@ -122,8 +122,16 @@ def grade_lab4b_ex3a(
     """
     Grade Exercise 3a: Implement Pauli Correlation Encoding: Qubit reduction
     """
+    initial_qubits = [20, 40, 60, 80, 100, 120, 140, 160, 180, 200]
+    final_qubits = []
+    for qubit in initial_qubits:
+        result = reduce_qubits_with_pce(qubit)
+        check_type(result, int)
+        final_qubits.append(result)
+
     answer_dict = {
-        "reduce_qubits_with_pce": reduce_qubits_with_pce,
+        "initial_qubits": initial_qubits,
+        "final_qubits": final_qubits,
         "node_x": node_x,
         "node_y": node_y,
         "node_z": node_z,
