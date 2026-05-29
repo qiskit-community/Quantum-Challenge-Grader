@@ -83,11 +83,6 @@ def grade_lab4b_ex2(
                 return False
         return True
 
-    # Validate inputs
-    if not isinstance(options_list, list) or len(options_list) != 4:
-        raise ValueError("options_list should be a list of 4 entries")
-    if not isinstance(job_list, list) or len(job_list) != 4:
-        raise ValueError("jobs should be a list of 4 jobs")
     # Compare job options with expected options
     for i, (job, expected) in enumerate(zip(job_list, options_list), start=1):
         if isinstance(job, RuntimeJobV2):
@@ -102,14 +97,8 @@ def grade_lab4b_ex2(
                 UserWarning,
             )
     # Go through these values m3_quasis_v3 and m3_quasis_v4 and convert np.floating into float
-    m3_quasis_v3 = {
-        k: float(v) if isinstance(v, np.floating) else v
-        for k, v in m3_quasis_v3.items()
-    }
-    m3_quasis_v4 = {
-        k: float(v) if isinstance(v, np.floating) else v
-        for k, v in m3_quasis_v4.items()
-    }
+    m3_quasis_v3 = {k: float(v) for k, v in m3_quasis_v3.items()}
+    m3_quasis_v4 = {k: float(v) for k, v in m3_quasis_v4.items()}
     # Transform options_list elements into a dictionary
     options_list = [_to_dict(options) for options in options_list]
 
