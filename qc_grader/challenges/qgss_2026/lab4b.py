@@ -36,6 +36,19 @@ def _grade(answer: Any, exercise: str) -> None:
     grade_answer(answer, lab=_LAB, exercise=exercise, challenge=_CHALLENGE)
 
 
+def _dict_contains(full_dict, subset_dict):
+    """Check if full_dict contains all key-value pairs from subset_dict (recursively)."""
+    for key, value in subset_dict.items():
+        if key not in full_dict:
+            return False
+        if isinstance(value, dict) and isinstance(full_dict[key], dict):
+            if not _dict_contains(full_dict[key], value):
+                return False
+        elif full_dict[key] != value:
+            return False
+    return True
+
+
 @typechecked
 def grade_lab4b_ex1a(partition_graph: nx.Graph) -> None:
     """
@@ -67,27 +80,11 @@ def grade_lab4b_ex2(
     Grade Exercise 2: Error suppression techniques
     """
 
-    def _to_dict(options):
-        """Convert SamplerOptions to dict."""
-        return asdict(options)
-
-    def _dict_contains(full_dict, subset_dict):
-        """Check if full_dict contains all key-value pairs from subset_dict (recursively)."""
-        for key, value in subset_dict.items():
-            if key not in full_dict:
-                return False
-            if isinstance(value, dict) and isinstance(full_dict[key], dict):
-                if not _dict_contains(full_dict[key], value):
-                    return False
-            elif full_dict[key] != value:
-                return False
-        return True
-
     # Compare job options with expected options
     for i, (job, expected) in enumerate(zip(job_list, options_list), start=1):
         if isinstance(job, RuntimeJobV2):
-            job_opts = _to_dict(job.inputs.get("options", {}))
-            exp_opts = _to_dict(expected)
+            job_opts = asdict(job.inputs.get("options", {}))
+            exp_opts = asdict(expected)
 
             if not _dict_contains(exp_opts, job_opts):
                 raise ValueError(f"job_v{i} options do not match expected options")
@@ -100,10 +97,10 @@ def grade_lab4b_ex2(
     m3_quasis_v3 = {k: float(v) for k, v in m3_quasis_v3.items()}
     m3_quasis_v4 = {k: float(v) for k, v in m3_quasis_v4.items()}
     # Transform options_list elements into a dictionary
-    options_list = [_to_dict(options) for options in options_list]
+    options_dicts = [asdict(options) for options in options_list]
 
     answer_dict = {
-        "options_list": options_list,
+        "options_list": options_dicts,
         "counts_list": counts_list,
         "m3_quasis_v3": m3_quasis_v3,
         "m3_quasis_v4": m3_quasis_v4,
