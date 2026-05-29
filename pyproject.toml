@@ -23,24 +23,17 @@ dependencies = [
     "typeguard",
     "requests",
     "ibm-platform-services",
-
-    # Dependencies our challenges use
     "networkx",
+    "qiskit>=2.3.0,<3.0",
+    "qiskit-ibm-runtime",
+
+    # Dependencies our challenges use. You can remove these
+    # when removing old challenges if they're no longer used.
     "moocore",
 ]
 
 [project.urls]
 Homepage = "https://quantum.cloud.ibm.com/"
-
-[project.optional-dependencies]
-qiskit = [
-    "qiskit[visualization]>=2.1.0,<3.0",
-    "qiskit-ibm-runtime",
-]
-jupyter = [
-    "jupyterlab",
-    "ipykernel",
-]
 
 [dependency-groups]
 dev = [
