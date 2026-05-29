@@ -123,11 +123,13 @@ def grade_lab4b_ex3a(
     Grade Exercise 3a: Implement Pauli Correlation Encoding: Qubit reduction
     """
     initial_qubits = [20, 40, 60, 80, 100, 120, 140, 160, 180, 200]
-    final_qubits = []
-    for qubit in initial_qubits:
+
+    def _validate_and_reduce(qubit: int) -> int:
         result = reduce_qubits_with_pce(qubit)
         check_type(result, int)
-        final_qubits.append(result)
+        return result
+
+    final_qubits = [_validate_and_reduce(qubit) for qubit in initial_qubits]
 
     answer_dict = {
         "initial_qubits": initial_qubits,
@@ -138,3 +140,22 @@ def grade_lab4b_ex3a(
     }
 
     _grade(answer_dict, "ex3a")
+
+
+@typechecked
+def grade_lab4b_ex3b(
+    pauli_correlation_encoding_x: list[SparsePauliOp],
+    pauli_correlation_encoding_y: list[SparsePauliOp],
+    pauli_correlation_encoding_z: list[SparsePauliOp],
+) -> None:
+    """
+    Grade Exercise 3b: Implement Pauli Correlation Encoding: Hamiltonian construction
+    """
+
+    answer_dict = {
+        "pauli_correlation_encoding_x": pauli_correlation_encoding_x,
+        "pauli_correlation_encoding_y": pauli_correlation_encoding_y,
+        "pauli_correlation_encoding_z": pauli_correlation_encoding_z,
+    }
+
+    _grade(answer_dict, "ex3b")
