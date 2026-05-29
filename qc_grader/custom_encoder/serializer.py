@@ -8,9 +8,6 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-
-import numpy
-
 from fractions import Fraction
 from io import BytesIO
 from typing import Union
@@ -22,6 +19,8 @@ from qiskit.circuit.library import TwoLocal
 from qiskit.primitives import SamplerResult, EstimatorResult, PrimitiveResult
 from qiskit.quantum_info import Operator, Pauli, SparsePauliOp, Statevector
 from qiskit.result import ProbDistribution, QuasiDistribution
+import numpy
+from networkx import Graph
 
 
 def circuit_to_bytes(qc: Union[TwoLocal, QuantumCircuit]) -> bytes:
@@ -138,6 +137,14 @@ def dump_pauli(obj: Pauli):
 
 def dump_sparse_pauli_op(obj: SparsePauliOp):
     return {"__class__": "SparsePauliOp", "op": obj.to_list()}
+
+
+def dump_graph(obj: Graph):
+    return {
+        "__class__": "Graph",
+        "nodes": list(obj.nodes(data=True)),
+        "edges": list(obj.edges(data=True)),
+    }
 
 
 def dump_dict_keys(obj: KeysView):
