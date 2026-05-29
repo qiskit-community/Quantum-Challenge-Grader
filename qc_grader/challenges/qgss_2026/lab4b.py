@@ -83,7 +83,9 @@ def grade_lab4b_ex2(
     # Compare job options with expected options
     for i, (job, expected) in enumerate(zip(job_list, options_list), start=1):
         if isinstance(job, RuntimeJobV2):
-            job_opts = asdict(job.inputs.get("options", {}))
+            job_opts = job.inputs.get("options", {})
+            if not isinstance(job_opts, dict):
+                job_opts = asdict(job_opts)
             exp_opts = asdict(expected)
 
             if not _dict_contains(exp_opts, job_opts):
