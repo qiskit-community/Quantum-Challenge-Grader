@@ -266,3 +266,80 @@ def grade_lab4b_ex4(
         "best_method": best_method,
     }
     _grade(answer_dict, "ex4")
+
+
+@typechecked
+def grade_lab4b_exbonus(
+    result_bonus: dict,
+    job_bonus: RuntimeJobV2 | LocalRuntimeJob,
+):
+    """
+    Grade Exercise Bonus: Achieve the best possible result for the partition problem
+    """
+
+    def _extract_qpu_usage_seconds(job):
+        metrics = getattr(job, "metrics", None)
+        if callable(metrics):
+            try:
+                metrics = metrics()
+            except Exception:
+                return None
+
+        if not isinstance(metrics, dict):
+            return None
+
+        usage = metrics.get("usage", metrics)
+        if not isinstance(usage, dict):
+            return None
+
+        value = usage.get("quantum_seconds")
+
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return None
+
+    if not isinstance(job_bonus, RuntimeJobV2):
+        raise ValueError(
+            "job_bonus is not a RuntimeJobV2 instance. You appear to be using a simulator, but this exercise is supposed to use a real hardware backend."
+        )
+
+    qpu_usage_seconds = _extract_qpu_usage_seconds(job_bonus)
+
+    if qpu_usage_seconds is None or qpu_usage_seconds <= 0:
+        raise ValueError("job_bonus should report QPU usage greater than 0 seconds")
+
+    if "exp_map" not in result_bonus:
+        raise ValueError("result_bonus should contain field 'exp_map'")
+
+    reconstructed_exp_map = _reconstruct_exp_map(job_bonus)
+    stored_exp_map = result_bonus.get("exp_map")
+    if stored_exp_map is not None:
+        if stored_exp_map != reconstructed_exp_map:
+            raise ValueError(
+                "result_bonus['exp_map'] does not match the expectation map reconstructed from its estimator job"
+            )
+
+    # Check result_bonus is a dictionary with required elements
+
+    required_fields = [
+        "set0",
+        "set1",
+        "difference",
+    ]
+    for field in required_fields:
+        if field not in result_bonus:
+            raise ValueError(f"result_bonus should contain field '{field}'")
+
+    reconstructed_exp_map = {k: float(v) for k, v in reconstructed_exp_map.items()}
+
+    answer_dict = {
+        "set0": result_bonus["set0"],
+        "set1": result_bonus["set1"],
+        "difference": result_bonus["difference"],
+        "qpu_usage_seconds": qpu_usage_seconds,
+        "exp_map": reconstructed_exp_map,
+        "job_id": job_bonus.job_id(),
+    }
+
+    _grade(answer_dict, "exbonus")

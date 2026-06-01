@@ -42,6 +42,7 @@ from .lab4b import (
     grade_lab4b_ex3b,
     grade_lab4b_ex3c,
     grade_lab4b_ex4,
+    grade_lab4b_exbonus,
 )
 
 
@@ -67,4 +68,5 @@ __all__ = [
     "grade_lab4b_ex3b",
     "grade_lab4b_ex3c",
     "grade_lab4b_ex4",
+    "grade_lab4b_exbonus",
 ]
