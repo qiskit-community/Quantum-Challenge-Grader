@@ -36,7 +36,7 @@ def _grade(answer: Any, exercise: str) -> None:
     grade_answer(answer, lab=_LAB, exercise=exercise, challenge=_CHALLENGE)
 
 
-def _dict_contains(full_dict, subset_dict):
+def _dict_contains(full_dict: dict[str, Any], subset_dict: dict[str, Any]) -> bool:
     """Check if full_dict contains all key-value pairs from subset_dict (recursively)."""
     for key, value in subset_dict.items():
         if key not in full_dict:
