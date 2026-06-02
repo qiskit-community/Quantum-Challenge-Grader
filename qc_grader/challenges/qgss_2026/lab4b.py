@@ -193,7 +193,8 @@ def grade_lab4b_ex3c(
     """
     Grade Exercise 3c: Implement Pauli Correlation Encoding: Cost Hamiltonian and QAOA ansatz
     """
-
+    if any(instr.operation.name == "box" for instr in circuit_pce.data):
+        circuit_pce = UnrollBoxes()(circuit_pce)
     answer_dict = {
         "hamiltonian_pce": hamiltonian_pce,
         "circuit_pce": circuit_pce,
