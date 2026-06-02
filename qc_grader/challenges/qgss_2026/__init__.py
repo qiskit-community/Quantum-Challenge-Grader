@@ -37,11 +37,6 @@ from .lab4c import (
     grade_lab4c_ex1a,
 )
 
-from .lab4b import (
-    grade_lab4b_ex1a,
-    grade_lab4b_ex1b,
-    grade_lab4b_ex2,
-)
 
 from .lab4b import (
     grade_lab4b_ex1a,

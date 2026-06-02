@@ -12,23 +12,16 @@
 QGSS 2026 Lab 4b - Grading Functions
 """
 
+from typeguard import typechecked, check_type
 from typing import Any, Callable
 import warnings
 from dataclasses import asdict
-
-from typeguard import typechecked, check_type
-from typing import Any
-import warnings
-from dataclasses import asdict
-
-from typeguard import typechecked
 
 import numpy as np
 import networkx as nx
 from qiskit.quantum_info import SparsePauliOp
 from qiskit import QuantumCircuit
 from qiskit_ibm_runtime.options import SamplerOptions, EstimatorOptions
-from qiskit_ibm_runtime.options import SamplerOptions
 from qiskit_ibm_runtime import RuntimeJobV2
 from qiskit_ibm_runtime.fake_provider.local_runtime_job import LocalRuntimeJob
 
@@ -42,7 +35,6 @@ def _grade(answer: Any, exercise: str) -> None:
     grade_answer(answer, lab=_LAB, exercise=exercise, challenge=_CHALLENGE)
 
 
-def _dict_contains(full_dict, subset_dict):
 def _dict_contains(full_dict: dict[str, Any], subset_dict: dict[str, Any]) -> bool:
     """Check if full_dict contains all key-value pairs from subset_dict (recursively)."""
     for key, value in subset_dict.items():
