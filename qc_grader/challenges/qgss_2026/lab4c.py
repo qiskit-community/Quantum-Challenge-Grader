@@ -27,7 +27,7 @@ def _grade(answer: Any, exercise: str) -> None:
 
 
 @typechecked
-def grade_lab4c_ex1a(alpha_beta_indices: list[tuple[int]]) -> None:
+def grade_lab4c_ex1a(alpha_beta_indices: list[tuple[int, ...]]) -> None:
     """
     Grade Exercise 1a: Verify alpha-beta interaction pairs.
 
