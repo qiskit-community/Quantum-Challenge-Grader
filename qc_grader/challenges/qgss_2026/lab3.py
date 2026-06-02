@@ -63,7 +63,6 @@ def grade_lab3_ex1(my_options: EstimatorOptions) -> None:
     _grade(answer, "ex1")
 
 
-
 @typechecked
 def grade_lab3_ex2(
     ising_ex2: QuantumCircuit,
@@ -76,7 +75,9 @@ def grade_lab3_ex2(
     box_insts = [i for i in boxed_circuit_ex2 if isinstance(i.operation, BoxOp)]
     gate_boxes = [b for b in box_insts if not _box_wraps_measure(b)]
     twirled = sum(
-        1 for b in gate_boxes if any(isinstance(a, Twirl) for a in b.operation.annotations)
+        1
+        for b in gate_boxes
+        if any(isinstance(a, Twirl) for a in b.operation.annotations)
     )
     injected = sum(
         1
@@ -109,6 +110,7 @@ def grade_lab3_ex3a(unique_layers: list) -> None:
     )
     answer = {"num_layers": len(unique_layers), "has_boxes": has_boxes}
     _grade(answer, "ex3a")
+
 
 @typechecked
 def grade_lab3_ex3b(
