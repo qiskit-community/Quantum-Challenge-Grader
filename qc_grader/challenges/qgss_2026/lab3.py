@@ -70,7 +70,7 @@ def grade_lab3_ex2(
     boxed_circuit_ex2: QuantumCircuit,
 ) -> None:
     """Grade Exercise 2."""
-    from samplomatic import Twirl, InjectNoise, build
+    from samplomatic import Twirl, InjectNoise, build  # type: ignore[import-untyped]
 
     box_insts = [i for i in boxed_circuit_ex2 if isinstance(i.operation, BoxOp)]
     gate_boxes = [b for b in box_insts if not _box_wraps_measure(b)]
