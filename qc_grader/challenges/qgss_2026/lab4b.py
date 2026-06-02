@@ -381,7 +381,7 @@ def grade_lab4b_exbonus(
         raise ValueError(
             "best_bits does not reconstruct set0 and set1 from results_bonus"
         )
-    reconstructed_exp_map = {k: float(v) for k, v in reconstructed_exp_map.items()}
+    reconstructed_exp_map = {int(k): float(v) for k, v in stored_exp_map.items()}
 
     answer_dict = {
         "set0": result_bonus["set0"],
