@@ -347,7 +347,7 @@ def _extract_qpu_usage_seconds(job: RuntimeJobV2):
 def grade_lab4b_exbonus(
     result_bonus: PartitionResult,
     best_bits: list[int],
-    numbers_bonus: list[int],
+    numbers_bonus: list[int] | np.ndarray,
     job_bonus: RuntimeJobV2 | LocalRuntimeJob,
 ):
     """
