@@ -70,7 +70,7 @@ def grade_lab4b_ex1b(
 @typechecked
 def grade_lab4b_ex2(
     options_list: list[SamplerOptions],
-    counts_list: list[dict[str, int]],
+    counts_list: list[dict[str, int | float]],
     m3_quasis_v3: dict[str, float | np.floating],
     m3_quasis_v4: dict[str, float | np.floating],
     job_list: list[RuntimeJobV2 | LocalRuntimeJob],
