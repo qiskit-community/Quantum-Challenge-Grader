@@ -223,7 +223,7 @@ PartitionResult = TypedDict(
         "par1": list[int] | set[int],
         "par0_size": int,
         "par1_size": int,
-        "best_cut": np.floating,
+        "best_cut": int | np.floating,
         "best_index": int,
         "set0": list[int] | set[int],
         "set1": list[int] | set[int],
