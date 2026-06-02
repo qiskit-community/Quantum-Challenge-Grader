@@ -219,14 +219,14 @@ PartitionResult = TypedDict(
     "PartitionResult",
     {
         "loss": np.floating,
-        "par0": list[int],
-        "par1": list[int],
+        "par0": list[int] | set[int],
+        "par1": list[int] | set[int],
         "par0_size": int,
         "par1_size": int,
-        "best_cut": np.floating,
+        "best_cut": int | np.floating,
         "best_index": int,
-        "set0": list[int],
-        "set1": list[int],
+        "set0": list[int] | set[int],
+        "set1": list[int] | set[int],
         "difference": int | float,
         "exp_map": dict[int, np.floating],
     },
@@ -347,7 +347,7 @@ def _extract_qpu_usage_seconds(job: RuntimeJobV2):
 def grade_lab4b_exbonus(
     result_bonus: PartitionResult,
     best_bits: list[int],
-    numbers_bonus: list[int],
+    numbers_bonus: list[int] | np.ndarray,
     job_bonus: RuntimeJobV2 | LocalRuntimeJob,
 ):
     """
@@ -381,7 +381,7 @@ def grade_lab4b_exbonus(
         raise ValueError(
             "best_bits does not reconstruct set0 and set1 from results_bonus"
         )
-    reconstructed_exp_map = {k: float(v) for k, v in reconstructed_exp_map.items()}
+    reconstructed_exp_map = {int(k): float(v) for k, v in stored_exp_map.items()}
 
     answer_dict = {
         "set0": result_bonus["set0"],
