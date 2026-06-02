@@ -8,7 +8,7 @@
 ## Installation
 
 ```sh
-uv sync --all-extras
+uv sync
 ```
 
 (uv automatically creates and manages a virtual environment.)
