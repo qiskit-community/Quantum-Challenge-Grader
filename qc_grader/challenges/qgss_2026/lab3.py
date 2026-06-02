@@ -49,7 +49,7 @@ def grade_lab3_ex1(my_options: EstimatorOptions) -> None:
         return obj
 
     nf = _get("resilience.zne.noise_factors")
-    payload = {
+    answer = {
         "dd_enable": bool(_get("dynamical_decoupling.enable")),
         "dd_sequence_type": _get("dynamical_decoupling.sequence_type"),
         "pt_enable_gates": bool(_get("twirling.enable_gates")),
@@ -60,7 +60,7 @@ def grade_lab3_ex1(my_options: EstimatorOptions) -> None:
         "zne_noise_factors": list(nf) if nf is not None else None,
         "zne_amplifier": _get("resilience.zne.amplifier"),
     }
-    _grade(payload, "ex1")
+    _grade(answer, "ex1")
 
 
 
@@ -89,7 +89,7 @@ def grade_lab3_ex2(
     except Exception:
         build_ok = False
 
-    payload = {
+    answer = {
         "ising_ex2": ising_ex2,
         "mirror_ex2": mirror_ex2,
         "boxed_num_qubits": boxed_circuit_ex2.num_qubits,
@@ -98,7 +98,7 @@ def grade_lab3_ex2(
         "boxed_gate_boxes_inject_noise": injected,
         "boxed_build_ok": build_ok,
     }
-    _grade(payload, "ex2")
+    _grade(answer, "ex2")
 
 
 @typechecked
@@ -107,8 +107,8 @@ def grade_lab3_ex3a(unique_layers: list) -> None:
     has_boxes = len(unique_layers) > 0 and all(
         isinstance(getattr(inst, "operation", None), BoxOp) for inst in unique_layers
     )
-    payload = {"num_layers": len(unique_layers), "has_boxes": has_boxes}
-    _grade(payload, "ex3a")
+    answer = {"num_layers": len(unique_layers), "has_boxes": has_boxes}
+    _grade(answer, "ex3a")
 
 @typechecked
 def grade_lab3_ex3b(
@@ -118,12 +118,12 @@ def grade_lab3_ex3b(
 ) -> None:
     """Grade Exercise 3b."""
     pauli, qubits = top_2q_generator
-    payload = {
+    answer = {
         "noise_sparse_list": _serialize_plmap(second_layer_noise),
         "mean_1q_rate": float(mean_1q_rate),
         "top_2q_generator": (pauli, list(qubits)),
     }
-    _grade(payload, "ex3b")
+    _grade(answer, "ex3b")
 
 
 @typechecked
@@ -134,13 +134,13 @@ def grade_lab3_ex4(
     top_5_terms_ex4: list,
 ) -> None:
     """Grade Exercise 4."""
-    payload = {
+    answer = {
         "target": _serialize_observable(target_observable_ex4),
         "target_isa": _serialize_observable(target_observable_ex4_isa),
         "obs_tilde": _serialize_observable(obs_tilde_ex4),
         "top_5_terms": [(str(p), complex(c).real) for p, c in top_5_terms_ex4],
     }
-    _grade(payload, "ex4")
+    _grade(answer, "ex4")
 
 
 @typechecked
@@ -165,7 +165,7 @@ def grade_lab3_ex5(
 
     box_insts = [i for i in boxed_circuit_ex5 if isinstance(i.operation, BoxOp)]
 
-    payload = {
+    answer = {
         "circuit_ising_ex5": circuit_ising_ex5,
         "mirrored_circuit_ex5": mirrored_circuit_ex5,
         "boxed_num_qubits": boxed_circuit_ex5.num_qubits,
@@ -178,4 +178,4 @@ def grade_lab3_ex5(
         "forward_list": [_serialize_bound(f) for f in forward_bounds_list],
         "backward_list": [_serialize_bound(b) for b in backward_bounds_list],
     }
-    _grade(payload, "ex5")
+    _grade(answer, "ex5")
