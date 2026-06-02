@@ -12,7 +12,7 @@
 QGSS 2026 Lab 4c - Grading Functions
 """
 
-from typing import Any, Sequence
+from typing import Any
 
 from typeguard import typechecked
 
@@ -27,11 +27,11 @@ def _grade(answer: Any, exercise: str) -> None:
 
 
 @typechecked
-def grade_lab4c_ex1a(alpha_beta_indicies: Sequence[Sequence[int]]) -> None:
+def grade_lab4c_ex1a(alpha_beta_indices: list[tuple[int]]) -> None:
     """
     Grade Exercise 1a: Verify alpha-beta interaction pairs.
 
     Args:
         alpha_beta_indicies: List of interaction pair indicies
     """
-    _grade(alpha_beta_indicies, "ex1a")
+    _grade(alpha_beta_indices, "ex1a")
