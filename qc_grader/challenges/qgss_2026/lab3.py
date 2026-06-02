@@ -87,10 +87,12 @@ def grade_lab3_ex5(
     obs_list_serialized = []
     for obs in obs_list:
         if hasattr(obs, "paulis"):
-            obs_list_serialized.append({
-                "num_qubits": obs.num_qubits,
-                "sparse_list": obs.to_sparse_list(),
-            })
+            obs_list_serialized.append(
+                {
+                    "num_qubits": obs.num_qubits,
+                    "sparse_list": obs.to_sparse_list(),
+                }
+            )
         else:
             obs_list_serialized.append(obs)
 
