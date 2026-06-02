@@ -12,9 +12,8 @@
 QGSS 2026 Lab 4c - Grading Functions
 """
 
-from typing import Any
-
-from typeguard import typechecked
+from typing import Any, Sequence
+from typeguard import typechecked, CollectionCheckStrategy
 
 from qc_grader.grader.grade import grade_answer
 
@@ -26,8 +25,8 @@ def _grade(answer: Any, exercise: str) -> None:
     grade_answer(answer, lab=_LAB, exercise=exercise, challenge=_CHALLENGE)
 
 
-@typechecked
-def grade_lab4c_ex1a(alpha_beta_indices: list[list[int]]) -> None:
+@typechecked(collection_check_strategy=CollectionCheckStrategy.ALL_ITEMS)
+def grade_lab4c_ex1a(alpha_beta_indices: Sequence[Sequence[int]]) -> None:
     """
     Grade Exercise 1a: Verify alpha-beta interaction pairs.
 
