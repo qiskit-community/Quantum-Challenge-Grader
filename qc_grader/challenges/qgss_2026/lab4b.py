@@ -13,7 +13,7 @@ QGSS 2026 Lab 4b - Grading Functions
 """
 
 from typeguard import typechecked, check_type
-from typing import Any, Callable
+from typing import Any, Callable, TypedDict, cast
 import warnings
 from dataclasses import asdict
 
@@ -191,43 +191,82 @@ def _reconstruct_exp_map(job: RuntimeJobV2 | LocalRuntimeJob) -> dict[int, np.fl
     return node_exp_map
 
 
+PartitionResult = TypedDict(
+    "PartitionResult",
+    {
+        "loss": np.floating,
+        "par0": list[int],
+        "par1": list[int],
+        "par0_size": int,
+        "par1_size": int,
+        "best_cut": np.floating,
+        "best_index": int,
+        "set0": list[int],
+        "set1": list[int],
+        "difference": int | float,
+        "exp_map": dict[int, np.floating],
+    },
+)
+
+EMResults = TypedDict(
+    "EMResults",
+    {
+        "No EM": PartitionResult,
+        "TREX": PartitionResult,
+        "ZNE": PartitionResult,
+        "PEC": PartitionResult,
+    },
+)
+
+
+def _find_best_result(
+    results_dict: EMResults,
+) -> tuple[float, str | None, int | float | None]:
+    """
+    Find the best result from the results dictionary.
+
+    Returns:
+        A tuple of (best_difference, best_method, total_sum)
+    """
+
+    best_difference = float("inf")
+    best_method: str | None = None
+    total_sum: int | float | None = None
+
+    for method, result in results_dict.items():
+        # Type checker needs explicit cast to know result is PartitionResult
+        partition_result = cast(PartitionResult, result)
+        if total_sum is None:
+            total_sum = sum(partition_result["set0"]) + sum(partition_result["set1"])
+
+        if partition_result["difference"] < best_difference:
+            best_difference = partition_result["difference"]
+            best_method = method
+
+    return best_difference, best_method, total_sum
+
+
 @typechecked
 def grade_lab4b_ex4(
     estimator_options_list: list[EstimatorOptions],
-    results_dict: dict,
+    results_dict: EMResults,
     job_list: list[RuntimeJobV2 | LocalRuntimeJob],
 ):
     """
     Grade Exercise 4: Error suppression mitigation techniques on the Estimator
     """
     required_keys = ["No EM", "TREX", "ZNE", "PEC"]
-    for key in required_keys:
-        if key not in results_dict:
-            raise ValueError(f"results_dict should contain key '{key}'")
-
-        result = results_dict[key]
-        required_fields = ["loss", "best_cut", "set0", "set1", "difference"]
-        for field in required_fields:
-            if field not in result:
-                raise ValueError(
-                    f"results_dict['{key}'] should contain field '{field}'"
-                )
-
-        if "exp_map" not in result:
-            raise ValueError(f"results_dict['{key}'] should contain field 'exp_map'")
     # Compare job options with expected options
-    required_keys = ["No EM", "TREX", "ZNE", "PEC"]
 
     for i, (job, expected, key) in enumerate(
         zip(job_list, estimator_options_list, required_keys), start=1
     ):
         reconstructed_exp_map = _reconstruct_exp_map(job)
         stored_exp_map = results_dict.get(key, {}).get("exp_map")
-        if stored_exp_map is not None:
-            if stored_exp_map != reconstructed_exp_map:
-                raise ValueError(
-                    f"results_dict['{key}']['exp_map'] does not match the expectation map reconstructed from its estimator job"
-                )
+        if stored_exp_map != reconstructed_exp_map:
+            raise ValueError(
+                f"results_dict['{key}']['exp_map'] does not match the expectation map reconstructed from its estimator job"
+            )
 
         if isinstance(job, RuntimeJobV2):
             job_opts = job.inputs.get("options", {})
@@ -246,17 +285,7 @@ def grade_lab4b_ex4(
     estimator_options_dicts = [asdict(options) for options in estimator_options_list]
 
     # Check 4: results has a best value which has a difference smaller than 5% of the total sum
-    best_difference = float("inf")
-    best_method = None
-    total_sum = None
-
-    for method, result in results_dict.items():
-        if total_sum is None:
-            total_sum = sum(result["set0"]) + sum(result["set1"])
-
-        if result["difference"] < best_difference:
-            best_difference = result["difference"]
-            best_method = method
+    best_difference, best_method, total_sum = _find_best_result(results_dict)
 
     answer_dict = {
         "estimator_options_list": estimator_options_dicts,
@@ -267,69 +296,67 @@ def grade_lab4b_ex4(
     _grade(answer_dict, "ex4")
 
 
+def _extract_qpu_usage_seconds(job: RuntimeJobV2):
+    metrics = getattr(job, "metrics", None)
+    if callable(metrics):
+        try:
+            metrics = metrics()
+        except Exception:
+            return None
+
+    if not isinstance(metrics, dict):
+        return None
+
+    usage = metrics.get("usage", metrics)
+    if not isinstance(usage, dict):
+        return None
+
+    value = usage.get("quantum_seconds")
+
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
 @typechecked
 def grade_lab4b_exbonus(
-    result_bonus: dict,
+    result_bonus: PartitionResult,
+    best_bits: list[int],
+    numbers_bonus: list[int],
     job_bonus: RuntimeJobV2 | LocalRuntimeJob,
 ):
     """
     Grade Exercise Bonus: Achieve the best possible result for the partition problem
     """
-
-    def _extract_qpu_usage_seconds(job):
-        metrics = getattr(job, "metrics", None)
-        if callable(metrics):
-            try:
-                metrics = metrics()
-            except Exception:
-                return None
-
-        if not isinstance(metrics, dict):
-            return None
-
-        usage = metrics.get("usage", metrics)
-        if not isinstance(usage, dict):
-            return None
-
-        value = usage.get("quantum_seconds")
-
-        try:
-            return float(value)
-        except (TypeError, ValueError):
-            return None
-
     if not isinstance(job_bonus, RuntimeJobV2):
         raise ValueError(
             "job_bonus is not a RuntimeJobV2 instance. You appear to be using a simulator, but this exercise is supposed to use a real hardware backend."
         )
-
     qpu_usage_seconds = _extract_qpu_usage_seconds(job_bonus)
 
     if qpu_usage_seconds is None or qpu_usage_seconds <= 0:
         raise ValueError("job_bonus should report QPU usage greater than 0 seconds")
 
-    if "exp_map" not in result_bonus:
-        raise ValueError("result_bonus should contain field 'exp_map'")
-
     reconstructed_exp_map = _reconstruct_exp_map(job_bonus)
     stored_exp_map = result_bonus.get("exp_map")
-    if stored_exp_map is not None:
-        if stored_exp_map != reconstructed_exp_map:
-            raise ValueError(
-                "result_bonus['exp_map'] does not match the expectation map reconstructed from its estimator job"
-            )
+    if stored_exp_map != reconstructed_exp_map:
+        raise ValueError(
+            "result_bonus['exp_map'] does not match the expectation map reconstructed from its estimator job"
+        )
 
-    # Check result_bonus is a dictionary with required elements
-
-    required_fields = [
-        "set0",
-        "set1",
-        "difference",
+    # Convert refined bit assignment back to number sets
+    set0 = [
+        int(numbers_bonus[i]) for i in range(len(numbers_bonus)) if best_bits[i] == 1
     ]
-    for field in required_fields:
-        if field not in result_bonus:
-            raise ValueError(f"result_bonus should contain field '{field}'")
-
+    set1 = [
+        int(numbers_bonus[i]) for i in range(len(numbers_bonus)) if best_bits[i] == 0
+    ]
+    # Check that these set0 and set1 match the results_bonus
+    if set0 != result_bonus["set0"] or set1 != result_bonus["set1"]:
+        raise ValueError(
+            "best_bits does not reconstruct set0 and set1 from results_bonus"
+        )
     reconstructed_exp_map = {k: float(v) for k, v in reconstructed_exp_map.items()}
 
     answer_dict = {
