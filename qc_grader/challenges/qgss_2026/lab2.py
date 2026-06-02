@@ -89,6 +89,21 @@ def grade_lab2_ex3(lambda_fitting: list[Ex3InputCase]) -> None:
 
 
 @typechecked
+def grade_lab2_ex4(repeated_x_meas_x_circuit: Callable[[int], QuantumCircuit]) -> None:
+    """
+    Grade Exercise 4: Check the repeated X circuit on X basis.
+    """
+    test_ns = [0, 1, 2, 3, 5, 10]
+    answer_dict = {
+        "repeated_x_meas_x_circuit": {
+            n: circuit_to_qpy_base64(repeated_x_meas_x_circuit(n)) for n in test_ns
+        }
+    }
+    _grade(answer_dict, "ex4")
+
+
+
+@typechecked
 def grade_lab2_ex5(
     initial_layout: list[int],
     basis_gates: list[str],
