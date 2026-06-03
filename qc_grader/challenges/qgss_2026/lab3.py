@@ -5,7 +5,7 @@ QGSS 2026 Lab 3 - Grading Functions
 """
 
 from dataclasses import asdict
-from typing import Any
+from typing import Any, TypedDict
 
 from typeguard import typechecked
 
@@ -23,8 +23,25 @@ def _grade(answer: Any, exercise: str) -> None:
     grade_answer(answer, lab=_LAB, exercise=exercise, challenge=_CHALLENGE)
 
 
+class Lab3Ex1OptionsDict(TypedDict):
+    dd: EstimatorOptions
+    pt: EstimatorOptions
+    trex: EstimatorOptions
+    zne: EstimatorOptions
+    pec: EstimatorOptions
+
+
+class Lab3Ex5OptionDict(TypedDict):
+    circuit_ising: QuantumCircuit
+    mirrored_circuit: QuantumCircuit
+    boxed: QuantumCircuit
+    obs_list: list[SparsePauliOp]
+    forward_list: list[dict[str, PauliLindbladMap]]
+    backward_bound: dict[str, PauliLindbladMap]
+
+
 @typechecked
-def grade_lab3_ex1(options_dict: dict[str, EstimatorOptions]) -> None:
+def grade_lab3_ex1(options_dict: Lab3Ex1OptionsDict) -> None:
     """
     Grade Exercise 1
     """
@@ -62,18 +79,17 @@ def grade_lab3_ex1(options_dict: dict[str, EstimatorOptions]) -> None:
 
 
 @typechecked
-def grade_lab3_ex5(
-    circuit_ising: QuantumCircuit,
-    mirrored_circuit: QuantumCircuit,
-    boxed: QuantumCircuit,
-    obs_list: list[SparsePauliOp],
-    forward_list: list[dict[str, PauliLindbladMap]],
-    backward_bound: dict[str, PauliLindbladMap],
-) -> None:
+def grade_lab3_ex5(inputs: Lab3Ex5OptionDict) -> None:
     """
     Grade Exercise 5: Investigate the locality of 3 observables for 15 qubits
     """
-    # convert PauliLindbladMap to sparse lists
+    circuit_ising = inputs["circuit_ising"]
+    mirrored_circuit = inputs["mirrored_circuit"]
+    boxed = inputs["boxed"]
+    obs_list = inputs["obs_list"]
+    forward_list = inputs["forward_list"]
+    backward_bound = inputs["backward_bound"]
+
     for key in backward_bound:
         backward_bound[key] = backward_bound[key].to_sparse_list()
 
