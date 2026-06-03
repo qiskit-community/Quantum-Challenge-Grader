@@ -4,12 +4,14 @@
 QGSS 2026 Lab 3 - Grading Functions
 """
 
+from dataclasses import asdict
 from typing import Any
 
 from typeguard import typechecked
 
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import PauliLindbladMap, SparsePauliOp
+from qiskit_ibm_runtime.options import EstimatorOptions
 
 from qc_grader.grader.grade import grade_answer
 
@@ -19,6 +21,45 @@ _LAB = "lab3"
 
 def _grade(answer: Any, exercise: str) -> None:
     grade_answer(answer, lab=_LAB, exercise=exercise, challenge=_CHALLENGE)
+
+
+@typechecked
+def grade_lab3_ex1(options_dict: dict[str, EstimatorOptions]) -> None:
+    """
+    Grade Exercise 1: configure five error-mitigation methods, each on its own
+    EstimatorOptions (keys "dd", "pt", "trex", "zne", "pec").
+    """
+    dd = asdict(options_dict["dd"])
+    pt = asdict(options_dict["pt"])
+    trex = asdict(options_dict["trex"])
+    zne = asdict(options_dict["zne"])
+    pec = asdict(options_dict["pec"])
+
+    answer_dict = {
+        "dd": {
+            "enable": dd["dynamical_decoupling"]["enable"],
+            "sequence_type": dd["dynamical_decoupling"]["sequence_type"],
+        },
+        "pt": {
+            "enable_gates": pt["twirling"]["enable_gates"],
+            "strategy": pt["twirling"]["strategy"],
+            "num_randomizations": pt["twirling"]["num_randomizations"],
+        },
+        "trex": {
+            "measure_mitigation": trex["resilience"]["measure_mitigation"],
+        },
+        "zne": {
+            "zne_mitigation": zne["resilience"]["zne_mitigation"],
+            "noise_factors": list(zne["resilience"]["zne"]["noise_factors"]),
+            "amplifier": zne["resilience"]["zne"]["amplifier"],
+        },
+        "pec": {
+            "pec_mitigation": pec["resilience"]["pec_mitigation"],
+            "max_overhead": pec["resilience"]["pec"]["max_overhead"],
+        },
+    }
+
+    _grade(answer_dict, "ex1")
 
 
 @typechecked
