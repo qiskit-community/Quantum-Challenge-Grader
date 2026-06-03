@@ -101,27 +101,46 @@ def grade_lab2_ex4(repeated_x_meas_x_circuit: Callable[[int], QuantumCircuit]) -
     }
     _grade(answer_dict, "ex4")
 
+def build_test_circuits() -> list[QuantumCircuit]:
+    c1 = QuantumCircuit(2)
+    c1.swap(0, 1)
 
+    c2 = QuantumCircuit(3)
+    c2.swap(0, 1)
+    c2.swap(1, 2)
+
+    c3 = QuantumCircuit(4)
+    c3.swap(0, 1)
+    c3.swap(1, 2)
+    c3.swap(2, 3)
+
+    c4 = QuantumCircuit(2)
+    c4.h(0)
+    c4.cx(0, 1)
+
+    c5 = QuantumCircuit(3)
+    c5.h(0)
+    c5.cx(0, 1)
+    c5.swap(1, 2)
+
+    return [c1, c2, c3, c4, c5]
 
 @typechecked
 def grade_lab2_ex5(
     initial_layout: list[int],
     basis_gates: list[str],
-    count_swap_gates: Callable[[QuantumCircuit], int]
+    count_swap_gates: Callable[[QuantumCircuit], int],
 ) -> None:
     """
     Grade Exercise 5: Check the initial_layout, basis_gates and count_swap_gates function.
     """
-    test_circuits = [
-        circuit_to_qpy_base64(c) for c in build_test_circuits()
-    ]
 
     answer_dict = {
         "initial_layout": initial_layout,
         "basis_gates": basis_gates,
         "count_swap_gates": {
-            circuit_base64: count_swap_gates(qpy_base64_to_circuit(circuit_base64))
-            for circuit_base64 in test_circuits
+            circuit_to_qpy_base64(c): count_swap_gates(c)
+            for c in build_test_circuits()
         },
     }
     _grade(answer_dict, "ex5")
@@ -132,7 +151,7 @@ def grade_lab2_ex6(build_circuit: Callable[[int], QuantumCircuit]) -> None:
     """
     Grade Exercise 6: Check the full dynamic circuit construction.
     """
-    test_num_qubits = [4, 6, 8,10,12]
+    test_num_qubits = [4, 6, 8,10,12,20]
 
     answer_dict = {
         "build_circuit": {
@@ -143,7 +162,10 @@ def grade_lab2_ex6(build_circuit: Callable[[int], QuantumCircuit]) -> None:
 
 
 @typechecked
-def grade_lab2_ex7(build_circuit: Callable[[int], QuantumCircuit]) -> None:
+def grade_lab2_ex7(
+    quantum_circuit_params: Callable[[QuantumCircuit], dict],
+    build_circuit: Callable[[int], QuantumCircuit],
+) -> None:
     """
     Grade Exercise 7: Check the quantum circuit parameters.
     """
@@ -151,7 +173,7 @@ def grade_lab2_ex7(build_circuit: Callable[[int], QuantumCircuit]) -> None:
 
     answer_dict = {
         "circuit_params": {
-            n: quantum_circuit_params(build_circuit(n)) for n in test_num_qubits
+            str(n): quantum_circuit_params(build_circuit(n)) for n in test_num_qubits
         }
     }
     _grade(answer_dict, "ex7")
