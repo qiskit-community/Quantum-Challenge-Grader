@@ -90,6 +90,18 @@ def grade_lab4b_ex1b(
     _grade(answer_dict, "ex1b")
 
 
+def replace_unset_with_none(value):
+    type_name = type(value).__name__
+
+    if type_name == "UnsetType" or repr(value) == "Unset":
+        return None
+
+    if isinstance(value, dict):
+        return {k: replace_unset_with_none(v) for k, v in value.items()}
+
+    return value
+
+
 @typechecked
 def grade_lab4b_ex2(
     options_list: list[SamplerOptions],
@@ -120,9 +132,10 @@ def grade_lab4b_ex2(
     # Go through these values m3_quasis_v3 and m3_quasis_v4 and convert np.floating into float
     m3_quasis_v3 = {k: float(v) for k, v in m3_quasis_v3.items()}
     m3_quasis_v4 = {k: float(v) for k, v in m3_quasis_v4.items()}
-    # Transform options_list elements into a dictionary
-    options_dicts = [asdict(options) for options in options_list]
-
+    # Transform options_list elements into a dictionary with not UnsetType values
+    options_dicts = [
+        replace_unset_with_none(asdict(options)) for options in options_list
+    ]
     answer_dict = {
         "options_list": options_dicts,
         "counts_list": counts_list,
@@ -305,9 +318,10 @@ def grade_lab4b_ex4(
                 f"job_{key} is not a RuntimeJobV2 instance. You appear to be using a simulator, but this exercise is supposed to use a real hardware backend.",
                 UserWarning,
             )
-    # Transform options_list elements into a dictionary
-    estimator_options_dicts = [asdict(options) for options in estimator_options_list]
-
+    # Transform options_list elements into a dictionary with not UnsetType values
+    estimator_options_dicts = [
+        replace_unset_with_none(asdict(options)) for options in estimator_options_list
+    ]
     # Check 4: results has a best value which has a difference smaller than 5% of the total sum
     best_difference, best_method, total_sum = _find_best_result(results_dict)
 
