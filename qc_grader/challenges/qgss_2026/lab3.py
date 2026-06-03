@@ -4,10 +4,12 @@
 QGSS 2026 Lab 3 - Grading Functions
 """
 
+from typing import Any
+
 from typeguard import typechecked
 
 from qiskit import QuantumCircuit
-from qiskit.quantum_info import SparsePauliOp
+from qiskit.quantum_info import PauliLindbladMap, SparsePauliOp
 
 from qc_grader.grader.grade import grade_answer
 
