@@ -10,9 +10,6 @@
 
 
 import json
-import numpy
-
-from networkx.classes import Graph
 from fractions import Fraction
 from typing import Any
 
@@ -22,7 +19,8 @@ from qiskit.circuit.library import TwoLocal
 from qiskit.primitives import SamplerResult, EstimatorResult, PrimitiveResult
 from qiskit.quantum_info import Operator, Pauli, SparsePauliOp, Statevector
 from qiskit.result import ProbDistribution, QuasiDistribution
-from qiskit_aer.noise import NoiseModel
+import numpy
+from networkx import Graph
 
 from . import serializer
 
@@ -70,8 +68,6 @@ class GraderJSONEncoder(json.JSONEncoder):
                 return serializer.dump_operator(o)
             case SparsePauliOp.__name__:
                 return serializer.dump_sparse_pauli_op(o)
-            case NoiseModel.__name__:
-                return serializer.dump_noise_model(o)
             case Pauli.__name__:
                 return serializer.dump_pauli(o)
             case Graph.__name__:
