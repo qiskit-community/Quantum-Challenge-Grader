@@ -146,38 +146,23 @@ def grade_lab3_ex4(
 
 
 @typechecked
-def grade_lab3_ex5(
-    circuit_ising_ex5: QuantumCircuit,
-    mirrored_circuit_ex5: QuantumCircuit,
-    boxed_circuit_ex5: QuantumCircuit,
-    obs_list: list,
-    forward_bounds_list: list,
-    backward_bounds_list: list,
-) -> None:
-    """Grade Exercise 5."""
+def grade_lab3_ex5(circuit_ising: QuantumCircuit, mirrored_circuit: QuantumCircuit, boxed: QuantumCircuit, obs_list: list[SparsePauliOp], forward_list: list[dict[str, PauliLindbladMap]], backward_bound: dict[str, PauliLindbladMap]) -> None:
+    """
+    Grade Exercise 5: Investigate the locality of 3 observables for 15 qubits
+    """
+    # convert PauliLindbladMap to sparse lists
+    for key in backward_bound:
+        backward_bound[key] = backward_bound[key].to_sparse_list()
 
-    def _serialize_bound(b: Any) -> Any:
-        if hasattr(b, "to_sparse_list"):
-            return [(p, list(q), float(r)) for p, q, r in b.to_sparse_list()]
-        if isinstance(b, dict):
-            return {k: _serialize_bound(v) for k, v in b.items()}
-        if isinstance(b, (list, tuple)):
-            return [_serialize_bound(v) for v in b]
-        return b
-
-    box_insts = [i for i in boxed_circuit_ex5 if isinstance(i.operation, BoxOp)]
-
-    answer = {
-        "circuit_ising_ex5": circuit_ising_ex5,
-        "mirrored_circuit_ex5": mirrored_circuit_ex5,
-        "boxed_num_qubits": boxed_circuit_ex5.num_qubits,
-        "boxed_box_count": len(box_insts),
-        "obs_list": [
-            _serialize_observable(o) if isinstance(o, SparsePauliOp) else o
-            for o in obs_list
-        ],
-        "obs_all_distinct": len({id(o) for o in obs_list}) == len(obs_list),
-        "forward_list": [_serialize_bound(f) for f in forward_bounds_list],
-        "backward_list": [_serialize_bound(b) for b in backward_bounds_list],
-    }
-    _grade(answer, "ex5")
+    for i, d in enumerate(forward_list):
+        for key, pl_map in d.items():
+            forward_list[i][key] = pl_map.to_sparse_list()
+    
+    answer_dict = {
+        "circuit_ising": circuit_ising, 
+        "mirrored_circuit": mirrored_circuit, 
+        "boxed": boxed, "obs_list": obs_list, 
+        "forward_list": forward_list, 
+        "backward_bound": backward_bound}
+    
+    _grade(answer_dict, "ex5")
