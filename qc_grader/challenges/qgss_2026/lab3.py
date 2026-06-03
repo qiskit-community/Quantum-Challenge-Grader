@@ -12,6 +12,7 @@ from qiskit import QuantumCircuit
 from qiskit.circuit import BoxOp
 from qiskit.quantum_info import SparsePauliOp
 from qiskit_ibm_runtime.options import EstimatorOptions
+import numpy as np
 
 from qc_grader.grader.grade import grade_answer
 
@@ -103,7 +104,7 @@ def grade_lab3_ex2(
 
 
 @typechecked
-def grade_lab3_ex3a(unique_layers: list) -> None:
+def grade_lab3_ex3a(unique_layers: list[CircuitInstruction]) -> None:
     """Grade Exercise 3a."""
     has_boxes = len(unique_layers) > 0 and all(
         isinstance(getattr(inst, "operation", None), BoxOp) for inst in unique_layers
@@ -114,9 +115,9 @@ def grade_lab3_ex3a(unique_layers: list) -> None:
 
 @typechecked
 def grade_lab3_ex3b(
-    second_layer_noise: Any,
+    second_layer_noise: dict[str, PauliLindbladMap],
     mean_1q_rate: float,
-    top_2q_generator: tuple,
+    top_2q_generator: tuple[str, list[int]],
 ) -> None:
     """Grade Exercise 3b."""
     pauli, qubits = top_2q_generator
@@ -133,7 +134,7 @@ def grade_lab3_ex4(
     target_observable_ex4: SparsePauliOp,
     target_observable_ex4_isa: SparsePauliOp,
     obs_tilde_ex4: SparsePauliOp,
-    top_5_terms_ex4: list,
+    top_5_terms_ex4: list[tuple[str, np.complex128]],
 ) -> None:
     """Grade Exercise 4."""
     answer = {
@@ -146,7 +147,14 @@ def grade_lab3_ex4(
 
 
 @typechecked
-def grade_lab3_ex5(circuit_ising: QuantumCircuit, mirrored_circuit: QuantumCircuit, boxed: QuantumCircuit, obs_list: list[SparsePauliOp], forward_list: list[dict[str, PauliLindbladMap]], backward_bound: dict[str, PauliLindbladMap]) -> None:
+def grade_lab3_ex5(
+    circuit_ising: QuantumCircuit,
+    mirrored_circuit: QuantumCircuit,
+    boxed: QuantumCircuit,
+    obs_list: list[SparsePauliOp],
+    forward_list: list[dict[str, PauliLindbladMap]],
+    backward_bound: dict[str, PauliLindbladMap],
+) -> None:
     """
     Grade Exercise 5: Investigate the locality of 3 observables for 15 qubits
     """
@@ -157,12 +165,14 @@ def grade_lab3_ex5(circuit_ising: QuantumCircuit, mirrored_circuit: QuantumCircu
     for i, d in enumerate(forward_list):
         for key, pl_map in d.items():
             forward_list[i][key] = pl_map.to_sparse_list()
-    
+
     answer_dict = {
-        "circuit_ising": circuit_ising, 
-        "mirrored_circuit": mirrored_circuit, 
-        "boxed": boxed, "obs_list": obs_list, 
-        "forward_list": forward_list, 
-        "backward_bound": backward_bound}
-    
+        "circuit_ising": circuit_ising,
+        "mirrored_circuit": mirrored_circuit,
+        "boxed": boxed,
+        "obs_list": obs_list,
+        "forward_list": forward_list,
+        "backward_bound": backward_bound,
+    }
+
     _grade(answer_dict, "ex5")
