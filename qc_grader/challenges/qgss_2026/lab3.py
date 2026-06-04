@@ -5,18 +5,30 @@ QGSS 2026 Lab 3 - Grading Functions
 """
 
 from dataclasses import asdict
-from typing import Any, TypedDict
-
-from typeguard import typechecked
+import math
+from typing import Any, TypedDict, cast
 
 from qiskit import QuantumCircuit
-from qiskit.quantum_info import PauliLindbladMap, SparsePauliOp
+from samplomatic.samplex import Samplex
+from samplomatic.tensor_interface import TensorInterface
+from typeguard import typechecked
+
+from qiskit.circuit import BoxOp
+from qiskit.quantum_info import (
+    PauliLindbladMap,
+    SparsePauliOp,
+    Statevector,
+    state_fidelity,
+)
 from qiskit_ibm_runtime.options import EstimatorOptions
 
 from qc_grader.grader.grade import grade_answer
 
+QuantumProgram = Any
+
 _CHALLENGE = "qgss_2026"
 _LAB = "lab3"
+_PI_8 = math.pi / 8
 
 
 def _grade(answer: Any, exercise: str) -> None:
@@ -67,6 +79,152 @@ def grade_lab3_ex1(options_dict: Lab3Ex1OptionsDict) -> None:
     }
 
     _grade(answer_dict, "ex1")
+
+
+@typechecked
+def grade_lab3_ex2(
+    ising_ex2: QuantumCircuit,
+    mirror_ex2: QuantumCircuit,
+    boxed_circuit_ex2: QuantumCircuit,
+) -> None:
+    """
+    Grade Exercise 2
+    """
+    op_counts: dict[str, int] = {}
+    rx_angles: list[float] = []
+    has_barriers = False
+    for inst in ising_ex2.data:
+        name = inst.operation.name
+        op_counts[name] = op_counts.get(name, 0) + 1
+        if name == "rx":
+            rx_angles.append(float(inst.operation.params[0]))
+        elif name == "barrier":
+            has_barriers = True
+
+    has_measure = any(inst.operation.name == "measure" for inst in mirror_ex2.data)
+    try:
+        mirror_no_meas = cast(
+            QuantumCircuit, mirror_ex2.remove_final_measurements(inplace=False)
+        )
+        sv = Statevector(mirror_no_meas)
+        zero = Statevector.from_label("0" * mirror_ex2.num_qubits)
+        fidelity = float(state_fidelity(sv, zero))
+    except Exception:
+        fidelity = 0.0
+
+    box_insts = [
+        inst for inst in boxed_circuit_ex2 if isinstance(inst.operation, BoxOp)
+    ]
+
+    def _has_measure(inst: Any) -> bool:
+        return any(sub.operation.name == "measure" for sub in inst.operation.body.data)
+
+    gate_boxes = [b for b in box_insts if not _has_measure(b)]
+    twirl = sum(
+        1
+        for b in gate_boxes
+        if any(
+            type(annotation).__name__ == "Twirl"
+            for annotation in b.operation.annotations
+        )
+    )
+    inject = sum(
+        1
+        for b in gate_boxes
+        if any(
+            type(annotation).__name__ == "InjectNoise"
+            for annotation in b.operation.annotations
+        )
+    )
+
+    build_ok = False
+    build_err = None
+    if box_insts:
+        try:
+            import importlib
+
+            samplomatic = importlib.import_module("samplomatic")
+            samplomatic.build(boxed_circuit_ex2)
+            build_ok = True
+        except Exception as exc:
+            build_err = f"{type(exc).__name__}: {exc}"
+
+    facts = {
+        "ising_num_qubits": int(ising_ex2.num_qubits),
+        "ising_op_counts": op_counts,
+        "ising_rx_all_pi8": bool(
+            rx_angles and all(abs(angle - _PI_8) < 1e-9 for angle in rx_angles)
+        ),
+        "ising_has_barriers": has_barriers,
+        "mirror_has_measure": has_measure,
+        "mirror_zero_state_fidelity": fidelity,
+        "boxed_num_qubits": int(boxed_circuit_ex2.num_qubits),
+        "num_boxes": len(box_insts),
+        "num_gate_boxes": len(gate_boxes),
+        "num_gate_boxes_twirl": twirl,
+        "num_gate_boxes_inject": inject,
+        "build_ok": build_ok,
+        "build_err": build_err,
+    }
+
+    _grade(facts, "ex2")
+
+
+@typechecked
+def grade_lab3_ex3(
+    template_ex3: QuantumCircuit,
+    samplex_ex3: Samplex,
+    samplex_args_ex3: TensorInterface,
+    program_ex3: QuantumProgram,
+    refs_to_noise_models_ex3: dict[str, PauliLindbladMap],
+) -> None:
+    """
+    Grade Exercise 3
+    """
+    template_is_qc = isinstance(template_ex3, QuantumCircuit)
+    template_params = int(template_ex3.num_parameters) if template_is_qc else 0
+
+    try:
+        specs = samplex_ex3.inputs().get_specs()
+        samplex_refs = sorted(str(spec.name) for spec in specs)
+    except Exception:
+        samplex_refs = []
+
+    try:
+        noise_keys = sorted(
+            f"pauli_lindblad_maps.{key}" for key in refs_to_noise_models_ex3.keys()
+        )
+    except Exception:
+        noise_keys = []
+
+    try:
+        args_fully_bound = bool(samplex_args_ex3.fully_bound)
+    except Exception:
+        args_fully_bound = False
+
+    try:
+        items = program_ex3.items
+        num_items = len(items)
+        item = items[0] if num_items > 0 else None
+        item_circuit_matches = bool(item is not None and item.circuit is template_ex3)
+        item_samplex_matches = bool(item is not None and item.samplex is samplex_ex3)
+    except Exception:
+        num_items = 0
+        item_circuit_matches = False
+        item_samplex_matches = False
+
+    facts = {
+        "template_is_qc": template_is_qc,
+        "template_params": template_params,
+        "samplex_refs": samplex_refs,
+        "noise_keys": noise_keys,
+        "args_fully_bound": args_fully_bound,
+        "num_items": num_items,
+        "item_circuit_matches": item_circuit_matches,
+        "item_samplex_matches": item_samplex_matches,
+    }
+
+    _grade(facts, "ex3")
 
 
 @typechecked
