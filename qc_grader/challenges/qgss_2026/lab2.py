@@ -57,7 +57,7 @@ def grade_lab2_ex2(repeated_x_circuit: Callable[[int], QuantumCircuit]) -> None:
         circuit = repeated_x_circuit(n)
         if _too_large_circuit(circuit):
             raise ValueError(
-                f"Circuit for n={n} is too large (num_qubits={circuit.num_qubits}, depth={circuit.depth()}). Please optimize your circuit."
+                f"Circuit for n={n} is too large (num_qubits={circuit.num_qubits}, depth={circuit.depth()}) compared to the expected answer."
             )
         repeated_x_dict[n] = circuit
 
