@@ -95,7 +95,7 @@ def grade_lab3_ex5(
         "boxed": boxed,
         "obs_list": obs_list,
         "forward_list": forward_list,
-        "backward_bound": backward_bound,
+        "backward_dict": backward_bound,
     }
 
     _grade(answer_dict, "ex5")
