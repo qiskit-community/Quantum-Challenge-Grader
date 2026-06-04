@@ -14,13 +14,11 @@ QGSS 2026 Lab 2 - Grading Functions
 
 from typing import Any, Callable, TypedDict
 from typeguard import typechecked
-import base64
-from io import BytesIO
 import numpy as np
 
 from qc_grader.grader.grade import grade_answer
 
-from qiskit import QuantumCircuit, qpy
+from qiskit import QuantumCircuit
 
 _CHALLENGE = "qgss_2026"
 _LAB = "lab2"
@@ -31,15 +29,22 @@ def _grade(answer: Any, exercise: str) -> None:
 
 
 @typechecked
-def grade_lab2_ex1(basis_operations: list[str],
-                   coupling_map: list[list[int] | tuple[int, int]]) -> None:
+def grade_lab2_ex1(
+    basis_operations: list[str], coupling_map: list[list[int] | tuple[int, int]]
+) -> None:
     """
     Grade Exercise 1: Check FakeTorino basis operations and coupling map.
     """
-    
-    answer_dict = {"basis_operations": basis_operations,
-                   "coupling_map": coupling_map}
+
+    answer_dict = {"basis_operations": basis_operations, "coupling_map": coupling_map}
     _grade(answer_dict, "ex1")
+
+
+def _too_large_circuit(
+    circuit: QuantumCircuit, max_qubits: int = 20, max_depth: int = 100
+) -> bool:
+    return circuit.num_qubits > max_qubits or circuit.depth() > max_depth
+
 
 @typechecked
 def grade_lab2_ex2(repeated_x_circuit: Callable[[int], QuantumCircuit]) -> None:
@@ -47,18 +52,37 @@ def grade_lab2_ex2(repeated_x_circuit: Callable[[int], QuantumCircuit]) -> None:
     Grade Exercise 2: Check the repeated X circuit.
     """
     test_ns = [0, 1, 2, 3, 5, 10]
-    answer_dict = {
-        "repeated_x_circuit": {
-            n: repeated_x_circuit(n) for n in test_ns
-        }
-    }
+    repeated_x_dict = dict()
+    for n in test_ns:
+        circuit = repeated_x_circuit(n)
+        if _too_large_circuit(circuit):
+            raise ValueError(
+                f"Circuit for n={n} is too large (num_qubits={circuit.num_qubits}, depth={circuit.depth()}). Please optimize your circuit."
+            )
+        repeated_x_dict[n] = circuit
+
+    answer_dict = {"repeated_x_circuit": repeated_x_dict}
     _grade(answer_dict, "ex2")
 
-Ex3InputCase = TypedDict("Ex3InputCase", {
-    "true lambda": np.float64 | float,
-    "fitted lambda": np.float64 | float,
-    "fit std": np.float64 | float
-})
+
+Ex3InputCase = TypedDict(
+    "Ex3InputCase",
+    {
+        "true lambda": np.float64 | float,
+        "fitted lambda": np.float64 | float,
+        "fit std": np.float64 | float,
+    },
+)
+
+Ex3InputCaseWithoutNp = TypedDict(
+    "Ex3InputCaseWithoutNp",
+    {
+        "true lambda": float,
+        "fitted lambda": float,
+        "fit std": float,
+    },
+)
+
 
 @typechecked
 def grade_lab2_ex3(lambda_fitting: list[Ex3InputCase]) -> None:
@@ -66,7 +90,14 @@ def grade_lab2_ex3(lambda_fitting: list[Ex3InputCase]) -> None:
     Grade Exercise 3: Check the estimated lambda vs true lambda
     """
     answer_dict = {
-        "lambda_fitting_cases": lambda_fitting
+        "lambda_fitting_cases": [
+            {
+                "true lambda": float(case["true lambda"]),
+                "fitted lambda": float(case["fitted lambda"]),
+                "fit std": float(case["fit std"]),
+            }
+            for case in lambda_fitting
+        ]
     }
     _grade(answer_dict, "ex3")
 
@@ -77,11 +108,16 @@ def grade_lab2_ex4(repeated_x_meas_x_circuit: Callable[[int], QuantumCircuit]) -
     Grade Exercise 4: Check the repeated X circuit on X basis.
     """
     test_ns = [0, 1, 2, 3, 5, 10]
-    answer_dict = {
-        "repeated_x_meas_x_circuit": {
-            str(n): repeated_x_meas_x_circuit(n) for n in test_ns
-        }
-    }
+    repeated_x_meas_x_dict = dict()
+    for n in test_ns:
+        circuit = repeated_x_meas_x_circuit(n)
+        if _too_large_circuit(circuit):
+            raise ValueError(
+                f"Circuit for n={n} is too large (num_qubits={circuit.num_qubits}, depth={circuit.depth()}). Please optimize your circuit."
+            )
+        repeated_x_meas_x_dict[n] = circuit
+
+    answer_dict = {"repeated_x_meas_x_circuit": repeated_x_meas_x_dict}
     _grade(answer_dict, "ex4")
 
 
@@ -123,9 +159,11 @@ def grade_lab2_ex5(
     answer_dict = {
         "initial_layout": initial_layout,
         "basis_gates": basis_gates,
-        "count_swap_gates": {
-            circuit_to_qpy_base64(c): count_swap_gates(c) for c in build_test_circuits()
-        },
+        "count_swap_gates": [
+            count_swap_gates(c)
+            for c in build_test_circuits()
+            # (c, count_swap_gates(c)) for c in build_test_circuits()
+        ],
     }
     _grade(answer_dict, "ex5")
 
@@ -140,9 +178,22 @@ def grade_lab2_ex6(build_circuit: Callable[[int], QuantumCircuit]) -> None:
     _grade(answer_dict, "ex6")
 
 
+CircuitParams = TypedDict(
+    "CircuitParams",
+    {
+        "Number of qubits": int,
+        "Depth": int,
+        "2-qubit depth": int,
+        "Gates": int,
+        "Multi-qubit gates": int,
+        "Number of ancillas": int,
+    },
+)
+
+
 @typechecked
 def grade_lab2_ex7(
-    quantum_circuit_params: Callable[[QuantumCircuit], dict],
+    quantum_circuit_params: Callable[[QuantumCircuit], CircuitParams],
     build_circuit: Callable[[int], QuantumCircuit],
 ) -> None:
     """
