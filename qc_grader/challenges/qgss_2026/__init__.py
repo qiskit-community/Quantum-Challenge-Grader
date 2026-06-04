@@ -76,7 +76,7 @@ __all__ = [
     "grade_lab1_ex7",
     "grade_lab2_ex1",
     "grade_lab2_ex2",
-    "grade_lab2_ex3,"
+    "grade_lab2_ex3",
     "grade_lab2_ex4",
     "grade_lab2_ex5",
     "grade_lab2_ex6",
