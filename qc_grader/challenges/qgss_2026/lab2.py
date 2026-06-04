@@ -96,10 +96,11 @@ def grade_lab2_ex4(repeated_x_meas_x_circuit: Callable[[int], QuantumCircuit]) -
     test_ns = [0, 1, 2, 3, 5, 10]
     answer_dict = {
         "repeated_x_meas_x_circuit": {
-            n: circuit_to_qpy_base64(repeated_x_meas_x_circuit(n)) for n in test_ns
+            str(n): repeated_x_meas_x_circuit(n) for n in test_ns
         }
     }
     _grade(answer_dict, "ex4")
+
 
 def build_test_circuits() -> list[QuantumCircuit]:
     c1 = QuantumCircuit(2)
@@ -125,6 +126,7 @@ def build_test_circuits() -> list[QuantumCircuit]:
 
     return [c1, c2, c3, c4, c5]
 
+
 @typechecked
 def grade_lab2_ex5(
     initial_layout: list[int],
@@ -139,8 +141,7 @@ def grade_lab2_ex5(
         "initial_layout": initial_layout,
         "basis_gates": basis_gates,
         "count_swap_gates": {
-            circuit_to_qpy_base64(c): count_swap_gates(c)
-            for c in build_test_circuits()
+            circuit_to_qpy_base64(c): count_swap_gates(c) for c in build_test_circuits()
         },
     }
     _grade(answer_dict, "ex5")
@@ -151,13 +152,8 @@ def grade_lab2_ex6(build_circuit: Callable[[int], QuantumCircuit]) -> None:
     """
     Grade Exercise 6: Check the full dynamic circuit construction.
     """
-    test_num_qubits = [4, 6, 8,10,12,20]
-
-    answer_dict = {
-        "build_circuit": {
-            n: circuit_to_qpy_base64(build_circuit(n)) for n in test_num_qubits
-        }
-    }
+    test_num_qubits = [4, 6, 8, 10, 12, 20]
+    answer_dict = {"build_circuit": {str(n): build_circuit(n) for n in test_num_qubits}}
     _grade(answer_dict, "ex6")
 
 
