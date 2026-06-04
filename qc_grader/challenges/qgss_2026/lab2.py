@@ -74,15 +74,6 @@ Ex3InputCase = TypedDict(
     },
 )
 
-Ex3InputCaseWithoutNp = TypedDict(
-    "Ex3InputCaseWithoutNp",
-    {
-        "true lambda": float,
-        "fitted lambda": float,
-        "fit std": float,
-    },
-)
-
 
 @typechecked
 def grade_lab2_ex3(lambda_fitting: list[Ex3InputCase]) -> None:
