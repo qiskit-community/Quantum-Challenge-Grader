@@ -32,17 +32,14 @@ def _grade(answer: Any, exercise: str) -> None:
 
 
 @typechecked
-def grade_lab2_ex1(
-    basis_operations: list[str], coupling_map: list[list[int] | tuple[int, int]]
-) -> None:
+def grade_lab2_ex1(basis_operations: list[str],
+                   coupling_map: list[list[int] | tuple[int, int]]) -> None:
     """
     Grade Exercise 1: Check FakeTorino basis operations and coupling map.
     """
-
-    answer_dict = {
-        "basis_operations": basis_operations,
-        "coupling_map": [(q1, q2) for q1, q2 in coupling_map],
-    }
+    
+    answer_dict = {"basis_operations": basis_operations,
+                   "coupling_map": [(q1, q2) for q1, q2 in coupling_map]}
     _grade(answer_dict, "ex1")
 
 
@@ -51,43 +48,43 @@ def circuit_to_qpy_base64(circuit: QuantumCircuit) -> str:
     qpy.dump(circuit, buffer)
     return base64.b64encode(buffer.getvalue()).decode("ascii")
 
-
 def simulator_to_dict(simulator: AerSimulator) -> dict:
-    return {"noise_model": simulator.options.noise_model.to_dict(serializable=True)}
-
+    return {
+        "noise_model": simulator.options.noise_model.to_dict(serializable=True)
+    }
 
 @typechecked
-def grade_lab2_ex2(
-    repeated_x_circuit: Callable[[int], QuantumCircuit],
-    depol_x_simulator: Callable[[float], AerSimulator],
-) -> None:
+def grade_lab2_ex2(repeated_x_circuit: Callable[[int], QuantumCircuit],
+                   depol_x_simulator: Callable[[float], AerSimulator]) -> None:
+    """
+    Grade Exercise 2: Check the repeated X circuit and depolarized simulator.
+    """
     test_ns = [0, 1, 2, 3, 5, 10]
-    test_lambdas = [0.0, 0.02, 0.04, 0.1, 0.5, 1.0]
+    test_lambdas = [0.0, 0.02, 0.04, 0.1, 0.5, 1.0]    
     answer_dict = {
-        "repeated_x_circuit": {str(n): repeated_x_circuit(n) for n in test_ns},
-        "depol_x_simulator": {
-            str(lam): simulator_to_dict(depol_x_simulator(lam)) for lam in test_lambdas
+        "repeated_x_circuit": {
+            n: circuit_to_qpy_base64(repeated_x_circuit(n)) for n in test_ns
         },
+        "depol_x_simulator": {
+            lam: simulator_to_dict(depol_x_simulator(lam)) for lam in test_lambdas
+        }
     }
     _grade(answer_dict, "ex2")
 
-
-Ex3InputCase = TypedDict(
-    "Ex3InputCase",
-    {
-        "true lambda": np.float64 | float,
-        "fitted lambda": np.float64 | float,
-        "fit std": np.float64 | float,
-    },
-)
-
+Ex3InputCase = TypedDict("Ex3InputCase", {
+    "true lambda": np.float64 | float,
+    "fitted lambda": np.float64 | float,
+    "fit std": np.float64 | float
+})
 
 @typechecked
 def grade_lab2_ex3(lambda_fitting: list[Ex3InputCase]) -> None:
     """
     Grade Exercise 3: Check the estimated lambda vs true lambda
     """
-    answer_dict = {"lambda_fitting_cases": lambda_fitting}
+    answer_dict = {
+        "lambda_fitting_cases": lambda_fitting
+    }
     _grade(answer_dict, "ex3")
 
 
