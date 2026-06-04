@@ -387,8 +387,8 @@ def test_grade_lab4b_ex4_exp_map_mismatch_raises_error() -> None:
             grade_lab4b_ex4(options_list, results_dict, job_list)  # type: ignore
 
 
-def test_grade_lab4b_ex4_matching_exp_map_no_error() -> None:
-    """Test that matching exp_map doesn't raise an error and emits expected warnings."""
+def test_grade_lab4b_ex4_matching_exp_map_no_error(capsys) -> None:
+    """Test that matching exp_map doesn't raise an error and prints expected warnings."""
     mock_job = _create_mock_job([1.0, 2.0])
     base_result = _create_base_result()
 
@@ -403,12 +403,14 @@ def test_grade_lab4b_ex4_matching_exp_map_no_error() -> None:
     job_list = [mock_job] * 4
 
     with patch("qc_grader.challenges.qgss_2026.lab4b.grade_answer"):
-        with pytest.warns(UserWarning, match="simulator"):
-            grade_lab4b_ex4(options_list, results_dict, job_list)  # type: ignore
+        grade_lab4b_ex4(options_list, results_dict, job_list)  # type: ignore
+        captured = capsys.readouterr()
+        assert "simulator" in captured.out
+        assert "Warning" in captured.out
 
 
-def test_grade_lab4b_ex4_local_runtime_job_warning() -> None:
-    """Test that LocalRuntimeJob triggers a warning."""
+def test_grade_lab4b_ex4_local_runtime_job_warning(capsys) -> None:
+    """Test that LocalRuntimeJob triggers a warning print."""
     mock_job = Mock(spec=LocalRuntimeJob)
     mock_pub_result = Mock()
     mock_data = Mock()
@@ -429,8 +431,10 @@ def test_grade_lab4b_ex4_local_runtime_job_warning() -> None:
     job_list = [mock_job] * 4
 
     with patch("qc_grader.challenges.qgss_2026.lab4b.grade_answer"):
-        with pytest.warns(UserWarning, match="simulator"):
-            grade_lab4b_ex4(options_list, results_dict, job_list)  # type: ignore
+        grade_lab4b_ex4(options_list, results_dict, job_list)  # type: ignore
+        captured = capsys.readouterr()
+        assert "simulator" in captured.out
+        assert "Warning" in captured.out
 
 
 def test_grade_lab4b_ex4_stored_exp_map_none_raises_error() -> None:
