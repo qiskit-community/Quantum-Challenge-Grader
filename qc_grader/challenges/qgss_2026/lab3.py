@@ -31,15 +31,6 @@ class Lab3Ex1OptionsDict(TypedDict):
     pec: EstimatorOptions
 
 
-class Lab3Ex5OptionDict(TypedDict):
-    circuit_ising: QuantumCircuit
-    mirrored_circuit: QuantumCircuit
-    boxed: QuantumCircuit
-    obs_list: list[SparsePauliOp]
-    forward_list: list[dict[str, PauliLindbladMap]]
-    backward_bound: dict[str, PauliLindbladMap]
-
-
 @typechecked
 def grade_lab3_ex1(options_dict: Lab3Ex1OptionsDict) -> None:
     """
@@ -79,24 +70,17 @@ def grade_lab3_ex1(options_dict: Lab3Ex1OptionsDict) -> None:
 
 
 @typechecked
-def grade_lab3_ex5(inputs: Lab3Ex5OptionDict) -> None:
+def grade_lab3_ex5(
+    circuit_ising: QuantumCircuit,
+    mirrored_circuit: QuantumCircuit,
+    boxed: QuantumCircuit,
+    obs_list: list[SparsePauliOp],
+    forward_list: list[dict[str, PauliLindbladMap]],
+    backward_bound: dict[str, PauliLindbladMap],
+) -> None:
     """
     Grade Exercise 5: Investigate the locality of 3 observables for 15 qubits
     """
-    circuit_ising = inputs["circuit_ising"]
-    mirrored_circuit = inputs["mirrored_circuit"]
-    boxed = inputs["boxed"]
-    obs_list = inputs["obs_list"]
-    forward_list = inputs["forward_list"]
-    backward_bound = inputs["backward_bound"]
-
-    for key in backward_bound:
-        backward_bound[key] = backward_bound[key].to_sparse_list()
-
-    for i, d in enumerate(forward_list):
-        for key, pl_map in d.items():
-            forward_list[i][key] = pl_map.to_sparse_list()
-
     answer_dict = {
         "circuit_ising": circuit_ising,
         "mirrored_circuit": mirrored_circuit,
