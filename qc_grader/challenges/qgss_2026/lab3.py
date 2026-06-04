@@ -15,6 +15,7 @@ from typeguard import typechecked
 
 from qiskit.circuit import BoxOp
 from qiskit.quantum_info import (
+    Pauli,
     PauliLindbladMap,
     SparsePauliOp,
     Statevector,
@@ -225,6 +226,28 @@ def grade_lab3_ex3(
     }
 
     _grade(facts, "ex3")
+
+
+@typechecked
+def grade_lab3_ex4(
+    target_observable_ex4: SparsePauliOp,
+    target_observable_ex4_isa: SparsePauliOp,
+    obs_tilde_ex4: SparsePauliOp,
+    top_5_terms_ex4: list[tuple[str | Pauli, complex]],
+) -> None:
+    """
+    Grade Exercise 4
+    """
+    top_5 = [[str(term[0]), term[1]] for term in top_5_terms_ex4]
+
+    facts = {
+        "target": target_observable_ex4,
+        "target_isa": target_observable_ex4_isa,
+        "obs_tilde": obs_tilde_ex4,
+        "top_5": top_5,
+    }
+
+    _grade(facts, "ex4")
 
 
 @typechecked
