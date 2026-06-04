@@ -4,12 +4,14 @@
 QGSS 2026 Lab 3 - Grading Functions
 """
 
-from typing import Any
+from dataclasses import asdict
+from typing import Any, TypedDict
 
 from typeguard import typechecked
 
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import PauliLindbladMap, SparsePauliOp
+from qiskit_ibm_runtime.options import EstimatorOptions
 
 from qc_grader.grader.grade import grade_answer
 
@@ -19,6 +21,52 @@ _LAB = "lab3"
 
 def _grade(answer: Any, exercise: str) -> None:
     grade_answer(answer, lab=_LAB, exercise=exercise, challenge=_CHALLENGE)
+
+
+class Lab3Ex1OptionsDict(TypedDict):
+    dd: EstimatorOptions
+    pt: EstimatorOptions
+    trex: EstimatorOptions
+    zne: EstimatorOptions
+    pec: EstimatorOptions
+
+
+@typechecked
+def grade_lab3_ex1(options_dict: Lab3Ex1OptionsDict) -> None:
+    """
+    Grade Exercise 1
+    """
+    dd = asdict(options_dict["dd"])
+    pt = asdict(options_dict["pt"])
+    trex = asdict(options_dict["trex"])
+    zne = asdict(options_dict["zne"])
+    pec = asdict(options_dict["pec"])
+
+    answer_dict = {
+        "dd": {
+            "enable": dd["dynamical_decoupling"]["enable"],
+            "sequence_type": dd["dynamical_decoupling"]["sequence_type"],
+        },
+        "pt": {
+            "enable_gates": pt["twirling"]["enable_gates"],
+            "strategy": pt["twirling"]["strategy"],
+            "num_randomizations": pt["twirling"]["num_randomizations"],
+        },
+        "trex": {
+            "measure_mitigation": trex["resilience"]["measure_mitigation"],
+        },
+        "zne": {
+            "zne_mitigation": zne["resilience"]["zne_mitigation"],
+            "noise_factors": list(zne["resilience"]["zne"]["noise_factors"]),
+            "amplifier": zne["resilience"]["zne"]["amplifier"],
+        },
+        "pec": {
+            "pec_mitigation": pec["resilience"]["pec_mitigation"],
+            "max_overhead": pec["resilience"]["pec"]["max_overhead"],
+        },
+    }
+
+    _grade(answer_dict, "ex1")
 
 
 @typechecked
@@ -47,7 +95,7 @@ def grade_lab3_ex5(
         "boxed": boxed,
         "obs_list": obs_list,
         "forward_list": forward_list,
-        "backward_bound": backward_bound,
+        "backward_dict": backward_bound,
     }
 
     _grade(answer_dict, "ex5")
