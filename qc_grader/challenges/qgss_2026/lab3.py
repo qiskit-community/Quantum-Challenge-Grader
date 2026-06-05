@@ -246,21 +246,27 @@ def grade_lab3_ex5(
     """
     Grade Exercise 5: Investigate the locality of 3 observables for 15 qubits
     """
-    # convert PauliLindbladMap to sparse lists
-    for key in backward_bound:
-        backward_bound[key] = backward_bound[key].to_sparse_list()
 
-    for i, d in enumerate(forward_list):
-        for key, pl_map in d.items():
-            forward_list[i][key] = pl_map.to_sparse_list()
+    boxed_num_qubits = int(boxed.num_qubits)
+    boxed_num_boxes = sum(1 for inst in boxed if isinstance(inst.operation, BoxOp))
+
+    backward_dict_sparse = {
+        key: pl_map.to_sparse_list() for key, pl_map in backward_bound.items()
+    }
+
+    forward_list_sparse = [
+        {key: pl_map.to_sparse_list() for key, pl_map in d.items()}
+        for d in forward_list
+    ]
 
     answer_dict = {
         "circuit_ising": circuit_ising,
         "mirrored_circuit": mirrored_circuit,
-        "boxed": boxed,
+        "boxed_num_qubits": boxed_num_qubits,
+        "boxed_num_boxes": boxed_num_boxes,
         "obs_list": obs_list,
-        "forward_list": forward_list,
-        "backward_dict": backward_bound,
+        "forward_list": forward_list_sparse,
+        "backward_dict": backward_dict_sparse,
     }
 
     _grade(answer_dict, "ex5")
