@@ -233,7 +233,6 @@ def grade_lab3_ex4(
 
     _grade(facts, "ex4")
 
-
 @typechecked
 def grade_lab3_ex5(
     circuit_ising: QuantumCircuit,
