@@ -14,7 +14,6 @@ QGSS 2026 Lab 4b - Grading Functions
 
 from typeguard import typechecked, check_type
 from typing import Any, Callable, TypedDict, cast
-import warnings
 from dataclasses import asdict
 
 import numpy as np
@@ -125,9 +124,9 @@ def grade_lab4b_ex2(
             if not _dict_contains(exp_opts, job_opts):
                 raise ValueError(f"job_v{i} options do not match expected options")
         else:
-            warnings.warn(
-                f"job_v{i} is not a RuntimeJobV2 instance. You appear to be using a simulator, but this exercise is supposed to use a real hardware backend.",
-                UserWarning,
+            print(
+                f"⚠️ Warning: job_v{i} is not a RuntimeJobV2 instance. "
+                "You appear to be using a simulator, but this exercise is supposed to use a real hardware backend."
             )
     # Go through these values m3_quasis_v3 and m3_quasis_v4 and convert np.floating into float
     m3_quasis_v3 = {k: float(v) for k, v in m3_quasis_v3.items()}
@@ -314,9 +313,9 @@ def grade_lab4b_ex4(
             if not _dict_contains(expected, job_opts):
                 raise ValueError(f"job_{key} options do not match expected options")
         else:
-            warnings.warn(
-                f"job_{key} is not a RuntimeJobV2 instance. You appear to be using a simulator, but this exercise is supposed to use a real hardware backend.",
-                UserWarning,
+            print(
+                f"⚠️ Warning: job_v{key} is not a RuntimeJobV2 instance. "
+                "You appear to be using a simulator, but this exercise is supposed to use a real hardware backend."
             )
     # Transform options_list elements into a dictionary with not UnsetType values
     estimator_options_dicts = [
