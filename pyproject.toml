@@ -26,6 +26,7 @@ dependencies = [
     "networkx",
     "qiskit>=2.3.0,<3.0",
     "qiskit-ibm-runtime",
+    "samplomatic",
 
     # Dependencies our challenges use. You can remove these
     # when removing old challenges if they're no longer used.

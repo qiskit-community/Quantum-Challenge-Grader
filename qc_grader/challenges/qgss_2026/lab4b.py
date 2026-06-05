@@ -25,6 +25,11 @@ from qiskit_ibm_runtime.options import SamplerOptions, EstimatorOptions
 from qiskit_ibm_runtime import RuntimeJobV2
 from qiskit_ibm_runtime.fake_provider.local_runtime_job import LocalRuntimeJob
 
+# Redefined UnrollBoxes from qopt_best_practices.transpilation
+from qiskit.dagcircuit import DAGCircuit
+from qiskit.transpiler import TransformationPass
+from qiskit.converters import circuit_to_dag
+
 from qc_grader.grader.grade import grade_answer
 
 _CHALLENGE = "qgss_2026"
@@ -56,6 +61,21 @@ def grade_lab4b_ex1a(partition_graph: nx.Graph) -> None:
     _grade(partition_graph, "ex1a")
 
 
+class UnrollBoxes(TransformationPass):
+    """Remove Boxes."""
+
+    def run(self, dag: DAGCircuit):
+
+        for node in dag.topological_op_nodes():
+            if node.op.name != "box":
+                continue
+
+            box_circuit = node.op.params[0]
+            box_dag = circuit_to_dag(box_circuit)
+            dag.substitute_node_with_dag(node, box_dag)
+        return dag
+
+
 @typechecked
 def grade_lab4b_ex1b(
     partition_hamiltonian: SparsePauliOp, circuit: QuantumCircuit
@@ -63,14 +83,29 @@ def grade_lab4b_ex1b(
     """
     Grade Exercise 1b: From graph to Hamiltonian and quantum circuit.
     """
+    # Check for any Box, since annotated_qaoa_ansatz (as suggested in the lab) introduces it
+    if any(instr.operation.name == "box" for instr in circuit.data):
+        circuit = UnrollBoxes()(circuit)
     answer_dict = {"partition_hamiltonian": partition_hamiltonian, "circuit": circuit}
     _grade(answer_dict, "ex1b")
+
+
+def replace_unset_with_none(value):
+    type_name = type(value).__name__
+
+    if type_name == "UnsetType" or repr(value) == "Unset":
+        return None
+
+    if isinstance(value, dict):
+        return {k: replace_unset_with_none(v) for k, v in value.items()}
+
+    return value
 
 
 @typechecked
 def grade_lab4b_ex2(
     options_list: list[SamplerOptions],
-    counts_list: list[dict[str, int]],
+    counts_list: list[dict[str, int | float]],
     m3_quasis_v3: dict[str, float | np.floating],
     m3_quasis_v4: dict[str, float | np.floating],
     job_list: list[RuntimeJobV2 | LocalRuntimeJob],
@@ -97,9 +132,10 @@ def grade_lab4b_ex2(
     # Go through these values m3_quasis_v3 and m3_quasis_v4 and convert np.floating into float
     m3_quasis_v3 = {k: float(v) for k, v in m3_quasis_v3.items()}
     m3_quasis_v4 = {k: float(v) for k, v in m3_quasis_v4.items()}
-    # Transform options_list elements into a dictionary
-    options_dicts = [asdict(options) for options in options_list]
-
+    # Transform options_list elements into a dictionary with not UnsetType values
+    options_dicts = [
+        replace_unset_with_none(asdict(options)) for options in options_list
+    ]
     answer_dict = {
         "options_list": options_dicts,
         "counts_list": counts_list,
@@ -170,7 +206,8 @@ def grade_lab4b_ex3c(
     """
     Grade Exercise 3c: Implement Pauli Correlation Encoding: Cost Hamiltonian and QAOA ansatz
     """
-
+    if any(instr.operation.name == "box" for instr in circuit_pce.data):
+        circuit_pce = UnrollBoxes()(circuit_pce)
     answer_dict = {
         "hamiltonian_pce": hamiltonian_pce,
         "circuit_pce": circuit_pce,
@@ -195,14 +232,14 @@ PartitionResult = TypedDict(
     "PartitionResult",
     {
         "loss": np.floating,
-        "par0": list[int],
-        "par1": list[int],
+        "par0": list[int] | set[int],
+        "par1": list[int] | set[int],
         "par0_size": int,
         "par1_size": int,
-        "best_cut": np.floating,
+        "best_cut": int | np.floating,
         "best_index": int,
-        "set0": list[int],
-        "set1": list[int],
+        "set0": list[int] | set[int],
+        "set1": list[int] | set[int],
         "difference": int | float,
         "exp_map": dict[int, np.floating],
     },
@@ -281,9 +318,10 @@ def grade_lab4b_ex4(
                 f"job_{key} is not a RuntimeJobV2 instance. You appear to be using a simulator, but this exercise is supposed to use a real hardware backend.",
                 UserWarning,
             )
-    # Transform options_list elements into a dictionary
-    estimator_options_dicts = [asdict(options) for options in estimator_options_list]
-
+    # Transform options_list elements into a dictionary with not UnsetType values
+    estimator_options_dicts = [
+        replace_unset_with_none(asdict(options)) for options in estimator_options_list
+    ]
     # Check 4: results has a best value which has a difference smaller than 5% of the total sum
     best_difference, best_method, total_sum = _find_best_result(results_dict)
 
@@ -323,7 +361,7 @@ def _extract_qpu_usage_seconds(job: RuntimeJobV2):
 def grade_lab4b_exbonus(
     result_bonus: PartitionResult,
     best_bits: list[int],
-    numbers_bonus: list[int],
+    numbers_bonus: list[int] | np.ndarray,
     job_bonus: RuntimeJobV2 | LocalRuntimeJob,
 ):
     """
@@ -357,7 +395,7 @@ def grade_lab4b_exbonus(
         raise ValueError(
             "best_bits does not reconstruct set0 and set1 from results_bonus"
         )
-    reconstructed_exp_map = {k: float(v) for k, v in reconstructed_exp_map.items()}
+    reconstructed_exp_map = {int(k): float(v) for k, v in stored_exp_map.items()}
 
     answer_dict = {
         "set0": result_bonus["set0"],
