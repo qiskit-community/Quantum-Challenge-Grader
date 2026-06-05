@@ -25,7 +25,7 @@ from qiskit_ibm_runtime.options import EstimatorOptions
 
 from qc_grader.grader.grade import grade_answer
 
-from qiskit_ibm_runtime import QuantumProgram
+QuantumProgram = Any
 
 _CHALLENGE = "qgss_2026"
 _LAB = "lab3"
@@ -182,39 +182,24 @@ def grade_lab3_ex3(
     """
     Grade Exercise 3
     """
-    template_params = int(template_ex3.num_parameters) if template_is_qc else 0
+    template_params = int(template_ex3.num_parameters)
 
-    try:
-        specs = samplex_ex3.inputs().get_specs()
-        samplex_refs = sorted(str(spec.name) for spec in specs)
-    except Exception:
-        samplex_refs = []
+    specs = samplex_ex3.inputs().get_specs()
+    samplex_refs = sorted(str(spec.name) for spec in specs)
 
-    try:
-        noise_keys = sorted(
-            f"pauli_lindblad_maps.{key}" for key in refs_to_noise_models_ex3.keys()
-        )
-    except Exception:
-        noise_keys = []
+    noise_keys = sorted(
+        f"pauli_lindblad_maps.{key}" for key in refs_to_noise_models_ex3.keys()
+    )
 
-    try:
-        args_fully_bound = bool(samplex_args_ex3.fully_bound)
-    except Exception:
-        args_fully_bound = False
+    args_fully_bound = bool(samplex_args_ex3.fully_bound)
 
-    try:
-        items = program_ex3.items
-        num_items = len(items)
-        item = items[0] if num_items > 0 else None
-        item_circuit_matches = bool(item is not None and item.circuit is template_ex3)
-        item_samplex_matches = bool(item is not None and item.samplex is samplex_ex3)
-    except Exception:
-        num_items = 0
-        item_circuit_matches = False
-        item_samplex_matches = False
+    items = program_ex3.items
+    num_items = len(items)
+    item = items[0] if num_items > 0 else None
+    item_circuit_matches = bool(item is not None and item.circuit is template_ex3)
+    item_samplex_matches = bool(item is not None and item.samplex is samplex_ex3)
 
     facts = {
-        "template_is_qc": template_is_qc,
         "template_params": template_params,
         "samplex_refs": samplex_refs,
         "noise_keys": noise_keys,
