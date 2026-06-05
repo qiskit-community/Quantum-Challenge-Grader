@@ -25,7 +25,7 @@ from qiskit_ibm_runtime.options import EstimatorOptions
 
 from qc_grader.grader.grade import grade_answer
 
-from samplomatic.program import QuantumProgram
+from qiskit_ibm_runtime import QuantumProgram
 
 _CHALLENGE = "qgss_2026"
 _LAB = "lab3"
