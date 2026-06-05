@@ -254,7 +254,7 @@ def grade_lab3_ex4(
 def grade_lab3_ex5(
     circuit_ising: QuantumCircuit,
     mirrored_circuit: QuantumCircuit,
-    boxed: QuantumCircuit,
+    boxed: QuantumCircuit,  # ← Keep this parameter (no API change)
     obs_list: list[SparsePauliOp],
     forward_list: list[dict[str, PauliLindbladMap]],
     backward_bound: dict[str, PauliLindbladMap],
@@ -262,6 +262,10 @@ def grade_lab3_ex5(
     """
     Grade Exercise 5: Investigate the locality of 3 observables for 15 qubits
     """
+    # Extract metrics from boxed circuit (avoids annotation serialization issues)
+    boxed_num_qubits = int(boxed.num_qubits)
+    boxed_num_boxes = sum(1 for inst in boxed if isinstance(inst.operation, BoxOp))
+
     # convert PauliLindbladMap to sparse lists
     for key in backward_bound:
         backward_bound[key] = backward_bound[key].to_sparse_list()
@@ -273,7 +277,8 @@ def grade_lab3_ex5(
     answer_dict = {
         "circuit_ising": circuit_ising,
         "mirrored_circuit": mirrored_circuit,
-        "boxed": boxed,
+        "boxed_num_qubits": boxed_num_qubits,  # ← Send metrics instead
+        "boxed_num_boxes": boxed_num_boxes,  # ← Send metrics instead
         "obs_list": obs_list,
         "forward_list": forward_list,
         "backward_dict": backward_bound,
