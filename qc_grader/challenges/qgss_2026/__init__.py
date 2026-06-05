@@ -39,7 +39,7 @@ from .lab2 import (
     grade_lab2_ex7,
 )
 
-from .lab3 import grade_lab3_ex1, grade_lab3_ex5
+from .lab3 import grade_lab3_ex5
 
 from .lab4a import (
     grade_lab4a_ex1,
