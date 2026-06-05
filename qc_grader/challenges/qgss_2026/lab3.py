@@ -25,7 +25,7 @@ from qiskit_ibm_runtime.options import EstimatorOptions
 
 from qc_grader.grader.grade import grade_answer
 
-QuantumProgram = Any
+from samplomatic.program import QuantumProgram
 
 _CHALLENGE = "qgss_2026"
 _LAB = "lab3"
@@ -182,7 +182,6 @@ def grade_lab3_ex3(
     """
     Grade Exercise 3
     """
-    template_is_qc = isinstance(template_ex3, QuantumCircuit)
     template_params = int(template_ex3.num_parameters) if template_is_qc else 0
 
     try:
