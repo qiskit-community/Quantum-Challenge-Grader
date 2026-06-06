@@ -83,7 +83,7 @@ def dump_quantum_circuit(obj: QuantumCircuit):
 def dump_quasi_distribution(obj: QuasiDistribution):
     return {
         "__class__": "QuasiDistribution",
-        "data": str(obj),
+        "data": obj.hex_probabilities(),
         "shots": obj.shots if hasattr(obj, "shots") else None,
         "stddev_upper_bound": obj.stddev_upper_bound
         if hasattr(obj, "stddev_upper_bound")
@@ -118,7 +118,7 @@ def dump_primitive_result(obj: PrimitiveResult):
 def dump_prob_distribution(obj: ProbDistribution):
     return {
         "__class__": "ProbDistribution",
-        "data": str(obj),
+        "data": obj.hex_probabilities(),
         "shots": obj.shots,
     }
 
