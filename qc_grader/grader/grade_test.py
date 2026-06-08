@@ -16,12 +16,29 @@ from qc_grader.grader.grade import determine_grade_response
 @pytest.mark.parametrize(
     "passed, score, msg, expected",
     [
-        (True, "100", "Perfect!", "Perfect!\nYour score is 100."),
+        (
+            True,
+            1,
+            "🎉 Correct!",
+            "🎉 Correct!\nYou scored 1 on this exercise.",
+        ),
+        (
+            True,
+            2,
+            "🎉 Both Circuit A and Circuit B have depth 3.",
+            "🎉 Both Circuit A and Circuit B have depth 3.\nYou scored 2 on this exercise.",
+        ),
         (
             False,
-            "50",
-            "Wrong",
-            "\nOops 😕! Wrong\nPlease review your answer and try again.",
+            0,
+            "Circuit A: you said 2, but depth is 3.",
+            "\nOops 😕! Circuit A: you said 2, but depth is 3.\nPlease review your answer and try again.",
+        ),
+        (
+            False,
+            1,
+            "Incorrect basis operations.",
+            "\nOops 😕! Incorrect basis operations.\nYou scored 1 on this exercise.\nPlease review your answer and try again.",
         ),
     ],
 )

@@ -65,6 +65,9 @@ def determine_grade_response(
     msg: str,
 ) -> str:
     """Format a human-readable message from a grade response."""
+    score_line = f"\nYou scored {score} on this exercise."
     if passed:
-        return msg + f"\nYour score is {score}."
+        return msg + score_line
+    if score > 0:
+        return f"\nOops 😕! {msg}{score_line}\nPlease review your answer and try again."
     return f"\nOops 😕! {msg}\nPlease review your answer and try again."
