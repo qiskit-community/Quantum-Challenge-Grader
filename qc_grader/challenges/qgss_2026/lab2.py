@@ -33,7 +33,7 @@ def grade_lab2_ex1(
     basis_operations: list[str], coupling_map: list[list[int] | tuple[int, int]]
 ) -> None:
     """
-    Grade Exercise 1: Check FakeTorino basis operations and coupling map.
+    Grade Exercise 1: Check ibm_fez basis operations and coupling map.
     """
 
     answer_dict = {"basis_operations": basis_operations, "coupling_map": coupling_map}
