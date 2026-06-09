@@ -8,23 +8,23 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-from .lab2 import (
+from .lab_sqd import (
     submit_name,
-    grade_lab2_ex1,
-    grade_lab2_ex2,
-    grade_lab2_ex3,
-    grade_lab2_ex4,
-    grade_lab2_ex5,
-    grade_lab2_ex6,
+    grade_lab_sqd_ex1,
+    grade_lab_sqd_ex2,
+    grade_lab_sqd_ex3,
+    grade_lab_sqd_ex4,
+    grade_lab_sqd_ex5,
+    grade_lab_sqd_ex6,
 )
 
 
 __all__ = [
     "submit_name",
-    "grade_lab2_ex1",
-    "grade_lab2_ex2",
-    "grade_lab2_ex3",
-    "grade_lab2_ex4",
-    "grade_lab2_ex5",
-    "grade_lab2_ex6",
+    "grade_lab_sqd_ex1",
+    "grade_lab_sqd_ex2",
+    "grade_lab_sqd_ex3",
+    "grade_lab_sqd_ex4",
+    "grade_lab_sqd_ex5",
+    "grade_lab_sqd_ex6",
 ]
