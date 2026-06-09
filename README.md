@@ -14,12 +14,12 @@ Pre-requisites:
 To install the grader locally:
 
 1. In the Python environment, install the grading client: `pip install git+https://github.com/qiskit-community/Quantum-Challenge-Grader.git`
-1. Configure the `IBMCLOUD_API_KEY` environment variables
+1. Configure the `QC_API_KEY` environment variables
 
     From a terminal (before launching your JupyterLab environment), enter
 
     ```
-    export IBMCLOUD_API_KEY=your_ibmcloud_api_key
+    export QC_API_KEY=your_ibmcloud_api_key
     ```
 
     where `your_ibmcloud_api_key` is your IBM Cloud API Key found in your **[Account page](https://cloud.ibm.com/iam/apikeys)**.
@@ -27,7 +27,7 @@ To install the grader locally:
     Alternatively, if you prefer you can instead run the following at the top cell of a notebook cell (whenever you start/restart the kernel)
 
     ```
-    %set_env IBMCLOUD_API_KEY=your_ibmcloud_api_key
+    %set_env QC_API_KEY=your_ibmcloud_api_key
     ```
 
 
@@ -36,7 +36,7 @@ To install the grader locally:
     > 
     > ```python
     > import os
-    > print(os.getenv('IBMCLOUD_API_KEY'))
+    > print(os.getenv('QC_API_KEY'))
     > ```
     > 
     > **Note2**: If you already installed [qiskit-ibm-runtime](https://github.com/Qiskit/qiskit-ibm-runtime) and saved your token by using `QiskitRuntimeService` by following [this instruction](https://quantum.cloud.ibm.com/docs/en/guides/cloud-setup#set-up-to-use-ibm-cloud) once, you don't need to set-up the env variable. You can save your token by using `QiskitRuntimeService` like below:
