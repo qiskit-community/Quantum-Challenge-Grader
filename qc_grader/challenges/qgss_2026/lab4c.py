@@ -57,7 +57,7 @@ def grade_lab4c_ex1b(
 @typechecked()
 def grade_lab4c_ex2a(
     reshape_bitstring: Callable[[np.ndarray, int], np.ndarray],
-    raw_bitstrings: np.ndarray
+    raw_bitstrings: np.ndarray,
 ) -> None:
     """
     Grade Exercise 2a: Verify bitstring reshape function.
