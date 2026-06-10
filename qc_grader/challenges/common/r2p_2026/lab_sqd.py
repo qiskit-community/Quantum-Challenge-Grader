@@ -10,7 +10,7 @@
 
 from typeguard import typechecked
 
-from qc_grader.grader.grade import grade_answer, submit_team_name
+from qc_grader.grader.grade import grade_answer
 
 from typing import Any, Callable
 import numpy as np
@@ -46,16 +46,6 @@ def _create_grade_function(challenge: str):
         grade_answer(answer, lab=_LAB, exercise=exercise, challenge=challenge)
 
     return _grade
-
-
-def _create_submit_name_function(challenge: str):
-    """Create a submit_name function for a specific challenge."""
-
-    @typechecked
-    def submit_name(name: str) -> None:
-        submit_team_name(name, challenge)
-
-    return submit_name
 
 
 def _create_grade_lab_sqd_ex1(_grade):

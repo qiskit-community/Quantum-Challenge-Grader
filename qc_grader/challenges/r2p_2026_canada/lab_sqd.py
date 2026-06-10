@@ -10,7 +10,6 @@
 
 from qc_grader.challenges.common.r2p_2026.lab_sqd import (
     _create_grade_function,
-    _create_submit_name_function,
     _create_grade_lab_sqd_ex1,
     _create_grade_lab_sqd_ex2,
     _create_grade_lab_sqd_ex3,
@@ -22,7 +21,6 @@ from qc_grader.challenges.common.r2p_2026.lab_sqd import (
 _CHALLENGE = "r2p_2026_canada"
 
 _grade = _create_grade_function(_CHALLENGE)
-submit_name = _create_submit_name_function(_CHALLENGE)
 grade_lab_sqd_ex1 = _create_grade_lab_sqd_ex1(_grade)
 grade_lab_sqd_ex2 = _create_grade_lab_sqd_ex2(_grade)
 grade_lab_sqd_ex3 = _create_grade_lab_sqd_ex3(_grade)

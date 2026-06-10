@@ -18,7 +18,7 @@ from moocore import hypervolume
 from qiskit import QuantumCircuit
 from typeguard import check_type, typechecked
 
-from qc_grader.grader.grade import grade_answer, submit_team_name
+from qc_grader.grader.grade import grade_answer
 
 from .qmoo_files import load_problem
 
@@ -32,16 +32,6 @@ def _create_grade_function(challenge: str):
         grade_answer(answer, lab=_LAB, exercise=exercise, challenge=challenge)
 
     return _grade
-
-
-def _create_submit_name_function(challenge: str):
-    """Create a submit_name function for a specific challenge."""
-
-    @typechecked
-    def submit_name(name: str) -> None:
-        submit_team_name(name, challenge)
-
-    return submit_name
 
 
 def _create_grade_lab_qmoo_ex1(_grade):

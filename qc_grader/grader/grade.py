@@ -10,18 +10,42 @@
 
 import typeguard
 from typing import Any, TypedDict
+from functools import partial
 
-from typeguard import check_type
+from typeguard import check_type, typechecked
 
 from qc_grader.custom_encoder import to_json
 
 from .api import send_request
 
 
-def submit_team_name(answer: str, challenge_id: str) -> None:
-    """Register the user to the provided team, then print the result."""
+@typechecked
+def _join_team(team_name: str, challenge_name: str) -> None:
+    """Register the user with the provided team, then print a confirmation."""
 
-    print("Submitting your team name. Please wait...\n")
+    print(f'Trying to join "{team_name}", please wait...\n')
+
+    try:
+        send_request(
+            "/register-team",
+            body={
+                "challenge_name": challenge_name,
+                "team_name": team_name,
+            },
+        )
+    except Exception as e:
+        print(f"Failed: {e}")
+        return
+
+    print(
+        f'You have joined "{team_name}" 🎉\n'
+        "Any answers you submit from now on will be associated with this team."
+    )
+
+
+@typechecked
+def create_join_team_function(challenge_name: str):
+    return partial(_join_team, challenge_name=challenge_name)
 
 
 class GradeResponse(TypedDict):
