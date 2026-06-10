@@ -8,7 +8,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-from qc_grader.grader.grade import _create_join_team_function
+from qc_grader.grader.grade import create_join_team_function
 
 from .lab_sqd import (
     grade_lab_sqd_ex1,
@@ -41,7 +41,7 @@ from .lab_hadron import (
 )
 
 _CHALLENGE = "r2p_2026_canada"
-join_team = _create_join_team_function(_CHALLENGE)
+join_team = create_join_team_function(_CHALLENGE)
 
 __all__ = [
     "join_team",

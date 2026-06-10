@@ -20,7 +20,7 @@ from .api import send_request
 
 
 @typechecked
-def join_team(team_name: str, challenge_name: str) -> None:
+def _join_team(team_name: str, challenge_name: str) -> None:
     """Register the user with the provided team, then print a confirmation."""
 
     print(f'Trying to join "{team_name}", please wait...\n')
@@ -44,8 +44,8 @@ def join_team(team_name: str, challenge_name: str) -> None:
 
 
 @typechecked
-def _create_join_team_function(challenge_name: str):
-    return partial(join_team, challenge_name=challenge_name)
+def create_join_team_function(challenge_name: str):
+    return partial(_join_team, challenge_name=challenge_name)
 
 
 class GradeResponse(TypedDict):
