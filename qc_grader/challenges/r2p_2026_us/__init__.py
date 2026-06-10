@@ -18,13 +18,52 @@ from .lab_sqd import (
     grade_lab_sqd_ex6,
 )
 
+from .lab_qmoo import (
+    grade_lab_qmoo_ex1,
+    grade_lab_qmoo_ex2,
+    grade_lab_qmoo_ex3,
+    grade_lab_qmoo_ex4,
+)
+
+from .lab_hadron import (
+    grade_lab_hadron_ex1,
+    grade_lab_hadron_ex2,
+    grade_lab_hadron_ex3,
+    grade_lab_hadron_ex4,
+    grade_lab_hadron_ex5,
+    grade_lab_hadron_ex7,
+    grade_lab_hadron_ex8,
+    grade_lab_hadron_ex9,
+    grade_lab_hadron_ex10,
+    grade_lab_hadron_ex11,
+    grade_lab_hadron_ex12,
+)
+
 
 __all__ = [
     "submit_name",
+    # lab_sqd
     "grade_lab_sqd_ex1",
     "grade_lab_sqd_ex2",
     "grade_lab_sqd_ex3",
     "grade_lab_sqd_ex4",
     "grade_lab_sqd_ex5",
     "grade_lab_sqd_ex6",
+    # lab_qmoo
+    "grade_lab_qmoo_ex1",
+    "grade_lab_qmoo_ex2",
+    "grade_lab_qmoo_ex3",
+    "grade_lab_qmoo_ex4",
+    # lab_hadron
+    "grade_lab_hadron_ex1",
+    "grade_lab_hadron_ex2",
+    "grade_lab_hadron_ex3",
+    "grade_lab_hadron_ex4",
+    "grade_lab_hadron_ex5",
+    "grade_lab_hadron_ex7",
+    "grade_lab_hadron_ex8",
+    "grade_lab_hadron_ex9",
+    "grade_lab_hadron_ex10",
+    "grade_lab_hadron_ex11",
+    "grade_lab_hadron_ex12",
 ]
