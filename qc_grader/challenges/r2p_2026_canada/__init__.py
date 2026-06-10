@@ -9,7 +9,7 @@
 # that they have been altered from the originals.
 
 from .lab_sqd import (
-    submit_name,
+    join_team,
     grade_lab_sqd_ex1,
     grade_lab_sqd_ex2,
     grade_lab_sqd_ex3,
@@ -41,7 +41,7 @@ from .lab_hadron import (
 
 
 __all__ = [
-    "submit_name",
+    "join_team",
     # lab_sqd
     "grade_lab_sqd_ex1",
     "grade_lab_sqd_ex2",

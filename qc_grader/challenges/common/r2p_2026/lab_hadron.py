@@ -20,7 +20,7 @@ from qiskit_ibm_runtime.ibm_backend import IBMBackend
 from qiskit_ibm_runtime.runtime_job_v2 import RuntimeJobV2
 from typeguard import typechecked
 
-from qc_grader.grader.grade import grade_answer, submit_team_name
+from qc_grader.grader.grade import grade_answer, join_team as _join_team
 
 
 _LAB = "lab_hadron"
@@ -35,14 +35,14 @@ def _create_grade_function(challenge: str):
     return _grade
 
 
-def _create_submit_name_function(challenge: str):
-    """Create a submit_name function for a specific challenge."""
+def _create_join_team_function(challenge: str):
+    """Create a join_team function for a specific challenge."""
 
     @typechecked
-    def submit_name(name: str) -> None:
-        submit_team_name(name, challenge)
+    def join_team(name: str) -> None:
+        _join_team(name, challenge)
 
-    return submit_name
+    return join_team
 
 
 def _create_grade_lab_hadron_ex1(_grade):
