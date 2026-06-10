@@ -18,7 +18,7 @@ from moocore import hypervolume
 from qiskit import QuantumCircuit
 from typeguard import check_type, typechecked
 
-from qc_grader.grader.grade import grade_answer, join_team as _join_team
+from qc_grader.grader.grade import grade_answer
 
 from .qmoo_files import load_problem
 
@@ -32,16 +32,6 @@ def _create_grade_function(challenge: str):
         grade_answer(answer, lab=_LAB, exercise=exercise, challenge=challenge)
 
     return _grade
-
-
-def _create_join_team_function(challenge: str):
-    """Create a join_team function for a specific challenge."""
-
-    @typechecked
-    def join_team(name: str) -> None:
-        _join_team(name, challenge)
-
-    return join_team
 
 
 def _create_grade_lab_qmoo_ex1(_grade):

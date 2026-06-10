@@ -10,14 +10,16 @@
 
 import typeguard
 from typing import Any, TypedDict
+from functools import partial
 
-from typeguard import check_type
+from typeguard import check_type, typechecked
 
 from qc_grader.custom_encoder import to_json
 
 from .api import send_request
 
 
+@typechecked
 def join_team(team_name: str, challenge_name: str) -> None:
     """Register the user with the provided team, then print a confirmation."""
 
@@ -39,6 +41,11 @@ def join_team(team_name: str, challenge_name: str) -> None:
         f'You have joined "{team_name}" 🎉\n'
         "Any answers you submit from now on will be associated with this team."
     )
+
+
+@typechecked
+def _create_join_team_function(challenge_name: str):
+    return partial(join_team, challenge_name=challenge_name)
 
 
 class GradeResponse(TypedDict):

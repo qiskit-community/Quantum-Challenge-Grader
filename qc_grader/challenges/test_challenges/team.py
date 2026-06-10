@@ -13,7 +13,7 @@ from typing import Any
 from qiskit import QuantumCircuit
 from typeguard import typechecked
 
-from qc_grader.grader.grade import grade_answer, join_team as _join_team
+from qc_grader.grader.grade import grade_answer, _create_join_team_function
 
 _CHALLENGE = "test_team"
 _LAB = "test"
@@ -23,9 +23,7 @@ def _grade(answer: Any, exercise: str) -> None:
     grade_answer(answer, lab=_LAB, exercise=exercise, challenge=_CHALLENGE)
 
 
-@typechecked
-def join_team(name: str) -> None:
-    _join_team(name, _CHALLENGE)
+join_team = _create_join_team_function(_CHALLENGE)
 
 
 @typechecked
