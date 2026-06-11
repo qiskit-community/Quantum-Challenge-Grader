@@ -101,7 +101,7 @@ def grade_lab4c_ex3a(
     """
     rng = np.random.default_rng(seed=42)
     test_occupancy = rng.random((25, 24))
-    test_output = [prob_flip_0_to_1(occ) for occ in test_occupancy]
+    test_output = np.array([prob_flip_0_to_1(occ) for occ in test_occupancy])
     _grade((test_occupancy, test_output), "ex3a")
 
 
@@ -146,7 +146,7 @@ def grade_lab4c_ex3b(
 
 @typechecked()
 def grade_lab4c_ex4(
-    hf_like_ci_strings: Sequence[np.ndarray],
+    hf_like_ci_strings: np.ndarray,
 ) -> None:
     """
     Grade Exercise 4: Verify the ci string.
@@ -155,3 +155,17 @@ def grade_lab4c_ex4(
         hf_like_ci_strings: An integer array that specifies the HF-like subspace. (Wrapped in a list)
     """
     _grade(hf_like_ci_strings, "ex4")
+
+
+# @typechecked()
+# def grade_lab4c_exbonus(
+#     best_energy: float,
+#     best_subspace: tuple[np.ndarray, np.ndarray],
+# ) -> None:
+#     """
+#     Grade Exercise Bonus: Verify the ci string.
+
+#     Args:
+#         hf_like_ci_strings: An integer array that specifies the HF-like subspace. (Wrapped in a list)
+#     """
+#     _grade((best_energy, best_subspace), "ex4")
