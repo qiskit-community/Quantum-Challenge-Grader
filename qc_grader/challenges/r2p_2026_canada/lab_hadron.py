@@ -15,12 +15,12 @@ from qc_grader.challenges.common.r2p_2026.lab_hadron import (
     _create_grade_lab_hadron_ex3,
     _create_grade_lab_hadron_ex4,
     _create_grade_lab_hadron_ex5,
+    _create_grade_lab_hadron_ex6,
     _create_grade_lab_hadron_ex7,
     _create_grade_lab_hadron_ex8,
     _create_grade_lab_hadron_ex9,
     _create_grade_lab_hadron_ex10,
     _create_grade_lab_hadron_ex11,
-    _create_grade_lab_hadron_ex12,
 )
 
 _CHALLENGE = "r2p_2026_canada"
@@ -31,9 +31,9 @@ grade_lab_hadron_ex2 = _create_grade_lab_hadron_ex2(_grade)
 grade_lab_hadron_ex3 = _create_grade_lab_hadron_ex3(_grade)
 grade_lab_hadron_ex4 = _create_grade_lab_hadron_ex4(_grade)
 grade_lab_hadron_ex5 = _create_grade_lab_hadron_ex5(_grade)
+grade_lab_hadron_ex6 = _create_grade_lab_hadron_ex6(_grade)
 grade_lab_hadron_ex7 = _create_grade_lab_hadron_ex7(_grade)
 grade_lab_hadron_ex8 = _create_grade_lab_hadron_ex8(_grade)
 grade_lab_hadron_ex9 = _create_grade_lab_hadron_ex9(_grade)
 grade_lab_hadron_ex10 = _create_grade_lab_hadron_ex10(_grade)
 grade_lab_hadron_ex11 = _create_grade_lab_hadron_ex11(_grade)
-grade_lab_hadron_ex12 = _create_grade_lab_hadron_ex12(_grade)

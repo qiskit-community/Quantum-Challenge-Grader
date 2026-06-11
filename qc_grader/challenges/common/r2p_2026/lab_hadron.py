@@ -102,25 +102,25 @@ def _create_grade_lab_hadron_ex5(_grade):
     return grade_lab_hadron_ex5
 
 
-def _create_grade_lab_hadron_ex7(_grade):
-    """Create grade_lab_hadron_ex7 function."""
+def _create_grade_lab_hadron_ex6(_grade):
+    """Create grade_lab_hadron_ex6 function."""
 
     @typechecked
-    def grade_lab_hadron_ex7(estimator: EstimatorV2) -> None:
+    def grade_lab_hadron_ex6(estimator: EstimatorV2) -> None:
         if not isinstance(estimator, qiskit_ibm_runtime.estimator.EstimatorV2):
             answer = "false"
         else:
             answer = "true"
-        _grade(answer, "ex7")
+        _grade(answer, "ex6")
 
-    return grade_lab_hadron_ex7
+    return grade_lab_hadron_ex6
 
 
-def _create_grade_lab_hadron_ex8(_grade):
-    """Create grade_lab_hadron_ex8 function."""
+def _create_grade_lab_hadron_ex7(_grade):
+    """Create grade_lab_hadron_ex7 function."""
 
     @typechecked
-    def grade_lab_hadron_ex8(
+    def grade_lab_hadron_ex7(
         pubs: list[tuple[QuantumCircuit, list[SparsePauliOp]]],
         circuits_all_isa: list[QuantumCircuit],
         observables_isa: list[SparsePauliOp],
@@ -131,6 +131,23 @@ def _create_grade_lab_hadron_ex8(_grade):
             "circuits_all_isa": circuits_all_isa[:1],
             "observables_isa": observables_isa,
         }
+        _grade(answer_dict, "ex7")
+
+    return grade_lab_hadron_ex7
+
+
+def _create_grade_lab_hadron_ex8(_grade):
+    """Create grade_lab_hadron_ex8 function."""
+
+    @typechecked
+    def grade_lab_hadron_ex8(job: RuntimeJobV2) -> None:
+
+        answer_dict = {
+            "job_primitive_id": job.primitive_id,
+            "job_status": job.status(),
+            "job_inputs": len(job.inputs["pubs"]),
+        }
+
         _grade(answer_dict, "ex8")
 
     return grade_lab_hadron_ex8
@@ -140,24 +157,7 @@ def _create_grade_lab_hadron_ex9(_grade):
     """Create grade_lab_hadron_ex9 function."""
 
     @typechecked
-    def grade_lab_hadron_ex9(job: RuntimeJobV2) -> None:
-
-        answer_dict = {
-            "job_primitive_id": job.primitive_id,
-            "job_status": job.status(),
-            "job_inputs": len(job.inputs["pubs"]),
-        }
-
-        _grade(answer_dict, "ex9")
-
-    return grade_lab_hadron_ex9
-
-
-def _create_grade_lab_hadron_ex10(_grade):
-    """Create grade_lab_hadron_ex10 function."""
-
-    @typechecked
-    def grade_lab_hadron_ex10(
+    def grade_lab_hadron_ex9(
         chi_wave: np.ndarray,
         chi_wave_mitig: np.ndarray,
         chi_vacuum: np.ndarray,
@@ -182,16 +182,16 @@ def _create_grade_lab_hadron_ex10(_grade):
             "results": results_list,
         }
 
-        _grade(answer_dict, "ex10")
+        _grade(answer_dict, "ex9")
 
-    return grade_lab_hadron_ex10
+    return grade_lab_hadron_ex9
 
 
-def _create_grade_lab_hadron_ex11(_grade):
-    """Create grade_lab_hadron_ex11 function."""
+def _create_grade_lab_hadron_ex10(_grade):
+    """Create grade_lab_hadron_ex10 function."""
 
     @typechecked
-    def grade_lab_hadron_ex11(
+    def grade_lab_hadron_ex10(
         chi_wave_cp: np.ndarray,
         chi_wave: np.ndarray,
         chi_vacuum_cp: np.ndarray,
@@ -205,16 +205,16 @@ def _create_grade_lab_hadron_ex11(_grade):
             "chi_vacuum": chi_vacuum,
         }
 
-        _grade(answer_dict, "ex11")
+        _grade(answer_dict, "ex10")
 
-    return grade_lab_hadron_ex11
+    return grade_lab_hadron_ex10
 
 
-def _create_grade_lab_hadron_ex12(_grade):
-    """Create grade_lab_hadron_ex12 function."""
+def _create_grade_lab_hadron_ex11(_grade):
+    """Create grade_lab_hadron_ex11 function."""
 
     @typechecked
-    def grade_lab_hadron_ex12(chi_final: np.ndarray) -> None:
-        _grade(chi_final, "ex12")
+    def grade_lab_hadron_ex11(chi_final: np.ndarray) -> None:
+        _grade(chi_final, "ex11")
 
-    return grade_lab_hadron_ex12
+    return grade_lab_hadron_ex11
