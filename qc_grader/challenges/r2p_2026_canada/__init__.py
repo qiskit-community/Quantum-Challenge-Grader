@@ -32,15 +32,15 @@ from .lab_hadron import (
     grade_lab_hadron_ex3,
     grade_lab_hadron_ex4,
     grade_lab_hadron_ex5,
+    grade_lab_hadron_ex6,
     grade_lab_hadron_ex7,
     grade_lab_hadron_ex8,
     grade_lab_hadron_ex9,
     grade_lab_hadron_ex10,
     grade_lab_hadron_ex11,
-    grade_lab_hadron_ex12,
 )
 
-_CHALLENGE = "r2p_2026_canada"
+_CHALLENGE = "r2p_2026_us"
 join_team = create_join_team_function(_CHALLENGE)
 
 __all__ = [
@@ -63,10 +63,10 @@ __all__ = [
     "grade_lab_hadron_ex3",
     "grade_lab_hadron_ex4",
     "grade_lab_hadron_ex5",
+    "grade_lab_hadron_ex6",
     "grade_lab_hadron_ex7",
     "grade_lab_hadron_ex8",
     "grade_lab_hadron_ex9",
     "grade_lab_hadron_ex10",
     "grade_lab_hadron_ex11",
-    "grade_lab_hadron_ex12",
 ]
