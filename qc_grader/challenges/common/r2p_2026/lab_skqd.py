@@ -36,7 +36,7 @@ CHEMICAL_POTENTIAL = -0.5 * ONSITE
 NBATH = NUM_ORBS - 1
 IMPURITY_INDEX = (NBATH) // 2
 
-_LAB = "lab_sqd"
+_LAB = "lab_skqd"
 
 
 def _create_grade_function(challenge: str):
@@ -48,11 +48,11 @@ def _create_grade_function(challenge: str):
     return _grade
 
 
-def _create_grade_lab_sqd_ex1(_grade):
-    """Create grade_lab_sqd_ex1 function."""
+def _create_grade_lab_skqd_ex1(_grade):
+    """Create grade_lab_skqd_ex1 function."""
 
     @typechecked
-    def grade_lab_sqd_ex1(perturbed_tfim_hamiltonian: Callable) -> None:
+    def grade_lab_skqd_ex1(perturbed_tfim_hamiltonian: Callable) -> None:
         H_test = perturbed_tfim_hamiltonian(NUM_QUBITS, J, H_X, H_Z)
 
         answer_dict = {
@@ -60,14 +60,14 @@ def _create_grade_lab_sqd_ex1(_grade):
         }
         _grade(answer_dict, "ex1")
 
-    return grade_lab_sqd_ex1
+    return grade_lab_skqd_ex1
 
 
-def _create_grade_lab_sqd_ex2(_grade):
-    """Create grade_lab_sqd_ex2 function."""
+def _create_grade_lab_skqd_ex2(_grade):
+    """Create grade_lab_skqd_ex2 function."""
 
     @typechecked
-    def grade_lab_sqd_ex2(
+    def grade_lab_skqd_ex2(
         construct_krylov_circuits: Callable, perturbed_tfim_hamiltonian: Callable
     ) -> None:
 
@@ -82,14 +82,14 @@ def _create_grade_lab_sqd_ex2(_grade):
         }
         _grade(answer_dict, "ex2")
 
-    return grade_lab_sqd_ex2
+    return grade_lab_skqd_ex2
 
 
-def _create_grade_lab_sqd_ex3(_grade):
-    """Create grade_lab_sqd_ex3 function."""
+def _create_grade_lab_skqd_ex3(_grade):
+    """Create grade_lab_skqd_ex3 function."""
 
     @typechecked
-    def grade_lab_sqd_ex3(bitstrings_test: np.ndarray, H_test: SparsePauliOp) -> None:
+    def grade_lab_skqd_ex3(bitstrings_test: np.ndarray, H_test: SparsePauliOp) -> None:
 
         answer_dict = {
             "bitstrings_test": bitstrings_test,
@@ -97,14 +97,14 @@ def _create_grade_lab_sqd_ex3(_grade):
         }
         _grade(answer_dict, "ex3")
 
-    return grade_lab_sqd_ex3
+    return grade_lab_skqd_ex3
 
 
-def _create_grade_lab_sqd_ex4(_grade):
-    """Create grade_lab_sqd_ex4 function."""
+def _create_grade_lab_skqd_ex4(_grade):
+    """Create grade_lab_skqd_ex4 function."""
 
     @typechecked
-    def grade_lab_sqd_ex4(siam_hamiltonian_momentum: Callable) -> None:
+    def grade_lab_skqd_ex4(siam_hamiltonian_momentum: Callable) -> None:
 
         H_test = siam_hamiltonian_momentum(
             NUM_ORBS, HYBRIDIZATION, HOPPING, ONSITE, CHEMICAL_POTENTIAL
@@ -116,14 +116,14 @@ def _create_grade_lab_sqd_ex4(_grade):
         )
         _grade((H_test[0].tolist(), H_test[1].tolist()), "ex4")
 
-    return grade_lab_sqd_ex4
+    return grade_lab_skqd_ex4
 
 
-def _create_grade_lab_sqd_ex5(_grade):
-    """Create grade_lab_sqd_ex5 function."""
+def _create_grade_lab_skqd_ex5(_grade):
+    """Create grade_lab_skqd_ex5 function."""
 
     @typechecked
-    def grade_lab_sqd_ex5(
+    def grade_lab_skqd_ex5(
         construct_krylov_siam: Callable, siam_hamiltonian_momentum: Callable
     ) -> None:
 
@@ -141,14 +141,14 @@ def _create_grade_lab_sqd_ex5(_grade):
         )
         _grade(circs_test, "ex5")
 
-    return grade_lab_sqd_ex5
+    return grade_lab_skqd_ex5
 
 
-def _create_grade_lab_sqd_ex6(_grade):
-    """Create grade_lab_sqd_ex6 function."""
+def _create_grade_lab_skqd_ex6(_grade):
+    """Create grade_lab_skqd_ex6 function."""
 
     @typechecked
-    def grade_lab_sqd_ex6(
+    def grade_lab_skqd_ex6(
         result,
         num_orbs: int,
         hopping: float,
@@ -169,4 +169,4 @@ def _create_grade_lab_sqd_ex6(_grade):
         }
         _grade(answer_dict, "ex6")
 
-    return grade_lab_sqd_ex6
+    return grade_lab_skqd_ex6
