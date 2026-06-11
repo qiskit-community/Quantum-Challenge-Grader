@@ -130,7 +130,7 @@ Create a new folder under `qc_grader/challenges` with the name of the challenge.
 
   Users must call `join_team()` with their team name to participate in a team challenge. They can switch teams any time.
 
-You can copy an existing challenge.
+You may find it easier to copy an existing challenge and modify it.
 
 ## Adding new labs
 
