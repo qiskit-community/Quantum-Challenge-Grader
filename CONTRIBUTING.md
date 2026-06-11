@@ -117,9 +117,9 @@ For developers testing how the server behaves, you can use the files from `qc_gr
 Create a new folder under `qc_grader/challenges` with the name of the challenge. This folder should contain:
 
 * A file for each lab (such as `lab0.py`, `lab2.py`)
-* An `__init__.py`, which imports and re-exports the grading functions for your lab.
+* An `__init__.py`, which imports and re-exports the grading functions from your labs.
 
-  If your challenge is a team challenge, you should also include the following code so users can register with a team when they start.
+  If your challenge is a team challenge, you should also export a `join_team` function so users can register with a team when they start.
 
   ```python
   from qc_grader.grader.grade import create_join_team_function
@@ -127,6 +127,8 @@ Create a new folder under `qc_grader/challenges` with the name of the challenge.
   # Replace the string with the name of your challenge
   join_team = create_join_team_function("...")
   ```
+
+  Users must call `join_team()` with their team name to participate in a team challenge. They can switch teams any time.
 
 You can copy an existing challenge.
 
