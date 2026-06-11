@@ -114,7 +114,7 @@ def _create_grade_lab_skqd_ex4(_grade):
             np.round(np.array(H_test[0], dtype=np.float64), decimals=12),
             np.round(np.array(H_test[1], dtype=np.float64), decimals=12),
         )
-        _grade((H_test[0].tolist(), H_test[1].tolist()), "ex4")
+        _grade([H_test[0].tolist(), H_test[1].tolist()], "ex4")
 
     return grade_lab_skqd_ex4
 
