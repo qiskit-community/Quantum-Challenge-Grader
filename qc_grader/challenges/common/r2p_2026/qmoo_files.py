@@ -28,7 +28,12 @@ def load_problem(dirfn, printtxt=True):
         for i in range(num_graphs):
             f = dirfn + f"problem_graph_{i}.json"
 
-            graphs.append(nx.node_link_graph(json.load(open(f, "r"))))
+            with open(f, "r") as file:
+                data = json.load(file)
+                # Handle NetworkX 3.0+ compatibility: convert 'links' to 'edges'
+                if "links" in data and "edges" not in data:
+                    data["edges"] = data.pop("links")
+                graphs.append(nx.node_link_graph(data))
         if len(graphs) != num_graphs:
             raise Exception
 
