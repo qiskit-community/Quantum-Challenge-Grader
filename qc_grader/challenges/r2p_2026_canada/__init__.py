@@ -40,7 +40,7 @@ from .lab_hadron import (
     grade_lab_hadron_ex11,
 )
 
-_CHALLENGE = "r2p_2026_us"
+_CHALLENGE = "r2p_2026_canada"
 join_team = create_join_team_function(_CHALLENGE)
 
 __all__ = [
