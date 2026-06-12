@@ -180,6 +180,6 @@ def determine_progress_response(response: ProgressResponse) -> str:
             f"score {lab['score_total']}"
         )
         for exercise in lab["per_exercise"]:
-            icon = "✅" if exercise["passed"] else "❌"
+            icon = "✅" if exercise["passed"] else "⬜"
             lines.append(f"  {icon} {exercise['name']} — score {exercise['score']}")
     return "\n".join(lines)

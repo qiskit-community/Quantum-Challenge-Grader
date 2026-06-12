@@ -84,7 +84,7 @@ def test_determine_grade_response(
             'Lab "lab_skqd" — 2/3 passed, score 5\n'
             "  ✅ ex1 — score 3\n"
             "  ✅ ex2 — score 2\n"
-            "  ❌ ex3 — score 0",
+            "  ⬜ ex3 — score 0",
         ),
         (
             ProgressResponse(
@@ -125,11 +125,11 @@ def test_determine_grade_response(
             'Lab "lab_skqd" — 2/3 passed, score 4\n'
             "  ✅ ex1 — score 2\n"
             "  ✅ ex2 — score 2\n"
-            "  ❌ ex3 — score 0\n"
+            "  ⬜ ex3 — score 0\n"
             "\n"
             'Lab "lab_qmoo" — 1/2 passed, score 3\n'
             "  ✅ ex1 — score 3\n"
-            "  ❌ ex2 — score 0",
+            "  ⬜ ex2 — score 0",
         ),
         (
             ProgressResponse(
@@ -157,8 +157,8 @@ def test_determine_grade_response(
             "Total score: 0\n"
             "\n"
             'Lab "lab_skqd" — 0/2 passed, score 0\n'
-            "  ❌ ex1 — score 0\n"
-            "  ❌ ex2 — score 0",
+            "  ⬜ ex1 — score 0\n"
+            "  ⬜ ex2 — score 0",
         ),
         (
             ProgressResponse(
