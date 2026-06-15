@@ -12,6 +12,8 @@
 QGSS 2026 Challenge - Grading Functions
 """
 
+from qc_grader.grader.grade import create_check_progress_function
+
 from .lab0 import (
     grade_lab0_ex1,
     grade_lab0_ex2,
@@ -68,7 +70,12 @@ from .lab4b import (
 )
 
 
+_CHALLENGE = "qgss_2026"
+check_progress = create_check_progress_function(_CHALLENGE)
+
+
 __all__ = [
+    "check_progress",
     "grade_lab0_ex1",
     "grade_lab0_ex2",
     "grade_lab0_ex3",
