@@ -157,15 +157,16 @@ def grade_lab4c_ex4(
     _grade(hf_like_ci_strings, "ex4")
 
 
-# @typechecked()
-# def grade_lab4c_exbonus(
-#     best_energy: float,
-#     best_subspace: tuple[np.ndarray, np.ndarray],
-# ) -> None:
-#     """
-#     Grade Exercise Bonus: Verify the ci string.
+@typechecked()
+def grade_lab4c_exbonus(
+    best_energy: float,
+    best_subspace: tuple[np.ndarray, np.ndarray],
+) -> None:
+    """
+    Grade Exercise Bonus: Verify the ci string.
 
-#     Args:
-#         hf_like_ci_strings: An integer array that specifies the HF-like subspace. (Wrapped in a list)
-#     """
-#     _grade((best_energy, best_subspace), "ex4")
+    Args:
+        best_energy: A float value energy
+        best_subspace: A pair of subsamples that specifies the diagonalization subspace
+    """
+    _grade((best_energy, best_subspace), "exbonus")
