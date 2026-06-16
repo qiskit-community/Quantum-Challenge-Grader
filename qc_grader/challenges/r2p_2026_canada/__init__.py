@@ -8,15 +8,18 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-from qc_grader.grader.grade import create_join_team_function
+from qc_grader.grader.grade import (
+    create_check_progress_function,
+    create_join_team_function,
+)
 
-from .lab_sqd import (
-    grade_lab_sqd_ex1,
-    grade_lab_sqd_ex2,
-    grade_lab_sqd_ex3,
-    grade_lab_sqd_ex4,
-    grade_lab_sqd_ex5,
-    grade_lab_sqd_ex6,
+from .lab_skqd import (
+    grade_lab_skqd_ex1,
+    grade_lab_skqd_ex2,
+    grade_lab_skqd_ex3,
+    grade_lab_skqd_ex4,
+    grade_lab_skqd_ex5,
+    grade_lab_skqd_ex6,
 )
 
 from .lab_qmoo import (
@@ -32,26 +35,29 @@ from .lab_hadron import (
     grade_lab_hadron_ex3,
     grade_lab_hadron_ex4,
     grade_lab_hadron_ex5,
+    grade_lab_hadron_ex6,
     grade_lab_hadron_ex7,
     grade_lab_hadron_ex8,
     grade_lab_hadron_ex9,
     grade_lab_hadron_ex10,
     grade_lab_hadron_ex11,
-    grade_lab_hadron_ex12,
 )
 
 _CHALLENGE = "r2p_2026_canada"
 join_team = create_join_team_function(_CHALLENGE)
+check_progress = create_check_progress_function(_CHALLENGE)
+
 
 __all__ = [
     "join_team",
-    # lab_sqd
-    "grade_lab_sqd_ex1",
-    "grade_lab_sqd_ex2",
-    "grade_lab_sqd_ex3",
-    "grade_lab_sqd_ex4",
-    "grade_lab_sqd_ex5",
-    "grade_lab_sqd_ex6",
+    "check_progress",
+    # lab_skqd
+    "grade_lab_skqd_ex1",
+    "grade_lab_skqd_ex2",
+    "grade_lab_skqd_ex3",
+    "grade_lab_skqd_ex4",
+    "grade_lab_skqd_ex5",
+    "grade_lab_skqd_ex6",
     # lab_qmoo
     "grade_lab_qmoo_ex1",
     "grade_lab_qmoo_ex2",
@@ -63,10 +69,10 @@ __all__ = [
     "grade_lab_hadron_ex3",
     "grade_lab_hadron_ex4",
     "grade_lab_hadron_ex5",
+    "grade_lab_hadron_ex6",
     "grade_lab_hadron_ex7",
     "grade_lab_hadron_ex8",
     "grade_lab_hadron_ex9",
     "grade_lab_hadron_ex10",
     "grade_lab_hadron_ex11",
-    "grade_lab_hadron_ex12",
 ]

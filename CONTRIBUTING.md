@@ -112,6 +112,37 @@ QiskitRuntimeService.save_account(
 
 For developers testing how the server behaves, you can use the files from `qc_grader.challenges.test_challenges`, such as `grade_success` from `qc_grader.challenges.test_challenges.individual`.
 
+## Adding a new challenge
+
+Create a new folder under `qc_grader/challenges` with the name of the challenge. This folder should contain:
+
+* A file for each lab (such as `lab0.py`, `lab2.py`)
+* An `__init__.py`, which imports and re-exports the grading functions from your labs.
+
+  Every challenge must also export a `check_progress` function so users can see how far they've gotten:
+
+  ```python
+  from qc_grader.grader.grade import create_check_progress_function
+
+  # Replace the string with the name of your challenge
+  check_progress = create_check_progress_function("...")
+  ```
+
+  Users call `check_progress()` (no arguments) to print a per-lab and per-exercise breakdown of their submissions plus a challenge-wide aggregate.
+
+  If your challenge is a team challenge, you should also export a `join_team` function so users can register with a team when they start.
+
+  ```python
+  from qc_grader.grader.grade import create_join_team_function
+
+  # Replace the string with the name of your challenge
+  join_team = create_join_team_function("...")
+  ```
+
+  Users must call `join_team()` with their team name to participate in a team challenge. They can switch teams any time.
+
+You may find it easier to copy an existing challenge and modify it.
+
 ## Adding new labs
 
 A *lab* is a single Python file corresponding to a Jupyter notebook that users receive. Each *challenge* has one or more labs. When you add new exercises to the server, add a matching Python file here so that users can call grading functions from their Jupyter notebooks.
