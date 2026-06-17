@@ -73,6 +73,7 @@ from .lab4c import (
     grade_lab4c_ex3a,
     grade_lab4c_ex3b,
     grade_lab4c_ex4,
+    grade_lab4c_exbonus,
 )
 
 _CHALLENGE = "qgss_2026"
