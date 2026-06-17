@@ -48,7 +48,6 @@ path = "qc_grader/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 exclude = ["**/*_test.py"]
-artifacts = ["qc_grader/challenges/qgss_2026/utils/*.npy"]
 
 [tool.pytest.ini_options]
 testpaths = ["qc_grader"]
