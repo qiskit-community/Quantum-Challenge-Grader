@@ -13,6 +13,7 @@ QGSS 2026 Lab 4c - Grading Functions
 """
 
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any, Sequence
 from typeguard import typechecked, CollectionCheckStrategy
 
@@ -130,8 +131,9 @@ def grade_lab4c_ex3b(
     probs = np.array([1 / num_samples] * num_samples)
     num_orbitals = 12
     num_elec = (6, 6)
-    samples = np.load("./utils/lab4c_test_samples.npy")
-    occs = np.load("./utils/lab4c_test_occ.npy")
+    _utils = Path(__file__).parent / "utils"
+    samples = np.load(_utils / "lab4c_test_samples.npy")
+    occs = np.load(_utils / "lab4c_test_occ.npy")
 
     recovered_bitstrings, _ = recover_configurations(
         samples,
