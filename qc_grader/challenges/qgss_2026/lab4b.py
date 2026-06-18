@@ -102,6 +102,66 @@ def replace_unset_with_none(value):
 
 
 @typechecked
+def grade_lab4b_ex2a(
+    options_v1: SamplerOptions,
+):
+    """
+    Grade Exercise 2a: Error suppression techniques
+    """
+
+    options_dict = replace_unset_with_none(asdict(options_v1))
+    answer_dict = {
+        "options_v1": options_dict,
+    }
+    _grade(answer_dict, "ex2a")
+
+
+@typechecked
+def grade_lab4b_ex2b(
+    options_v2: SamplerOptions,
+):
+    """
+    Grade Exercise 2b: Error suppression techniques
+    """
+
+    options_dict = replace_unset_with_none(asdict(options_v2))
+    answer_dict = {
+        "options_v2": options_dict,
+    }
+    _grade(answer_dict, "ex2b")
+
+
+@typechecked
+def grade_lab4b_ex2c(
+    options_v3: SamplerOptions,
+):
+    """
+    Grade Exercise 2c: Error suppression techniques
+    """
+
+    options_dict = replace_unset_with_none(asdict(options_v3))
+    answer_dict = {
+        "options_v3": options_dict,
+    }
+    _grade(answer_dict, "ex2c")
+
+
+@typechecked
+def grade_lab4b_ex2d(
+    options_v4: SamplerOptions,
+):
+    """
+    Grade Exercise 2d: Error suppression techniques
+    """
+
+    options_dict = replace_unset_with_none(asdict(options_v4))
+    answer_dict = {
+        "options_v4": options_dict,
+    }
+    _grade(answer_dict, "ex2d")
+
+
+@typechecked
 def grade_lab4b_ex2(
     options_list: list[SamplerOptions],
     counts_list: list[dict[str, int | float]],
