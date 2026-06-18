@@ -275,6 +275,66 @@ def grade_lab4b_ex3c(
     _grade(answer_dict, "ex3c")
 
 
+@typechecked
+def grade_lab4b_ex4a(
+    options_no_em: EstimatorOptions,
+):
+    """
+    Grade Exercise 4a: Error mitigation techniques
+    """
+
+    options_dict = replace_unset_with_none(asdict(options_no_em))
+    answer_dict = {
+        "options_no_em": options_dict,
+    }
+    _grade(answer_dict, "ex4a")
+
+
+@typechecked
+def grade_lab4b_ex4b(
+    options_trex: EstimatorOptions,
+):
+    """
+    Grade Exercise 4b: Error mitigation techniques
+    """
+
+    options_dict = replace_unset_with_none(asdict(options_trex))
+    answer_dict = {
+        "options_trex": options_dict,
+    }
+    _grade(answer_dict, "ex4b")
+
+
+@typechecked
+def grade_lab4b_ex4c(
+    options_zne: EstimatorOptions,
+):
+    """
+    Grade Exercise 4c: Error mitigation techniques
+    """
+
+    options_dict = replace_unset_with_none(asdict(options_zne))
+    answer_dict = {
+        "options_zne": options_dict,
+    }
+    _grade(answer_dict, "ex4c")
+
+
+@typechecked
+def grade_lab4b_ex4d(
+    options_pec: EstimatorOptions,
+):
+    """
+    Grade Exercise 4d: Error mitigation techniques
+    """
+
+    options_dict = replace_unset_with_none(asdict(options_pec))
+    answer_dict = {
+        "options_pec": options_dict,
+    }
+    _grade(answer_dict, "ex4d")
+
+
 def _reconstruct_exp_map(job: RuntimeJobV2 | LocalRuntimeJob) -> dict[int, np.floating]:
     result = job.result()
     node_exp_map = {}
