@@ -10,8 +10,6 @@ Users are primarily students and are sometimes beginners to either programming o
 
 ## Workflows
 
-Refer to the file `CONTRIBUTING.md` for instructions on how to run the project and extend it:
-
 * Format: `just fmt`
 * Linter and type checker: `just lint`
 * Test: `just test`
