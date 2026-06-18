@@ -1,0 +1,147 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'qc_grader/__init__.py'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get version from qc_grader/__init__.py
+        id: get-version
+        run: |
+          VERSION=$(python -c "import re; print(re.search(r'__version__\s*=\s*\"([^\"]+)\"', open('qc_grader/__init__.py').read()).group(1))")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Version to release: $VERSION"
+
+      - name: Validate version format (YEAR.MONTH.DAY, no leading zeros)
+        run: |
+          VERSION="${{ steps.get-version.outputs.version }}"
+          if ! [[ "$VERSION" =~ ^[0-9]{4}\.(1[0-2]|[1-9])\.(3[01]|[12][0-9]|[1-9])(\.[0-9]+)?$ ]]; then
+            echo "Error: Invalid version format: $VERSION"
+            echo "Expected a date-based version YEAR.MONTH.DAY with no leading zeros, e.g. 2026.6.18"
+            exit 1
+          fi
+
+      - name: Check if tag exists
+        run: |
+          VERSION="${{ steps.get-version.outputs.version }}"
+          if git ls-remote --tags origin "v$VERSION" | grep -q .; then
+            echo "Error: Tag v$VERSION already exists"
+            exit 1
+          fi
+
+  test:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.10"
+      - uses: extractions/setup-just@v3
+      - name: install
+        run: uv sync
+      - run: just lint
+      - run: just test
+
+  build:
+    needs: [validate, test]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Build distribution
+        run: uv build
+
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+  publish-to-pypi:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/qc_grader/
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  create-release:
+    needs: [validate, publish-to-pypi]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create and push tag
+        run: |
+          VERSION="${{ needs.validate.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v$VERSION" -m "Release version $VERSION"
+          git push origin "v$VERSION"
+
+      - name: Write release notes
+        env:
+          VERSION: ${{ needs.validate.outputs.version }}
+          REPO: ${{ github.repository }}
+        run: |
+          # The previous release tag, if any. HEAD is already tagged v$VERSION,
+          # so look at HEAD^ to find the prior release.
+          PREV=$(git describe --tags --abbrev=0 --match 'v*' "v$VERSION^" 2>/dev/null || true)
+          if [ -n "$PREV" ]; then
+            URL="https://github.com/$REPO/compare/$PREV...v$VERSION"
+          else
+            URL="https://github.com/$REPO/commits/v$VERSION"
+          fi
+          {
+            echo "**What changed:** see the commits included in this release:"
+            echo ""
+            echo "$URL"
+          } > release-notes.md
+          cat release-notes.md
+
+      - name: Download distribution artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.validate.outputs.version }}
+        run: |
+          gh release create "v$VERSION" \
+            --title "v$VERSION" \
+            --notes-file release-notes.md \
+            dist/*

@@ -13,7 +13,7 @@ Pre-requisites:
 
 To install the grader locally:
 
-1. In the Python environment, install the grading client: `pip install git+https://github.com/qiskit-community/Quantum-Challenge-Grader.git`
+1. In the Python environment, install the grading client: `pip install qc-grader`
 1. Configure the `QC_API_KEY` environment variables
 
     From a terminal (before launching your JupyterLab environment), enter
