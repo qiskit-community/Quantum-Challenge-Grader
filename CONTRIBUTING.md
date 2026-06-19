@@ -40,16 +40,10 @@ just test
 
 ([Original documentation](https://docs.astral.sh/uv/concepts/projects/dependencies/))
 
-Add a core dependency:
+Add a dependency:
 
 ```
 uv add <dependency>
-```
-
-Add an extra:
-
-```
-uv add <dependnecy> --optional qiskit
 ```
 
 Add a dev dependency:
@@ -57,6 +51,37 @@ Add a dev dependency:
 ```
 uv add <dependency> --dev
 ```
+
+## Release a new version
+
+You should release a new version any time you make user-facing changes.
+
+Releasing is automated. To cut a release, update `__version__` in
+[`qc_grader/__init__.py`](qc_grader/__init__.py) to **today's date** and merge to `main`.
+A GitHub Actions workflow then builds the package, publishes it to PyPI, and creates a
+GitHub Release whose notes link to the commits included in that release.
+
+### Version format
+
+Versions are date-based, written as **`YEAR.MONTH.DAY`** with **no leading zeros**:
+
+* The year comes first, then the month, then the day (`YEAR.MONTH.DAY`).
+* Do not pad with zeros: use `6`, not `06`.
+
+For example, a release made on **18 June 2026** is version `2026.6.18`.
+
+| Date           | Version     |
+| -------------- | ----------- |
+| 18 June 2026   | `2026.6.18` |
+| 1 December 2026 | `2026.12.1` |
+| 5 January 2027 | `2027.1.5`  |
+
+If you need to release more than once on the same day, add a counter at the end, starting
+at `.1`: the second release on 18 June 2026 is `2026.6.18.1`, the third is `2026.6.18.2`,
+and so on.
+
+Versions only ever move forward — we always release from the latest `main` and never
+maintain older versions in parallel.
 
 ## Run the client
 

@@ -136,7 +136,7 @@ class ProgressResponse(TypedDict):
 
 
 @typechecked
-def _check_progress(challenge_name: str) -> None:
+def _check_progress(challenge_name: str, lab_name: str | None = None) -> None:
     """Fetch the user's progress for a challenge and print a summary."""
 
     print("Fetching your progress. Please wait...\n")
@@ -155,16 +155,40 @@ def _check_progress(challenge_name: str) -> None:
         print(f"Failed: {e}")
         return
 
-    print(determine_progress_response(cast(ProgressResponse, response)))
+    print(
+        determine_progress_response(cast(ProgressResponse, response), lab_name=lab_name)
+    )
 
 
 @typechecked
-def create_check_progress_function(challenge_name: str) -> Callable[[], None]:
+def create_check_progress_function(challenge_name: str) -> Callable[..., None]:
     return partial(_check_progress, challenge_name=challenge_name)
 
 
-def determine_progress_response(response: ProgressResponse) -> str:
+def _format_lab(lab: LabSummary) -> list[str]:
+    lines = [
+        f'Lab "{lab["name"]}" — '
+        f"{lab['num_exercises_passed']}/{lab['num_exercises']} passed, "
+        f"score {lab['score_total']}",
+    ]
+    for exercise in lab["per_exercise"]:
+        icon = "✅" if exercise["passed"] else "⬜"
+        lines.append(f"  {icon} {exercise['name']} — score {exercise['score']}")
+    return lines
+
+
+def determine_progress_response(
+    response: ProgressResponse, lab_name: str | None = None
+) -> str:
     """Format a human-readable progress summary."""
+    if lab_name is not None:
+        lab = next(
+            (lab for lab in response["per_lab"] if lab["name"] == lab_name), None
+        )
+        if lab is None:
+            raise ValueError(f'No lab named "{lab_name}" found.')
+        return "\n".join(["📊 Your progress", "", *_format_lab(lab)])
+
     aggregate = response["challenge_aggregate"]
     lines = [
         "📊 Your progress",
@@ -174,12 +198,5 @@ def determine_progress_response(response: ProgressResponse) -> str:
     ]
     for lab in response["per_lab"]:
         lines.append("")
-        lines.append(
-            f'Lab "{lab["name"]}" — '
-            f"{lab['num_exercises_passed']}/{lab['num_exercises']} passed, "
-            f"score {lab['score_total']}"
-        )
-        for exercise in lab["per_exercise"]:
-            icon = "✅" if exercise["passed"] else "⬜"
-            lines.append(f"  {icon} {exercise['name']} — score {exercise['score']}")
+        lines.extend(_format_lab(lab))
     return "\n".join(lines)

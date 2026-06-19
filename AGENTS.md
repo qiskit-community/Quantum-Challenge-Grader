@@ -10,9 +10,8 @@ Users are primarily students and are sometimes beginners to either programming o
 
 ## Workflows
 
-Refer to the file `CONTRIBUTING.md` for instructions on how to run the project and extend it:
-
-* Run formatter
-* Run Ruff linter and ty type checker
-* Run Pytest tests
-* Add new labs and exercises
+* Format: `just fmt`
+* Linter and type checker: `just lint`
+* Test: `just test`
+* Add new labs and exercises: refer to `CONTRIBUTING.md`
+* Releases: refer to `CONTRIBUTING.md`. All user-facing changes should have a new release.

@@ -52,9 +52,42 @@ def test_determine_grade_response(
     assert determine_grade_response(passed, score, msg) == expected
 
 
+_MULTI_LAB_RESPONSE = ProgressResponse(
+    challenge_aggregate={
+        "score_total": 7,
+        "num_exercises_passed": 3,
+        "num_exercises": 5,
+    },
+    per_lab=[
+        {
+            "name": "lab_skqd",
+            "score_total": 4,
+            "num_exercises_passed": 2,
+            "num_exercises": 3,
+            "per_exercise": [
+                {"name": "ex1", "score": 2, "passed": True},
+                {"name": "ex2", "score": 2, "passed": True},
+                {"name": "ex3", "score": 0, "passed": False},
+            ],
+        },
+        {
+            "name": "lab_qmoo",
+            "score_total": 3,
+            "num_exercises_passed": 1,
+            "num_exercises": 2,
+            "per_exercise": [
+                {"name": "ex1", "score": 3, "passed": True},
+                {"name": "ex2", "score": 0, "passed": False},
+            ],
+        },
+    ],
+)
+
+
 @pytest.mark.parametrize(
-    "response, expected",
+    "response, lab_name, expected",
     [
+        # Single lab, no filter
         (
             ProgressResponse(
                 challenge_aggregate={
@@ -76,6 +109,7 @@ def test_determine_grade_response(
                     },
                 ],
             ),
+            None,
             "📊 Your progress\n"
             "\n"
             "Exercises passed: 2/3\n"
@@ -86,37 +120,23 @@ def test_determine_grade_response(
             "  ✅ ex2 — score 2\n"
             "  ⬜ ex3 — score 0",
         ),
+        # No labs, no filter
         (
             ProgressResponse(
                 challenge_aggregate={
-                    "score_total": 7,
-                    "num_exercises_passed": 3,
-                    "num_exercises": 5,
+                    "score_total": 0,
+                    "num_exercises_passed": 0,
+                    "num_exercises": 0,
                 },
-                per_lab=[
-                    {
-                        "name": "lab_skqd",
-                        "score_total": 4,
-                        "num_exercises_passed": 2,
-                        "num_exercises": 3,
-                        "per_exercise": [
-                            {"name": "ex1", "score": 2, "passed": True},
-                            {"name": "ex2", "score": 2, "passed": True},
-                            {"name": "ex3", "score": 0, "passed": False},
-                        ],
-                    },
-                    {
-                        "name": "lab_qmoo",
-                        "score_total": 3,
-                        "num_exercises_passed": 1,
-                        "num_exercises": 2,
-                        "per_exercise": [
-                            {"name": "ex1", "score": 3, "passed": True},
-                            {"name": "ex2", "score": 0, "passed": False},
-                        ],
-                    },
-                ],
+                per_lab=[],
             ),
+            None,
+            "📊 Your progress\n\nExercises passed: 0/0\nTotal score: 0",
+        ),
+        # Multi-lab, no filter — shows aggregate + all labs
+        (
+            _MULTI_LAB_RESPONSE,
+            None,
             "📊 Your progress\n"
             "\n"
             "Exercises passed: 3/5\n"
@@ -131,47 +151,35 @@ def test_determine_grade_response(
             "  ✅ ex1 — score 3\n"
             "  ⬜ ex2 — score 0",
         ),
+        # Multi-lab, filtered to first lab — no aggregate
         (
-            ProgressResponse(
-                challenge_aggregate={
-                    "score_total": 0,
-                    "num_exercises_passed": 0,
-                    "num_exercises": 2,
-                },
-                per_lab=[
-                    {
-                        "name": "lab_skqd",
-                        "score_total": 0,
-                        "num_exercises_passed": 0,
-                        "num_exercises": 2,
-                        "per_exercise": [
-                            {"name": "ex1", "score": 0, "passed": False},
-                            {"name": "ex2", "score": 0, "passed": False},
-                        ],
-                    },
-                ],
-            ),
+            _MULTI_LAB_RESPONSE,
+            "lab_skqd",
             "📊 Your progress\n"
             "\n"
-            "Exercises passed: 0/2\n"
-            "Total score: 0\n"
-            "\n"
-            'Lab "lab_skqd" — 0/2 passed, score 0\n'
-            "  ⬜ ex1 — score 0\n"
-            "  ⬜ ex2 — score 0",
+            'Lab "lab_skqd" — 2/3 passed, score 4\n'
+            "  ✅ ex1 — score 2\n"
+            "  ✅ ex2 — score 2\n"
+            "  ⬜ ex3 — score 0",
         ),
+        # Multi-lab, filtered to second lab — no aggregate
         (
-            ProgressResponse(
-                challenge_aggregate={
-                    "score_total": 0,
-                    "num_exercises_passed": 0,
-                    "num_exercises": 0,
-                },
-                per_lab=[],
-            ),
-            "📊 Your progress\n\nExercises passed: 0/0\nTotal score: 0",
+            _MULTI_LAB_RESPONSE,
+            "lab_qmoo",
+            "📊 Your progress\n"
+            "\n"
+            'Lab "lab_qmoo" — 1/2 passed, score 3\n'
+            "  ✅ ex1 — score 3\n"
+            "  ⬜ ex2 — score 0",
         ),
     ],
 )
-def test_determine_progress_response(response: ProgressResponse, expected: str) -> None:
-    assert determine_progress_response(response) == expected
+def test_determine_progress_response(
+    response: ProgressResponse, lab_name: str | None, expected: str
+) -> None:
+    assert determine_progress_response(response, lab_name=lab_name) == expected
+
+
+def test_determine_progress_response_unknown_lab() -> None:
+    with pytest.raises(ValueError, match='No lab named "lab_missing" found.'):
+        determine_progress_response(_MULTI_LAB_RESPONSE, lab_name="lab_missing")
