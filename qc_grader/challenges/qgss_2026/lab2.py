@@ -19,6 +19,7 @@ import numpy as np
 from qc_grader.grader.grade import grade_answer
 
 from qiskit import QuantumCircuit
+from rustworkx import EdgeList
 
 _CHALLENGE = "qgss_2026"
 _LAB = "lab2"
@@ -30,12 +31,13 @@ def _grade(answer: Any, exercise: str) -> None:
 
 @typechecked
 def grade_lab2_ex1(
-    basis_operations: list[str], coupling_map: list[list[int] | tuple[int, int]]
+    basis_operations: list[str], coupling_map: list[list[int] | tuple[int, int]] | EdgeList
 ) -> None:
     """
     Grade Exercise 1: Check ibm_fez basis operations and coupling map.
     """
-
+    if isinstance(coupling_map, EdgeList):
+        coupling_map = [[int(q0), int(q1)] for q0, q1 in coupling_map]
     answer_dict = {"basis_operations": basis_operations, "coupling_map": coupling_map}
     _grade(answer_dict, "ex1")
 
