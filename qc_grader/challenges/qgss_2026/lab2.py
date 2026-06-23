@@ -137,7 +137,7 @@ def grade_lab2_ex4(
     answer_dict = {
         "answer_pauli_visibility": answer_pauli_visibility,
     }
-    _grade(answer_dict, "ex3")
+    _grade(answer_dict, "ex4")
 
 
 def build_test_circuits() -> list[QuantumCircuit]:
