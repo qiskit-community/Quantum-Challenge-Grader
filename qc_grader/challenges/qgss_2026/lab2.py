@@ -14,7 +14,6 @@ QGSS 2026 Lab 2 - Grading Functions
 
 from typing import Any, Callable, TypedDict
 from typeguard import typechecked
-import numpy as np
 
 from qc_grader.grader.grade import grade_answer
 
@@ -31,7 +30,8 @@ def _grade(answer: Any, exercise: str) -> None:
 
 @typechecked
 def grade_lab2_ex1(
-    basis_operations: list[str], coupling_map: list[list[int] | tuple[int, int]] | EdgeList
+    basis_operations: list[str],
+    coupling_map: list[list[int] | tuple[int, int]] | EdgeList,
 ) -> None:
     """
     Grade Exercise 1: Check ibm_fez basis operations and coupling map.
@@ -67,38 +67,10 @@ def grade_lab2_ex2(repeated_x_circuit: Callable[[int], QuantumCircuit]) -> None:
     _grade(answer_dict, "ex2")
 
 
-Ex3InputCase = TypedDict(
-    "Ex3InputCase",
-    {
-        "true lambda": np.float64 | float,
-        "fitted lambda": np.float64 | float,
-        "fit std": np.float64 | float,
-    },
-)
-
-
 @typechecked
-def grade_lab2_ex3(lambda_fitting: list[Ex3InputCase]) -> None:
+def grade_lab2_ex3(repeated_x_meas_x_circuit: Callable[[int], QuantumCircuit]) -> None:
     """
-    Grade Exercise 3: Check the estimated lambda vs true lambda
-    """
-    answer_dict = {
-        "lambda_fitting_cases": [
-            {
-                "true lambda": float(case["true lambda"]),
-                "fitted lambda": float(case["fitted lambda"]),
-                "fit std": float(case["fit std"]),
-            }
-            for case in lambda_fitting
-        ]
-    }
-    _grade(answer_dict, "ex3")
-
-
-@typechecked
-def grade_lab2_ex4(repeated_x_meas_x_circuit: Callable[[int], QuantumCircuit]) -> None:
-    """
-    Grade Exercise 4: Check the repeated X circuit on X basis.
+    Grade Exercise 3: Check the repeated X circuit on X basis.
     """
     test_ns = [0, 1, 2, 3, 5, 10]
     repeated_x_meas_x_dict = dict()
@@ -111,7 +83,61 @@ def grade_lab2_ex4(repeated_x_meas_x_circuit: Callable[[int], QuantumCircuit]) -
         repeated_x_meas_x_dict[n] = circuit
 
     answer_dict = {"repeated_x_meas_x_circuit": repeated_x_meas_x_dict}
-    _grade(answer_dict, "ex4")
+    _grade(answer_dict, "ex3")
+
+
+@typechecked
+def grade_lab2_ex4(
+    answer_pauli_visibility: dict[str, dict[str, bool | None]],
+) -> None:
+    """
+    Grade Exercise 4: Identify which Pauli errors are detectable
+    in the bit-flip-sensitive and phase-flip-sensitive experiments.
+    """
+    required_errors = {"X error", "Y error", "Z error"}
+    required_experiments = {
+        "bit-flip sensitive",
+        "phase-flip sensitive",
+    }
+
+    submitted_errors = set(answer_pauli_visibility)
+    if submitted_errors != required_errors:
+        missing = required_errors - submitted_errors
+        extra = submitted_errors - required_errors
+        raise ValueError(
+            "The answer dictionary must contain exactly the keys "
+            f"{sorted(required_errors)}. Missing: {sorted(missing)}. "
+            f"Unexpected: {sorted(extra)}."
+        )
+
+    for error, contents in answer_pauli_visibility.items():
+        submitted_experiments = set(contents)
+        if submitted_experiments != required_experiments:
+            missing = required_experiments - submitted_experiments
+            extra = submitted_experiments - required_experiments
+            raise ValueError(
+                f"For {error}, provide exactly the keys "
+                f"{sorted(required_experiments)}. Missing: {sorted(missing)}. "
+                f"Unexpected: {sorted(extra)}."
+            )
+
+        for experiment, visibility in contents.items():
+            if visibility is None:
+                raise ValueError(
+                    f"Please replace None with True or False for "
+                    f"'{error}' in the '{experiment}' experiment."
+                )
+
+            if not isinstance(visibility, bool):
+                raise TypeError(
+                    f"The value for '{error}' in the '{experiment}' experiment "
+                    f"must be True or False, not {type(visibility).__name__}."
+                )
+
+    answer_dict = {
+        "answer_pauli_visibility": answer_pauli_visibility,
+    }
+    _grade(answer_dict, "ex3")
 
 
 def build_test_circuits() -> list[QuantumCircuit]:
