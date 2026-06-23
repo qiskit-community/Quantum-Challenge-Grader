@@ -6,6 +6,7 @@ build-backend = "hatchling.build"
 name = "qc_grader"
 dynamic = ["version"]
 description = "Grading client for the IBM Quantum Challenge"
+readme = "README.md"
 license = { text = "Apache-2.0" }
 authors = [
     { name = "IBM Quantum Community Team" },

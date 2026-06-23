@@ -40,16 +40,10 @@ just test
 
 ([Original documentation](https://docs.astral.sh/uv/concepts/projects/dependencies/))
 
-Add a core dependency:
+Add a dependency:
 
 ```
 uv add <dependency>
-```
-
-Add an extra:
-
-```
-uv add <dependnecy> --optional qiskit
 ```
 
 Add a dev dependency:
@@ -57,6 +51,37 @@ Add a dev dependency:
 ```
 uv add <dependency> --dev
 ```
+
+## Release a new version
+
+You should release a new version any time you make user-facing changes.
+
+Releasing is automated. To cut a release, update `__version__` in
+[`qc_grader/__init__.py`](qc_grader/__init__.py) to **today's date** and merge to `main`.
+A GitHub Actions workflow then builds the package, publishes it to PyPI, and creates a
+GitHub Release whose notes link to the commits included in that release.
+
+### Version format
+
+Versions are date-based, written as **`YEAR.MONTH.DAY`** with **no leading zeros**:
+
+* The year comes first, then the month, then the day (`YEAR.MONTH.DAY`).
+* Do not pad with zeros: use `6`, not `06`.
+
+For example, a release made on **18 June 2026** is version `2026.6.18`.
+
+| Date           | Version     |
+| -------------- | ----------- |
+| 18 June 2026   | `2026.6.18` |
+| 1 December 2026 | `2026.12.1` |
+| 5 January 2027 | `2027.1.5`  |
+
+If you need to release more than once on the same day, add a counter at the end, starting
+at `.1`: the second release on 18 June 2026 is `2026.6.18.1`, the third is `2026.6.18.2`,
+and so on.
+
+Versions only ever move forward — we always release from the latest `main` and never
+maintain older versions in parallel.
 
 ## Run the client
 
@@ -111,6 +136,37 @@ QiskitRuntimeService.save_account(
 ```
 
 For developers testing how the server behaves, you can use the files from `qc_grader.challenges.test_challenges`, such as `grade_success` from `qc_grader.challenges.test_challenges.individual`.
+
+## Adding a new challenge
+
+Create a new folder under `qc_grader/challenges` with the name of the challenge. This folder should contain:
+
+* A file for each lab (such as `lab0.py`, `lab2.py`)
+* An `__init__.py`, which imports and re-exports the grading functions from your labs.
+
+  Every challenge must also export a `check_progress` function so users can see how far they've gotten:
+
+  ```python
+  from qc_grader.grader.grade import create_check_progress_function
+
+  # Replace the string with the name of your challenge
+  check_progress = create_check_progress_function("...")
+  ```
+
+  Users call `check_progress()` (no arguments) to print a per-lab and per-exercise breakdown of their submissions plus a challenge-wide aggregate.
+
+  If your challenge is a team challenge, you should also export a `join_team` function so users can register with a team when they start.
+
+  ```python
+  from qc_grader.grader.grade import create_join_team_function
+
+  # Replace the string with the name of your challenge
+  join_team = create_join_team_function("...")
+  ```
+
+  Users must call `join_team()` with their team name to participate in a team challenge. They can switch teams any time.
+
+You may find it easier to copy an existing challenge and modify it.
 
 ## Adding new labs
 
