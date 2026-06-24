@@ -20,15 +20,10 @@ from qiskit.quantum_info import (
     Statevector,
     state_fidelity,
 )
+from qiskit_ibm_runtime import QuantumProgram
 from qiskit_ibm_runtime.options import EstimatorOptions
 
 from qc_grader.grader.grade import grade_answer
-
-# Only exported in newer runtime versions; fall back to Any otherwise.
-try:
-    from qiskit_ibm_runtime import QuantumProgram  # ty: ignore[unresolved-import]
-except Exception:
-    QuantumProgram = Any
 
 _CHALLENGE = "qgss_2026"
 _LAB = "lab3"
@@ -207,7 +202,10 @@ def grade_lab3_ex3(
     num_items = len(items)
     item = items[0] if num_items > 0 else None
     item_circuit_matches = bool(item is not None and item.circuit is template_ex3)
-    item_samplex_matches = bool(item is not None and item.samplex is samplex_ex3)
+    # `samplex` only exists on `SamplexItem`, not the `QuantumProgramItem` base,
+    item_samplex_matches = bool(
+        item is not None and getattr(item, "samplex", None) is samplex_ex3
+    )
 
     facts = {
         "template_params": template_params,
