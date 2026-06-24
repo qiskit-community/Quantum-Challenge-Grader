@@ -162,7 +162,7 @@ def grade_lab4b_ex2b(
 def grade_lab4b_ex2c(
     options_v3: SamplerOptions,
     optimized_circuit: QuantumCircuit,
-    meas_map_v3: dict[int, int] | list,
+    meas_map_v3: dict[int, int] | list[int],
     m3_quasis_v3: dict[str, float | np.floating],
     counts_bin_v3: dict[str | int, int],
 ):
@@ -186,7 +186,7 @@ def grade_lab4b_ex2c(
 def grade_lab4b_ex2d(
     options_v4: SamplerOptions,
     optimized_circuit: QuantumCircuit,
-    meas_map_v4: dict[int, int] | list,
+    meas_map_v4: dict[int, int] | list[int],
     m3_quasis_v4: dict[str, float | np.floating],
     counts_bin_v4: dict[str | int, int],
 ):
