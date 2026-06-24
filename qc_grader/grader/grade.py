@@ -162,7 +162,9 @@ def _check_progress(challenge_name: str, lab_name: str | None = None) -> None:
 
 @typechecked
 def create_check_progress_function(challenge_name: str) -> Callable[..., None]:
-    return partial(_check_progress, challenge_name=challenge_name)
+    # Bind `challenge_name` positionally (not as a keyword) so the user can pass
+    # `lab_name` either positionally or by keyword.
+    return partial(_check_progress, challenge_name)
 
 
 def _format_lab(lab: LabSummary) -> list[str]:
