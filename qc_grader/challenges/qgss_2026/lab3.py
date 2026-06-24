@@ -191,12 +191,6 @@ def grade_lab3_ex3(
 
     args_fully_bound = bool(samplex_args_ex3.fully_bound)
 
-    # Guards the case where QuantumProgram fell back to Any (no @typechecked).
-    if type(program_ex3).__name__ != "QuantumProgram":
-        raise TypeError(
-            "`program_ex3` should be a QuantumProgram, "
-            f"but got {type(program_ex3).__name__}."
-        )
 
     items = program_ex3.items
     num_items = len(items)
