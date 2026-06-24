@@ -14,10 +14,12 @@ QGSS 2026 Lab 4c - Grading Functions
 
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any, Sequence, Optional
 from typeguard import typechecked, CollectionCheckStrategy
 
 import numpy as np
+from qiskit import QuantumCircuit, generate_preset_pass_manager
+from qiskit_ibm_runtime.fake_provider import FakeMiami
 
 from qc_grader.grader.grade import grade_answer
 
@@ -45,6 +47,8 @@ def grade_lab4c_ex1a(
 @typechecked(collection_check_strategy=CollectionCheckStrategy.ALL_ITEMS)
 def grade_lab4c_ex1b(
     initial_layout: Sequence[int],
+    alpha_beta_indices: Sequence[Sequence[int]],
+    seed: Optional[int],
 ) -> None:
     """
     Grade Exercise 1b: Verify initial layout.
@@ -52,7 +56,56 @@ def grade_lab4c_ex1b(
     Args:
         initial_layout: A list of qubit layout
     """
-    _grade(initial_layout, "ex1b")
+
+    backend = FakeMiami()
+    num_pairs = len(alpha_beta_indices)
+
+    # Test alpha-beta pair layout
+    angles = np.array(
+        [
+            -1.52450963e00,
+            -1.51845886e00,
+            -7.65931488e-01,
+            -2.66798027e-02,
+            -1.51732558e-02,
+            5.37571952e-02,
+            3.61501255e-03,
+            4.62304337e-02,
+            1.78404672e-02,
+            8.64710024e-04,
+            1.54544066e-02,
+            -3.54207910e-02,
+            -3.57567660e-02,
+            1.64312367e-03,
+            2.00627775e-02,
+            -3.87242902e-02,
+            -2.46880320e-02,
+            -7.29545064e-03,
+            2.91340124e-03,
+            1.36074778e-02,
+            -4.85994184e-03,
+            -2.85536083e-02,
+            -4.15798626e-02,
+            -7.68232453e-01,
+            -1.51392432e00,
+            -1.47923619e00,
+        ]
+    )
+
+    diag_coulomb = QuantumCircuit(52)
+    for i in range(num_pairs):
+        diag_coulomb.cp(angles[i], i, i + 26)
+
+    pm = generate_preset_pass_manager(
+        backend=backend,
+        optimization_level=1 if num_pairs == 24 else 3,
+        initial_layout=initial_layout,
+        seed_transpiler=seed,
+    )
+    isa_circuit = pm.run(diag_coulomb)
+    depth2q = isa_circuit.depth(filter_function=lambda x: x.operation.num_qubits == 2)
+
+    _grade((initial_layout, (num_pairs, depth2q)), "ex1b")
 
 
 @typechecked()
