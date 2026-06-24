@@ -191,7 +191,6 @@ def grade_lab3_ex3(
 
     args_fully_bound = bool(samplex_args_ex3.fully_bound)
 
-
     items = program_ex3.items
     num_items = len(items)
     item = items[0] if num_items > 0 else None
