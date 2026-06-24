@@ -15,7 +15,6 @@ from typeguard import typechecked
 
 from qiskit.circuit import BoxOp
 from qiskit.quantum_info import (
-    Pauli,
     PauliLindbladMap,
     SparsePauliOp,
     Statevector,
@@ -25,7 +24,11 @@ from qiskit_ibm_runtime.options import EstimatorOptions
 
 from qc_grader.grader.grade import grade_answer
 
-QuantumProgram = Any
+# Only exported in newer runtime versions; fall back to Any otherwise.
+try:
+    from qiskit_ibm_runtime import QuantumProgram  # ty: ignore[unresolved-import]
+except Exception:
+    QuantumProgram = Any
 
 _CHALLENGE = "qgss_2026"
 _LAB = "lab3"
@@ -193,6 +196,13 @@ def grade_lab3_ex3(
 
     args_fully_bound = bool(samplex_args_ex3.fully_bound)
 
+    # Guards the case where QuantumProgram fell back to Any (no @typechecked).
+    if type(program_ex3).__name__ != "QuantumProgram":
+        raise TypeError(
+            "`program_ex3` should be a QuantumProgram, "
+            f"but got {type(program_ex3).__name__}."
+        )
+
     items = program_ex3.items
     num_items = len(items)
     item = items[0] if num_items > 0 else None
@@ -217,18 +227,14 @@ def grade_lab3_ex4(
     target_observable_ex4: SparsePauliOp,
     target_observable_ex4_isa: SparsePauliOp,
     obs_tilde_ex4: SparsePauliOp,
-    top_5_terms_ex4: list[tuple[str | Pauli, complex]],
 ) -> None:
     """
     Grade Exercise 4
     """
-    top_5 = [[str(term[0]), term[1]] for term in top_5_terms_ex4]
-
     facts = {
         "target": target_observable_ex4,
         "target_isa": target_observable_ex4_isa,
         "obs_tilde": obs_tilde_ex4,
-        "top_5": top_5,
     }
 
     _grade(facts, "ex4")
