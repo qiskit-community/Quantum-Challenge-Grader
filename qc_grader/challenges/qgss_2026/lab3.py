@@ -15,17 +15,15 @@ from typeguard import typechecked
 
 from qiskit.circuit import BoxOp
 from qiskit.quantum_info import (
-    Pauli,
     PauliLindbladMap,
     SparsePauliOp,
     Statevector,
     state_fidelity,
 )
+from qiskit_ibm_runtime import QuantumProgram
 from qiskit_ibm_runtime.options import EstimatorOptions
 
 from qc_grader.grader.grade import grade_answer
-
-QuantumProgram = Any
 
 _CHALLENGE = "qgss_2026"
 _LAB = "lab3"
@@ -197,7 +195,10 @@ def grade_lab3_ex3(
     num_items = len(items)
     item = items[0] if num_items > 0 else None
     item_circuit_matches = bool(item is not None and item.circuit is template_ex3)
-    item_samplex_matches = bool(item is not None and item.samplex is samplex_ex3)
+    # `samplex` only exists on `SamplexItem`, not the `QuantumProgramItem` base,
+    item_samplex_matches = bool(
+        item is not None and getattr(item, "samplex", None) is samplex_ex3
+    )
 
     facts = {
         "template_params": template_params,
@@ -217,18 +218,14 @@ def grade_lab3_ex4(
     target_observable_ex4: SparsePauliOp,
     target_observable_ex4_isa: SparsePauliOp,
     obs_tilde_ex4: SparsePauliOp,
-    top_5_terms_ex4: list[tuple[str | Pauli, complex]],
 ) -> None:
     """
     Grade Exercise 4
     """
-    top_5 = [[str(term[0]), term[1]] for term in top_5_terms_ex4]
-
     facts = {
         "target": target_observable_ex4,
         "target_isa": target_observable_ex4_isa,
         "obs_tilde": obs_tilde_ex4,
-        "top_5": top_5,
     }
 
     _grade(facts, "ex4")
