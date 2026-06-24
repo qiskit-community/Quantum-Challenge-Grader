@@ -15,6 +15,7 @@ QGSS 2026 Lab 4b - Grading Functions
 from typeguard import typechecked, check_type
 from typing import Any, Callable, TypedDict, cast
 from dataclasses import asdict
+import json
 
 import numpy as np
 import networkx as nx
@@ -89,16 +90,102 @@ def grade_lab4b_ex1b(
     _grade(answer_dict, "ex1b")
 
 
-def replace_unset_with_none(value):
-    type_name = type(value).__name__
+def sanitize_for_json(value: Any) -> Any:
+    """
+    Recursively sanitize a value to ensure it's JSON serializable.
+    Converts non-serializable items to None while preserving dictionary keys.
 
+    Args:
+        value: The value to sanitize (can be dict, list, or any other type)
+
+    Returns:
+        A JSON-serializable version of the value
+    """
+    # Handle None explicitly
+    if value is None:
+        return None
+
+    # Check for Unset types (backward compatibility)
+    type_name = type(value).__name__
     if type_name == "UnsetType" or repr(value) == "Unset":
         return None
 
+    # Handle dictionaries recursively
     if isinstance(value, dict):
-        return {k: replace_unset_with_none(v) for k, v in value.items()}
+        return {k: sanitize_for_json(v) for k, v in value.items()}
 
-    return value
+    # Handle lists and tuples recursively
+    if isinstance(value, (list, tuple)):
+        sanitized = [sanitize_for_json(item) for item in value]
+        return sanitized if isinstance(value, list) else tuple(sanitized)
+
+    # Try to serialize the value to check if it's JSON-serializable
+    try:
+        json.dumps(value)
+        return value
+    except (TypeError, ValueError, OverflowError):
+        # If not serializable, return None
+        return None
+
+
+@typechecked
+def grade_lab4b_ex2a(
+    options_v1: SamplerOptions,
+):
+    """
+    Grade Exercise 2a: Error suppression techniques
+    """
+
+    options_dict = sanitize_for_json(asdict(options_v1))
+    answer_dict = {
+        "options_v1": options_dict,
+    }
+    _grade(answer_dict, "ex2a")
+
+
+@typechecked
+def grade_lab4b_ex2b(
+    options_v2: SamplerOptions,
+):
+    """
+    Grade Exercise 2b: Error suppression techniques
+    """
+
+    options_dict = sanitize_for_json(asdict(options_v2))
+    answer_dict = {
+        "options_v2": options_dict,
+    }
+    _grade(answer_dict, "ex2b")
+
+
+@typechecked
+def grade_lab4b_ex2c(
+    options_v3: SamplerOptions,
+):
+    """
+    Grade Exercise 2c: Error suppression techniques
+    """
+
+    options_dict = sanitize_for_json(asdict(options_v3))
+    answer_dict = {
+        "options_v3": options_dict,
+    }
+    _grade(answer_dict, "ex2c")
+
+
+@typechecked
+def grade_lab4b_ex2d(
+    options_v4: SamplerOptions,
+):
+    """
+    Grade Exercise 2d: Error suppression techniques
+    """
+
+    options_dict = sanitize_for_json(asdict(options_v4))
+    answer_dict = {
+        "options_v4": options_dict,
+    }
+    _grade(answer_dict, "ex2d")
 
 
 @typechecked
@@ -132,9 +219,7 @@ def grade_lab4b_ex2(
     m3_quasis_v3 = {k: float(v) for k, v in m3_quasis_v3.items()}
     m3_quasis_v4 = {k: float(v) for k, v in m3_quasis_v4.items()}
     # Transform options_list elements into a dictionary with not UnsetType values
-    options_dicts = [
-        replace_unset_with_none(asdict(options)) for options in options_list
-    ]
+    options_dicts = [sanitize_for_json(asdict(options)) for options in options_list]
     answer_dict = {
         "options_list": options_dicts,
         "counts_list": counts_list,
@@ -213,6 +298,66 @@ def grade_lab4b_ex3c(
     }
 
     _grade(answer_dict, "ex3c")
+
+
+@typechecked
+def grade_lab4b_ex4a(
+    options_no_em: EstimatorOptions,
+):
+    """
+    Grade Exercise 4a: Error mitigation techniques
+    """
+
+    options_dict = sanitize_for_json(asdict(options_no_em))
+    answer_dict = {
+        "options_no_em": options_dict,
+    }
+    _grade(answer_dict, "ex4a")
+
+
+@typechecked
+def grade_lab4b_ex4b(
+    options_trex: EstimatorOptions,
+):
+    """
+    Grade Exercise 4b: Error mitigation techniques
+    """
+
+    options_dict = sanitize_for_json(asdict(options_trex))
+    answer_dict = {
+        "options_trex": options_dict,
+    }
+    _grade(answer_dict, "ex4b")
+
+
+@typechecked
+def grade_lab4b_ex4c(
+    options_zne: EstimatorOptions,
+):
+    """
+    Grade Exercise 4c: Error mitigation techniques
+    """
+
+    options_dict = sanitize_for_json(asdict(options_zne))
+    answer_dict = {
+        "options_zne": options_dict,
+    }
+    _grade(answer_dict, "ex4c")
+
+
+@typechecked
+def grade_lab4b_ex4d(
+    options_pec: EstimatorOptions,
+):
+    """
+    Grade Exercise 4d: Error mitigation techniques
+    """
+
+    options_dict = sanitize_for_json(asdict(options_pec))
+    answer_dict = {
+        "options_pec": options_dict,
+    }
+    _grade(answer_dict, "ex4d")
 
 
 def _reconstruct_exp_map(job: RuntimeJobV2 | LocalRuntimeJob) -> dict[int, np.floating]:
@@ -319,7 +464,7 @@ def grade_lab4b_ex4(
             )
     # Transform options_list elements into a dictionary with not UnsetType values
     estimator_options_dicts = [
-        replace_unset_with_none(asdict(options)) for options in estimator_options_list
+        sanitize_for_json(asdict(options)) for options in estimator_options_list
     ]
     # Check 4: results has a best value which has a difference smaller than 5% of the total sum
     best_difference, best_method, total_sum = _find_best_result(results_dict)

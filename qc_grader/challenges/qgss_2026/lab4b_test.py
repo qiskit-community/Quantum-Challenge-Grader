@@ -33,6 +33,7 @@ from qc_grader.challenges.qgss_2026.lab4b import (
     _reconstruct_exp_map,
     grade_lab4b_ex4,
     grade_lab4b_exbonus,
+    sanitize_for_json,
 )
 
 
@@ -53,6 +54,186 @@ def test_dict_contains_nested_missing_key():
     full = {"a": 1, "b": {"x": 10}}
     subset = {"b": {"x": 10, "y": 20}}
     assert _dict_contains(full, subset) is False
+
+
+def test_sanitize_for_json_none():
+    """Test that None values are preserved."""
+    assert sanitize_for_json(None) is None
+
+
+def test_sanitize_for_json_basic_types():
+    """Test that basic JSON-serializable types are preserved."""
+    assert sanitize_for_json(42) == 42
+    assert sanitize_for_json(3.14) == 3.14
+    assert sanitize_for_json("hello") == "hello"
+    assert sanitize_for_json(True) is True
+    assert sanitize_for_json(False) is False
+
+
+def test_sanitize_for_json_list():
+    """Test that lists are recursively sanitized."""
+    result = sanitize_for_json([1, 2, "three", None])
+    assert result == [1, 2, "three", None]
+
+
+def test_sanitize_for_json_tuple():
+    """Test that tuples are recursively sanitized and preserved as tuples."""
+    result = sanitize_for_json((1, 2, "three", None))
+    assert result == (1, 2, "three", None)
+    assert isinstance(result, tuple)
+
+
+def test_sanitize_for_json_dict():
+    """Test that dictionaries are recursively sanitized."""
+    input_dict = {
+        "a": 1,
+        "b": "text",
+        "c": None,
+        "d": [1, 2, 3],
+    }
+    result = sanitize_for_json(input_dict)
+    assert result == input_dict
+
+
+def test_sanitize_for_json_nested_dict():
+    """Test that nested dictionaries are recursively sanitized."""
+    input_dict = {"level1": {"level2": {"level3": "value"}}}
+    result = sanitize_for_json(input_dict)
+    assert result == input_dict
+
+
+def test_sanitize_for_json_non_serializable_object():
+    """Test that non-serializable objects are converted to None."""
+
+    class CustomObject:
+        pass
+
+    obj = CustomObject()
+    result = sanitize_for_json(obj)
+    assert result is None
+
+
+def test_sanitize_for_json_dict_with_non_serializable_values():
+    """Test that non-serializable values in dicts are converted to None while preserving keys."""
+
+    class CustomObject:
+        pass
+
+    input_dict = {"valid": 42, "invalid": CustomObject(), "also_valid": "text"}
+    result = sanitize_for_json(input_dict)
+
+    assert result["valid"] == 42
+    assert result["invalid"] is None
+    assert result["also_valid"] == "text"
+    assert set(result.keys()) == {"valid", "invalid", "also_valid"}
+
+
+def test_sanitize_for_json_list_with_non_serializable():
+    """Test that non-serializable items in lists are converted to None."""
+
+    class CustomObject:
+        pass
+
+    input_list = [1, CustomObject(), "text", None]
+    result = sanitize_for_json(input_list)
+
+    assert result[0] == 1
+    assert result[1] is None
+    assert result[2] == "text"
+    assert result[3] is None
+
+
+def test_sanitize_for_json_complex_nested_structure():
+    """Test sanitization of complex nested structures."""
+
+    class CustomObject:
+        pass
+
+    input_data = {
+        "numbers": [1, 2, 3],
+        "nested": {
+            "valid": "text",
+            "invalid": CustomObject(),
+            "list": [1, CustomObject(), 3],
+        },
+        "tuple": (1, 2, CustomObject()),
+        "object": CustomObject(),
+    }
+
+    result = sanitize_for_json(input_data)
+
+    assert result["numbers"] == [1, 2, 3]
+    assert result["nested"]["valid"] == "text"
+    assert result["nested"]["invalid"] is None
+    assert result["nested"]["list"] == [1, None, 3]
+    assert result["tuple"] == (1, 2, None)
+    assert result["object"] is None
+
+
+def test_sanitize_for_json_unset_type_backward_compatibility():
+    """Test backward compatibility with UnsetType."""
+
+    # Create a mock Unset-like object
+    class UnsetType:
+        def __repr__(self):
+            return "Unset"
+
+    unset_value = UnsetType()
+    result = sanitize_for_json(unset_value)
+    assert result is None
+
+
+def test_sanitize_for_json_dict_with_unset():
+    """Test that Unset values in dicts are converted to None."""
+
+    class UnsetType:
+        def __repr__(self):
+            return "Unset"
+
+    input_dict = {
+        "set_value": 42,
+        "unset_value": UnsetType(),
+        "nested": {"also_unset": UnsetType()},
+    }
+
+    result = sanitize_for_json(input_dict)
+
+    assert result["set_value"] == 42
+    assert result["unset_value"] is None
+    assert result["nested"]["also_unset"] is None
+
+
+def test_sanitize_for_json_numpy_array():
+    """Test that numpy arrays (non-serializable) are converted to None."""
+    arr = np.array([1, 2, 3])
+    result = sanitize_for_json(arr)
+    assert result is None
+
+
+def test_sanitize_for_json_dict_with_numpy():
+    """Test that numpy arrays in dicts are converted to None."""
+    input_dict = {"regular": [1, 2, 3], "numpy": np.array([1, 2, 3])}
+
+    result = sanitize_for_json(input_dict)
+
+    assert result["regular"] == [1, 2, 3]
+    assert result["numpy"] is None
+
+
+def test_sanitize_for_json_empty_containers():
+    """Test that empty containers are preserved."""
+    assert sanitize_for_json({}) == {}
+    assert sanitize_for_json([]) == []
+    assert sanitize_for_json(()) == ()
+
+
+def test_sanitize_for_json_preserves_numeric_types():
+    """Test that various numeric types are preserved."""
+    assert sanitize_for_json(42) == 42
+    assert sanitize_for_json(3.14159) == 3.14159
+    assert sanitize_for_json(-100) == -100
+    assert sanitize_for_json(0) == 0
+    assert sanitize_for_json(0.0) == 0.0
 
 
 # ------------------------------------------------------------------------------------------------------

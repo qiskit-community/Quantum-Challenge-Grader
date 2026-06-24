@@ -6,6 +6,7 @@ build-backend = "hatchling.build"
 name = "qc_grader"
 dynamic = ["version"]
 description = "Grading client for the IBM Quantum Challenge"
+readme = "README.md"
 license = { text = "Apache-2.0" }
 authors = [
     { name = "IBM Quantum Community Team" },
@@ -25,9 +26,8 @@ dependencies = [
     "ibm-platform-services",
     "networkx",
     "qiskit>=2.3.0,<3.0",
-    "qiskit-ibm-runtime",
+    "qiskit-ibm-runtime>=0.47.0",
     "samplomatic",
-
     # Dependencies our challenges use. You can remove these
     # when removing old challenges if they're no longer used.
     "moocore",
