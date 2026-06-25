@@ -101,8 +101,8 @@ def determine_grade_response(
     if passed:
         return msg + score_line
     if score > 0:
-        return f"\nOops 😕! {msg}{score_line}\nPlease review your answer and try again."
-    return f"\nOops 😕! {msg}\nPlease review your answer and try again."
+        return f"\nNot quite! {msg}{score_line}\nPlease review your answer and try again."
+    return f"\nNot quite! {msg}\nPlease review your answer and try again."
 
 
 # ------------------------------------------------------------------------------------------------------
