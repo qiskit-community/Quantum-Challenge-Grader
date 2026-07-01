@@ -1055,6 +1055,7 @@ dependencies = [
     { name = "qiskit" },
     { name = "qiskit-ibm-runtime" },
     { name = "requests" },
+    { name = "rustworkx" },
     { name = "samplomatic" },
     { name = "typeguard" },
 ]
@@ -1074,6 +1075,7 @@ requires-dist = [
     { name = "qiskit", specifier = ">=2.3.0,<3.0" },
     { name = "qiskit-ibm-runtime", specifier = ">=0.47.0" },
     { name = "requests" },
+    { name = "rustworkx" },
     { name = "samplomatic" },
     { name = "typeguard" },
 ]
