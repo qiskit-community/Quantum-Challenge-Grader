@@ -161,14 +161,23 @@ def grade_lab4b_ex2b(
 @typechecked
 def grade_lab4b_ex2c(
     options_v3: SamplerOptions,
+    optimized_circuit: QuantumCircuit,
+    meas_map_v3: dict[int, int] | list[int],
+    m3_quasis_v3: dict[str, float | np.floating],
+    counts_bin_v3: dict[str | int, int],
 ):
     """
     Grade Exercise 2c: Error suppression techniques
     """
 
     options_dict = sanitize_for_json(asdict(options_v3))
+    m3_quasis_v3 = {k: float(v) for k, v in m3_quasis_v3.items()}
     answer_dict = {
-        "options_v3": options_dict,
+        "options": options_dict,
+        "optimized_circuit": optimized_circuit,
+        "meas_map": meas_map_v3,
+        "m3_quasis": m3_quasis_v3,
+        "counts_bin": counts_bin_v3,
     }
     _grade(answer_dict, "ex2c")
 
@@ -176,14 +185,23 @@ def grade_lab4b_ex2c(
 @typechecked
 def grade_lab4b_ex2d(
     options_v4: SamplerOptions,
+    optimized_circuit: QuantumCircuit,
+    meas_map_v4: dict[int, int] | list[int],
+    m3_quasis_v4: dict[str, float | np.floating],
+    counts_bin_v4: dict[str | int, int],
 ):
     """
-    Grade Exercise 2d: Error suppression techniques
+    Grade Exercise 2c: Error suppression techniques
     """
 
     options_dict = sanitize_for_json(asdict(options_v4))
+    m3_quasis_v4 = {k: float(v) for k, v in m3_quasis_v4.items()}
     answer_dict = {
-        "options_v4": options_dict,
+        "options": options_dict,
+        "optimized_circuit": optimized_circuit,
+        "meas_map": meas_map_v4,
+        "m3_quasis": m3_quasis_v4,
+        "counts_bin": counts_bin_v4,
     }
     _grade(answer_dict, "ex2d")
 
@@ -192,8 +210,6 @@ def grade_lab4b_ex2d(
 def grade_lab4b_ex2(
     options_list: list[SamplerOptions],
     counts_list: list[dict[str, int | float]],
-    m3_quasis_v3: dict[str, float | np.floating],
-    m3_quasis_v4: dict[str, float | np.floating],
     job_list: list[RuntimeJobV2 | LocalRuntimeJob],
 ):
     """
@@ -215,16 +231,11 @@ def grade_lab4b_ex2(
                 f"⚠️ Warning: job_v{i} is not a RuntimeJobV2 instance. "
                 "You appear to be using a simulator, but this exercise is supposed to use a real hardware backend."
             )
-    # Go through these values m3_quasis_v3 and m3_quasis_v4 and convert np.floating into float
-    m3_quasis_v3 = {k: float(v) for k, v in m3_quasis_v3.items()}
-    m3_quasis_v4 = {k: float(v) for k, v in m3_quasis_v4.items()}
     # Transform options_list elements into a dictionary with not UnsetType values
     options_dicts = [sanitize_for_json(asdict(options)) for options in options_list]
     answer_dict = {
         "options_list": options_dicts,
         "counts_list": counts_list,
-        "m3_quasis_v3": m3_quasis_v3,
-        "m3_quasis_v4": m3_quasis_v4,
     }
     _grade(answer_dict, "ex2")
 
