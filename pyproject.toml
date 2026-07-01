@@ -27,12 +27,12 @@ dependencies = [
     "networkx",
     "qiskit>=2.3.0,<3.0",
     "qiskit-ibm-runtime>=0.47.0",
-    "samplomatic",
-    "rustworkx",
 
     # Dependencies our challenges use. You can remove these
     # when removing old challenges if they're no longer used.
     "moocore",
+    "rustworkx",
+    "samplomatic",
 ]
 
 [project.urls]
