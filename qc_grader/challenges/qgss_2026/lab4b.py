@@ -537,7 +537,8 @@ def grade_lab4b_exbonus(
         raise ValueError(
             "result_bonus['exp_map'] does not match the expectation map reconstructed from its estimator job"
         )
-
+    if len(numbers_bonus) != 1600:
+        raise ValueError("The length of numbers_bonus should be 1600")
     # Convert refined bit assignment back to number sets
     set0 = [
         int(numbers_bonus[i]) for i in range(len(numbers_bonus)) if best_bits[i] == 1
