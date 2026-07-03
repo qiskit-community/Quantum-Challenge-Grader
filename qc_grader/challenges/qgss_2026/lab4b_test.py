@@ -721,12 +721,14 @@ def test_grade_lab4b_exbonus_correct_bit_reconstruction() -> None:
     """Test that correct bit reconstruction passes validation."""
     mock_job = _create_runtime_job([1.0, 2.0, 3.0])
 
-    numbers_bonus = [10, 20, 30, 40, 50]
-    best_bits = [1, 0, 1, 0, 1]  # set0=[10,30,50], set1=[20,40]
+    # numbers_bonus must be exactly 1600 elements; first 5 are meaningful, rest are
+    # 0s assigned to set1 (bit=0) so they don't affect set0.
+    numbers_bonus = [10, 20, 30, 40, 50] + [0] * 1595
+    best_bits = [1, 0, 1, 0, 1] + [0] * 1595  # set0=[10,30,50], set1=[20,40,0,...,0]
 
     result_bonus = _create_bonus_result(
         [10, 30, 50],
-        [20, 40],
+        [20, 40] + [0] * 1595,
         {0: np.float64(1.0), 1: np.float64(2.0), 2: np.float64(3.0)},
     )
 
@@ -738,12 +740,15 @@ def test_grade_lab4b_exbonus_incorrect_bit_reconstruction() -> None:
     """Test that incorrect bit reconstruction raises ValueError."""
     mock_job = _create_runtime_job([1.0, 2.0])
 
-    numbers_bonus = [10, 20, 30, 40]
-    best_bits = [1, 0, 1, 0]  # Would give set0=[10,30], set1=[20,40]
+    # numbers_bonus must be exactly 1600 elements.
+    numbers_bonus = [10, 20, 30, 40] + [0] * 1596
+    best_bits = [1, 0, 1, 0] + [
+        0
+    ] * 1596  # Would give set0=[10,30], set1=[20,40,0,...,0]
 
     result_bonus = _create_bonus_result(
         [10, 40],  # Wrong! Should be [10, 30]
-        [20, 30],  # Wrong! Should be [20, 40]
+        [20, 30] + [0] * 1596,  # Wrong! Should be [20, 40, 0, ...]
         {0: np.float64(1.0), 1: np.float64(2.0)},
     )
 
@@ -758,10 +763,13 @@ def test_grade_lab4b_exbonus_empty_sets() -> None:
     """Test with empty sets (all bits same value)."""
     mock_job = _create_runtime_job([1.0], qpu_seconds=50.0)
 
-    numbers_bonus = [10, 20, 30]
-    best_bits = [0, 0, 0]  # All in set1
+    # numbers_bonus must be exactly 1600 elements; all bits 0 so all go to set1.
+    numbers_bonus = [10, 20, 30] + [0] * 1597
+    best_bits = [0] * 1600  # All in set1
 
-    result_bonus = _create_bonus_result([], [10, 20, 30], {0: np.float64(1.0)})
+    result_bonus = _create_bonus_result(
+        [], [10, 20, 30] + [0] * 1597, {0: np.float64(1.0)}
+    )
 
     with patch("qc_grader.challenges.qgss_2026.lab4b.grade_answer"):
         grade_lab4b_exbonus(result_bonus, best_bits, numbers_bonus, mock_job)
@@ -814,8 +822,9 @@ def test_grade_lab4b_exbonus_mismatched_lengths() -> None:
     """Test that mismatched lengths between best_bits and numbers_bonus causes IndexError."""
     mock_job = _create_runtime_job([1.0])
 
-    numbers_bonus = [10, 20, 30]
-    best_bits = [1, 0]  # Too short!
+    # numbers_bonus must be exactly 1600 elements; best_bits intentionally too short.
+    numbers_bonus = [10, 20, 30] + [0] * 1597  # 1600 elements
+    best_bits = [1, 0]  # Too short — IndexError during set reconstruction
 
     result_bonus = _create_bonus_result([10], [20], {0: np.float64(1.0)})
 
