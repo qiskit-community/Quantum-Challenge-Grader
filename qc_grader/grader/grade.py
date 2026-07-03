@@ -101,8 +101,10 @@ def determine_grade_response(
     if passed:
         return msg + score_line
     if score > 0:
-        return f"\nOops 😕! {msg}{score_line}\nPlease review your answer and try again."
-    return f"\nOops 😕! {msg}\nPlease review your answer and try again."
+        return (
+            f"\nNot quite! {msg}{score_line}\nPlease review your answer and try again."
+        )
+    return f"\nNot quite! {msg}\nPlease review your answer and try again."
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -162,7 +164,9 @@ def _check_progress(challenge_name: str, lab_name: str | None = None) -> None:
 
 @typechecked
 def create_check_progress_function(challenge_name: str) -> Callable[..., None]:
-    return partial(_check_progress, challenge_name=challenge_name)
+    # Bind `challenge_name` positionally (not as a keyword) so the user can pass
+    # `lab_name` either positionally or by keyword.
+    return partial(_check_progress, challenge_name)
 
 
 def _format_lab(lab: LabSummary) -> list[str]:

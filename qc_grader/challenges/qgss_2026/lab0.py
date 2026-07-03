@@ -79,27 +79,11 @@ def grade_lab0_ex3(exp_val: np.ndarray | float) -> None:
 
 
 @typechecked
-def grade_lab0_ex4(c_out: list[str], cpp_out: list[str]) -> None:
+def grade_lab0_ex4(sv: Statevector) -> None:
     """
-    Grade Exercise 4: Verify C/C++ circuit outputs.
-
-    Args:
-        c_out: Shell output from C circuit program
-        cpp_out: Shell output from C++ circuit program
-    """
-    answer_dict = {
-        "c_out": " ".join(str(x) for x in c_out),
-        "cpp_out": " ".join(str(x) for x in cpp_out),
-    }
-    _grade(answer_dict, "ex4")
-
-
-@typechecked
-def grade_lab0_ex5(sv: Statevector) -> None:
-    """
-    Grade Exercise 5: Verify statevector.
+    Grade Exercise 4: Verify statevector.
 
     Args:
         sv: Statevector object to verify
     """
-    _grade(sv, "ex5")
+    _grade(sv, "ex4")

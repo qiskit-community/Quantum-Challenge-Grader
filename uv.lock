@@ -340,6 +340,21 @@ wheels = [
 ]
 
 [[package]]
+name = "ibm-quantum-schemas"
+version = "0.9.20260612"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pybase64" },
+    { name = "pydantic" },
+    { name = "qiskit" },
+    { name = "samplomatic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d5/41/448a23f4ea497d6eec461a34bb1ad599d37a36ee72f126340d95c3c78fae/ibm_quantum_schemas-0.9.20260612.tar.gz", hash = "sha256:d22ad0f900fb897ad446ba7413979e003bdc29d75584d74890c8c8ccff3c6544", size = 97979, upload-time = "2026-06-12T14:20:24.235Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ad/7f/a41b1cee6cfd140c978dd3177dc78dfe04f9a7566c9ef211fe8ce2a6c3eb/ibm_quantum_schemas-0.9.20260612-py3-none-any.whl", hash = "sha256:31afc35c15c56d10f4c9c39155478802daaab5baffb4215fbb93d8ddbdf3f285", size = 111323, upload-time = "2026-06-12T14:20:22.865Z" },
+]
+
+[[package]]
 name = "idna"
 version = "3.11"
 source = { registry = "https://pypi.org/simple" }
@@ -1040,6 +1055,7 @@ dependencies = [
     { name = "qiskit" },
     { name = "qiskit-ibm-runtime" },
     { name = "requests" },
+    { name = "rustworkx" },
     { name = "samplomatic" },
     { name = "typeguard" },
 ]
@@ -1057,8 +1073,9 @@ requires-dist = [
     { name = "moocore" },
     { name = "networkx" },
     { name = "qiskit", specifier = ">=2.3.0,<3.0" },
-    { name = "qiskit-ibm-runtime" },
+    { name = "qiskit-ibm-runtime", specifier = ">=0.47.0" },
     { name = "requests" },
+    { name = "rustworkx" },
     { name = "samplomatic" },
     { name = "typeguard" },
 ]
@@ -1097,28 +1114,30 @@ wheels = [
 
 [[package]]
 name = "qiskit-ibm-runtime"
-version = "0.45.1"
+version = "0.47.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ibm-platform-services" },
+    { name = "ibm-quantum-schemas" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "packaging" },
+    { name = "pybase64" },
     { name = "pydantic" },
     { name = "python-dateutil" },
     { name = "qiskit" },
     { name = "requests" },
     { name = "requests-ntlm" },
+    { name = "samplomatic" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/cc/50/82917ad29bfeab4f03163de8fe61b8832811c7413baa857300b6cc461619/qiskit_ibm_runtime-0.45.1.tar.gz", hash = "sha256:cc8e9360ba5e76df6c6663bd37644ce3e1252554eb1faba0fa5922fc95cd38c2", size = 1525919, upload-time = "2026-02-12T17:17:55.735Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/1b/72/edb412c34011abccf53c632c526d05e39059b3d0f1cd23e8cd3c249d7894/qiskit_ibm_runtime-0.47.0.tar.gz", hash = "sha256:3f670cc58d52fc599f09e2f533d8c91124391ed1224987e379a677a3bf801ea6", size = 1980137, upload-time = "2026-05-12T18:35:04.381Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ee/98/92edc7c34deaf698db5bcaa31e0bbd43d4e317b2526b9fdf2b5a957956e4/qiskit_ibm_runtime-0.45.1-py3-none-any.whl", hash = "sha256:b48a791e414f85d0d835fa8df110ba0e996393b06e2458ad498c7e68fc06e7da", size = 1453522, upload-time = "2026-02-12T17:17:54.023Z" },
+    { url = "https://files.pythonhosted.org/packages/cd/7e/1c816137b32f56013f889340c4777d4433f0568f01c0c537730bdf81288d/qiskit_ibm_runtime-0.47.0-py3-none-any.whl", hash = "sha256:5115e5d2200cbbd1dd4d71cee473787632b46b14a933c75cd65115477fc6c93a", size = 1911275, upload-time = "2026-05-12T18:35:02.157Z" },
 ]
 
 [[package]]
 name = "requests"
-version = "2.32.3"
+version = "2.34.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
@@ -1126,9 +1145,9 @@ dependencies = [
     { name = "idna" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/63/70/2bf7780ad2d390a8d301ad0b550f1581eadbd9a20f896afe06353c2a2913/requests-2.32.3.tar.gz", hash = "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760", size = 131218, upload-time = "2024-05-29T15:37:49.536Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ac/c3/e2a2b89f2d3e2179abd6d00ebd70bff6273f37fb3e0cc209f48b39d00cbf/requests-2.34.2.tar.gz", hash = "sha256:f288924cae4e29463698d6d60bc6a4da69c89185ad1e0bcc4104f584e960b9ed", size = 142856, upload-time = "2026-05-14T19:25:27.735Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f9/9b/335f9764261e915ed497fcdeb11df5dfd6f7bf257d4a6a2a686d80da4d54/requests-2.32.3-py3-none-any.whl", hash = "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6", size = 64928, upload-time = "2024-05-29T15:37:47.027Z" },
+    { url = "https://files.pythonhosted.org/packages/a0/f4/c67b0b3f1b9245e8d266f0f112c500d50e5b4e83cb6f3b71b6528104182a/requests-2.34.2-py3-none-any.whl", hash = "sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0", size = 73075, upload-time = "2026-05-14T19:25:26.443Z" },
 ]
 
 [[package]]

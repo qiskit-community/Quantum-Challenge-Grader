@@ -36,13 +36,13 @@ from qc_grader.grader.grade import (
             False,
             0,
             "Circuit A: you said 2, but depth is 3.",
-            "\nOops 😕! Circuit A: you said 2, but depth is 3.\nPlease review your answer and try again.",
+            "\nNot quite! Circuit A: you said 2, but depth is 3.\nPlease review your answer and try again.",
         ),
         (
             False,
             1,
             "Incorrect basis operations.",
-            "\nOops 😕! Incorrect basis operations.\nYou scored 1 on this exercise.\nPlease review your answer and try again.",
+            "\nNot quite! Incorrect basis operations.\nYou scored 1 on this exercise.\nPlease review your answer and try again.",
         ),
     ],
 )
