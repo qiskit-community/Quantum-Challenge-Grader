@@ -72,11 +72,11 @@ def grade_answer(answer: Any, lab: str, exercise: str, challenge: str) -> None:
     print("Grading your answer. Please wait...\n")
     try:
         answer_json_str = to_json(answer)
-        answer_bytes = answer_json_str.encode("utf-8")
-        if len(answer_bytes) > _MAX_ANSWER_BYTES:
+        # len() == byte count because json.dumps uses ensure_ascii=True (default), producing pure ASCII.
+        if len(answer_json_str) > _MAX_ANSWER_BYTES:
             print(
                 f"Your answer is too large to submit "
-                f"({len(answer_bytes) / 1024 / 1024:.1f} MB). "
+                f"({len(answer_json_str) / 1024 / 1024:.1f} MB). "
                 "Please simplify your answer and try again."
             )
             return
