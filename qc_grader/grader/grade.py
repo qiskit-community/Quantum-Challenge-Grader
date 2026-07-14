@@ -62,14 +62,26 @@ class GradeResponse(TypedDict):
     msg: str
 
 
+_MAX_ANSWER_BYTES = 50 * 1024 * 1024  # 50 MB
+
+
 def grade_answer(answer: Any, lab: str, exercise: str, challenge: str) -> None:
     """Send the answer to the validate endpoint and print the result."""
 
     print("Grading your answer. Please wait...\n")
     try:
+        answer_json_str = to_json(answer)
+        answer_bytes = answer_json_str.encode("utf-8")
+        if len(answer_bytes) > _MAX_ANSWER_BYTES:
+            print(
+                f"Your answer is too large to submit "
+                f"({len(answer_bytes) / 1024 / 1024:.1f} MB). "
+                "Please simplify your answer and try again."
+            )
+            return
         response = send_request(
             f"/submissions/{challenge}/{lab}/{exercise}",
-            body={"answer": to_json(answer)},
+            body={"answer": answer_json_str},
         )
         check_type(response, GradeResponse)
     except typeguard.TypeCheckError as e:
