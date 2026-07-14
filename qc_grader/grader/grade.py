@@ -62,6 +62,7 @@ class GradeResponse(TypedDict):
     msg: str
 
 
+# Payload limits are also set in the server and may need to be adjusted.
 _MAX_ANSWER_BYTES = 50 * 1024 * 1024  # 50 MB
 
 
