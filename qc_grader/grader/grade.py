@@ -63,7 +63,7 @@ class GradeResponse(TypedDict):
 
 
 # Payload limits are also set in the server and may need to be adjusted.
-_MAX_ANSWER_BYTES = 50 * 1024 * 1024  # 50 MB
+_MAX_ANSWER_BYTES = 20 * 1024 * 1024  # 20 MB
 
 
 def grade_answer(answer: Any, lab: str, exercise: str, challenge: str) -> None:
@@ -74,9 +74,10 @@ def grade_answer(answer: Any, lab: str, exercise: str, challenge: str) -> None:
         answer_json_str = to_json(answer)
         # len() == byte count because json.dumps uses ensure_ascii=True (default), producing pure ASCII.
         if len(answer_json_str) > _MAX_ANSWER_BYTES:
+            limit_mb = _MAX_ANSWER_BYTES / 1024 / 1024
             print(
                 f"Your answer is too large to submit "
-                f"({len(answer_json_str) / 1024 / 1024:.1f} MB). "
+                f"({len(answer_json_str) / 1024 / 1024:.1f} MB, limit is {limit_mb:.0f} MB). "
                 "Please simplify your answer and try again."
             )
             return
