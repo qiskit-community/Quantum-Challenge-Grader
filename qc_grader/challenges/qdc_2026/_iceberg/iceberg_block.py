@@ -182,23 +182,23 @@ class LogicalBlock:
 
     # -- logical operator supports ----------------------------------------------
 
-    def z_supports(self, l, frame=0):
+    def z_supports(self, l, frame=0):  # noqa: E741
         """Both physical supports of Zbar_l, stabilizer-equivalent representatives."""
         return tuple(
             tuple(self.physical(r, frame) for r in roles) for roles in Z_SUPPORTS[l]
         )
 
-    def x_supports(self, l, frame=0):
+    def x_supports(self, l, frame=0):  # noqa: E741
         """Both physical supports of Xbar_l."""
         return tuple(
             tuple(self.physical(r, frame) for r in roles) for roles in X_SUPPORTS[l]
         )
 
-    def z_support(self, l, frame=0, representative=0):
+    def z_support(self, l, frame=0, representative=0):  # noqa: E741
         """One physical support of Zbar_l."""
         return self.z_supports(l, frame)[representative]
 
-    def x_support(self, l, frame=0, representative=0):
+    def x_support(self, l, frame=0, representative=0):  # noqa: E741
         """One physical support of Xbar_l."""
         return self.x_supports(l, frame)[representative]
 
@@ -268,8 +268,12 @@ def _check_operator_algebra():
     # The two representatives of each logical differ by the stabilizer, so their
     # symmetric difference is the full four-qubit stabilizer support.
     for supports in (Z_SUPPORTS, X_SUPPORTS):
-        for l, (rep_a, rep_b) in supports.items():
-            assert set(rep_a) ^ set(rep_b) == set(STABILIZER_SUPPORT), (l, rep_a, rep_b)
+        for lq, (rep_a, rep_b) in supports.items():
+            assert set(rep_a) ^ set(rep_b) == set(STABILIZER_SUPPORT), (
+                lq,
+                rep_a,
+                rep_b,
+            )
     # Zbar_i anticommutes with Xbar_i and commutes with Xbar_j, for every choice of
     # representative on either side.
     for i in (0, 1):
@@ -317,7 +321,12 @@ def _check_block_construction():
     assert block.site_to_physical() == {0: 16, 1: 3, 2: 4, 3: 2, 4: 1, 5: 0}
     assert block_from_sites(0, block.site_to_physical()) == block
     assert block.configured("syndrome") == {
-        16: "d0", 3: "az", 4: "d1", 2: "ax", 1: "d2", 0: "d3",
+        16: "d0",
+        3: "az",
+        4: "d1",
+        2: "ax",
+        1: "d2",
+        0: "d3",
     }
     for bad, reason in [
         ({"d0": 0}, "incomplete"),

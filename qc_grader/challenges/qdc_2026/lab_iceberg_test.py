@@ -106,7 +106,7 @@ def test_every_exercise_has_a_grade_function():
         )
     if str(server) not in sys.path:
         sys.path.insert(0, str(server))
-    from validations.qdc_2026 import lab_iceberg as S
+    from validations.qdc_2026 import lab_iceberg as S  # ty: ignore[unresolved-import]
 
     for exercise in S.POINTS:
         assert hasattr(C, f"grade_lab_iceberg_{exercise}"), exercise
@@ -547,8 +547,8 @@ def test_a_function_reading_the_global_still_works():
     captured = {}
 
     def postselect(data_list, syn_list):
-        captured["from_global"] = num_logical_blocks  # noqa: F821 - injected by the client
-        return P.GRADER_postselect_parity(data_list, syn_list, num_logical_blocks)  # noqa: F821
+        captured["from_global"] = num_logical_blocks  # noqa: F821 - injected by the client  # ty: ignore[unresolved-reference]
+        return P.GRADER_postselect_parity(data_list, syn_list, num_logical_blocks)  # noqa: F821  # ty: ignore[unresolved-reference]
 
     _packed(C.grade_lab_iceberg_ex2_1, postselect)
     assert captured["from_global"] == 2

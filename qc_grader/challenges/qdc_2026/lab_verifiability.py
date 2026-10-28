@@ -77,7 +77,7 @@ def _int(x: object, name: str) -> int:
     if isinstance(x, (bool, np.bool_)):
         raise ValueError(f"Pass a whole number for {name}, not a bool.")
     if isinstance(x, np.ndarray) and x.size == 1:
-        x = x.item()
+        x = x.item()  # ty: ignore[no-matching-overload]
     if isinstance(x, (int, np.integer)):
         return int(x)
     if (
@@ -94,7 +94,7 @@ def _real(x: object, name: str) -> float:
     if isinstance(x, (bool, np.bool_)):
         raise ValueError(f"Pass a number for {name}, not a bool.")
     if isinstance(x, np.ndarray) and x.size == 1:
-        x = x.item()
+        x = x.item()  # ty: ignore[no-matching-overload]
     if isinstance(x, (int, float, np.integer, np.floating)):
         return float(x)
     raise ValueError(f"Pass a number for {name}; got {_kind(x)}.")

@@ -163,9 +163,9 @@ def _require_callable(fn: object, name: str) -> Callable:
     return fn  # type: ignore[return-value]
 
 
-def _num(x: object, what: str) -> float:
+def _num(x: Any, what: str) -> float:
     try:
-        v = float(x)  # type: ignore[arg-type]
+        v = float(x)
     except Exception:
         raise ValueError(f"{what} must be a number, got {type(x).__name__}.") from None
     if not math.isfinite(v):
@@ -173,10 +173,10 @@ def _num(x: object, what: str) -> float:
     return v
 
 
-def _site_key(site: object) -> str:
+def _site_key(site: Any) -> str:
     """``(block, logical)`` -> a JSON string, because JSON object keys must be strings."""
     try:
-        return json.dumps([int(x) for x in site])  # type: ignore[union-attr]
+        return json.dumps([int(x) for x in site])
     except Exception:
         raise ValueError(
             f"Expected a (block, logical) site pair, got {site!r}. The keys of your "
@@ -184,9 +184,9 @@ def _site_key(site: object) -> str:
         ) from None
 
 
-def _obs_key(key: object) -> str:
+def _obs_key(key: Any) -> str:
     try:
-        site, rep = key  # type: ignore[misc]
+        site, rep = key
         return json.dumps([[int(x) for x in site], int(rep)])
     except Exception:
         raise ValueError(
@@ -210,7 +210,7 @@ def _zbar_map(values: object, what: str) -> dict:
     return {_site_key(site): _num(v, f"{what}[{site!r}]") for site, v in values.items()}
 
 
-def _levels(mapping: object, field: str) -> dict:
+def _levels(mapping: Any, field: str) -> dict:
     """``{(site, rep): array}`` -> ``{json key: [floats]}``, NaN preserved as None."""
     if not isinstance(mapping, dict):
         raise ValueError(f"{field} must be a dict keyed by (site, representative).")
@@ -348,7 +348,7 @@ def grade_lab_iceberg_ex1_2(
     """PART 1.2 - the toy system: ``lattice``, ``block_qubits``, ``bubble_sites``,
     ``placement``."""
     try:
-        sites = [[int(b), int(l)] for b, l in lattice.nodes()]
+        sites = [[int(b), int(lq)] for b, lq in lattice.nodes()]
         edges = [[[int(x) for x in u], [int(y) for y in v]] for u, v in lattice.edges]
     except Exception:
         raise ValueError(
@@ -365,7 +365,7 @@ def grade_lab_iceberg_ex1_2(
         "block_qubits": {
             str(int(b)): [int(q) for q in qs] for b, qs in block_qubits.items()
         },
-        "bubble": [[int(b), int(l)] for b, l in bubble_sites],
+        "bubble": [[int(b), int(lq)] for b, lq in bubble_sites],
     }
     _grade(answer, "ex1_2")
 
@@ -417,9 +417,9 @@ def grade_lab_iceberg_ex1_3(
                 )
             )
         )
-    for b, l, frame in LOGICAL_X_CASES:
+    for b, lq, frame in LOGICAL_X_CASES:
         probe, _, place = _fresh_circuit()
-        answer["logical_x"].append(_signature(logical_x(probe, place, b, l, frame)))
+        answer["logical_x"].append(_signature(logical_x(probe, place, b, lq, frame)))
     for fr in PREP_BLOCKS_CASES:
         probe, _, place = _fresh_circuit()
         answer["bubble"].append(
@@ -863,7 +863,7 @@ def grade_lab_iceberg_ex3_1(
             "n_sites": len(sites),
             "n_blocks": len({int(b) for b, _ in sites}),
             "n_edges": int(n_edges),
-            "bubble": [[int(b), int(l)] for b, l in bubble_sites_L],
+            "bubble": [[int(b), int(lq)] for b, lq in bubble_sites_L],
         },
         "ex3_1",
     )
@@ -910,11 +910,11 @@ def grade_lab_iceberg_ex3_4(
         raise ValueError(
             "The bitstring lists are empty: did the job results come back?"
         )
-    first_data = data_bitstrings_list[0]
-    first_syn = syn_bitstrings_list[0]
+    first_data = data_bitstrings_list[0]  # ty: ignore[not-subscriptable]
+    first_syn = syn_bitstrings_list[0]  # ty: ignore[not-subscriptable]
     if not first_data or not first_syn:
         raise ValueError("The first circuit has no shots.")
-    obs_k = obs_k_list[0] if obs_k_list else {}
+    obs_k = obs_k_list[0] if obs_k_list else {}  # ty: ignore[not-subscriptable]
     f0 = []
     for v in obs_k.values():
         series = v.get("f_k") if isinstance(v, dict) else None
@@ -1049,10 +1049,10 @@ def grade_lab_iceberg_ex5_2(
     _grade(
         {
             "backend": str(backend_name)[:128],
-            "depth_hh": int(depth_heavyhex),
-            "depth_sq": int(depth_square),
-            "gates_hh": int(gates_heavyhex),
-            "gates_sq": int(gates_square),
+            "depth_hh": int(depth_heavyhex),  # ty: ignore[invalid-argument-type]
+            "depth_sq": int(depth_square),  # ty: ignore[invalid-argument-type]
+            "gates_hh": int(gates_heavyhex),  # ty: ignore[invalid-argument-type]
+            "gates_sq": int(gates_square),  # ty: ignore[invalid-argument-type]
             "unenc_sq": _zbar_map(unenc_square, "unenc_square"),
         },
         "ex5_2",

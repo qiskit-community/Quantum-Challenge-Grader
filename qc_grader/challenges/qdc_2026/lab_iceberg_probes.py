@@ -74,8 +74,8 @@ def _observables(num_logical_blocks: int) -> dict:
     index = {b: i for i, b in enumerate(placement.blocks)}
     out = {}
     for site in lattice.nodes():
-        b, l = site  # the probe uses the identity site -> code-qubit map
-        for rep, roles in enumerate(Z_SUPPORTS[l]):
+        b, lq = site  # the probe uses the identity site -> code-qubit map
+        for rep, roles in enumerate(Z_SUPPORTS[lq]):
             bits = [4 * index[b] + int(role[1]) for role in roles]
             out[(site, rep)] = SparsePauliOp.from_sparse_list(
                 [("ZZ", bits, 1.0)], num_qubits=n_bits

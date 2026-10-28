@@ -25,7 +25,7 @@ from itertools import combinations
 from types import MappingProxyType
 
 from . import iceberg_device as device
-from .iceberg_block import CONFIGURATIONS, LogicalBlock, ROLES
+from .iceberg_block import LogicalBlock, ROLES
 
 
 #: Physical qubits owned by each block. Ground truth, from the paper's Fig. 1b.
@@ -64,11 +64,41 @@ BRIDGES = (5, 45, 47, 51, 61, 69, 91, 105, 115, 129, 147)
 #: The 35 adjacent block pairs listed in Table ``tab:cost``. Used as a validator.
 TAB_COST_PAIRS = frozenset(
     {
-        (0, 1), (0, 2), (1, 3), (2, 4), (2, 9), (3, 5), (3, 7), (4, 9), (5, 6),
-        (5, 7), (5, 8), (6, 8), (6, 9), (6, 11), (7, 8), (8, 11), (8, 12), (9, 10),
-        (10, 13), (11, 12), (11, 14), (11, 15), (12, 15), (13, 14), (13, 16),
-        (13, 19), (14, 15), (14, 17), (14, 19), (15, 17), (16, 18), (16, 19),
-        (17, 19), (17, 20), (19, 20),
+        (0, 1),
+        (0, 2),
+        (1, 3),
+        (2, 4),
+        (2, 9),
+        (3, 5),
+        (3, 7),
+        (4, 9),
+        (5, 6),
+        (5, 7),
+        (5, 8),
+        (6, 8),
+        (6, 9),
+        (6, 11),
+        (7, 8),
+        (8, 11),
+        (8, 12),
+        (9, 10),
+        (10, 13),
+        (11, 12),
+        (11, 14),
+        (11, 15),
+        (12, 15),
+        (13, 14),
+        (13, 16),
+        (13, 19),
+        (14, 15),
+        (14, 17),
+        (14, 19),
+        (15, 17),
+        (16, 18),
+        (16, 19),
+        (17, 19),
+        (17, 20),
+        (19, 20),
     }
 )
 
@@ -81,8 +111,15 @@ FIG2A_GRID = {
     3: {1: (9, 1), 2: (9, 0), 3: (6, 0), 4: (6, 1), 5: (5, 1), 6: (5, 0)},
     4: {1: (10, 1), 2: (10, 0), 3: (11, 0), 4: (11, 1), 5: (8, 0), 6: (8, 1)},
     5: {1: (13, 0), 2: (13, 1), 3: (14, 0), 4: (14, 1), 5: (15, 0), 6: (12, 1)},
-    6: {0: (18, 1), 1: (16, 1), 2: (19, 1), 3: (17, 0), 4: (17, 1), 5: (15, 1),
-        6: (12, 0)},
+    6: {
+        0: (18, 1),
+        1: (16, 1),
+        2: (19, 1),
+        3: (17, 0),
+        4: (17, 1),
+        5: (15, 1),
+        6: (12, 0),
+    },
     7: {0: (18, 0), 1: (16, 0), 2: (19, 0), 3: (20, 1), 4: (20, 0)},
 }
 
@@ -111,7 +148,7 @@ class LatticeCheck:
         return not (self.unknown_blocks or self.duplicate_sites)
 
     def summary(self):
-        lines = ["structurally %s" % ("ok" if self.ok else "INVALID")]
+        lines: list[str] = ["structurally %s" % ("ok" if self.ok else "INVALID")]
         if self.unknown_blocks:
             lines.append("  sites naming unknown blocks: %s" % (self.unknown_blocks,))
         if self.duplicate_sites:
@@ -130,13 +167,16 @@ class LatticeCheck:
                 % (u, v, tuple(sorted((u[0], v[0]))))
             )
         if self.degree_out_of_range:
-            lines.append("  sites with degree outside 2..4: %s"
-                         % (self.degree_out_of_range,))
+            lines.append(
+                "  sites with degree outside 2..4: %s" % (self.degree_out_of_range,)
+            )
         return "\n".join(lines)
 
     def __repr__(self):
         return "LatticeCheck(ok=%s, realizable=%d, unrealizable=%d)" % (
-            self.ok, len(self.realizable), len(self.unrealizable)
+            self.ok,
+            len(self.realizable),
+            len(self.unrealizable),
         )
 
 
@@ -182,14 +222,13 @@ class LogicalLattice:
             if len(coord) != 2 or not all(isinstance(c, int) for c in coord):
                 raise ValueError("coordinate must be two ints, got %r" % (coord,))
             if len(node) != 2 or node[1] not in (0, 1):
-                raise ValueError("site must be (block, l) with l in (0, 1), got %r"
-                                 % (node,))
+                raise ValueError(
+                    "site must be (block, l) with l in (0, 1), got %r" % (node,)
+                )
         if edges is None:
             dropped = {_canonical_edge(u, v) for u, v in omit}
             candidates = nearest_neighbor_edges(sites)
-            edges = tuple(
-                e for e in candidates if _canonical_edge(*e) not in dropped
-            )
+            edges = tuple(e for e in candidates if _canonical_edge(*e) not in dropped)
             unknown = dropped - {_canonical_edge(*e) for e in candidates}
             if unknown:
                 raise ValueError(
@@ -200,16 +239,22 @@ class LogicalLattice:
         known = set(sites.values())
         for u, v in edges:
             if u not in known or v not in known:
-                raise ValueError("edge %s - %s names a site not on the lattice" % (u, v))
+                raise ValueError(
+                    "edge %s - %s names a site not on the lattice" % (u, v)
+                )
         return cls(sites=MappingProxyType(dict(sorted(sites.items()))), edges=edges)
 
     @classmethod
     def from_rows(cls, rows, edges=None, omit=()):
         """Build from the picture-like ``{row: {col: (block, l)}}`` form."""
         return cls.from_sites(
-            {(row, col): node for row, entries in rows.items()
-             for col, node in entries.items()},
-            edges=edges, omit=omit,
+            {
+                (row, col): node
+                for row, entries in rows.items()
+                for col, node in entries.items()
+            },
+            edges=edges,
+            omit=omit,
         )
 
     def from_blocks(self, blocks):
@@ -304,12 +349,11 @@ class LogicalLattice:
             else:
                 seen[node] = coord
         unknown = tuple(
-            (coord, self.sites[coord]) for coord in sorted(self.sites)
+            (coord, self.sites[coord])
+            for coord in sorted(self.sites)
             if self.sites[coord][0] not in placement.blocks
         )
-        missing = tuple(
-            node for node in placement.logical_nodes() if node not in seen
-        )
+        missing = tuple(node for node in placement.logical_nodes() if node not in seen)
         good, bad = self.realizable(placement)
         degree = self.degrees()
         out_of_range = tuple(
@@ -326,8 +370,10 @@ class LogicalLattice:
 
     def __repr__(self):
         return "LogicalLattice(%d sites, %d couplings: %d intra + %d inter)" % (
-            len(self.sites), len(self.edges),
-            len(self.intra_edges()), len(self.inter_edges()),
+            len(self.sites),
+            len(self.edges),
+            len(self.intra_edges()),
+            len(self.inter_edges()),
         )
 
 
@@ -365,23 +411,72 @@ FIG2A_MISSING = (
 #:     LogicalLattice.from_rows(FIG2A_GRID, edges=FIG2A_EDGES)   # include these
 #:     LogicalLattice.from_rows(FIG2A_GRID, omit=FIG2A_MISSING)  # all but these
 FIG2A_EDGES = (
-    ((4, 1), (2, 0)), ((4, 1), (4, 0)), ((2, 0), (0, 1)), ((2, 0), (2, 1)),
-    ((0, 1), (1, 0)), ((0, 1), (0, 0)), ((1, 0), (3, 0)), ((1, 0), (1, 1)),
-    ((3, 0), (7, 1)), ((3, 0), (3, 1)), ((7, 1), (7, 0)), ((4, 0), (2, 1)),
-    ((4, 0), (9, 1)), ((2, 1), (0, 0)), ((2, 1), (9, 0)), ((0, 0), (1, 1)),
-    ((1, 1), (3, 1)), ((3, 1), (7, 0)), ((3, 1), (5, 1)), ((7, 0), (5, 0)),
-    ((9, 1), (9, 0)), ((9, 1), (10, 1)), ((9, 0), (6, 0)), ((9, 0), (10, 0)),
-    ((6, 0), (6, 1)), ((6, 0), (11, 0)), ((6, 1), (5, 1)), ((6, 1), (11, 1)),
-    ((5, 1), (5, 0)), ((5, 1), (8, 0)), ((5, 0), (8, 1)), ((10, 1), (10, 0)),
-    ((10, 1), (13, 0)), ((10, 0), (13, 1)), ((11, 0), (11, 1)), ((11, 0), (14, 0)),
-    ((11, 1), (8, 0)), ((11, 1), (14, 1)), ((8, 0), (8, 1)), ((8, 1), (12, 1)),
-    ((13, 0), (13, 1)), ((13, 0), (16, 1)), ((13, 1), (14, 0)), ((13, 1), (19, 1)),
-    ((14, 0), (14, 1)), ((14, 0), (17, 0)), ((14, 1), (15, 0)), ((14, 1), (17, 1)),
-    ((15, 0), (12, 1)), ((15, 0), (15, 1)), ((12, 1), (12, 0)), ((18, 1), (16, 1)),
-    ((18, 1), (18, 0)), ((16, 1), (19, 1)), ((16, 1), (16, 0)), ((19, 1), (17, 0)),
-    ((19, 1), (19, 0)), ((17, 0), (17, 1)), ((17, 0), (20, 1)), ((17, 1), (15, 1)),
-    ((17, 1), (20, 0)), ((15, 1), (12, 0)), ((18, 0), (16, 0)), ((16, 0), (19, 0)),
-    ((19, 0), (20, 1)), ((20, 1), (20, 0)),
+    ((4, 1), (2, 0)),
+    ((4, 1), (4, 0)),
+    ((2, 0), (0, 1)),
+    ((2, 0), (2, 1)),
+    ((0, 1), (1, 0)),
+    ((0, 1), (0, 0)),
+    ((1, 0), (3, 0)),
+    ((1, 0), (1, 1)),
+    ((3, 0), (7, 1)),
+    ((3, 0), (3, 1)),
+    ((7, 1), (7, 0)),
+    ((4, 0), (2, 1)),
+    ((4, 0), (9, 1)),
+    ((2, 1), (0, 0)),
+    ((2, 1), (9, 0)),
+    ((0, 0), (1, 1)),
+    ((1, 1), (3, 1)),
+    ((3, 1), (7, 0)),
+    ((3, 1), (5, 1)),
+    ((7, 0), (5, 0)),
+    ((9, 1), (9, 0)),
+    ((9, 1), (10, 1)),
+    ((9, 0), (6, 0)),
+    ((9, 0), (10, 0)),
+    ((6, 0), (6, 1)),
+    ((6, 0), (11, 0)),
+    ((6, 1), (5, 1)),
+    ((6, 1), (11, 1)),
+    ((5, 1), (5, 0)),
+    ((5, 1), (8, 0)),
+    ((5, 0), (8, 1)),
+    ((10, 1), (10, 0)),
+    ((10, 1), (13, 0)),
+    ((10, 0), (13, 1)),
+    ((11, 0), (11, 1)),
+    ((11, 0), (14, 0)),
+    ((11, 1), (8, 0)),
+    ((11, 1), (14, 1)),
+    ((8, 0), (8, 1)),
+    ((8, 1), (12, 1)),
+    ((13, 0), (13, 1)),
+    ((13, 0), (16, 1)),
+    ((13, 1), (14, 0)),
+    ((13, 1), (19, 1)),
+    ((14, 0), (14, 1)),
+    ((14, 0), (17, 0)),
+    ((14, 1), (15, 0)),
+    ((14, 1), (17, 1)),
+    ((15, 0), (12, 1)),
+    ((15, 0), (15, 1)),
+    ((12, 1), (12, 0)),
+    ((18, 1), (16, 1)),
+    ((18, 1), (18, 0)),
+    ((16, 1), (19, 1)),
+    ((16, 1), (16, 0)),
+    ((19, 1), (17, 0)),
+    ((19, 1), (19, 0)),
+    ((17, 0), (17, 1)),
+    ((17, 0), (20, 1)),
+    ((17, 1), (15, 1)),
+    ((17, 1), (20, 0)),
+    ((15, 1), (12, 0)),
+    ((18, 0), (16, 0)),
+    ((16, 0), (19, 0)),
+    ((19, 0), (20, 1)),
+    ((20, 1), (20, 0)),
 )
 
 #: The paper's logical graph of Fig. 2a: a square lattice on :data:`FIG2A_GRID` less the
@@ -413,9 +508,7 @@ def fork_candidates(placement=None, topology=None):
         inner = {q: neighbors[q] & qubits for q in qubits}
         degree = {q: len(n) for q, n in inner.items()}
         hub = next(q for q, d in degree.items() if d == 3)
-        candidates[index] = tuple(
-            sorted(q for q in inner[hub] if degree[q] == 1)
-        )
+        candidates[index] = tuple(sorted(q for q in inner[hub] if degree[q] == 1))
     return candidates
 
 
@@ -492,11 +585,18 @@ class Connection:
     def __repr__(self):
         if self.bridge is None:
             return "Connection(%d-%d direct: %d-%d)" % (
-                self.blocks[0], self.blocks[1], self.a_qubit, self.b_qubit
+                self.blocks[0],
+                self.blocks[1],
+                self.a_qubit,
+                self.b_qubit,
             )
         return "Connection(%d-%d via %d: %d-%d-%d)" % (
-            self.blocks[0], self.blocks[1], self.bridge,
-            self.a_qubit, self.bridge, self.b_qubit,
+            self.blocks[0],
+            self.blocks[1],
+            self.bridge,
+            self.a_qubit,
+            self.bridge,
+            self.b_qubit,
         )
 
 
@@ -531,7 +631,10 @@ class Route:
         placement, so the inter-block gadget is a pair of arms plus an optional bridge
         rather than a bespoke circuit per edge.
         """
-        strip = lambda roles: tuple(r.split(":", 1)[1] for r in roles)
+
+        def strip(roles):
+            return tuple(r.split(":", 1)[1] for r in roles)
+
         arm_a = strip(r for r in self.roles if r.startswith("a:"))
         arm_b = strip(r for r in self.roles if r.startswith("b:"))
         return arm_a, tuple(reversed(arm_b)), "bridge" in self.roles
@@ -593,8 +696,9 @@ class Placement:
     # -- construction -----------------------------------------------------------
 
     @classmethod
-    def from_qubits(cls, placement=None, bridges=BRIDGES, az_qubits=None,
-                    topology=None):
+    def from_qubits(
+        cls, placement=None, bridges=BRIDGES, az_qubits=None, topology=None
+    ):
         """Build a placement.
 
         ``placement`` maps block index -> its six physical qubits and ``bridges`` lists
@@ -612,8 +716,9 @@ class Placement:
         az_qubits = AZ_QUBITS if az_qubits is None else az_qubits
         unknown = set(az_qubits) - set(placement)
         if unknown:
-            raise ValueError("az_qubits names blocks not in the placement: %s"
-                             % sorted(unknown))
+            raise ValueError(
+                "az_qubits names blocks not in the placement: %s" % sorted(unknown)
+            )
         topology = device.as_topology(topology)
         blocks = {
             index: LogicalBlock(
@@ -648,7 +753,7 @@ class Placement:
         }
 
     def logical_nodes(self):
-        return tuple((b, l) for b in sorted(self.blocks) for l in (0, 1))
+        return tuple((b, lq) for b in sorted(self.blocks) for lq in (0, 1))
 
     def active_qubits(self):
         return frozenset(self.owner()) | frozenset(self.bridges)
@@ -749,16 +854,19 @@ class Placement:
                         roles = tuple(
                             self._role_label(q, owner, a, b, frames) for q in path
                         )
-                        bridge = next(
-                            (q for q in path if q in self.bridges), None
-                        )
+                        bridge = next((q for q in path if q in self.bridges), None)
                         signature = "-".join(roles)
                         out.setdefault(
                             path,
                             Route(
-                                u=u, v=v, path=path, roles=roles, bridge=bridge,
+                                u=u,
+                                v=v,
+                                path=path,
+                                roles=roles,
+                                bridge=bridge,
                                 supports=(support_a, support_b),
-                                frames=frames, signature=signature,
+                                frames=frames,
+                                signature=signature,
                             ),
                         )
         return tuple(sorted(out.values(), key=lambda r: (r.length, r.path)))
@@ -802,9 +910,7 @@ class Placement:
         chosen = {}
         for connection in self.connections().get(tuple(sorted((u[0], v[0]))), ()):
             crossed = set(connection.path)
-            match = next(
-                (r for p, r in by_path.items() if crossed <= set(p)), None
-            )
+            match = next((r for p, r in by_path.items() if crossed <= set(p)), None)
             if match is not None:
                 chosen[connection] = match
         return dict(sorted(chosen.items(), key=lambda kv: kv[1].length))
@@ -822,8 +928,13 @@ class Placement:
         roles = ("a:d1", "a:d2")
         return (
             Route(
-                u=u, v=v, path=pair, roles=roles, bridge=None,
-                supports=(pair, pair), frames=frames,
+                u=u,
+                v=v,
+                path=pair,
+                roles=roles,
+                bridge=None,
+                supports=(pair, pair),
+                frames=frames,
                 signature="intra:" + "-".join(roles),
             ),
         )
@@ -886,7 +997,8 @@ class Placement:
                 index = owner[qubit]
                 block = self.blocks[index]
                 graph.nodes[qubit].update(
-                    kind="block", block=index,
+                    kind="block",
+                    block=index,
                     role=block.role_at(qubit),
                     syndrome_role=block.configured("syndrome")[qubit],
                 )
@@ -925,15 +1037,14 @@ class Placement:
         lattice = FIG2A if lattice is None else lattice
         realizable, unrealizable = lattice.realizable(self)
         positions = lattice.positions()
-        graph = nx.Graph(
-            placement=self, lattice=lattice, missing_edges=unrealizable
-        )
+        graph = nx.Graph(placement=self, lattice=lattice, missing_edges=unrealizable)
         for node in lattice.nodes():
             graph.add_node(node, block=node[0], l=node[1], grid_pos=positions[node])
 
         for u, v in realizable:
             graph.add_edge(
-                u, v,
+                u,
+                v,
                 kind="intra" if u[0] == v[0] else "inter",
                 blocks=tuple(sorted((u[0], v[0]))),
                 routes=self.routes(
@@ -954,7 +1065,14 @@ def _check_blocks_on_device(place):
     assert len(owner) == 126, len(owner)
     coupling = place.topology.edges
     for index, block in place.blocks.items():
-        assert place.topology.induced_shape(block.physical_qubits()) == [1, 1, 1, 2, 2, 3], index
+        assert place.topology.induced_shape(block.physical_qubits()) == [
+            1,
+            1,
+            1,
+            2,
+            2,
+            3,
+        ], index
         for edge in block.physical_edges():
             assert edge in coupling, (index, edge)
         assert set(block.qubits) == set(ROLES), index
@@ -990,7 +1108,14 @@ def _check_forks(place):
     mirror = Placement.from_qubits(az_qubits={b: d0 for b, (d0, _) in choices.items()})
     for index, block in mirror.blocks.items():
         assert block.qubits["az"] == choices[index][0]
-        assert place.topology.induced_shape(block.physical_qubits()) == [1, 1, 1, 2, 2, 3]
+        assert place.topology.induced_shape(block.physical_qubits()) == [
+            1,
+            1,
+            1,
+            2,
+            2,
+            3,
+        ]
 
     # Bad input is rejected clearly.
     for bad, why in [({0: 3}, "a non-leaf qubit"), ({99: 4}, "an unknown block")]:
@@ -1026,7 +1151,8 @@ def _check_active_counts(place):
 def _check_adjacency(place):
     pairs = place.adjacent_pairs()
     assert pairs == TAB_COST_PAIRS, (
-        sorted(pairs - TAB_COST_PAIRS), sorted(TAB_COST_PAIRS - pairs)
+        sorted(pairs - TAB_COST_PAIRS),
+        sorted(TAB_COST_PAIRS - pairs),
     )
     connections = place.connections()
     multi = {p: c for p, c in connections.items() if len(c) > 1}
@@ -1077,7 +1203,8 @@ def _check_routes(place):
                 assert place.route(u, v) in chosen.values(), (u, v)
                 for connection, route in chosen.items():
                     same = [
-                        r for r in place.routes(u, v, place.frames_for(u, v))
+                        r
+                        for r in place.routes(u, v, place.frames_for(u, v))
                         if connection.bridge == r.bridge
                     ]
                     assert route.length == min(r.length for r in same), (u, v, route)
@@ -1167,7 +1294,8 @@ def _check_topology(place):
     class FakeCouplingMap:
         def size(self):
             return device.N_QUBITS
-        def get_edges(self):                      # directed both ways, as Qiskit may be
+
+        def get_edges(self):  # directed both ways, as Qiskit may be
             return [(v, u) for u, v in device.COUPLING_MAP] + list(device.COUPLING_MAP)
 
     from_cmap = device.as_topology(FakeCouplingMap())
@@ -1189,9 +1317,7 @@ def _check_topology(place):
 
     # A backend reporting fewer couplers than the ideal lattice still matches; one
     # reporting an edge the lattice lacks does not.
-    fewer = device.topology_from_edges(
-        device.N_QUBITS, sorted(topology.edges)[:-1]
-    )
+    fewer = device.topology_from_edges(device.N_QUBITS, sorted(topology.edges)[:-1])
     assert device.matches_heavy_hex(fewer)
     extra = device.topology_from_edges(
         device.N_QUBITS, sorted(topology.edges) + [(0, 155)]
@@ -1220,7 +1346,10 @@ def _check_lattice(place):
 
     # Every declared coupling can be routed at some frame.
     for u, v in check.realizable:
-        assert any(place.routes(u, v, f) for f in ((0, 0), (1, 0), (0, 1), (1, 1))), (u, v)
+        assert any(place.routes(u, v, f) for f in ((0, 0), (1, 0), (0, 1), (1, 1))), (
+            u,
+            v,
+        )
 
     # FIG2A_MISSING is verified, not assumed: a *full* square lattice on these sites has
     # exactly those four couplings unrealizable, and each really fails to route.
@@ -1278,8 +1407,10 @@ def _check_lattice(place):
         assert lattice.site_at(coord) == node
 
     # A user-supplied lattice: the 1D chain of six sites through blocks 4, 2, 0.
-    chain_sites = {(0, i): node for i, node in enumerate(
-        [(4, 1), (2, 0), (0, 1), (0, 0), (2, 1), (4, 0)])}
+    chain_sites = {
+        (0, i): node
+        for i, node in enumerate([(4, 1), (2, 0), (0, 1), (0, 0), (2, 1), (4, 0)])
+    }
     chain = LogicalLattice.from_sites(chain_sites)
     assert len(chain.edges) == 5, chain.edges
     chain_check = chain.check(place)
@@ -1333,8 +1464,9 @@ def _check_lattice_routes(place):
         # The chosen route is the unique shortest, and shortest over every frame too.
         assert route.length == shortest, edge
         assert sum(r.length == shortest for r in candidates) == 1, edge
-        assert shortest == min(r.length for f in all_frames
-                               for r in place.routes(*edge, f)), edge
+        assert shortest == min(
+            r.length for f in all_frames for r in place.routes(*edge, f)
+        ), edge
 
         if edge in intra:
             # Frame-independent: SWAP(d1, d2) only relabels an adjacent pair.
@@ -1347,7 +1479,9 @@ def _check_lattice_routes(place):
             # Four candidates per connection: the 2 x 2 logical-Z representative
             # freedom. Only one of the four is canonical, so the realizable count is
             # the connection count - see Placement.connection_routes.
-            n_connections = len(place.connections()[tuple(sorted((edge[0][0], edge[1][0])))])
+            n_connections = len(
+                place.connections()[tuple(sorted((edge[0][0], edge[1][0])))]
+            )
             assert len(candidates) == 4 * n_connections, (edge, len(candidates))
             assert len(place.connection_routes(*edge)) == n_connections, edge
 
@@ -1382,17 +1516,31 @@ def self_test():
 if __name__ == "__main__":
     placement = self_test()
     print("iceberg_layout: all self-checks passed")
-    print("  21 blocks, %d block qubits, %d bridges, %d active, %d unused"
-          % (len(placement.owner()), len(placement.bridges),
-             len(placement.active_qubits()), len(placement.unused_qubits())))
-    print("  %d adjacent block pairs == Table tab:cost" % len(placement.adjacent_pairs()))
+    print(
+        "  21 blocks, %d block qubits, %d bridges, %d active, %d unused"
+        % (
+            len(placement.owner()),
+            len(placement.bridges),
+            len(placement.active_qubits()),
+            len(placement.unused_qubits()),
+        )
+    )
+    print(
+        "  %d adjacent block pairs == Table tab:cost" % len(placement.adjacent_pairs())
+    )
     chosen = cheapest_routes(placement)
-    print("  %d couplings routed, %d distinct full signatures"
-          % (len(chosen), len({r.signature for r in chosen.values()})))
+    print(
+        "  %d couplings routed, %d distinct full signatures"
+        % (len(chosen), len({r.signature for r in chosen.values()}))
+    )
     check = FIG2A.check(placement)
     print("  %r" % (FIG2A,))
-    print("  vs placement: %d realizable, %d unrealizable"
-          % (len(check.realizable), len(check.unrealizable)))
+    print(
+        "  vs placement: %d realizable, %d unrealizable"
+        % (len(check.realizable), len(check.unrealizable))
+    )
     print("  %d distinct arm shapes:" % len(arm_shapes(placement)))
-    for arm, count in sorted(arm_shapes(placement).items(), key=lambda kv: (len(kv[0]), kv[0])):
+    for arm, count in sorted(
+        arm_shapes(placement).items(), key=lambda kv: (len(kv[0]), kv[0])
+    ):
         print("      %3dx  %s" % (count, "-".join(arm)))
