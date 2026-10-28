@@ -67,13 +67,13 @@ from .lab_iceberg import (
     grade_lab_iceberg_ex5_2,
 )
 
-# from .lab_ole import (
-#     grade_lab_ole_ex1,
-#     grade_lab_ole_ex2,
-#     grade_lab_ole_ex3,
-#     grade_lab_ole_ex4,
-#     grade_lab_ole_questions,
-# )
+from .lab_ole import (
+    grade_lab_ole_ex1,
+    grade_lab_ole_ex2,
+    grade_lab_ole_ex3,
+    grade_lab_ole_ex4,
+    grade_lab_ole_questions,
+)
 # from .lab_proteasome import (
 #     grade_lab_proteasome_ex1,
 #     grade_lab_proteasome_ex2,
@@ -190,11 +190,11 @@ __all__ = [
     # "grade_lab_proteasome_ex11",
     # "grade_lab_proteasome_ex12",
     # # lab_ole
-    # "grade_lab_ole_ex1",
-    # "grade_lab_ole_ex2",
-    # "grade_lab_ole_ex3",
-    # "grade_lab_ole_ex4",
-    # "grade_lab_ole_questions",
+    "grade_lab_ole_ex1",
+    "grade_lab_ole_ex2",
+    "grade_lab_ole_ex3",
+    "grade_lab_ole_ex4",
+    "grade_lab_ole_questions",
     # # lab_qamoo
     # "grade_lab_qamoo_ex1_1a",
     # "grade_lab_qamoo_ex1_1b",
