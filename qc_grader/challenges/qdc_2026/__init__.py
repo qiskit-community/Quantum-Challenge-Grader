@@ -111,6 +111,20 @@ from .lab_ole import (
 #     grade_lab_verifiability_ex9,
 #     grade_lab_verifiability_ex10,
 # )
+from .lab_tcfs import (
+    grade_lab_tcfs_ex1a,
+    grade_lab_tcfs_ex1b,
+    grade_lab_tcfs_ex1c,
+    grade_lab_tcfs_ex1d,
+    grade_lab_tcfs_ex2a,
+    grade_lab_tcfs_ex2b,
+    grade_lab_tcfs_ex2c,
+    grade_lab_tcfs_ex2d,
+    grade_lab_tcfs_ex2e,
+    grade_lab_tcfs_ex3d,
+    grade_lab_tcfs_ex3l,
+    grade_lab_tcfs_ex3t,
+)
 
 _CHALLENGE = "qdc_2026"
 join_team = create_join_team_function(_CHALLENGE)
@@ -205,4 +219,17 @@ __all__ = [
     # "grade_lab_qamoo_ex1_2c",
     # "grade_lab_qamoo_ex2_1",
     # "grade_lab_qamoo_ex2_2",
+    # # lab_foruier_lcu_qaoa
+    "grade_lab_tcfs_ex1a",
+    "grade_lab_tcfs_ex1b",
+    "grade_lab_tcfs_ex1c",
+    "grade_lab_tcfs_ex1d",
+    "grade_lab_tcfs_ex2a",
+    "grade_lab_tcfs_ex2b",
+    "grade_lab_tcfs_ex2c",
+    "grade_lab_tcfs_ex2d",
+    "grade_lab_tcfs_ex2e",
+    "grade_lab_tcfs_ex3d",
+    "grade_lab_tcfs_ex3l",
+    "grade_lab_tcfs_ex3t",
 ]
