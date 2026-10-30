@@ -372,8 +372,40 @@ def test_ex1_4_reads_the_schedule():
 
 
 def test_ex1_4_rejects_a_non_schedule():
-    with pytest.raises(ValueError, match="ScheduleOptimizer.optimize"):
-        _packed(C.grade_lab_iceberg_ex1_4, object())
+    """Either typeguard or ``_schedule_answer`` must stop it; which one is not the contract."""
+    for bad in (object(), (1, 2, 3), 42, None):
+        with pytest.raises((TypeCheckError, ValueError)):
+            _packed(C.grade_lab_iceberg_ex1_4, bad)
+
+
+def test_ex1_4_accepts_a_schedule_from_the_challenge_folders_own_class():
+    """A participant's own copy of ``GateSchedule`` is a distinct class object."""
+    ns: dict = {}
+    exec(  # noqa: S102
+        "class GateSchedule:\n"
+        "    def __init__(self, depth, time, status):\n"
+        "        self.depth, self.time, self.status = depth, time, status\n"
+        "    @property\n"
+        "    def n_cx(self):\n"
+        "        return len(self.time)\n",
+        ns,
+    )
+    sched = ns["GateSchedule"](12, {0: 0, 1: 2}, "OPTIMAL")
+    answer = _packed(C.grade_lab_iceberg_ex1_4, sched)
+    assert answer == {"depth": 12, "n_cx": 2, "status": "OPTIMAL"}
+
+
+def test_ex1_4_accepts_numpy_counts():
+    """``np.int64``/``np.int32`` are not ``int`` subclasses; ``SupportsInt`` admits them."""
+    np = pytest.importorskip("numpy")
+
+    class Gsched:
+        depth, n_cx, status = np.int64(12), np.int32(22), "OPTIMAL"
+
+    answer = _packed(C.grade_lab_iceberg_ex1_4, Gsched())
+    assert answer == {"depth": 12, "n_cx": 22, "status": "OPTIMAL"}
+    assert isinstance(answer["depth"], int)
+    assert isinstance(answer["n_cx"], int)
 
 
 @needs_prototype

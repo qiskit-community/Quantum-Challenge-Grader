@@ -34,7 +34,14 @@ import json
 import math
 import types
 from collections.abc import Callable, Iterable, Mapping
-from typing import Any, SupportsFloat
+from typing import (
+    Any,
+    Protocol,
+    SupportsFloat,
+    SupportsInt,
+    TypedDict,
+    runtime_checkable,
+)
 
 from typeguard import typechecked
 
@@ -75,11 +82,11 @@ _LAB = "lab_iceberg"
 #     a call to it"*, which is the fix. EXERCISES.md section 3 documents that message as the
 #     contract and the client tests assert it, so the hand-rolled check wins. Every one of these
 #     parameters is guarded on the first line of its function.
-#   * **``lattice``/``placement`` (ex1_2, ex3_1) and ``gsched`` (ex1_4, ex3_2).** The challenge's
-#     own ``LogicalLattice``, ``Placement`` and ``GateSchedule``. Annotating them would bind the
-#     check to ``_iceberg``'s copy of the class while the participant holds the challenge
-#     folder's - two identical classes that fail ``isinstance`` against each other, rejecting
-#     correct work. Verified: ``isinstance(utils_lattice, _iceberg.LogicalLattice)`` is False.
+#   * **``lattice``/``placement`` (ex1_2, ex3_1).** The challenge's own ``LogicalLattice`` and
+#     ``Placement``. Annotating them would bind the check to ``_iceberg``'s copy of the class
+#     while the participant holds the challenge folder's - two identical classes that fail
+#     ``isinstance`` against each other, rejecting correct work. Verified:
+#     ``isinstance(utils_lattice, _iceberg.LogicalLattice)`` is False.
 
 
 def _grade(answer: Any, exercise: str) -> None:
@@ -467,7 +474,30 @@ def grade_lab_iceberg_ex1_3(
 
 
 # 1.4 / 3.2
-def _schedule_answer(gsched: Any) -> dict:
+@runtime_checkable
+class ScheduleLike(Protocol):
+    """Structural type for ``GateSchedule``: the attributes the grader reads off it.
+
+    ``GateSchedule`` is not vendored under ``_iceberg``, so a participant holds a distinct class
+    object that fails ``isinstance`` against ours; a Protocol matches on shape instead. Members
+    are plain annotations, not ``@property`` stubs, which typeguard does not check. The counts
+    are ``SupportsInt`` for the reason the header gives for ``SupportsFloat``.
+    """
+
+    depth: SupportsInt
+    n_cx: SupportsInt
+    status: str
+
+
+class ScheduleAnswer(TypedDict):
+    """The 1.4 / 3.2 wire payload."""
+
+    depth: int
+    n_cx: int
+    status: str
+
+
+def _schedule_answer(gsched: ScheduleLike) -> ScheduleAnswer:
     for attr in ("depth", "n_cx", "status"):
         if not hasattr(gsched, attr):
             raise ValueError(
@@ -482,13 +512,13 @@ def _schedule_answer(gsched: Any) -> dict:
 
 
 @typechecked
-def grade_lab_iceberg_ex1_4(gsched: Any) -> None:
+def grade_lab_iceberg_ex1_4(gsched: ScheduleLike) -> None:
     """PART 1.4 - the toy Trotter-step schedule: ``gsched``."""
     _grade(_schedule_answer(gsched), "ex1_4")
 
 
 @typechecked
-def grade_lab_iceberg_ex3_2(gsched_L: Any) -> None:
+def grade_lab_iceberg_ex3_2(gsched_L: ScheduleLike) -> None:
     """PART 3.2 - the 21-block Trotter-step schedule: ``gsched_L``."""
     _grade(_schedule_answer(gsched_L), "ex3_2")
 
