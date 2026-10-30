@@ -32,6 +32,7 @@ from __future__ import annotations
 import inspect
 import json
 import math
+import types
 from collections.abc import Callable, Iterable, Mapping
 from typing import Any, SupportsFloat
 
@@ -306,38 +307,64 @@ def _orp_probe(num_logical_blocks: int = 2):
     return [data], [[syn]]
 
 
+_BLOCKS = "num_logical_blocks"
+
+
+def _shadow_call(fn: Any, args: tuple, **overrides):
+    """Call ``fn`` with ``overrides`` pinned in a copy of its globals, leaving the real ones."""
+    target = getattr(fn, "__func__", fn)
+    globs = getattr(target, "__globals__", None)
+    code = getattr(target, "__code__", None)
+    if globs is None or code is None:
+        return fn(*args)
+
+    clone = types.FunctionType(
+        code,
+        {**globs, **overrides},
+        target.__name__,
+        target.__defaults__,
+        target.__closure__,
+    )
+    clone.__kwdefaults__ = target.__kwdefaults__
+    if fn is not target:
+        clone = clone.__get__(fn.__self__, type(fn.__self__))
+    return clone(*args)
+
+
 def _call_with_optional_blocks(fn: Any, name: str, *args, num_logical_blocks: int = 2):
     """Call ``fn``, passing ``num_logical_blocks`` only if it accepts it (P3-19).
 
     The wire contract passes it explicitly, but the notebook's ``postselect_parity`` reads it
     from the module globals instead. Both are supported: pass the argument when the signature
-    has a slot for it, otherwise inject the global for the duration of the call.
+    has a slot for it, otherwise pin it in a shadow copy of the globals (see ``_shadow_call``).
     """
     try:
         params = list(inspect.signature(fn).parameters.values())
     except (TypeError, ValueError):
         params = []
-    positional = [
-        p for p in params if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)
-    ]
-    takes_var = any(p.kind is p.VAR_POSITIONAL for p in params)
 
-    if takes_var or len(positional) > len(args):
+    named = next((p for p in params if p.name == _BLOCKS), None)
+    if named is not None:
+        if named.kind is named.POSITIONAL_ONLY:
+            return fn(*args, num_logical_blocks)
+        if named.kind in (named.POSITIONAL_OR_KEYWORD, named.KEYWORD_ONLY):
+            return fn(*args, **{_BLOCKS: num_logical_blocks})
+
+    if any(p.kind is p.VAR_KEYWORD for p in params):
+        return fn(*args, **{_BLOCKS: num_logical_blocks})
+    if any(p.kind is p.VAR_POSITIONAL for p in params):
         return fn(*args, num_logical_blocks)
 
-    globs = getattr(fn, "__globals__", None)
-    if globs is None:
-        return fn(*args)
-    sentinel = object()
-    saved = globs.get("num_logical_blocks", sentinel)
-    globs["num_logical_blocks"] = num_logical_blocks
-    try:
-        return fn(*args)
-    finally:
-        if saved is sentinel:
-            globs.pop("num_logical_blocks", None)
-        else:
-            globs["num_logical_blocks"] = saved
+    required = [
+        p
+        for p in params
+        if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)
+        and p.default is p.empty
+    ]
+    if len(required) > len(args):
+        return fn(*args, num_logical_blocks)
+
+    return _shadow_call(fn, args, **{_BLOCKS: num_logical_blocks})
 
 
 # 1.2

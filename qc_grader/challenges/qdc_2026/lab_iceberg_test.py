@@ -555,3 +555,104 @@ def test_a_function_reading_the_global_still_works():
     assert "num_logical_blocks" not in postselect.__globals__, (
         "the global must be restored"
     )
+
+
+def _identity_postselect_module(source: str):
+    """A throwaway module defining ``postselect_parity`` over its own globals."""
+    ns: dict = {"num_logical_blocks": 99}
+    exec(source, ns)  # noqa: S102
+    return ns
+
+
+def test_the_participants_global_is_never_mutated():
+    """A notebook that bound ``num_logical_blocks`` itself must still hold its own value."""
+    ns = _identity_postselect_module(
+        "def postselect_parity(data_list, syn_list):\n"
+        "    seen.append(num_logical_blocks)\n"
+        "    return data_list, syn_list\n"
+    )
+    ns["seen"] = []
+    _packed(C.grade_lab_iceberg_ex2_1, ns["postselect_parity"])
+    assert ns["seen"] == [2]
+    assert ns["num_logical_blocks"] == 99
+
+
+def test_a_generator_body_sees_the_block_count():
+    """A ``yield``-based implementation runs its body after the call returns."""
+    ns = _identity_postselect_module(
+        "def postselect_parity(data_list, syn_list):\n"
+        "    def gen():\n"
+        "        seen.append(num_logical_blocks)\n"
+        "        yield None\n"
+        "    g = gen()\n"
+        "    next(g)\n"
+        "    return data_list, syn_list\n"
+    )
+    ns["seen"] = []
+    _packed(C.grade_lab_iceberg_ex2_1, ns["postselect_parity"])
+    assert ns["seen"] == [2]
+    assert ns["num_logical_blocks"] == 99
+
+
+def test_an_unrelated_trailing_parameter_is_not_given_the_block_count():
+    """Dispatch is by parameter name, not arity."""
+    ns = _identity_postselect_module(
+        "def postselect_parity(data_list, syn_list, verbose=False):\n"
+        "    seen.append(('verbose', verbose))\n"
+        "    seen.append(('blocks', num_logical_blocks))\n"
+        "    return data_list, syn_list\n"
+    )
+    ns["seen"] = []
+    _packed(C.grade_lab_iceberg_ex2_1, ns["postselect_parity"])
+    assert ("verbose", False) in ns["seen"]
+    assert ("blocks", 2) in ns["seen"]
+
+
+def test_module_level_writes_from_the_graded_call_do_not_escape():
+    """A module-level write from inside the graded call lands in the copy and is dropped."""
+    ns = _identity_postselect_module(
+        "def postselect_parity(data_list, syn_list):\n"
+        "    globals()['num_logical_blocks'] = 7\n"
+        "    globals()['side_effect'] = 'escaped'\n"
+        "    return data_list, syn_list\n"
+    )
+    _packed(C.grade_lab_iceberg_ex2_1, ns["postselect_parity"])
+    assert ns["num_logical_blocks"] == 99
+    assert "side_effect" not in ns
+
+
+@pytest.mark.parametrize(
+    "signature",
+    [
+        "def postselect_parity(data_list, syn_list, num_logical_blocks):",
+        "def postselect_parity(data_list, syn_list, *, num_logical_blocks=99):",
+        "def postselect_parity(data_list, syn_list, nblocks):",
+        "def postselect_parity(*args):",
+        "def postselect_parity(data_list, syn_list, **kw):",
+    ],
+)
+def test_every_accepted_signature_shape_receives_two(signature):
+    """Each of these has a slot for the count, so it must arrive as ``2``."""
+    body = (
+        "    import inspect\n"
+        "    frame = inspect.currentframe()\n"
+        "    seen.update(frame.f_locals)\n"
+        "    return data_list, syn_list\n"
+        if "*args" not in signature
+        else "    seen['args'] = args\n    return args[0], args[1]\n"
+    )
+    ns = _identity_postselect_module(f"{signature}\n{body}")
+    ns["seen"] = {}
+    _packed(C.grade_lab_iceberg_ex2_1, ns["postselect_parity"])
+    if "*args" in signature:
+        assert ns["seen"]["args"][2] == 2
+    else:
+        got = {
+            k: v
+            for k, v in ns["seen"].items()
+            if k in ("num_logical_blocks", "nblocks", "kw")
+        }
+        assert 2 in [v for v in got.values() if isinstance(v, int)] or got.get(
+            "kw"
+        ) == {"num_logical_blocks": 2}, got
+    assert ns["num_logical_blocks"] == 99
