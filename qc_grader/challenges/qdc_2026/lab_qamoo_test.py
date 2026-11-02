@@ -327,12 +327,15 @@ def test_every_exercise_has_one_grade_function() -> None:
 
 
 def test_the_package_exports_every_function_and_the_platform_helpers() -> None:
+    """The package shares ``__all__`` with the other labs, so check inclusion, not equality."""
     package = importlib.import_module("qc_grader.challenges.qdc_2026")
-    assert set(package.__all__) == {
+    expected = {
         "check_progress",
         "join_team",
         *(f"grade_lab_qamoo_{exercise}" for exercise in EXERCISES),
     }
+    exported = set(package.__all__)
+    assert expected <= exported, sorted(expected - exported)
     for name in package.__all__:
         assert callable(getattr(package, name))
 
@@ -1251,8 +1254,8 @@ def test_ex1_1a_on_the_real_hamiltonian(challenge: tuple[Any, Any]) -> None:
     pytest.importorskip("qiskit_addon_opt_mapper")
     pytest.importorskip("docplex")
     src, _ = challenge
-    from qiskit_addon_opt_mapper.converters import OptimizationProblemToQubo
-    from qiskit_addon_opt_mapper.translators import from_docplex_mp, to_ising
+    from qiskit_addon_opt_mapper.converters import OptimizationProblemToQubo  # ty: ignore[unresolved-import]
+    from qiskit_addon_opt_mapper.translators import from_docplex_mp, to_ising  # ty: ignore[unresolved-import]
 
     model, _ = src.weighted_sum_model(src.Portfolio(0), 1.0, 1.0)
     hamiltonian, _offset = to_ising(
