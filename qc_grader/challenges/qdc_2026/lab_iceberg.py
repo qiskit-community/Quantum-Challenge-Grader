@@ -32,8 +32,16 @@ from __future__ import annotations
 import inspect
 import json
 import math
+import types
 from collections.abc import Callable, Iterable, Mapping
-from typing import Any, SupportsFloat
+from typing import (
+    Any,
+    Protocol,
+    SupportsFloat,
+    SupportsInt,
+    TypedDict,
+    runtime_checkable,
+)
 
 from typeguard import typechecked
 
@@ -74,11 +82,11 @@ _LAB = "lab_iceberg"
 #     a call to it"*, which is the fix. EXERCISES.md section 3 documents that message as the
 #     contract and the client tests assert it, so the hand-rolled check wins. Every one of these
 #     parameters is guarded on the first line of its function.
-#   * **``lattice``/``placement`` (ex1_2, ex3_1) and ``gsched`` (ex1_4, ex3_2).** The challenge's
-#     own ``LogicalLattice``, ``Placement`` and ``GateSchedule``. Annotating them would bind the
-#     check to ``_iceberg``'s copy of the class while the participant holds the challenge
-#     folder's - two identical classes that fail ``isinstance`` against each other, rejecting
-#     correct work. Verified: ``isinstance(utils_lattice, _iceberg.LogicalLattice)`` is False.
+#   * **``lattice``/``placement`` (ex1_2, ex3_1).** The challenge's own ``LogicalLattice`` and
+#     ``Placement``. Annotating them would bind the check to ``_iceberg``'s copy of the class
+#     while the participant holds the challenge folder's - two identical classes that fail
+#     ``isinstance`` against each other, rejecting correct work. Verified:
+#     ``isinstance(utils_lattice, _iceberg.LogicalLattice)`` is False.
 
 
 def _grade(answer: Any, exercise: str) -> None:
@@ -306,38 +314,64 @@ def _orp_probe(num_logical_blocks: int = 2):
     return [data], [[syn]]
 
 
+_BLOCKS = "num_logical_blocks"
+
+
+def _shadow_call(fn: Any, args: tuple, **overrides):
+    """Call ``fn`` with ``overrides`` pinned in a copy of its globals, leaving the real ones."""
+    target = getattr(fn, "__func__", fn)
+    globs = getattr(target, "__globals__", None)
+    code = getattr(target, "__code__", None)
+    if globs is None or code is None:
+        return fn(*args)
+
+    clone = types.FunctionType(
+        code,
+        {**globs, **overrides},
+        target.__name__,
+        target.__defaults__,
+        target.__closure__,
+    )
+    clone.__kwdefaults__ = target.__kwdefaults__
+    if fn is not target:
+        clone = clone.__get__(fn.__self__, type(fn.__self__))
+    return clone(*args)
+
+
 def _call_with_optional_blocks(fn: Any, name: str, *args, num_logical_blocks: int = 2):
     """Call ``fn``, passing ``num_logical_blocks`` only if it accepts it (P3-19).
 
     The wire contract passes it explicitly, but the notebook's ``postselect_parity`` reads it
     from the module globals instead. Both are supported: pass the argument when the signature
-    has a slot for it, otherwise inject the global for the duration of the call.
+    has a slot for it, otherwise pin it in a shadow copy of the globals (see ``_shadow_call``).
     """
     try:
         params = list(inspect.signature(fn).parameters.values())
     except (TypeError, ValueError):
         params = []
-    positional = [
-        p for p in params if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)
-    ]
-    takes_var = any(p.kind is p.VAR_POSITIONAL for p in params)
 
-    if takes_var or len(positional) > len(args):
+    named = next((p for p in params if p.name == _BLOCKS), None)
+    if named is not None:
+        if named.kind is named.POSITIONAL_ONLY:
+            return fn(*args, num_logical_blocks)
+        if named.kind in (named.POSITIONAL_OR_KEYWORD, named.KEYWORD_ONLY):
+            return fn(*args, **{_BLOCKS: num_logical_blocks})
+
+    if any(p.kind is p.VAR_KEYWORD for p in params):
+        return fn(*args, **{_BLOCKS: num_logical_blocks})
+    if any(p.kind is p.VAR_POSITIONAL for p in params):
         return fn(*args, num_logical_blocks)
 
-    globs = getattr(fn, "__globals__", None)
-    if globs is None:
-        return fn(*args)
-    sentinel = object()
-    saved = globs.get("num_logical_blocks", sentinel)
-    globs["num_logical_blocks"] = num_logical_blocks
-    try:
-        return fn(*args)
-    finally:
-        if saved is sentinel:
-            globs.pop("num_logical_blocks", None)
-        else:
-            globs["num_logical_blocks"] = saved
+    required = [
+        p
+        for p in params
+        if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)
+        and p.default is p.empty
+    ]
+    if len(required) > len(args):
+        return fn(*args, num_logical_blocks)
+
+    return _shadow_call(fn, args, **{_BLOCKS: num_logical_blocks})
 
 
 # 1.2
@@ -440,7 +474,30 @@ def grade_lab_iceberg_ex1_3(
 
 
 # 1.4 / 3.2
-def _schedule_answer(gsched: Any) -> dict:
+@runtime_checkable
+class ScheduleLike(Protocol):
+    """Structural type for ``GateSchedule``: the attributes the grader reads off it.
+
+    ``GateSchedule`` is not vendored under ``_iceberg``, so a participant holds a distinct class
+    object that fails ``isinstance`` against ours; a Protocol matches on shape instead. Members
+    are plain annotations, not ``@property`` stubs, which typeguard does not check. The counts
+    are ``SupportsInt`` for the reason the header gives for ``SupportsFloat``.
+    """
+
+    depth: SupportsInt
+    n_cx: SupportsInt
+    status: str
+
+
+class ScheduleAnswer(TypedDict):
+    """The 1.4 / 3.2 wire payload."""
+
+    depth: int
+    n_cx: int
+    status: str
+
+
+def _schedule_answer(gsched: ScheduleLike) -> ScheduleAnswer:
     for attr in ("depth", "n_cx", "status"):
         if not hasattr(gsched, attr):
             raise ValueError(
@@ -455,13 +512,13 @@ def _schedule_answer(gsched: Any) -> dict:
 
 
 @typechecked
-def grade_lab_iceberg_ex1_4(gsched: Any) -> None:
+def grade_lab_iceberg_ex1_4(gsched: ScheduleLike) -> None:
     """PART 1.4 - the toy Trotter-step schedule: ``gsched``."""
     _grade(_schedule_answer(gsched), "ex1_4")
 
 
 @typechecked
-def grade_lab_iceberg_ex3_2(gsched_L: Any) -> None:
+def grade_lab_iceberg_ex3_2(gsched_L: ScheduleLike) -> None:
     """PART 3.2 - the 21-block Trotter-step schedule: ``gsched_L``."""
     _grade(_schedule_answer(gsched_L), "ex3_2")
 
