@@ -327,10 +327,8 @@ def test_every_exercise_has_one_grade_function() -> None:
 
 
 def test_the_package_exports_every_function_and_the_platform_helpers() -> None:
-    # The package is shared by every lab of the challenge, so this lab's names must be
-    # among the exports; other labs may add theirs.
     package = importlib.import_module("qc_grader.challenges.qdc_2026")
-    assert set(package.__all__) >= {
+    assert set(package.__all__) == {
         "check_progress",
         "join_team",
         *(f"grade_lab_qamoo_{exercise}" for exercise in EXERCISES),
@@ -507,7 +505,7 @@ def test_ex1_1a_long_error_text_is_cut() -> None:
 
 
 def test_ex1_1a_rejects_a_hamiltonian_that_is_too_small_with_a_hint() -> None:
-    with pytest.raises(ValueError, match="100-qubit"):
+    with pytest.raises(ValueError, match="at least 4"):
         C.grade_lab_qamoo_ex1_1a(is_pure_z, is_at_most_weight_2, ising(3))
 
 
@@ -1253,14 +1251,13 @@ def test_ex1_1a_on_the_real_hamiltonian(challenge: tuple[Any, Any]) -> None:
     pytest.importorskip("qiskit_addon_opt_mapper")
     pytest.importorskip("docplex")
     src, _ = challenge
-    # imported by name: the addon is a challenge requirement, not a client dependency
-    converters = importlib.import_module("qiskit_addon_opt_mapper.converters")
-    translators = importlib.import_module("qiskit_addon_opt_mapper.translators")
+    from qiskit_addon_opt_mapper.converters import OptimizationProblemToQubo
+    from qiskit_addon_opt_mapper.translators import from_docplex_mp, to_ising
 
     model, _ = src.weighted_sum_model(src.Portfolio(0), 1.0, 1.0)
-    problem_op = translators.from_docplex_mp(model)
-    qubo = converters.OptimizationProblemToQubo().convert(problem_op)
-    hamiltonian, _offset = translators.to_ising(qubo)
+    hamiltonian, _offset = to_ising(
+        OptimizationProblemToQubo().convert(from_docplex_mp(model))
+    )
     answer = _answer(
         C.grade_lab_qamoo_ex1_1a, is_pure_z, is_at_most_weight_2, hamiltonian
     )

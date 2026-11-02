@@ -124,7 +124,9 @@ def grade_lab_qamoo_ex1_1a(
     """
     if hamiltonian.num_qubits < 4:
         raise ValueError(
-            "Pass the 100-qubit `hamiltonian` that `to_ising` returned in Exercise 1.1."
+            f"`hamiltonian` acts on {hamiltonian.num_qubits} qubits; the probes need at least 4 "
+            "(they add terms on qubits 0-3). Pass the `hamiltonian` that `to_ising` returned in "
+            "Exercise 1.1."
         )
     probes = _hamiltonian_probes(hamiltonian)
     answer = {
