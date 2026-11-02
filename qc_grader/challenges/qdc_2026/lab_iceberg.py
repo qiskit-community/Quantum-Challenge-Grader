@@ -968,9 +968,23 @@ def grade_lab_iceberg_ex3_4(
             "The bitstring lists are empty: did the job results come back?"
         )
     first_data = data_bitstrings_list[0]  # ty: ignore[not-subscriptable]
-    first_syn = syn_bitstrings_list[0]  # ty: ignore[not-subscriptable]
-    if not first_data or not first_syn:
+    if not first_data:
         raise ValueError("The first circuit has no shots.")
+    # The n_steps = 0 circuit is state preparation only - `circ_elements` is empty, so it has
+    # no syndrome round and no syn register at all, and its entry here is []. Read the rounds
+    # and the register width from the first circuit that actually measured one, rather than
+    # from index 0, which would otherwise read "no syndrome round" as "no shots".
+    syn_rounds, syn_width = 0, 0
+    for rounds in syn_bitstrings_list:
+        if rounds and len(rounds[0]):
+            syn_rounds, syn_width = len(rounds), len(str(rounds[0][0]))
+            break
+    if syn_rounds == 0:
+        raise ValueError(
+            "No circuit measured a syndrome register. Every circuit with at least one "
+            "Trotter step should end in a syndrome round, so pass the per-circuit lists you "
+            "built from result.data."
+        )
     obs_k = obs_k_list[0] if obs_k_list else {}  # ty: ignore[not-subscriptable]
     f0 = []
     for v in obs_k.values():
@@ -980,9 +994,9 @@ def grade_lab_iceberg_ex3_4(
     _grade(
         {
             "width": len(str(first_data[0])),
-            "syn_width": len(str(first_syn[0][0])),
+            "syn_width": syn_width,
             "shots": len(first_data),
-            "rounds": len(first_syn),
+            "rounds": syn_rounds,
             "n_obs": len(obs_k),
             "f0": f0,
         },
