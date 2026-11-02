@@ -123,7 +123,13 @@ def grade_lab_ole_ex1(echo: Callable[..., Any]) -> None:
     circuits = []
     for eta, delta in PROBES_EX1:
         where = f"echo({eta}, {delta})"
-        qc = echo(eta, delta)
+        try:
+            qc = echo(eta, delta)
+        except Exception as err:  # noqa: BLE001 - the participant's code; reported as a hint
+            raise ValueError(
+                f"Fix echo first: {where} raised {type(err).__name__}: {err}. "
+                f"Run {where} in a cell to see the full traceback."
+            ) from None
         if not isinstance(qc, QuantumCircuit):
             raise ValueError(
                 f"Return a QuantumCircuit from echo: {where} returned {type(qc).__name__}."
