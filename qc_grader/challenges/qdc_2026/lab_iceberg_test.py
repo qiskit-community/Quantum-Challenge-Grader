@@ -501,6 +501,45 @@ def test_ex2_7_packs_the_whole_pipeline():
     assert set(answer["O_k"]) == set(answer["k_star"])
 
 
+def test_ex3_4_reads_the_first_circuit_that_measured_a_syndrome():
+    """The ``n_steps = 0`` circuit has no syndrome register, so its entry is ``[]``.
+
+    ``circ_elements`` is empty for that circuit - state preparation only - so the job returns
+    no syndrome bitstrings for it. Indexing ``syn_bitstrings_list[0]`` therefore reads "no
+    syndrome round" as "no shots" and rejects a correct submission; the rounds and the register
+    width have to come from the first circuit that actually measured one.
+    """
+    nblk, shots = 21, 32_000
+    data = [["0" * (4 * nblk)] * shots for _ in range(3)]
+    syn = [
+        [],  # n_steps = 0: state preparation only, no syn register
+        [["0" * (2 * nblk)] * shots],
+        [["0" * (2 * nblk)] * shots],
+    ]
+    obs_k = [{f"o{i}": {"f_k": [1.0, 0.9], "O_k": [0.5, 0.5]}} for i in range(3)]
+
+    answer = _packed(C.grade_lab_iceberg_ex3_4, data, syn, obs_k)
+    _assert_wire_ok(answer)
+    assert answer["rounds"] == 1, (
+        "rounds must come from a circuit that has a syndrome round"
+    )
+    assert answer["syn_width"] == 2 * nblk
+    assert answer["width"] == 4 * nblk
+    assert answer["shots"] == shots
+
+
+def test_ex3_4_rejects_a_job_with_no_syndromes_at_all():
+    """Every circuit empty is a genuine problem, and must say so rather than score."""
+    data = [["0" * 84] * 10]
+    with pytest.raises(ValueError, match="syndrome register"):
+        _packed(C.grade_lab_iceberg_ex3_4, data, [[]], [{}])
+
+
+def test_ex3_4_still_rejects_a_circuit_with_no_shots():
+    with pytest.raises(ValueError, match="no shots"):
+        _packed(C.grade_lab_iceberg_ex3_4, [[]], [[["0" * 42] * 10]], [{}])
+
+
 def test_ex3_5_keys_are_json_strings():
     values = {(0, 0): 0.5, (1, 1): -0.3}
     answer = _packed(C.grade_lab_iceberg_ex3_5, values, values, 0.2, 0.1)
