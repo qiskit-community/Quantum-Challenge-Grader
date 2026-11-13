@@ -25,7 +25,7 @@ from networkx import Graph
 
 def circuit_to_bytes(qc: Union[TwoLocal, QuantumCircuit]) -> bytes:
     with BytesIO() as container:
-        qpy.dump(qc, container)
+        qpy.dump(qc, container, version=qpy.QPY_VERSION - 1)
         circuit = container.getvalue()
 
     return circuit
